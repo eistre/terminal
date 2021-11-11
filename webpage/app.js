@@ -27,7 +27,8 @@ server.listen(port, function (error) {
 })
 
 // Jooksutamine: node app.js
-//Loob ühenduse ja see töötab, kuid käsu väljundit näeb pärast lõpetamist.
+//Loob ühenduse ja see töötab, kuid käsu väljundit näeb pärast lõpetamist. Also tabulaator ei tööta.
+//https://github.com/mscdex/ssh2#client-examples
 const conn = new Client();
 let UserExit = false;
 conn.on('ready', () => {
@@ -40,13 +41,12 @@ conn.on('ready', () => {
         }).on('data', (data) => {
             console.log('OUTPUT: ' + data);
         });
-        while (!UserExit) {     //
+        while (!UserExit) {     //https://www.codecademy.com/articles/getting-user-input-in-node-js
             const name = prompt();
-            stream.write(name + '\n');
-            if (name == 'exit') {
-                UserExit = true
-                stream.end('exit\n');
+            if (name != 'exit' && name != null) {
+                stream.write(name + '\n');
             }
+            else UserExit = true
         }
     });
 }).connect({
