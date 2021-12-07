@@ -1,3 +1,4 @@
+require('dotenv').config();
 //https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 var fs = require('fs');
 var path = require('path');
@@ -51,14 +52,15 @@ io.on('connection', function(socket) {
     socket.emit('data', '\r\n*** SSH CONNECTION CLOSED ***\r\n');
   }).on('error', function(err) {
     socket.emit('data', '\r\n*** SSH CONNECTION ERROR: ' + err.message + ' ***\r\n');
+    console.log(err)
   }).connect({
     host: 'localhost',
-    port: 22,
-    username: 'test',
-    password: 'test'
+    port: process.env.PORT,
+    username: process.env.USERNAME,
+    password: process.env.PASS,
   });
 });
 
-let port = 8000;
+let port = process.env.OUTPORT;
 console.log('Listening on port', port) //Avab aadressil localhost:8000
 server.listen(port);
