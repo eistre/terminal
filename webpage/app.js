@@ -1,5 +1,6 @@
 require('dotenv').config({ path: '../.env' })
-//https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
+//copy-pasted from: https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
+//Credit goes to Elliot404
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);

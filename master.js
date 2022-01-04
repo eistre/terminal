@@ -8,7 +8,6 @@ let host = process.env.HOST;
 let port = process.env.PORT;
 let username = process.env.USERNAME;
 let password = process.env.PASS;
-let outPort = process.env.OUTPORT;
 
 var docker = new Docker({
     // host: "http://127.0.0.14",
@@ -24,13 +23,17 @@ docker.buildImage({
     src: ['Dockerfile']
 }, {
     t: "autogen_ubuntu_ssh",
+    buildargs: {
+        usr:'test',
+        pwd:'test',
+    }
 }, function (err, response) {
     if (err) {
-        console.log("viga")
+        console.log("Error!")
         console.log(err)
     }
     else {
-        console.log("olemas!");
+        console.log("Ubuntu 20.04 has been built!");
 
     }
     //...
@@ -61,7 +64,9 @@ function runExec(container) {
     });
 }
 
-for (var i = 0; i < 10; i++) {
+//Iterating over port values
+//Connecting all OS's with corresponding webpage.
+for (var i = 0; i < 1; i=i+2) {
     var docker = new Docker({ port:22})
     let newport = (parseInt(port) + i).toString()
     docker.createContainer({
@@ -79,16 +84,15 @@ for (var i = 0; i < 10; i++) {
             runExec(container);
         });
     });
-};
 
 //---------------------------------------------------------------
-//Ühenduse loomine veebilehe kaudu
+//Webpage side
+//Creating the webpage and SSH into the OS via app.js in webpage.
 
-const child_process = require('child_process');
-for (var i = 0; i < 10; i++) {
-    let newport = parseInt(port) + i
-    let newoutPort = parseInt(outPort) + i
-    var worker_process = child_process.fork("webpage3.0/app.js", [host, newport, username, password, newoutPort]);
+    const child_process = require('child_process');
+    newport = parseInt(newport)
+    let outPort = newport+1
+    var worker_process = child_process.fork("webpage/app.js", [host, newport, username, password, outPort]);
     worker_process.on('close', function (code) {
         console.log('child process exited with code ' + code);
     });
