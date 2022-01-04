@@ -8,6 +8,8 @@ Credit goes to Elliot404 -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SSH SERVER</title>
+  <!--TODO: create a proper icon or use something acceptable.-->
+  <link rel="icon" href="https://i.imgur.com/uy6Ntdz.png"/>
   <link rel="stylesheet" href="/xterm.css" />
   <script defer src="/xterm.js"></script>
   <script defer src="/xterm-addon-fit.js"></script>
@@ -20,9 +22,9 @@ Credit goes to Elliot404 -->
   <h3>WebSSH</h3>
   <div id="terminal-container"></div>
   <script>
-  // PLEASE USE A SEPERATE FILE FOR THE JS and defer it
-  // like the above app.js file 
-    window.addEventListener('load', function() {
+    // PLEASE USE A SEPERATE FILE FOR THE JS and defer it
+    // like the above app.js file 
+    window.addEventListener('load', function () {
       const terminalContainer = document.getElementById('terminal-container');
       const term = new Terminal({
         cursorBlink: true
@@ -33,21 +35,21 @@ Credit goes to Elliot404 -->
       fitAddon.fit();
 
       const socket = io() //.connect();
-      socket.on('connect', function() {
+      socket.on('connect', function () {
         term.write('\r\n*** Connected to backend ***\r\n');
       });
 
       // Browser -> Backend
-      term.onKey(function(ev) {
+      term.onKey(function (ev) {
         socket.emit('data', ev.key);
       });
 
       // Backend -> Browser
-      socket.on('data', function(data) {
+      socket.on('data', function (data) {
         term.write(data);
       });
 
-      socket.on('disconnect', function() {
+      socket.on('disconnect', function () {
         term.write('\r\n*** Disconnected from backend ***\r\n');
       });
     }, false);

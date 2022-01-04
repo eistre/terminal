@@ -24,8 +24,8 @@ docker.buildImage({
 }, {
     t: "autogen_ubuntu_ssh",
     buildargs: {
-        usr:'test',
-        pwd:'test',
+        usr: 'test',
+        pwd: 'test',
     }
 }, function (err, response) {
     if (err) {
@@ -66,8 +66,8 @@ function runExec(container) {
 
 //Iterating over port values
 //Connecting all OS's with corresponding webpage.
-for (var i = 0; i < 1; i=i+2) {
-    var docker = new Docker({ port:22})
+for (var i = 0; i < 1; i = i + 2) {
+    var docker = new Docker({ port: 22 })
     let newport = (parseInt(port) + i).toString()
     docker.createContainer({
         Image: 'autogen_ubuntu_ssh',
@@ -78,20 +78,20 @@ for (var i = 0; i < 1; i=i+2) {
         },
     }, function (err, container) {
         container.start({}, function (err, data) {
-            if (err){
+            if (err) {
                 return ""
             }
             runExec(container);
         });
     });
 
-//---------------------------------------------------------------
-//Webpage side
-//Creating the webpage and SSH into the OS via app.js in webpage.
+    //---------------------------------------------------------------
+    //Webpage side
+    //Creating the webpage and SSH into the OS via app.js in webpage.
 
     const child_process = require('child_process');
     newport = parseInt(newport)
-    let outPort = newport+1
+    let outPort = newport + 1
     var worker_process = child_process.fork("webpage/app.js", [host, newport, username, password, outPort]);
     worker_process.on('close', function (code) {
         console.log('child process exited with code ' + code);
