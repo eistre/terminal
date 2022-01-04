@@ -1,15 +1,15 @@
 <!-- Base from https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
-Credit goes to Elliot404 -->
+Template credit goes to Elliot404. Modified by Joonas Halapuu-->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="et">
 
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SSH SERVER</title>
-  <!--TODO: create a proper icon or use something acceptable.-->
-  <link rel="icon" href="https://i.imgur.com/uy6Ntdz.png"/>
+  <title>Ubuntu veebiterminal</title>
+  <!--Todo millalgi kui aega on liiga palju - normaalne ikoon.-->
+  <link rel="icon" href="https://i.imgur.com/uy6Ntdz.png" />
   <link rel="stylesheet" href="/xterm.css" />
   <script defer src="/xterm.js"></script>
   <script defer src="/xterm-addon-fit.js"></script>
@@ -19,8 +19,30 @@ Credit goes to Elliot404 -->
 </head>
 
 <body>
-  <h3>WebSSH</h3>
-  <div id="terminal-container"></div>
+  <!--TODO: Veebilehe poolel: 
+    a) veebileht ilusamaks (ala reacti/vue peale vms)
+    b) käskude kirjeldused ja valik drop-down menüüga.
+    c) käskude kirjeldused eraldada ja hoida "andmebaasis"
+    e) kusagil vahepeal peaks käske ka välja mõtlema vbl :D
+    d) käivitada automaatkontroll mis kontrollib tehtud käsu õigsust.
+  -->
+  <h3 style="text-align: center;">Ubuntu 20.04 Terminali harjutuskeskkond</h3>
+  <div style="display: flex;">
+    <div id='tasks-container' style="flex: 1 1 0%; margin: 0 20px;">
+      <h3>Käsk</h3>
+      <p>selle kirjeldus</p>
+      <p>kasutamise näide</p>
+      <ol>
+        <li>1.Ül</li>
+        <li>2.Ül</li>
+        <li>3.Ül</li>
+        <li>4.Ül</li>
+      </ol>
+    </div>
+    <div id="terminal-container" style="flex: auto;"></div>
+
+  </div>
+
   <script>
     // PLEASE USE A SEPERATE FILE FOR THE JS and defer it
     // like the above app.js file 
