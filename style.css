@@ -1,0 +1,8 @@
+button {
+    font-size:xx-large;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

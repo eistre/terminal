@@ -1,0 +1,48 @@
+<html lang="et">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The button</title>
+    <!--Todo millalgi kui aega on liiga palju - normaalne ikoon.-->
+    <link rel="icon" href="https://i.imgur.com/uy6Ntdz.png" />
+    <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+    <div>
+        <button id="someButton" onclick="UbuntuWortyofMordor()">Press the Button</button>
+    </div>
+    <!--HTML request script taken from https://stackoverflow.com/questions/45697176/send-simple-http-request-with-html-submit-button
+        Credit goes to thepi.-->
+    <script type="text/javascript">
+        let ubuntuID = 0
+        function UbuntuWortyofMordor() {
+            /**    var xhr = new XMLHttpRequest();
+                xhr.open("POST", 'localhost:8080/ubuntuInstance/22', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({
+                    "girafe": 2
+                }));
+                xhr.send();
+            } 
+            */
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", `http://localhost:8080/ubuntuInstance/${ubuntuID}`, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send();
+            xhr.onload = function () {
+                console.log("HELLO")
+                console.log(this.responseText);
+                var data = JSON.parse(this.responseText);
+                console.log(data["yourAdress"]);
+                window.open(data["yourAdress"]);
+                ubuntuID+=2
+            }
+        }
+    </script>
+</body>
+
+</html>

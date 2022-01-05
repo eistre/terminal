@@ -44,7 +44,6 @@ function runExec(container) {
 
     var options = {
         Cmd: ['bash', '-c', 'service ssh start'],
-        //Env: ['VAR=ttslkfjsdalkfj'],
         AttachStdout: true,
         AttachStderr: true
     };
@@ -66,15 +65,14 @@ function runExec(container) {
 
 //Iterating over port values
 //Connecting all OS's with corresponding webpage.
-for (var i = 0; i < 1; i = i + 2) {
+function makeContainer(containerNumber) {
     var docker = new Docker({ port: 22 })
-    let newport = (parseInt(port) + i).toString()
     docker.createContainer({
         Image: 'autogen_ubuntu_ssh',
         Tty: true,
         //Cmd: ['/bin/bash', '-c', 'service ssh start'],
         PortBindings: {
-            "22/tcp": [{ HostPort: newport }]//Binding the internal ssh to outside port.
+            "22/tcp": [{ HostPort: containerNumber.toString() }]//Binding the internal ssh to outside port.
         },
     }, function (err, container) {
         container.start({}, function (err, data) {
@@ -90,10 +88,10 @@ for (var i = 0; i < 1; i = i + 2) {
     //Creating the webpage and SSH into the OS via app.js in webpage.
 
     const child_process = require('child_process');
-    newport = parseInt(newport)
-    let outPort = newport + 1
-    var worker_process = child_process.fork("webpage/app.js", [host, newport, username, password, outPort]);
+    var worker_process = child_process.fork("webpage/app.js", [host, containerNumber, username, password, containerNumber+1]);
     worker_process.on('close', function (code) {
         console.log('child process exited with code ' + code);
     });
 } 
+
+exports.newContainer = makeContainer;
