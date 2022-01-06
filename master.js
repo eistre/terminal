@@ -90,10 +90,8 @@ function makeContainer(containerNumber, callback) {
     //Firstly check if port is already used. Then make connection.
     portInUse(containerNumber, function (inUse) {
         console.log(inUse ? "the port is used":"port is not used")
-        if (inUse) callback(200)
+        if (inUse) callback(200) //TODO: check somewhere that it is up and running and if it is not then get it up.
         else {
-            console.log("Port was not in use")
-
             //TODO: kui port juba olemas, lihtsalt loo ühendus.
             var docker = new Docker({ port: 22 })
             docker.createContainer({

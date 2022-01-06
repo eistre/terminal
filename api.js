@@ -5,23 +5,33 @@ const master = require('./master')
 
 app.use(express.json())
 
+var StartingPort = 49152
+
 
 app.post('/ubuntuInstance/:id', (req, res) => {
-
   const { id } = req.params;
-  //const { used_for_later } = req.body;
-  const port = 49152 + Number(id)
+  var portNumber = 49999;
+  if (id === 'Unknown') {
+    portNumber = StartingPort;
+    StartingPort += 2;
+    console.log(StartingPort)
+  }
+  else {
+    //const { used_for_later } = req.body;
+    portNumber = Number(id)-1 //-1 because the port number we gave is already 1 unit greater than the ubuntu port
+  }
   //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
-  master.newContainer(port, (result) => {
+  //TODO: kusagil kunagi - avab samas aknas.
+  master.newContainer(portNumber, (result) => {
 
     console.log(`Return code ${result}`)
 
     //Kui olemas siis 200 == OK.
     //Kui pole olemas, siis 201 == created.
     res.status(result).send({
-      yourAdress: `http://localhost:${port + 1}`,
+      yourAddress: `http://localhost:${portNumber + 1}`,
     })
-    
+
   });
 })
 
