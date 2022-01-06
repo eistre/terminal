@@ -5,34 +5,34 @@ const master = require('./master')
 
 app.use(express.json())
 
-app.get('/tshirt/l', (req, res) => {
-    res.status(200).send({
-        'shirt': '👕',
-        'size': 'large',
-    })
-})
 
 app.post('/ubuntuInstance/:id', (req, res) => {
 
-    const { id } = req.params;
-    //const { used_for_later } = req.body;
-    const port = 49152+Number(id)
-    //tuleb kontrollida et tüüp oleks õige ja viga visata muidu.
-    master.newContainer(port);
+  const { id } = req.params;
+  //const { used_for_later } = req.body;
+  const port = 49152 + Number(id)
+  //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
+  master.newContainer(port, (result) => {
 
-    res.status(200).send({
-        yourAdress: `http://localhost:${port+1}`,
+    console.log(`Return code ${result}`)
+
+    //Kui olemas siis 200 == OK.
+    //Kui pole olemas, siis 201 == created.
+    res.status(result).send({
+      yourAdress: `http://localhost:${port + 1}`,
     })
+    
+  });
 })
 
 app.listen(
-    PORT,
-    () => console.log(`it's alive on http://localhost:${PORT}`)
+  PORT,
+  () => console.log(`it's alive on http://localhost:${PORT}`)
 )
 
 
 /// bad practice i think
-
+// -------------------- CENTRAL BUTTON PAGE -------------------
 
 //copy-pasted from: https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 //Credit goes to Elliot404

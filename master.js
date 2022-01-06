@@ -1,4 +1,5 @@
 require('dotenv').config();
+var net = require('net');
 var Docker = require('dockerode');
 
 
@@ -63,35 +64,66 @@ function runExec(container) {
     });
 }
 
+
+//Code from https://stackoverflow.com/questions/29860354/in-nodejs-how-do-i-check-if-a-port-is-listening-or-in-use
+// Author :R. Bernstein (rocky)
+var portInUse = function (port, callback) {
+    var server = net.createServer(function (socket) {
+        socket.write('Echo server\r\n');
+        socket.pipe(socket);
+    });
+
+    server.listen(port, 'localhost');
+    server.on('error', function (e) {
+        callback(true);
+    });
+    server.on('listening', function (e) {
+        server.close();
+        callback(false);
+    });
+};
+
 //Iterating over port values
 //Connecting all OS's with corresponding webpage.
-function makeContainer(containerNumber) {
-    var docker = new Docker({ port: 22 })
-    docker.createContainer({
-        Image: 'autogen_ubuntu_ssh',
-        Tty: true,
-        //Cmd: ['/bin/bash', '-c', 'service ssh start'],
-        PortBindings: {
-            "22/tcp": [{ HostPort: containerNumber.toString() }]//Binding the internal ssh to outside port.
-        },
-    }, function (err, container) {
-        container.start({}, function (err, data) {
-            if (err) {
-                return ""
-            }
-            runExec(container);
-        });
-    });
+function makeContainer(containerNumber, callback) {
 
-    //---------------------------------------------------------------
-    //Webpage side
-    //Creating the webpage and SSH into the OS via app.js in webpage.
+    //Firstly check if port is already used. Then make connection.
+    portInUse(containerNumber, function (inUse) {
+        console.log(inUse ? "the port is used":"port is not used")
+        if (inUse) callback(200)
+        else {
+            console.log("Port was not in use")
 
-    const child_process = require('child_process');
-    var worker_process = child_process.fork("webpage/app.js", [host, containerNumber, username, password, containerNumber+1]);
-    worker_process.on('close', function (code) {
-        console.log('child process exited with code ' + code);
+            //TODO: kui port juba olemas, lihtsalt loo ühendus.
+            var docker = new Docker({ port: 22 })
+            docker.createContainer({
+                Image: 'autogen_ubuntu_ssh',
+                Tty: true,
+                //Cmd: ['/bin/bash', '-c', 'service ssh start'],
+                PortBindings: {
+                    "22/tcp": [{ HostPort: containerNumber.toString() }]//Binding the internal ssh to outside port.
+                },
+            }, function (err, container) {
+                container.start({}, function (err, data) {
+                    if (err) {
+                        return ""
+                    }
+                    runExec(container);
+                });
+            });
+
+            //---------------------------------------------------------------
+            //Webpage side
+            //Creating the webpage and SSH into the OS via app.js in webpage.
+
+            const child_process = require('child_process');
+            var worker_process = child_process.fork("webpage/app.js", [host, containerNumber, username, password, containerNumber + 1]);
+            worker_process.on('close', function (code) {
+                console.log('child process exited with code ' + code);
+            });
+            callback(201)
+        }
     });
-} 
+}
 
 exports.newContainer = makeContainer;
