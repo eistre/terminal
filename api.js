@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const PORT = 8080;
-const master = require('./master')
+const dockerController = require('./dockerController')
 
 app.use(express.json())
 
@@ -9,30 +9,52 @@ var StartingPort = 49152
 
 
 app.post('/ubuntuInstance/:id', (req, res) => {
+  /**
+   * Call to action response comes.
+   * The action that we take: 
+   * 1) docker (activete, check if exists, make it exist.)
+   * 2) make website and connect it to docker
+   * 3) send back signal that all is fine and proceed.
+   * 
+  */
   const { id } = req.params;
-  var portNumber = 49999;
   if (id === 'Unknown') {
     portNumber = StartingPort;
     StartingPort += 2;
-    console.log(StartingPort)
+    //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
+    //TODO: kusagil kunagi - avab samas aknas.
+    dockerController.newContainer(portNumber, (result) => {
+
+      console.log(`Return code ${result}`)
+
+      if (result == 201) {
+        //Webpage side
+        //Creating the webpage and SSH into the OS via app.js in webpage.
+
+        const child_process = require('child_process');           // host                   user    password -> should come from env file for now
+        var worker_process = child_process.fork("webpage/app.js", ['127.0.0.1', portNumber, 'test', 'test', portNumber + 1]);
+        worker_process.on('close', function (code) {
+          console.log('child process exited with code ' + code);
+        });
+        res.status(result).send({
+          yourAddress: `http://localhost:${portNumber + 1}`,
+        })
+      }
+      else {
+        console.log('The port we wanted to assign you was already taken.')
+      }
+    });
   }
   else {
     //const { used_for_later } = req.body;
-    portNumber = Number(id)-1 //-1 because the port number we gave is already 1 unit greater than the ubuntu port
-  }
-  //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
-  //TODO: kusagil kunagi - avab samas aknas.
-  master.newContainer(portNumber, (result) => {
-
-    console.log(`Return code ${result}`)
-
-    //Kui olemas siis 200 == OK.
-    //Kui pole olemas, siis 201 == created.
-    res.status(result).send({
+    portNumber = Number(id) - 1 //-1 because the port number we gave is already 1 unit greater than the ubuntu port
+    //just open it
+    //TODO: Check if container has stopped, start it up again.
+    res.status(200).send({
       yourAddress: `http://localhost:${portNumber + 1}`,
     })
+  }
 
-  });
 })
 
 app.listen(
@@ -40,7 +62,7 @@ app.listen(
   () => console.log(`it's alive on http://localhost:${PORT}`)
 )
 
-
+/**
 /// bad practice i think
 // -------------------- CENTRAL BUTTON PAGE -------------------
 
@@ -59,11 +81,13 @@ app.use('/style.css', express.static(require.resolve('./style.css')));
 
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/Button.html');
+  res.sendFile(__dirname + '/startingPage.html');
   //res.render('index');
   // I am using ejs as my templating engine but HTML file work just fine.
 });
 
 http.listen(8000, () => {
   console.log('Listening on http://localhost:' + 8000);
-});
+}); 
+
+ */

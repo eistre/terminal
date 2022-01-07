@@ -18,14 +18,17 @@ app.use(express.static(__dirname + '/public'));
 app.use('/xterm.css', express.static(require.resolve('xterm/css/xterm.css')));
 app.use('/xterm.js', express.static(require.resolve('xterm')));
 app.use('/xterm-addon-fit.js', express.static(require.resolve('xterm-addon-fit')));
+app.use('/terminalDisplay.js', express.static(require.resolve('./terminalDisplay.js')));
 
-const SSHClient = require('ssh2').Client;
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+   res.sendFile(__dirname + '/index.html');
   //res.render('index');
   // I am using ejs as my templating engine but HTML file work just fine.
 });
+// routes lõpp
+//SSH ühenduse algus.
+const SSHClient = require('ssh2').Client;
 
 io.on('connection', function (socket) {
   var conn = new SSHClient();
@@ -54,12 +57,8 @@ io.on('connection', function (socket) {
     password: process.argv[5],
   });
 });
-console.log(process.argv[2])
-console.log(process.argv[3])
-console.log(process.argv[4])
-console.log(process.argv[5])
-console.log(process.argv[6])
 let port = process.argv[6];
+// see ka routes all.
 http.listen(port, () => {
   console.log('Listening on http://localhost:' + port);
 });
