@@ -1,3 +1,7 @@
+/*
+Also copied from https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
+Credit goes to Avishek Acharya aka Elliot404
+*/
 window.addEventListener('load', function () {
     const terminalContainer = document.getElementById('terminal-container');
     const term = new Terminal({

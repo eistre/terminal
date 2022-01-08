@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const PORT = 8080;
+const routes = require('./routes')
 const dockerController = require('./dockerController')
 
 app.use(express.json())
@@ -31,11 +32,9 @@ app.post('/ubuntuInstance/:id', (req, res) => {
         //Webpage side
         //Creating the webpage and SSH into the OS via app.js in webpage.
 
-        const child_process = require('child_process');           // host                   user    password -> should come from env file for now
-        var worker_process = child_process.fork("webpage/app.js", ['127.0.0.1', portNumber, 'test', 'test', portNumber + 1]);
-        worker_process.on('close', function (code) {
-          console.log('child process exited with code ' + code);
-        });
+        routes.newPage(portNumber+1, (http) => {//TODO: get the user/password from user.
+          SSHConnect('127.0.0.1', portNumber, 'test', 'test', http)
+        })
         res.status(result).send({
           yourAddress: `http://localhost:${portNumber + 1}`,
         })
@@ -62,32 +61,44 @@ app.listen(
   () => console.log(`it's alive on http://localhost:${PORT}`)
 )
 
-/**
-/// bad practice i think
-// -------------------- CENTRAL BUTTON PAGE -------------------
 
+//Still bad practice. is here now for convenience. TODO: cleanup later.
 //copy-pasted from: https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 //Credit goes to Elliot404
-const http = require('http').Server(app);
-app.set('view engine', 'ejs');
-app.use(express.urlencoded({
-  extended: false,
-  limit: '150mb'
-}));
-//app.use(express.static(__dirname + '/public'));
-app.use('/style.css', express.static(require.resolve('./style.css')));
-//app.use('/xterm.js', express.static(require.resolve('xterm')));
-//app.use('/xterm-addon-fit.js', express.static(require.resolve('xterm-addon-fit')));
+//SSH connection.
+function SSHConnect(host, port, username, password, http) {
+  const SSHClient = require('ssh2').Client;
+  const io = require('socket.io')(http, {
+    cors: {
+      origin: "*"
+    }
+  });
 
-
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/startingPage.html');
-  //res.render('index');
-  // I am using ejs as my templating engine but HTML file work just fine.
-});
-
-http.listen(8000, () => {
-  console.log('Listening on http://localhost:' + 8000);
-}); 
-
- */
+  io.on('connection', function (socket) {
+    var conn = new SSHClient();
+    conn.on('ready', function () {
+      socket.emit('data', '\r\n*** SSH CONNECTION ESTABLISHED ***\r\n');
+      conn.shell(function (err, stream) {
+        if (err)
+          return socket.emit('data', '\r\n*** SSH SHELL ERROR: ' + err.message + ' ***\r\n');
+        socket.on('data', function (data) {
+          stream.write(data);
+        });
+        stream.on('data', function (d) {
+          socket.emit('data', d.toString('binary'));
+        }).on('close', function () {
+          conn.end();
+        });
+      });
+    }).on('close', function () {
+      socket.emit('data', '\r\n*** SSH CONNECTION CLOSED ***\r\n');
+    }).on('error', function (err) {
+      socket.emit('data', '\r\n*** SSH CONNECTION ERROR: ' + err.message + ' ***\r\n');
+    }).connect({
+      host: host,
+      port: port,
+      username: username,
+      password: password,
+    });
+  });
+}

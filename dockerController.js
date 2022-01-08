@@ -5,6 +5,7 @@ var Docker = require('dockerode');
 
 const fs = require('fs');
 //Getting environment variables.
+//TODO: instead of environmentals use user assigned or smthing.
 let host = process.env.HOST;
 let port = process.env.PORT;
 let username = process.env.USERNAME;
@@ -20,7 +21,7 @@ var docker = new Docker({
 
 //Build an image and wait for it to finish.
 docker.buildImage({
-    context: __dirname + '/dockerStuff',
+    context: __dirname,
     src: ['Dockerfile']
 }, {
     t: "autogen_ubuntu_ssh",
