@@ -36,14 +36,12 @@ docker.buildImage({
     }
     else {
         console.log("Ubuntu 20.04 has been built!");
-
     }
     //...
 });
 // Build has finished
 
 function runExec(container) {
-
     var options = {
         Cmd: ['bash', '-c', 'service ssh start'],
         AttachStdout: true,
@@ -68,50 +66,82 @@ function runExec(container) {
 
 //Code from https://stackoverflow.com/questions/29860354/in-nodejs-how-do-i-check-if-a-port-is-listening-or-in-use
 // Author :R. Bernstein (rocky)
-var portInUse = function (port, callback) {
-    var server = net.createServer(function (socket) {
-        socket.write('Echo server\r\n');
-        socket.pipe(socket);
-    });
+var portInUse = function (port) {
+    return new Promise((response, reject) => {
 
-    server.listen(port, 'localhost');
-    server.on('error', function (e) {
-        callback(true);
-    });
-    server.on('listening', function (e) {
-        server.close();
-        callback(false);
-    });
+        var server = net.createServer(function (socket) {
+            socket.write('Echo server\r\n');
+            socket.pipe(socket);
+        });
+
+        server.listen(port, 'localhost');
+        server.on('error', function (e) {
+            response(true);
+            return true;
+        });
+        server.on('listening', function (e) {
+            server.close();
+            response(false);
+            return false;
+        });
+    })
 };
 
-//Iterating over port values
-//Makes the container with requested port number.
-function makeContainer(containerNumber, callback) {
-
-    //Firstly check if port is already used. Then make connection.
-    portInUse(containerNumber, function (inUse) {
-        console.log(inUse ? "the port is used" : "port is not used")
-        if (inUse) callback(200) //TODO: check somewhere that it is up and running and if it is not then get it up.
-        else {
-            //TODO: kui masin magab/kinni aga olemas -> ärata üles.
-            var docker = new Docker({ port: 22 })
-            docker.createContainer({
-                Image: 'autogen_ubuntu_ssh',
-                Tty: true,
-                PortBindings: {
-                    "22/tcp": [{ HostPort: containerNumber.toString() }]//Binding the internal ssh to outside port.
-                },
-            }, function (err, container) {
-                container.start({}, function (err, data) {
-                    if (err) {
-                        return ""
+function startIfClosed(containerNumber) {
+    return new Promise((resolve, reject) => {
+        new Docker().listContainers({ all: true }, (err, containers) => {
+            containers.forEach((containerInfo) => {
+                var isTargetContainer = containerInfo.Ports[0] && containerInfo.Ports[0].PublicPort == containerNumber
+                if (isTargetContainer) {
+                    if (containerInfo.State != 'running') {
+                        //docker.getContainer(containerInfo.Id).rename({name:`NewTown${containerNumber}`})
+                        docker.getContainer(containerInfo.Id).start();
+                        console.log(`Restarted container ${containerInfo.Id} on port ${containerNumber}`)
                     }
-                    runExec(container);
-                });
+                    resolve({ containerID: containerInfo.Id, containerName: containerInfo.Names[0] });
+                    return;
+                }
             });
-            callback(201)
-        }
+            resolve({ containerID: null, containerName: "anonymous" });
+        });
     });
 }
 
-exports.newContainer = makeContainer;
+//Iterating over port values
+//Makes the container with requested port number.
+function makeContainer(containerPort) {
+    return new Promise((resolve, reject) => {
+
+        console.log("Checking ports and closed containers")
+        startIfClosed(containerPort).then(containerIDandName => {
+            portInUse(containerPort).then((inUse) => {
+                console.log(inUse ? "the port is used" : "port is not used")
+                if (inUse) resolve({ 'status': 200, 'containerID': containerIDandName.containerID, 'userName': containerIDandName.containerName })
+                else {
+                    console.log("Creating new container")
+                    var docker = new Docker({ port: 22 })
+                    docker.createContainer({
+                        Image: 'autogen_ubuntu_ssh',
+                        Tty: true,
+                        PortBindings: {
+                            "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
+                        },
+                    }, function (err, container) {
+                        container.start({}, function (err, data) {
+                            if (err) {
+                                return ""
+                            }
+                            runExec(container);
+                        });
+                        container.inspect((err, data) => {
+                            resolve({ 'status': 201, 'containerID': data.Id, 'userName': 'anonymous' })
+                        })
+                    });
+                }
+            });
+        })
+    })
+}
+
+exports.makeContainer = makeContainer;
+exports.portInUse = portInUse;

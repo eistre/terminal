@@ -3,55 +3,65 @@ const app = express()
 const PORT = 8080;
 const routes = require('./routes')
 const dockerController = require('./dockerController')
+var cookieParser = require('cookie-parser')
 
-app.use(express.json())
+app.use(cookieParser())
+app.use(express.json()) //neccesary?
 
 var StartingPort = 49152
 
-
-app.post('/ubuntuInstance/:id', (req, res) => {
-  /**
-   * Call to action response comes.
-   * The action that we take: 
-   * 1) docker (activete, check if exists, make it exist.)
-   * 2) make website and connect it to docker
-   * 3) send back signal that all is fine and proceed.
-   * 
-  */
-  const { id } = req.params;
-  if (id === 'Unknown') {
-    portNumber = StartingPort;
+function getPortNumber(cookie) {
+  if (cookie === undefined) {
     StartingPort += 2;
-    //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
-    //TODO: kusagil kunagi - avab samas aknas.
-    dockerController.newContainer(portNumber, (result) => {
+    return StartingPort - 2;
+  }
+  return Number(cookie.split('%')[1])
+}
 
-      console.log(`Return code ${result}`)
 
-      if (result == 201) {
-        //Webpage side
-        //Creating the webpage and SSH into the OS via app.js in webpage.
 
-        routes.newPage(portNumber+1, (http) => {//TODO: get the user/password from user.
-          SSHConnect('127.0.0.1', portNumber, 'test', 'test', http)
-        })
-        res.status(result).send({
-          yourAddress: `http://localhost:${portNumber + 1}`,
-        })
-      }
-      else {
-        console.log('The port we wanted to assign you was already taken.')
-      }
+
+app.post('/ubuntuInstance/:userID', (req, res) => {
+  function sendResponse(containerInfo, portNumber, exprMinFromNow) {
+    res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { expires: new Date(Date.now() + (exprMinFromNow * 60000)), httpOnly: true });
+    res.status(containerInfo['status']).send({
+      yourAddress: `http://localhost:${portNumber + 1}`,
     });
   }
+
+  function makeConnection(isCookieMissing,portNumber) {
+    //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
+    //TODO: kusagil kunagi - avab samas aknas.
+    dockerController.makeContainer(portNumber).then(containerInfo => {
+  
+      if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
+        console.log(containerInfo['status'] == 201 ? `New container has been created.` :`Using an existing container`)
+        routes.makeNewPage(portNumber + 1).then(http => {//TODO: get the user/password from user.
+          connectToContainer(host = '127.0.0.1', port = portNumber, username = 'test', password = 'test', http = http).then(()=>{
+            sendResponse(containerInfo, portNumber, exprMinFromNow = 15);
+          })
+        }).catch((error) => {
+          console.log("Webpage already existed.")
+          sendResponse(containerInfo, portNumber, exprMinFromNow = 15);
+        })
+      }
+      else { //also cookie is missing (must be)
+        console.log(`The port ${StartingPort} we wanted to assign you was already taken.`)
+        makeConnection(isCookieMissing,portNumber)
+      }
+      //TODO: Check if container has stopped, start it up again.
+    });
+  }
+
+  //if it is to anonymous
+  //if it is to certain user.
+  const { userID } = req.params;
+  const portNumber = getPortNumber(req.cookies.anonymous);
+  const isCookieMissing = req.cookies.anonymous === undefined;
+  if (userID === "Anonymous")
+    makeConnection(isCookieMissing, portNumber);
   else {
-    //const { used_for_later } = req.body;
-    portNumber = Number(id) - 1 //-1 because the port number we gave is already 1 unit greater than the ubuntu port
-    //just open it
-    //TODO: Check if container has stopped, start it up again.
-    res.status(200).send({
-      yourAddress: `http://localhost:${portNumber + 1}`,
-    })
+    makeAuthConnection();
   }
 
 })
@@ -62,11 +72,12 @@ app.listen(
 )
 
 
+
 //Still bad practice. is here now for convenience. TODO: cleanup later.
 //copy-pasted from: https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 //Credit goes to Elliot404
 //SSH connection.
-function SSHConnect(host, port, username, password, http) {
+function connectToContainer(host, port, username, password, http) {
   const SSHClient = require('ssh2').Client;
   const io = require('socket.io')(http, {
     cors: {
