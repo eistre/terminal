@@ -4,7 +4,7 @@
 //TODO: can the POST action be done inside html using <form action="/ubuntuInstance/Unknown" method="post">
 function sendAnonymousRequest() {
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", `http://localhost:8080/ubuntuInstance/Anonymous`, true);
+    xhr.open("POST", `http://localhost:8080/ubuntuInstance/anonymous`, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send();
     xhr.onload = function () {

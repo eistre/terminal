@@ -87,27 +87,41 @@ var portInUse = function (port) {
     })
 };
 
-function startIfClosed(containerID, isAnonymous) {
+function startIfClosed(containerID, userID) {
+    //wrong name. true name _L> check if container exists.
     return new Promise((resolve, reject) => {
+        const isAnonymous = userID === "anonymous" 
         //Container was used before thus might need starting.
         if (containerID) {
             docker = new Docker()
             docker.getContainer(containerID).inspect((err, data) => {
                 if (err) reject(err)
-                if (data.State.Status == 'running') {
-                    console.log(`There is no id ${data.Id} or name ${data.Name} but there is ${containerID}?`)
-                    if (isAnonymous)
-                        resolve({ containerID: data.Id, containerName: 'anonymous' });
-                    else
-                        resolve({ containerID: data.Id, containerName: data.Name });
-                    return;
-                }
+                console.log(data.Name)
+                if (data.State.Status == 'running')
+                    resolve({ containerID: data.Id, containerName: userID });
                 else {
                     docker.getContainer(containerID).start();
-                    resolve({ containerID: data.Id, containerName: data.Name });
+                    resolve({ containerID: data.Id, containerName: userID });
                     return;
                 }
             })
+        }
+        else if (!isAnonymous){
+            new Docker().listContainers({ all: true }, (err, containers) => {
+                containers.forEach((containerInfo) => {
+                    var isTargetContainer = containerInfo.Names[0]=="/"+userID;//TODO: test if it is true.
+                    if (isTargetContainer) {
+                        if (containerInfo.State != 'running') {
+                            //docker.getContainer(containerInfo.Id).rename({name:`NewTown${containerNumber}`})
+                            docker.getContainer(containerInfo.Id).start();
+                            console.log(`Restarted container ${containerInfo.Id} on port ${portNumber}`);
+                        }
+                        resolve({ containerID: containerInfo.Id, containerName: userID });
+                        return;
+                    }
+                });
+                reject(`No contatiner found on port ${portNumber}`);
+            });
         }
         else {
             console.log("Container does not yet exist.")
@@ -138,13 +152,12 @@ function ensureContainerIsRunningOnPort(portNumber) {
 
 //Iterating over port values
 //Makes the container with requested port number.
-function makeContainerForAnonymous(containerPort, containerID) {
+function makeContainer(containerPort, containerID, userID) {
     return new Promise((resolve, reject) => {
 
         console.log("Checking ports and closed containers")
-        startIfClosed(containerID, isAnonymous = true).then(containerIDandName => {
+        startIfClosed(containerID, userID).then(containerIDandName => {
             portInUse(containerPort).then((inUse) => {
-                console.log(inUse ? "the port is used" : "port is not used")
                 //Only if cookie proves that the container is knwon.
                 if (inUse && containerIDandName.containerID) {
                     console.log(`Container ${containerIDandName.containerName} existed before!`)
@@ -153,30 +166,34 @@ function makeContainerForAnonymous(containerPort, containerID) {
                 else {
                     if (inUse)
                         reject(`Port ${containerPort} was alerady used`)
-                    console.log("Creating new container")
-                    var docker = new Docker({ port: 22 })
-                    docker.createContainer({
-                        Image: 'autogen_ubuntu_ssh',
-                        Tty: true,
-                        PortBindings: {
-                            "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
-                        },
-                    }, function (err, container) {
-                        container.start({}, function (err, data) {
-                            if (err) {
-                                return ""
-                            }
-                            runExec(container);
+                    else {
+                        console.log("Creating new container")
+                        var docker = new Docker({ port: 22 })
+                        docker.createContainer({
+                            Image: 'autogen_ubuntu_ssh',
+                            Tty: true,
+                            name: isAnonymous ? "" : userID,
+                            PortBindings: {
+                                "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
+                            },
+                        }, function (err, container) {
+                            container.start({}, function (err, data) {
+                                if (err) {
+                                    reject(err)
+                                    return ""
+                                }
+                                runExec(container);
+                            });
+                            container.inspect((err, data) => {
+                                resolve({ 'status': 201, 'containerID': data.Id, 'userName': 'anonymous' })
+                            })
                         });
-                        container.inspect((err, data) => {
-                            resolve({ 'status': 201, 'containerID': data.Id, 'userName': 'anonymous' })
-                        })
-                    });
+                    }
                 }
             });
         })
     })
 }
 
-exports.makeContainer = makeContainerForAnonymous;
+exports.makeContainer = makeContainer;
 exports.portInUse = portInUse;

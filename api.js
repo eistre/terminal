@@ -29,10 +29,11 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
     });
   }
 
-  function makeConnection(isCookieMissing, portNumber, containerID) {
+  function makeConnection(userID ,containerID, portNumber) {
+    const isAnonymous = userID === "anonymous"
     //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
     //TODO: kusagil kunagi - avab samas aknas.
-    dockerController.makeContainer(portNumber, containerID).then(containerInfo => {
+    dockerController.makeContainer(portNumber, containerID, isAnonymous).then(containerInfo => {
 
       if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
         console.log(containerInfo['status'] == 201 ? `New container has been created.` : `Using an existing container`)
@@ -49,22 +50,18 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
     }).catch((error) => {
       //aka log error and try again.
       console.log(error)
-      makeConnection(true, getPortNumber(undefined), null)
+      //if authenticated port was already used we need to check if named container exists and if not then create it.
+      makeConnection( getPortNumber(undefined), null)
     });
   }
 
   //if it is to anonymous
   //if it is to certain user.
   const { userID } = req.params;
-  if (userID === "Anonymous") {
-    const isCookieMissing = req.cookies.anonymous === undefined;
-    const portNumber = getPortNumber(req.cookies.anonymous);
-    const containerID = isCookieMissing ? null : req.cookies.anonymous.split('%')[0]
-    makeConnection(isCookieMissing, portNumber, containerID);
-  }
-  else {
-    makeAuthConnection();
-  }
+  const isCookieMissing = req.cookies[userID] === undefined;
+  const portNumber = getPortNumber(req.cookies[userID]);
+  const containerID = isCookieMissing ? null : req.cookies[userID].split('%')[0]
+  makeConnection(userID, containerID, portNumber);
 
 })
 
