@@ -29,15 +29,15 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
     });
   }
 
-  function makeConnection(isCookieMissing,portNumber) {
+  function makeConnection(isCookieMissing, portNumber, containerID) {
     //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
     //TODO: kusagil kunagi - avab samas aknas.
-    dockerController.makeContainer(portNumber).then(containerInfo => {
-  
+    dockerController.makeContainer(portNumber, containerID).then(containerInfo => {
+
       if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
-        console.log(containerInfo['status'] == 201 ? `New container has been created.` :`Using an existing container`)
+        console.log(containerInfo['status'] == 201 ? `New container has been created.` : `Using an existing container`)
         routes.makeNewPage(portNumber + 1).then(http => {//TODO: get the user/password from user.
-          connectToContainer(host = '127.0.0.1', port = portNumber, username = 'test', password = 'test', http = http).then(()=>{
+          connectToContainer(host = '127.0.0.1', port = portNumber, username = 'test', password = 'test', http = http).then(() => {
             sendResponse(containerInfo, portNumber, exprMinFromNow = 15);
           })
         }).catch((error) => {
@@ -45,21 +45,23 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
           sendResponse(containerInfo, portNumber, exprMinFromNow = 15);
         })
       }
-      else { //also cookie is missing (must be)
-        console.log(`The port ${StartingPort} we wanted to assign you was already taken.`)
-        makeConnection(isCookieMissing,portNumber)
-      }
       //TODO: Check if container has stopped, start it up again.
+    }).catch((error) => {
+      //aka log error and try again.
+      console.log(error)
+      makeConnection(true, getPortNumber(undefined), null)
     });
   }
 
   //if it is to anonymous
   //if it is to certain user.
   const { userID } = req.params;
-  const portNumber = getPortNumber(req.cookies.anonymous);
-  const isCookieMissing = req.cookies.anonymous === undefined;
-  if (userID === "Anonymous")
-    makeConnection(isCookieMissing, portNumber);
+  if (userID === "Anonymous") {
+    const isCookieMissing = req.cookies.anonymous === undefined;
+    const portNumber = getPortNumber(req.cookies.anonymous);
+    const containerID = isCookieMissing ? null : req.cookies.anonymous.split('%')[0]
+    makeConnection(isCookieMissing, portNumber, containerID);
+  }
   else {
     makeAuthConnection();
   }

@@ -87,37 +87,72 @@ var portInUse = function (port) {
     })
 };
 
-function startIfClosed(containerNumber) {
+function startIfClosed(containerID, isAnonymous) {
+    return new Promise((resolve, reject) => {
+        //Container was used before thus might need starting.
+        if (containerID) {
+            docker = new Docker()
+            docker.getContainer(containerID).inspect((err, data) => {
+                if (err) reject(err)
+                if (data.State.Status == 'running') {
+                    console.log(`There is no id ${data.Id} or name ${data.Name} but there is ${containerID}?`)
+                    if (isAnonymous)
+                        resolve({ containerID: data.Id, containerName: 'anonymous' });
+                    else
+                        resolve({ containerID: data.Id, containerName: data.Name });
+                    return;
+                }
+                else {
+                    docker.getContainer(containerID).start();
+                    resolve({ containerID: data.Id, containerName: data.Name });
+                    return;
+                }
+            })
+        }
+        else {
+            console.log("Container does not yet exist.")
+            resolve({ containerID: null, containerName: null });
+        }
+    });
+}
+
+function ensureContainerIsRunningOnPort(portNumber) {
     return new Promise((resolve, reject) => {
         new Docker().listContainers({ all: true }, (err, containers) => {
             containers.forEach((containerInfo) => {
-                var isTargetContainer = containerInfo.Ports[0] && containerInfo.Ports[0].PublicPort == containerNumber
+                var isTargetContainer = containerInfo.Ports[0] && containerInfo.Ports[0].PublicPort == portNumber;
                 if (isTargetContainer) {
                     if (containerInfo.State != 'running') {
                         //docker.getContainer(containerInfo.Id).rename({name:`NewTown${containerNumber}`})
                         docker.getContainer(containerInfo.Id).start();
-                        console.log(`Restarted container ${containerInfo.Id} on port ${containerNumber}`)
+                        console.log(`Restarted container ${containerInfo.Id} on port ${portNumber}`);
                     }
                     resolve({ containerID: containerInfo.Id, containerName: containerInfo.Names[0] });
                     return;
                 }
             });
-            resolve({ containerID: null, containerName: "anonymous" });
+            reject(`No contatiner found on port ${portNumber}`);
         });
-    });
+    })
 }
 
 //Iterating over port values
 //Makes the container with requested port number.
-function makeContainer(containerPort) {
+function makeContainerForAnonymous(containerPort, containerID) {
     return new Promise((resolve, reject) => {
 
         console.log("Checking ports and closed containers")
-        startIfClosed(containerPort).then(containerIDandName => {
+        startIfClosed(containerID, isAnonymous = true).then(containerIDandName => {
             portInUse(containerPort).then((inUse) => {
                 console.log(inUse ? "the port is used" : "port is not used")
-                if (inUse) resolve({ 'status': 200, 'containerID': containerIDandName.containerID, 'userName': containerIDandName.containerName })
+                //Only if cookie proves that the container is knwon.
+                if (inUse && containerIDandName.containerID) {
+                    console.log(`Container ${containerIDandName.containerName} existed before!`)
+                    resolve({ 'status': 200, 'containerID': containerIDandName.containerID, 'userName': containerIDandName.containerName })
+                }
                 else {
+                    if (inUse)
+                        reject(`Port ${containerPort} was alerady used`)
                     console.log("Creating new container")
                     var docker = new Docker({ port: 22 })
                     docker.createContainer({
@@ -143,5 +178,5 @@ function makeContainer(containerPort) {
     })
 }
 
-exports.makeContainer = makeContainer;
+exports.makeContainer = makeContainerForAnonymous;
 exports.portInUse = portInUse;
