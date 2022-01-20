@@ -1,15 +1,7 @@
 require('dotenv').config();
 var net = require('net');
 var Docker = require('dockerode');
-
-
 const fs = require('fs');
-//Getting environment variables.
-//TODO: instead of environmentals use user assigned or smthing.
-let host = process.env.HOST;
-let port = process.env.PORT;
-let username = process.env.USERNAME;
-let password = process.env.PASS;
 
 var docker = new Docker({
     // host: "http://127.0.0.14",
@@ -57,15 +49,20 @@ function runExec(container) {
 
             exec.inspect(function (err, data) {
                 if (err) return;
-                console.log(data);
+                //console.log(data);
             });
         });
     });
 }
 
 
-//Code from https://stackoverflow.com/questions/29860354/in-nodejs-how-do-i-check-if-a-port-is-listening-or-in-use
-// Author :R. Bernstein (rocky)
+/**
+ * Checks if the port is used or not.
+ * @param {Number} port port to be checked.
+ * @returns a proomise with boolean response.
+ * Code from https://stackoverflow.com/questions/29860354/in-nodejs-how-do-i-check-if-a-port-is-listening-or-in-use
+ * Author :R. Bernstein (rocky)
+ */
 var portInUse = function (port) {
     return new Promise((response, reject) => {
 
@@ -87,114 +84,141 @@ var portInUse = function (port) {
     })
 };
 
-function startIfClosed(userID, containerID) {
-    //wrong name. true name _L> check if container exists.
-    return new Promise((resolve, reject) => {
-        const isAnonymous = userID === "anonymous" || userID === undefined || userID === null
-        //Container was used before thus might need starting.
-        if (containerID) {
-            docker = new Docker()
-            docker.getContainer(containerID).inspect((err, data) => {
-                if (err) reject(err)
-                console.log(data.Name)
-                if (data.State.Status == 'running')
-                    resolve({ containerID: data.Id, containerName: userID });
-                else {
-                    docker.getContainer(containerID).start();
-                    resolve({ containerID: data.Id, containerName: userID });
-                    return;
-                }
-            })
-        }
-        else if (!isAnonymous) {
-            new Docker().listContainers({ all: true }, (err, containers) => {
-                containers.forEach((containerInfo) => {
-                    var isTargetContainer = containerInfo.Names[0] == "/" + userID;//TODO: test if it is true.
-                    if (isTargetContainer) {
-                        if (containerInfo.State != 'running') {
-                            //docker.getContainer(containerInfo.Id).rename({name:`NewTown${containerNumber}`})
-                            docker.getContainer(containerInfo.Id).start();
-                            console.log(`Restarted container ${containerInfo.Id} on port ${containerInfo.Ports[0].PublicPort}`);
-                        }
-                        resolve({ containerID: containerInfo.Id, containerName: userID });
-                        return;
-                    }
-                });
-                reject(`No contatiner found with ID ${containerID} for user ${userID}`);
-            });
-        }
-        else {
-            console.log("Container does not yet exist.")
-            resolve({ containerID: null, containerName: null });
-        }
-    });
-}
-
-function ensureContainerIsRunningOnPort(portNumber) {
+/**
+ * Finds container ID when container name is given.
+ * @param {String} userID name of the user what must match the containers name. Unique.
+ * @returns Promise which resolves to containerID. Else rejected with error message.
+ */
+function getContainerIdByUser(userID) {
     return new Promise((resolve, reject) => {
         new Docker().listContainers({ all: true }, (err, containers) => {
             containers.forEach((containerInfo) => {
-                var isTargetContainer = containerInfo.Ports[0] && containerInfo.Ports[0].PublicPort == portNumber;
+                var isTargetContainer = containerInfo.Names[0] == "/" + userID;
                 if (isTargetContainer) {
                     if (containerInfo.State != 'running') {
-                        //docker.getContainer(containerInfo.Id).rename({name:`NewTown${containerNumber}`})
                         docker.getContainer(containerInfo.Id).start();
-                        console.log(`Restarted container ${containerInfo.Id} on port ${portNumber}`);
+                        console.log(`Restarted container ${containerInfo.Id} on port ${containerInfo.Ports[0].PublicPort}`);
                     }
-                    resolve({ containerID: containerInfo.Id, containerName: containerInfo.Names[0] });
+                    resolve(containerInfo.Id);
                     return;
                 }
             });
-            reject(`No contatiner found on port ${portNumber}`);
+            reject(`No contatiner found for user ${userID}`);
         });
     })
 }
 
-//Iterating over port values
-//Makes the container with requested port number.
-function makeContainer(userID, containerID, containerPort) {
+/**
+ * 
+ * @param {String} containerID 
+ * @returns Promise that rejects if container is not found, else resolves at nothing.
+ */
+function ensureContainerIsRunning(containerID) {
     return new Promise((resolve, reject) => {
-
-        console.log("Checking ports and closed containers")
-        startIfClosed(userID, containerID).then(containerIDandName => {
-            portInUse(containerPort).then((inUse) => {
-                //Only if cookie proves that the container is knwon.
-                if (inUse && containerIDandName.containerID) {
-                    console.log(`Container ${containerIDandName.containerName} existed before!`)
-                    resolve({ 'status': 200, 'containerID': containerIDandName.containerID, 'userName': containerIDandName.containerName })
-                }
-                else {
-                    if (inUse)
-                        reject(`Port ${containerPort} was alerady used`)
-                    else {
-                        console.log("Creating new container")
-                        var docker = new Docker({ port: 22 })
-                        docker.createContainer({
-                            Image: 'autogen_ubuntu_ssh',
-                            Tty: true,
-                            name: userID === 'anonymous' ? "" : userID,
-                            PortBindings: {
-                                "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
-                            },
-                        }, function (err, container) {
-                            container.start({}, function (err, data) {
-                                if (err) {
-                                    reject(err)
-                                    return ""
-                                }
-                                runExec(container);
-                            });
-                            container.inspect((err, data) => {
-                                resolve({ 'status': 201, 'containerID': data.Id, 'userName': userID })
-                            })
-                        });
-                    }
-                }
-            });
-        })
+        var docker = new Docker();
+        docker.getContainer(containerID).inspect((err, data) => {
+            if (err)
+                reject(err);
+            console.log(data.Name);
+            if (data.State.Status == 'running')
+                resolve();
+            else {
+                docker.getContainer(containerID).start();
+                resolve();
+                return;
+            }
+        });
     })
 }
 
+/**
+ * Makes a Ubuntu 20.04 container with given name and open port if the port is free.
+ * @param {String} userID Name of the container to be created. In case of 'anonymous' the default name is set.
+ * @param {Number} containerPort Port to which the Ubuntu is open to.
+ * @returns A promise with the created ContainerID and UserID. Rejects if port was already used or docker has some internal troubles.
+ */
+function makeContainer(userID, containerPort) {
+    return new Promise((resolve, reject) => {
+        portInUse(containerPort)
+            .then((inUse) => {
+                if (inUse)
+                    reject(`Port ${containerPort} was alerady used`)
+                else {
+                    console.log("Creating new container")
+                    var docker = new Docker({ port: 22 })
+                    docker.createContainer({
+                        Image: 'autogen_ubuntu_ssh',
+                        Tty: true,
+                        name: userID === 'anonymous' ? "" : userID,
+                        PortBindings: {
+                            "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
+                        },
+                    }, function (err, container) {
+                        container.start({}, function (err, data) {
+                            if (err) {
+                                reject(err)
+                                return ""
+                            }
+                            runExec(container);
+                        });
+                        container.inspect((err, data) => {
+                            resolve({ 'status': 201, 'containerID': data.Id, 'userName': userID })
+                        })
+                    });
+                }
+            })
+    });
+}
+
+/**
+ * The main method of this file.
+ * Ensures that the container is running and if it does not exist, creates the container.
+ * @param {String} userID  
+ * @param {String} containerID 
+ * @param {Number} containerPort 
+ * @returns Promise with dictonary containing status (function result), containerID and userName
+ */
+function handleContainer(userID, containerID, containerPort) {
+    return new Promise((resolve, reject) => {
+        const isKnownUser = userID != "anonymous" //|| userID === undefined || userID === null
+        if (containerID) {
+            ensureContainerIsRunning(containerID)
+                .then(() => {
+                    console.log(`Container ${containerID} existed before!`)
+                    resolve({ 'status': 200, 'containerID': containerID, 'userName': userID })
+                }).catch(err => {
+                    console.log(err)
+                    reject({ 'status': 404, 'containerID': null, 'userName': userID })
+                });
+        }
+        else if (isKnownUser) {
+            getContainerIdByUser(userID).then(newContainerID => {
+                resolve({ 'status': 200, 'containerID': newContainerID, 'userName': userID })
+            }).catch(err => {
+                makeContainer(userID, containerPort)
+                    .then((data) => {
+                        resolve(data)
+                    }).catch((err) => {
+                        console.log(err)
+                        reject({ 'status': 403, 'containerID': null, 'userName': userID })
+                    })
+            });
+        }
+        else {
+            makeContainer(userID, containerPort)
+                .then((data) => {
+                    resolve(data)
+                }).catch((err) => {
+                    console.log(err)
+                    reject({ 'status': 403, 'containerID': null, 'userName': userID })
+                })
+        }
+    });
+}
+/**
+ * Stops the container with given ID and removes it.
+ * @param {String} containerID ID of the container to be removed.
+ */
 function killContainerById(containerID) {
     var container = new Docker().getContainer(containerID)
     container.stop()
@@ -207,6 +231,6 @@ function killContainerById(containerID) {
         });
 }
 
-exports.makeContainer = makeContainer;
+exports.handleContainer = handleContainer;
 exports.portInUse = portInUse;
 exports.killContainerById = killContainerById;

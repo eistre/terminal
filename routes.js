@@ -34,6 +34,7 @@ http.listen(8000, () => {
 
 //copied from https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 //Credit goes to Elliot404
+//Modified to be a promise and reject if port is in use.
 function createPage(port) {
   return new Promise((resolve, reject) => {
     const express = require('express')

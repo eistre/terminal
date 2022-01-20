@@ -13,7 +13,10 @@ module.exports = class Timer {
         this.updateTimer();
     }
 
-    //Takes in Date object.
+    /**
+     * Sets timer to t milliseconds from now.
+     * @param {Number} t milliseconds from which the function will execute.
+     */
     newTime(t) {
         this.time = Date.now() + t;
         this.updateTimer();
