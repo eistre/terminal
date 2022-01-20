@@ -87,10 +87,10 @@ var portInUse = function (port) {
     })
 };
 
-function startIfClosed(containerID, userID) {
+function startIfClosed(userID, containerID) {
     //wrong name. true name _L> check if container exists.
     return new Promise((resolve, reject) => {
-        const isAnonymous = userID === "anonymous" 
+        const isAnonymous = userID === "anonymous" || userID === undefined || userID === null
         //Container was used before thus might need starting.
         if (containerID) {
             docker = new Docker()
@@ -106,21 +106,21 @@ function startIfClosed(containerID, userID) {
                 }
             })
         }
-        else if (!isAnonymous){
+        else if (!isAnonymous) {
             new Docker().listContainers({ all: true }, (err, containers) => {
                 containers.forEach((containerInfo) => {
-                    var isTargetContainer = containerInfo.Names[0]=="/"+userID;//TODO: test if it is true.
+                    var isTargetContainer = containerInfo.Names[0] == "/" + userID;//TODO: test if it is true.
                     if (isTargetContainer) {
                         if (containerInfo.State != 'running') {
                             //docker.getContainer(containerInfo.Id).rename({name:`NewTown${containerNumber}`})
                             docker.getContainer(containerInfo.Id).start();
-                            console.log(`Restarted container ${containerInfo.Id} on port ${portNumber}`);
+                            console.log(`Restarted container ${containerInfo.Id} on port ${containerInfo.Ports[0].PublicPort}`);
                         }
                         resolve({ containerID: containerInfo.Id, containerName: userID });
                         return;
                     }
                 });
-                reject(`No contatiner found on port ${portNumber}`);
+                reject(`No contatiner found with ID ${containerID} for user ${userID}`);
             });
         }
         else {
@@ -152,11 +152,11 @@ function ensureContainerIsRunningOnPort(portNumber) {
 
 //Iterating over port values
 //Makes the container with requested port number.
-function makeContainer(containerPort, containerID, userID) {
+function makeContainer(userID, containerID, containerPort) {
     return new Promise((resolve, reject) => {
 
         console.log("Checking ports and closed containers")
-        startIfClosed(containerID, userID).then(containerIDandName => {
+        startIfClosed(userID, containerID).then(containerIDandName => {
             portInUse(containerPort).then((inUse) => {
                 //Only if cookie proves that the container is knwon.
                 if (inUse && containerIDandName.containerID) {
@@ -172,7 +172,7 @@ function makeContainer(containerPort, containerID, userID) {
                         docker.createContainer({
                             Image: 'autogen_ubuntu_ssh',
                             Tty: true,
-                            name: isAnonymous ? "" : userID,
+                            name: userID === 'anonymous' ? "" : userID,
                             PortBindings: {
                                 "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
                             },
@@ -185,7 +185,7 @@ function makeContainer(containerPort, containerID, userID) {
                                 runExec(container);
                             });
                             container.inspect((err, data) => {
-                                resolve({ 'status': 201, 'containerID': data.Id, 'userName': 'anonymous' })
+                                resolve({ 'status': 201, 'containerID': data.Id, 'userName': userID })
                             })
                         });
                     }
@@ -195,5 +195,18 @@ function makeContainer(containerPort, containerID, userID) {
     })
 }
 
+function killContainerById(containerID) {
+    var container = new Docker().getContainer(containerID)
+    container.stop()
+        .then(data => {
+            return container.remove();
+        }).then(data => {
+            console.log('container removed');
+        }).catch(err => {
+            console.log(err);
+        });
+}
+
 exports.makeContainer = makeContainer;
 exports.portInUse = portInUse;
+exports.killContainerById = killContainerById;

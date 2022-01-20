@@ -3,12 +3,14 @@ const app = express()
 const PORT = 8080;
 const routes = require('./routes')
 const dockerController = require('./dockerController')
+const Timer = require('./timer.js')
 var cookieParser = require('cookie-parser')
 
 app.use(cookieParser())
 app.use(express.json()) //neccesary?
 
 var StartingPort = 49152
+var killTimers = {}
 
 function getPortNumber(cookie) {
   if (cookie === undefined) {
@@ -19,31 +21,45 @@ function getPortNumber(cookie) {
 }
 
 
-
-
 app.post('/ubuntuInstance/:userID', (req, res) => {
   function sendResponse(containerInfo, portNumber, exprMinFromNow) {
-    res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { expires: new Date(Date.now() + (exprMinFromNow * 60000)), httpOnly: true });
+    exprSecFromNow = exprMinFromNow * 60000
+    const containerID = containerInfo['containerID']
+    res.cookie(`${containerInfo['userName']}`, `${containerID}%${portNumber}`, { expires: new Date(Date.now() + exprSecFromNow), httpOnly: true });
     res.status(containerInfo['status']).send({
       yourAddress: `http://localhost:${portNumber + 1}`,
     });
+    //kill timer shananigans.
+    /** var timer;
+    if (killTimers[containerID]) {
+      timer = killTimers[containerID]
+      timer.newTime(exprSecFromNow)
+    }
+    else {
+      timer = new Timer(exprSecFromNow, () => {
+        dockerController.killContainerById(containerID)
+      });
+    }*/
+    if (killTimers[containerID])
+      killTimers[containerID].newTime(exprSecFromNow)
+    else
+      killTimers[containerID] = new Timer(exprSecFromNow, () => { dockerController.killContainerById(containerID) })
   }
 
-  function makeConnection(userID ,containerID, portNumber) {
-    const isAnonymous = userID === "anonymous"
+  function makeConnection(userID, containerID, portNumber) {
     //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
     //TODO: kusagil kunagi - avab samas aknas.
-    dockerController.makeContainer(portNumber, containerID, isAnonymous).then(containerInfo => {
+    dockerController.makeContainer(userID, containerID, portNumber).then(containerInfo => {
 
       if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
         console.log(containerInfo['status'] == 201 ? `New container has been created.` : `Using an existing container`)
         routes.makeNewPage(portNumber + 1).then(http => {//TODO: get the user/password from user.
           connectToContainer(host = '127.0.0.1', port = portNumber, username = 'test', password = 'test', http = http).then(() => {
-            sendResponse(containerInfo, portNumber, exprMinFromNow = 15);
+            sendResponse(containerInfo, portNumber, exprMinFromNow = 0.25);
           })
         }).catch((error) => {
           console.log("Webpage already existed.")
-          sendResponse(containerInfo, portNumber, exprMinFromNow = 15);
+          sendResponse(containerInfo, portNumber, exprMinFromNow = 0.25);
         })
       }
       //TODO: Check if container has stopped, start it up again.
@@ -51,7 +67,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
       //aka log error and try again.
       console.log(error)
       //if authenticated port was already used we need to check if named container exists and if not then create it.
-      makeConnection( getPortNumber(undefined), null)
+      makeConnection('anonymous', null, getPortNumber(undefined))
     });
   }
 
