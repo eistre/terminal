@@ -17,9 +17,9 @@ window.addEventListener('load', function () {
       term.write('\r\n*** Connected to backend ***\r\n');
     });
 
-    // Browser -> Backend
-    term.onKey(function (ev) {
-      socket.emit('data', ev.key);
+    // Browser -> Backend //allows copy paste as well with ctrl + shift + v
+    term.onData((data) => {
+      socket.emit('data', data);
     });
 
     // Backend -> Browser
