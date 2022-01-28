@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 //&resource=https%3A%2F%2Fgraph.microsoft.com&state=TX1LwXG7dlAOs5O&redirect_uri=https%3A%2F%2Fmoodle.ut.ee%2Fauth%2Foidc%2F
 
 http.listen(8000, () => {
-  console.log('Listening on http://localhost:' + 8000);
+  console.log('StartingPage is ready on http://localhost:' + 8000);
 });
 
 //copied from https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console

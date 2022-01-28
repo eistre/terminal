@@ -12,27 +12,31 @@ var docker = new Docker({
 });
 
 //Build an image and wait for it to finish.
-docker.buildImage({
-    context: __dirname,
-    src: ['Dockerfile']
-}, {
-    t: "autogen_ubuntu_ssh",
-    buildargs: {
-        usr: 'test',
-        pwd: 'test',
-    }
-}, function (err, response) {
-    if (err) {
-        console.log("Error!")
-        console.log(err)
-    }
-    else {
-        console.log("Ubuntu 20.04 has been built!");
-    }
-    //...
-});
-// Build has finished
+async function buildImg() {
 
+    let stream = await docker.buildImage({
+        context: __dirname,
+        src: ['Dockerfile']
+    }, {
+        t: "autogen_ubuntu_ssh",
+        buildargs: {
+            usr: 'test',
+            pwd: 'test',
+        }
+    })
+
+    await new Promise((resolve, reject) => {
+        docker.modem.followProgress(stream, (err, res) => err ? reject(err) : resolve(res));
+    })
+}
+buildImg().then(data => {
+    console.log("Ubuntu 20.04 has been built!")
+}).catch(err => {
+    console.log("Error!")
+    console.log(err)
+});
+
+// Build has finished
 function runExec(container) {
     var options = {
         Cmd: ['bash', '-c', 'service ssh start'],

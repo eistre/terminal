@@ -65,6 +65,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
   function makeConnection(userID, containerID, portNumber) {
     //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
     //TODO: kusagil kunagi - avab samas aknas.
+    const cookieAndContainerExprInMin = 300
     dockerController.handleContainer(userID, containerID, portNumber)
       .then(containerInfo => {
         if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
@@ -73,13 +74,13 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
             .then(http => {//TODO: get the user/password from user.
               connectToContainer(host = '127.0.0.1', port = portNumber, username = 'test', password = 'test', http = http)
             }).then(() => {
-              sendResponse(containerInfo, portNumber, exprMinFromNow = 0.25);
-              updateKillTimers(containerInfo['containerID'], exprMinFromNow = 0.25);
+              sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
+              updateKillTimers(containerInfo['containerID'], exprMinFromNow = cookieAndContainerExprInMin);
             })
             .catch((error) => {
               console.log("Webpage already existed.")
-              sendResponse(containerInfo, portNumber, exprMinFromNow = 0.25);
-              updateKillTimers(containerID, exprMinFromNow = 0.25);
+              sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
+              updateKillTimers(containerID, exprMinFromNow = cookieAndContainerExprInMin);
             })
         }
       }).catch((containerInfo) => {
@@ -99,7 +100,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
 
 app.listen(
   PORT,
-  () => console.log(`it's alive on http://localhost:${PORT}`)
+  () => console.log(`API is live on http://localhost:${PORT}`)
 )
 
 
@@ -120,6 +121,18 @@ function connectToContainer(host, port, username, password, http) {
     var conn = new SSHClient();
     conn.on('ready', function () {
       socket.emit('data', '\r\n*** SSH CONNECTION ESTABLISHED ***\r\n');
+      //Start file watch system to check for changes in /home/test/ directory.
+      conn.exec('inotifywait -rm /home/test/', (err, stream) => {
+        if (err) throw err;
+        stream.on('close', (code, signal) => {
+          console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
+          conn.end();
+        }).on('data', (data) => {
+          socket.emit('data', 'FromServer '+data)
+        }).stderr.on('data', (data) => {
+          console.log('STDERR: ' + data);
+        });
+      });
       conn.shell(function (err, stream) {
         if (err)
           return socket.emit('data', '\r\n*** SSH SHELL ERROR: ' + err.message + ' ***\r\n');

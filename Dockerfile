@@ -7,9 +7,11 @@ FROM ubuntu:20.04
 
 RUN apt update && apt install  openssh-server sudo -y
 
+RUN apt update && apt install inotify-tools sudo -y
+
 RUN useradd -rm -s /bin/bash -g root -G sudo -u 1000 test 
 
-RUN  echo '$usr:$pwd' | chpasswd
+RUN  echo 'test:test' | chpasswd
 
 RUN service ssh start
 #Opens port nr 22 which is used for SSH connections.
