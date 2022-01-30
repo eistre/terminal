@@ -33,10 +33,29 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
       <p>selle kirjeldus</p>
       <p>kasutamise näide</p>
       <ol>
-        <li>1.Ül</li>
-        <li>2.Ül</li>
-        <li>3.Ül</li>
-        <li>4.Ül</li>
+        <!--
+          TODO: try it out to run contiainers in --privileged mode.
+          liigu kausta /etc ning kuva hosts faili sisu 
+          Seejärel liigu tagasi kodukausta (/home/test/)
+          loo kaust kus on tühik sees mkdir "kaust t2hikuga" või mkdir kausta\ t2hik
+          leia kõik failid mis lõppevad nimega "peidetud"
+          leia fail milles on sees tekst "parool"
+          leia viimasena muudetud failid (vihje uuri ls käsku) -- ls -at | head -n 5
+          kustuta peidetud fail rm -r ning tühikuga kaust.
+          installige tarkvara sl. Kus asub rakenduse sl binaarid nt -- whereis ps 
+          Kuva kõik käimas olevad käsud ==  ps -e ja otsime inotifywait'i :)
+          Tõmmake alla lehekülg https://www.aki.ee/et/eraelu-kaitse/andmeturve. Allatõmmatud failis esinevate sõnade arv. == wc -w
+        -->
+        <li id="task1">Liigu kausta /etc ning kuva faili hosts sisu terminali. Hint: (kasuta käsku "cat")</li><!--cd ja cat-->
+        <li id="task2">Liigu tagasi kodukausta ja loo kaust mille nimes esineb vähemalt üks väiketäht (inglise tähestiku), number, tühik, võrdlusmärk ja lauselõpumärk.</li><!--cd ja character escape-->
+        <li id="task3">leia kõigi selliste failide asukohad, mis asuvad /home kaustas või selle alamkaustades ja lõppevad nimega "peidetud" (jutumärkideta muidugi)</li><!--find /home -name '*peidetud'-->
+        <li id="task4">leia fail mille sisse on kirjutatud tekst "parool"</li> <!--grep-->
+        <li id="task5">installige tarkvara sl. Leidke kus asuvad rakenduse sl binaarid. Hint: sudo apt install ... ja  whereis sl</li> <!--apt install ja whereis-->
+        <li id="task6">tõmmake alla lehekülg https://courses.cs.ut.ee/MTAT.TK.012/2015_fall/uploads/Main/anton_hansen_tammsaare_tode_ja_oigus_i.txt. Leidke allatõmmatud failis esinevate sõnade arv. Hint. vaja läheb käske wget ja wc</li> <!--wget ja wc-->
+        <li>leia 5 viimasena muudetud faili. Vihje: uuri käsku ls</li><!--ls ja head-->
+        <li id="task8">kustuta peidetud fail ning tühikuga kaust.</li> <!--rm-->
+        <li id="task9">Kuvage kõik käimasolevad käsud. (hint uurige käsku ps.)</li> <!--ps-->
+        <li>Avage teises aknas sama veebileht uuesti ning käivitage seal käsk "nano tekstifail" Esimeses aknas leidke protsessi nano number ning saatke sellele SIGHUP või SIGTERM signaal.</li><!--ps ja kill-->
       </ol>
     </div>
     <div id="terminal-container" style="flex: auto;"></div>
