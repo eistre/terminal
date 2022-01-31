@@ -93,7 +93,7 @@ var portInUse = function (port) {
  * @param {String} userID name of the user what must match the containers name. Unique.
  * @returns Promise which resolves to containerID. Else rejected with error message.
  */
-function getContainerIdByUser(userID) {
+function getContainerIdAndPortByUser(userID) {
     return new Promise((resolve, reject) => {
         new Docker().listContainers({ all: true }, (err, containers) => {
             containers.forEach((containerInfo) => {
@@ -103,7 +103,7 @@ function getContainerIdByUser(userID) {
                         docker.getContainer(containerInfo.Id).start();
                         console.log(`Restarted container ${containerInfo.Id} on port ${containerInfo.Ports[0].PublicPort}`);
                     }
-                    resolve(containerInfo.Id);
+                    resolve([containerInfo.Id, containerInfo.Ports[0].PublicPort]);
                     return;
                 }
             });
@@ -166,7 +166,8 @@ function makeContainer(userID, containerPort) {
                             runExec(container);
                         });
                         container.inspect((err, data) => {
-                            resolve({ 'status': 201, 'containerID': data.Id, 'userName': userID })
+                            //this is very bad...
+                            resolve({ 'status': 201, 'containerID': data.Id, 'userName': userID, 'containerPort': containerPort }) 
                         })
                     });
                 }
@@ -189,22 +190,22 @@ function handleContainer(userID, containerID, containerPort) {
             ensureContainerIsRunning(containerID)
                 .then(() => {
                     console.log(`Container ${containerID} existed before!`)
-                    resolve({ 'status': 200, 'containerID': containerID, 'userName': userID })
+                    resolve({ 'status': 200, 'containerID': containerID, 'userName': userID, 'containerPort': containerPort })
                 }).catch(err => {
                     console.log(err)
-                    reject({ 'status': 404, 'containerID': null, 'userName': userID })
+                    reject({ 'status': 404, 'containerID': null, 'userName': userID, 'containerPort': containerPort })
                 });
         }
         else if (isKnownUser) {
-            getContainerIdByUser(userID).then(newContainerID => {
-                resolve({ 'status': 200, 'containerID': newContainerID, 'userName': userID })
+            getContainerIdAndPortByUser(userID).then(idAndPort => {
+                resolve({ 'status': 200, 'containerID': idAndPort[0], 'userName': userID, 'containerPort': idAndPort[1] })
             }).catch(err => {
                 makeContainer(userID, containerPort)
                     .then((data) => {
                         resolve(data)
                     }).catch((err) => {
                         console.log(err)
-                        reject({ 'status': 403, 'containerID': null, 'userName': userID })
+                        reject({ 'status': 403, 'containerID': null, 'userName': userID, 'containerPort': containerPort })
                     })
             });
         }
@@ -214,7 +215,7 @@ function handleContainer(userID, containerID, containerPort) {
                     resolve(data)
                 }).catch((err) => {
                     console.log(err)
-                    reject({ 'status': 403, 'containerID': null, 'userName': userID })
+                    reject({ 'status': 403, 'containerID': null, 'userName': userID, 'containerPort': containerPort })
                 })
         }
     });
@@ -229,7 +230,7 @@ function killContainerById(containerID) {
         .then(data => {
             return container.remove();
         }).then(data => {
-            console.log('container removed');
+            console.log(`container ${containerID} removed`);
         }).catch(err => {
             console.log(err);
         });

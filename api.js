@@ -18,7 +18,7 @@ var killTimers = {}
  * @returns Second part of the string(cookie) split at % sign.
  */
 function getPortNumber(cookie) {
-  if (cookie === undefined) {
+  if (cookie === undefined || isNaN(Number(cookie.split('%')[1]))) {
     StartingPort += 2;
     return StartingPort - 2;
   }
@@ -70,17 +70,20 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
       .then(containerInfo => {
         if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
           console.log(containerInfo['status'] == 201 ? `New container has been created.` : `Using an existing container`)
+          portNumber = containerInfo['containerPort']
           routes.makeNewPage(portNumber + 1)
             .then(http => {//TODO: get the user/password from user.
               connectToContainer(host = '127.0.0.1', port = portNumber, username = 'test', password = 'test', http = http)
             }).then(() => {
               sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
               updateKillTimers(containerInfo['containerID'], exprMinFromNow = cookieAndContainerExprInMin);
+              displayDataOnPage({ userID: userID, userName: name }, `/${portNumber}`)
             })
             .catch((error) => {
               console.log("Webpage already existed.")
               sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
               updateKillTimers(containerID, exprMinFromNow = cookieAndContainerExprInMin);
+              displayDataOnPage({ userID: userID, userName: name }, `/${portNumber}`)
             })
         }
       }).catch((containerInfo) => {
@@ -91,12 +94,19 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
   }
 
   const { userID } = req.params;
-  const isCookieMissing = req.cookies[userID] === undefined;
+  const name = req.body.name ? req.body.name : "anonymous";
   const portNumber = getPortNumber(req.cookies[userID]);
+  const isCookieMissing = req.cookies[userID] === undefined;
   const containerID = isCookieMissing ? null : req.cookies[userID].split('%')[0]
   makeConnection(userID, containerID, portNumber);
 
 })
+
+function displayDataOnPage(data, pageUrl) {
+  app.get(pageUrl, (req, res) => {
+    res.json(data['userID'] === 'anonymous' ? { userID: 'anonymous' } : data)
+  })
+}
 
 app.listen(
   PORT,
@@ -128,7 +138,7 @@ function connectToContainer(host, port, username, password, http) {
           console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
           conn.end();
         }).on('data', (data) => {
-          socket.emit('data', 'FromServer '+data)
+          socket.emit('data', 'FromServer ' + data)
         }).stderr.on('data', (data) => {
           console.log('STDERR: ' + data);
         });

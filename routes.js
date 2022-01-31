@@ -65,7 +65,7 @@ function createPage(port) {
       resolve(http);
     });
 
-    http.on('error',(error)=>{
+    http.on('error', (error) => {
       reject(error)
     })
 

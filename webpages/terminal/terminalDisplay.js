@@ -1,5 +1,5 @@
 /*
-Also copied from https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
+Boilerplate copied from https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 Credit goes to Avishek Acharya aka Elliot404
 */
 var task8Progress = [false, false]
@@ -33,7 +33,7 @@ window.addEventListener('load', function () {
     if (data.match(new RegExp('^127\\.0\\.0\\.1[\\s\\S]*localhost[\\s\\S]*ip6-localhost[\\s\\S]*localnet[\\s\\S]*allnodes[\\s\\S]*allrouters'))) {
       addStyleDoneToElementWithId('task1');
     }
-    if (data.match(new RegExp('FromServer /home/test/ CREATE,ISDIR ' + specificFolderRegex))) {
+    if (data.match(new RegExp('/home/test/ CREATE,ISDIR ' + specificFolderRegex))) {
       addStyleDoneToElementWithId('task2');
     }
     if (data.match(new RegExp('/\\.h2sti_peidetud')))
@@ -76,16 +76,23 @@ window.addEventListener('load', function () {
   });
 }, false);
 
-//TODO: write function that on window loading calls the 
-// inotifywait -rm .  or inotifywait -rm /home/test/ command
-//And for starters logs all of the output to console.
-//Piirangud : ainult x arv subtreesid saab teha. Võivad tekkida protsessori aja probleemid?
-var fileWatcher = function () {
-  console.log("I exist.")
-}
-fileWatcher()
-
 function addStyleDoneToElementWithId(elemId) {
   document.getElementById(elemId).style.textDecoration = "line-through";
   document.getElementById(elemId).style.color = 'green';
+}
+
+window.onload = () => {
+  console.log(window.location.port)
+  fetch(`http://localhost:8080/${window.location.port - 1}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data['userID']=='anonymous') {
+        document.getElementById('name').innerHTML = "külaline"
+        document.getElementById('maatriculation').hidden=true;
+      }
+      else {
+        document.getElementById('matriculation').innerHTML = data['userID']
+        document.getElementById('name').innerHTML = data['userName'] 
+      }
+    })
 }

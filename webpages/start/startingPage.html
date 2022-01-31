@@ -10,11 +10,20 @@
     <link rel="icon" href="https://i.imgur.com/uy6Ntdz.png" />
     <link rel="stylesheet" href="startingPage.css" />
 </head>
+
 <body>
     <div>
-        <button id="someButton" onclick="sendAnonymousRequest()">Continue without authentication</button>
-        <br/>
-        <a id="authButton" href="/auth">Authenticate!</a>
+        <!--sendAnonymousRequest(document.getElementById('nimi').value,document.getElementById('matrikkel').value)-->
+        <label for="nimi">Nimi:</label><br>
+        <input type="text" id="nimi" value=""><br>
+        <label for="matrikkel">Matrikli number:</label><br>
+        <input type="text" id="matrikkel" value=""><br><br>
+        <button id="otherButton"
+            onclick="document.getElementById('nimi').value && document.getElementById('matrikkel').value ?
+                sendRequest(document.getElementById('nimi').value,document.getElementById('matrikkel').value)
+                : alert(`Väljad nimi ja matriklinumber peavad olema täidetud!`)">
+            Logi sisse</button>
+        <button id="someButton" onclick="sendRequest()">Jätka külalisena</button>
     </div>
 </body>
 
