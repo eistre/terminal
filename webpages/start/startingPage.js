@@ -9,11 +9,25 @@ function sendRequest(name, matriculationNr) {
     else
         xhr.open("POST", `http://localhost:8080/ubuntuInstance/anonymous`, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
-    
-    xhr.send(name ? JSON.stringify({name:name}) : null);
+
+    xhr.send(name ? JSON.stringify({ name: name }) : null);
     xhr.onload = function () {
         var data = JSON.parse(this.responseText);
         //localStorage.setItem('portID',data["yourAddress"].split(':').pop());
         window.open(data["yourAddress"]);
     }
+}
+
+function validateLoginCredentials() {
+    var name = document.getElementById('nimi').value
+    var matric = document.getElementById('matrikkel').value
+    if (name && matric) {
+        if (matric.match(new RegExp('^[A-Za-zõüäöÕÜÖÄ][0-9]+$'))) {
+            sendRequest(name, matric)
+        }
+        else
+            alert("Matriklinumber peab koosnema ainult suurest esitähest ja numbritest.")
+    }
+    else
+        alert(`Väljad nimi ja matriklinumber peavad olema täidetud!`)
 }

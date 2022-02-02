@@ -9,22 +9,48 @@
     <script src="startingPage.js"></script>
     <link rel="icon" href="https://i.imgur.com/uy6Ntdz.png" />
     <link rel="stylesheet" href="startingPage.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Questrial">
 </head>
 
 <body>
-    <img src="https://cs.ut.ee/sites/default/files/2021-08/arvutiteaduse_instituut_est_white_2021-01.svg" style="filter: brightness(0) saturate(100%) invert(26%) sepia(71%) saturate(846%) hue-rotate(184deg) brightness(95%) contrast(87%); width:20em;"/>
-    <div>
-        <!--sendAnonymousRequest(document.getElementById('nimi').value,document.getElementById('matrikkel').value)-->
-        <label for="nimi">Nimi:</label><br>
-        <input type="text" id="nimi" value=""><br>
-        <label for="matrikkel">Matrikli number:</label><br>
-        <input type="text" id="matrikkel" value=""><br><br>
-        <button id="otherButton"
-            onclick="document.getElementById('nimi').value && document.getElementById('matrikkel').value ?
-                sendRequest(document.getElementById('nimi').value,document.getElementById('matrikkel').value)
-                : alert(`Väljad nimi ja matriklinumber peavad olema täidetud!`)">
-            Logi sisse</button>
-        <button id="someButton" onclick="sendRequest()">Jätka külalisena</button>
+    <div style="padding: 2vh 2vw; display: flex;">
+        <img src="https://cs.ut.ee/sites/default/files/2021-08/arvutiteaduse_instituut_est_white_2021-01.svg"
+            style="filter: brightness(0) saturate(100%) invert(26%) sepia(71%) saturate(846%) hue-rotate(184deg) brightness(95%) contrast(87%); height:5vh;" />
+        <h2 style="width:60%;margin: 0 auto;">Linuxi käsurea harjutuskeskkond - Ubuntu terminal veebibrauseris</h2>
+    </div>
+    <div class="main">
+        <div>
+            <p>Veebisait on koostatud bakalaureusetöö osana. Lehe eesmärgiks on meelde tuletada põhilisemad Linuxi
+                käsurea
+                käsud ning nende kasutusjuhud. Lisaks ülesannetele on olemas ka automaatkontroll mis värvib ülesande
+                roheliseks kui see on edukalt sooritatud.</p>
+            <p>Pärast ülesannete läbi tegemist palun täitke ka tagasiside küsitlus.</p>
+        </div>
+        <h3 style="text-align: center;">Registreerimisinfo</h3>
+        <p>Matrikli number peab koosnema ainult tähtedest ja numbritest. Tühikuid ei tohi lõpus olla. Registreerimiseks
+            sisestage oma täispikk nimi ja matrikli kood. Pärast esimest korda nime ja matrikli
+            sisestamist ning nupu "Logi sisse" vajutamist ei saa oma nime ümber muuta sest see jääb seotuks
+            matrikli numbriga. Muutes matrikli numbrit luuakse uus ühendus uute arvutisse. </p>
+        <div style="width: 70%;margin:auto; border:lightgrey 1px solid;">
+            <!--sendAnonymousRequest(document.getElementById('nimi').value,document.getElementById('matrikkel').value)-->
+            <div style="display: flex; margin:auto">
+                <span class="loginInput">
+                    <label for="nimi">Nimi:</label>
+                    <input type="text" id="nimi">
+                </span>
+                <span class="loginInput">
+                    <label for="matrikkel">Matrikli number:</label>
+                    <input type="text" id="matrikkel">
+                </span>
+            </div>
+            <div style="display: flex; margin: auto;">
+                <button id="otherButton" onclick="validateLoginCredentials()"
+                    style="margin-left: auto; margin-right: 1em;">
+                    Logi sisse</button>
+                <button id="someButton" onclick="sendRequest()" style="margin-left: 1em; margin-right: auto;">Jätka
+                    külalisena</button>
+            </div>
+        </div>
     </div>
 </body>
 
