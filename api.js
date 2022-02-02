@@ -132,11 +132,11 @@ function connectToContainer(host, port, username, password, http) {
     conn.on('ready', function () {
       socket.emit('data', '\r\n*** SSH CONNECTION ESTABLISHED ***\r\n');
       //Start file watch system to check for changes in /home/test/ directory.
-      conn.exec('inotifywait -rm /home/test/', (err, stream) => {
-        if (err) throw err;
+      //conn.exec('inotifywait -rm /home/test/', (err, stream) => {  inotifywait -rm /home/test/
+      conn.exec(`if pgrep -x "inotifywait" > /dev/null; then echo "running" > /dev/null; else inotifywait -rm /home/test/ ; fi`, (err, stream) => {
+        if (err) console.log(err);
         stream.on('close', (code, signal) => {
-          console.log('Stream :: close :: code: ' + code + ', signal: ' + signal);
-          conn.end();
+          console.log("One instance of Inotify already exsisted")
         }).on('data', (data) => {
           socket.emit('data', 'FromServer ' + data)
         }).stderr.on('data', (data) => {
