@@ -152,11 +152,13 @@ function makeContainer(userID, containerPort) {
                     var docker = new Docker({ port: 22 })
                     docker.createContainer({
                         Image: 'autogen_ubuntu_ssh',
+                        Cmd: ['/usr/sbin/init'],//for privileged
                         Tty: true,
                         name: userID === 'anonymous' ? "" : userID,
                         PortBindings: {
                             "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
                         },
+                        Privileged: true,//for privileged
                     }, function (err, container) {
                         container.start({}, function (err, data) {
                             if (err) {
