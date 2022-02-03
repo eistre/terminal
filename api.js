@@ -5,6 +5,9 @@ const routes = require('./routes')
 const dockerController = require('./dockerController')
 const Timer = require('./timer.js')
 var cookieParser = require('cookie-parser')
+var cors = require('cors')
+app.use(cors());
+app.options('*', cors());
 
 app.use(cookieParser())
 app.use(express.json()) //neccesary?
@@ -35,7 +38,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
    */
   function sendResponse(containerInfo, portNumber, exprMinFromNow) {
     exprSecFromNow = exprMinFromNow * 60000
-    res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { expires: new Date(Date.now() + exprSecFromNow), httpOnly: true });
+    res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { expires: new Date(Date.now() + exprSecFromNow), httpOnly: true, sameSite: 'none', secure: true });
     res.status(containerInfo['status']).send({
       yourAddress: `http://localhost:${portNumber + 1}`,
     });
@@ -133,7 +136,7 @@ function connectToContainer(host, port, username, password, http) {
       socket.emit('data', '\r\n*** SSH CONNECTION ESTABLISHED ***\r\n');
       //Start file watch system to check for changes in /home/test/ directory.
       //conn.exec('inotifywait -rm /home/test/', (err, stream) => {  inotifywait -rm /home/test/
-      conn.exec(`if pgrep -x "inotifywait" > /dev/null; then echo "running" > /dev/null; else inotifywait -rm /home/test/ ; fi`, (err, stream) => {
+      conn.exec(`if pgrep -x "inotifywait" > /dev/null; then echo "running" > /dev/null; else inotifywait /home /home/test/ -m  ; fi`, (err, stream) => {
         if (err) console.log(err);
         stream.on('close', (code, signal) => {
           console.log("One instance of Inotify already exsisted")

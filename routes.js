@@ -2,6 +2,9 @@
 //Credit goes to Elliot404
 const express = require('express')
 const app = express()
+var cors = require('cors')
+app.use(cors());
+app.options('*', cors());
 const http = require('http').Server(app);
 
 //Add route to startingPage.
@@ -40,6 +43,9 @@ function createPage(port) {
     const express = require('express')
     const app = express()
     const http = require('http').Server(app);
+    var cors = require('cors')
+    app.use(cors());
+    app.options('*', cors());
 
     console.log(port)
     app.set('view engine', 'ejs');
