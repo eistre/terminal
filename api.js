@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 const app = express()
 const PORT = 8080;
@@ -40,7 +41,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
     exprSecFromNow = exprMinFromNow * 60000
     res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { expires: new Date(Date.now() + exprSecFromNow), httpOnly: true, sameSite: 'none', secure: true });
     res.status(containerInfo['status']).send({
-      yourAddress: `http://localhost:${portNumber + 1}`,
+      yourAddress: `http://${process.env.HOST}:${portNumber + 1}`,
     });
   }
 
@@ -113,7 +114,7 @@ function displayDataOnPage(data, pageUrl) {
 
 app.listen(
   PORT,
-  () => console.log(`API is live on http://localhost:${PORT}`)
+  () => console.log(`API is live on http://${process.env.HOST}:${PORT}`)
 )
 
 

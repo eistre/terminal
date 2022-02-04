@@ -93,9 +93,11 @@ window.addEventListener('load', function () {
 }, false);
 
 
+const HOST = '172.27.16.146'
+
 window.onload = () => {
   console.log(window.location.port)
-  fetch(`http://localhost:8080/${window.location.port - 1}`)
+  fetch(`http://${HOST}:8080/${window.location.port - 1}`)
     .then(response => response.json())
     .then(data => {
       if (data['userID'] == 'anonymous') {

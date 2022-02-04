@@ -75,7 +75,7 @@ var portInUse = function (port) {
             socket.pipe(socket);
         });
 
-        server.listen(port, 'localhost');
+        server.listen(port, process.env.HOST);
         server.on('error', function (e) {
             response(true);
             return true;

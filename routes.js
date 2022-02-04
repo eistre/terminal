@@ -1,3 +1,4 @@
+require('dotenv').config()
 //copy-pasted from: https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 //Credit goes to Elliot404
 const express = require('express')
@@ -32,7 +33,7 @@ app.get('/', (req, res) => {
 //&resource=https%3A%2F%2Fgraph.microsoft.com&state=TX1LwXG7dlAOs5O&redirect_uri=https%3A%2F%2Fmoodle.ut.ee%2Fauth%2Foidc%2F
 
 http.listen(8000, () => {
-  console.log('StartingPage is ready on http://localhost:' + 8000);
+  console.log(`StartingPage is ready on http://${process.env.HOST}:` + 8000);
 });
 
 //copied from https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
@@ -67,7 +68,7 @@ function createPage(port) {
 
 
     http.listen(port, () => {
-      console.log('Listening on http://localhost:' + port);
+      console.log(`Listening on http://${process.env.HOST}:` + port);
       resolve(http);
     });
 

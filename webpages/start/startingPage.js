@@ -1,3 +1,4 @@
+const HOST = '172.27.16.146'
 //HTML request script taken from https://stackoverflow.com/questions/45697176/send-simple-http-request-with-html-submit-button
 //      Credit goes to thepi
 // Authentication modification by Joonas.
@@ -5,9 +6,9 @@
 function sendRequest(name, matriculationNr) {
     var xhr = new XMLHttpRequest();
     if (matriculationNr)
-        xhr.open("POST", `http://localhost:8080/ubuntuInstance/${matriculationNr}`, true);
+        xhr.open("POST", `http://${HOST}:8080/ubuntuInstance/${matriculationNr}`, true);
     else
-        xhr.open("POST", `http://localhost:8080/ubuntuInstance/anonymous`, true);
+        xhr.open("POST", `http://${HOST}:8080/ubuntuInstance/anonymous`, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
 
     xhr.send(name ? JSON.stringify({ name: name }) : null);
