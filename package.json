@@ -1,0 +1,33 @@
+{
+  "name": "ubuntuterminal",
+  "version": "1.0.0",
+  "description": "Part of bachelor's thesis. For the basics of Linux terminal on Ubuntu 20.04",
+  "main": "api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/JoonasHalapuu/ubuntuterminal.git"
+  },
+  "author": "Joonas Halapuu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/JoonasHalapuu/ubuntuterminal/issues"
+  },
+  "homepage": "https://gitlab.com/JoonasHalapuu/ubuntuterminal#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dockerode": "^3.3.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
+    "net": "^1.0.2",
+    "socketio": "^1.0.0",
+    "ssh2": "^1.6.0",
+    "xterm": "^4.17.0",
+    "xterm-addon-fit": "^0.5.0"
+  }
+}

@@ -77,7 +77,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
           portNumber = containerInfo['containerPort']
           routes.makeNewPage(portNumber + 1)
             .then(http => {//TODO: get the user/password from user.
-              connectToContainer(host = '127.0.0.1', port = portNumber, username = 'test', password = 'test', http = http)
+              connectToContainer(host = process.env.HOST, port = portNumber, username = 'test', password = 'test', http = http)
             }).then(() => {
               sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
               updateKillTimers(containerInfo['containerID'], exprMinFromNow = cookieAndContainerExprInMin);
@@ -114,6 +114,7 @@ function displayDataOnPage(data, pageUrl) {
 
 app.listen(
   PORT,
+  //process.env.HOST,
   () => console.log(`API is live on http://${process.env.HOST}:${PORT}`)
 )
 
