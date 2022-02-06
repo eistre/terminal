@@ -1,3 +1,5 @@
+const HOST = '172.20.137.204'
+
 /*
 Boilerplate copied from https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 Credit goes to Avishek Acharya aka Elliot404
@@ -23,8 +25,6 @@ window.addEventListener('load', function () {
     socket.emit('data', data);
   });
 
-  //TODO: võiks saada ka hosts asju muuta ning kui mitu korda lehte avada siis ikkagi oleks ainult üks intoifywait protsess.
-  //TODO: kus võimalik peaks testima ka failide avamist lisaks käsu väljundile 8nda ülesande stiilis
   // Backend -> Browser
   socket.on('data', function (data) {
     //Automatic correct results check for tasks
@@ -93,7 +93,6 @@ window.addEventListener('load', function () {
 }, false);
 
 
-const HOST = '172.27.16.146'
 
 window.onload = () => {
   console.log(window.location.port)

@@ -38,93 +38,87 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
     a) veebileht ilusamaks (ala reacti/vue peale vms)
     b) käskude kirjeldused ja valik drop-down menüüga.
     c) käskude kirjeldused eraldada ja hoida "andmebaasis"
-    e) kusagil vahepeal peaks käske ka välja mõtlema vbl :D
-    d) käivitada automaatkontroll mis kontrollib tehtud käsu õigsust.
+    d) käivitada automaatkontroll mis kontrollib tehtud käsu õigsust ka eraldama. -refraktoreering
   -->
   <div style="display: flex;">
     <div id='tasks-container' style="flex: 1 1 0%; margin: 0 20px; width:33%">
       <p style="margin: 20px 0;">Kiire sissejuhatus asja</p>
-      <!--
-          TODO: try it out to run contiainers in --privileged mode.
-          liigu kausta /etc ning kuva hosts faili sisu 
-          Seejärel liigu tagasi kodukausta (/home/test/)
-          loo kaust kus on tühik sees mkdir "kaust t2hikuga" või mkdir kausta\ t2hik
-          leia kõik failid mis lõppevad nimega "peidetud"
-          leia fail milles on sees tekst "parool"
-          leia viimasena muudetud failid (vihje uuri ls käsku) -- ls -at | head -n 5
-          kustuta peidetud fail rm -r ning tühikuga kaust.
-          installige tarkvara sl. Kus asub rakenduse sl binaarid nt -- whereis ps 
-          Kuva kõik käimas olevad käsud ==  ps -e ja otsime inotifywait'i :)
-          Tõmmake alla lehekülg https://www.aki.ee/et/eraelu-kaitse/andmeturve. Allatõmmatud failis esinevate sõnade arv. == wc -w
-        -->
       <button class="collapsible">Ülesanne 1</button>
       <div class="content">
-        <p id="task1">a)Liigu kausta /etc ning kuva faili hosts sisu terminali. Hint: (kasuta käsku "cat")
-          b)Muuda oma masina nimi (hostname) nii ajutiselt kui ka permanentselt (nii, et see säiliks ka pärast
-          restarti).
-          Pane arvuti nimeks näiteks oma perekonnanimi.
+        <p id="task1">a)Liigu kausta <code>/etc</code> ning kuva <cod>hosts</cod> faili sisu terminali. (Vihje: kasuta
+          käsku <code>cat</code>)
         </p>
         <!--cd ja cat-->
       </div>
       <button class="collapsible">Ülesanne 2</button>
       <div class="content">
-        <p id="task2">Liigu tagasi kodukausta ja loo kaust mille nimes esineb vähemalt üks väiketäht (inglise
-          tähestiku), number, tühik, võrdlusmärk ja lauselõpumärk.
+        <p id="task2">Loo <code>test</code> kasutaja kodukausta alamkaust mille nimes esineb vähemalt üks inglise
+          tähestiku väiketäht, number, tühik, võrdlusmärk ja lauselõpumärk.
         </p>
         <!--cd ja character escape-->
         <!--ja lõpuks pane väike dir kinda sama mis ls tho harjutus ka sisse.-->
       </div>
       <button class="collapsible">Ülesanne 3</button>
       <div class="content">
-        <p id="task3">leia kõigi selliste failide asukohad, mis asuvad <code>/home</code> kaustas või selle
+        <p id="task3">Leia kõik failid, mis asuvad <code>/home</code> kaustas või selle
           alamkaustades ja
-          lõppevad nimega "peidetud" (jutumärkideta muidugi)</p>
+          lõppevad sõnega "peidetud" (jutumärkideta).</p>
+        <!--TODO:fail võiks asuda alamkaustas (.ajutine/.h2sti_peidetud) mis on omakorda peidetud-->
         <!--find /home -name '*peidetud'-->
       </div>
       <button class="collapsible">Ülesanne 4</button>
       <div class="content">
-        <p id="task4">leia fail kodukaustast või <code>/home</code> kaustast mille sisse on kirjutatud tekst
-          <code>parool</code></p>
+        <p id="task4">Leia fail <code>/home</code> kaustast või alamkaustast mis sisaldab teksti
+          <code>parool</code> (Jäta parool meelde, sul läheb seda hiljem vaja!).
+          <!--TODO:Muuda parool ägedamaks nätieks Test1234-->
+        </p>
         <!--grep-->
       </div>
       <button class="collapsible">Ülesanne 5</button>
       <div class="content">
-        <p id="task5">installige tarkvara <code>sl</code>. Leidke kus asuvad rakenduse <code>sl</code> binaarid. Hint:
-          sudo apt install ... ja
-          whereis sl</p>
+        <p id="task5">Paigaldage tarkvara nimega <code>nano</code>. Leidke, kus asuvad rakenduse <code>nano</code>
+          binaarid. (vihje: <code>sudo apt ...</code>, <code>whereis</code>, sudo parooli leidsite eelmises punktis)
+        </p>
         <!--apt install ja whereis-->
       </div>
-      <button class="collapsible">Ülesanne 6</button>
+      <button class="collapsible">Uus Ülesanne 6</button>
       <div class="content">
-        <p id="task6">tõmmake alla lehekülg
-          <a
-            href='https://courses.cs.ut.ee/MTAT.TK.012/2015_fall/uploads/Main/anton_hansen_tammsaare_tode_ja_oigus_i.txt'>https://courses.cs.ut.ee/MTAT.TK.012/2015_fall/uploads/Main/anton_hansen_tammsaare_tode_ja_oigus_i.txt</a>.
-          Leidke allatõmmatud failis esinevate sõnade arv. Hint. vaja läheb käske wget ja wc
+        <p id="task11"> Loo kasutaja <code>test</code> kodukausta fail nimega andmeturve ja faili sisuks pane oma nimi.
+          Muudek faili õigusi nii, et faili omanik (<code>test</code>) ja faili grupp (<code>test</code>) saaks faili
+          kirjutada ja lugeda aga mitte käivitada ja teistele kasutajatele oleks keelatud failile ligipääs.
+          Enesekontrolliks ja automaatkontrolli käivitamiseks käivitage käsk <code>ls -la /home/test/andeturve</code> </s></p>
+        <!--faili õigused 660-->
+        <!--nano-->
+      </div>
+      <button class="collapsible">Ülesanne 7</button>
+      <div class="content">
+        <p id="task6">Laadige alla lehekülg
+          <code>
+            https://courses.cs.ut.ee/MTAT.TK.012/2015_fall/uploads/Main/anton_hansen_tammsaare_tode_ja_oigus_i.txt
+          </code>.
+          Leidke allatõmmatud failis esinevate sõnade arv. Vihje: vaja läheb käske <code>wget</code> ja <code>wc</code>
         </p>
         <!--wget ja wc-->
       </div>
-      <button class="collapsible">Ülesanne 7</button>
+      <button class="collapsible">Ülesanne 8</button>
       <div class="content">
         <p>Loo oma eesnimega kasutaja kelle kodukaustaks on <code>/home/[eesnimi]<code>.</p>
         <!--ls ja head-->
       </div>
-      <button class="collapsible">Ülesanne 8</button>
-      <div class="content">
-        <p>
-          Sisenege uude kasutajasse (see mis eelmises ülesandes loodud sai) ja kopeerige oma veidra nimega kaust (loodud ülesandes 2) oma uude kodukausta.</p>
-        <!--ps ja kill-->
-      </div>
       <button class="collapsible">Ülesanne 9</button>
       <div class="content">
-        <p id="task8">kustuta kõik peidetud failid mis asuvad <code>/home</code> kaustas või selle alamkaustades ning tühikuga kaust <code>/home/test</code> kaustast.</p>
+        <p id="task8">Kustutage kaust <code>/home/test/.ajutine</code> ja selle sisu.</p>
+        <!--Kontrolli et .ajutine on kustutatud.-->
         <!--rm-->
       </div>
       <button class="collapsible">Ülesanne 10</button>
       <div class="content">
-        <p id="task9">Kuvage kõik käimasolevad käsud. (hint uurige käsku ps.)</p>
+        <p id="task9">Kuvage kõik käimasolevad protsessid. (Vihje: uurige käsku <code>ps</code>)</p>
         <!--ps-->
       </div>
     </div>
+    <!--TODO:Proovi unminimizeta panna man arvutisse. Keela unminimize käsk ära.-->
+    <!--TODO:Dockeritele max performance limitor mälu 512 Mb ja cpu 1 tuum 50% -->
     <div id="terminal-container" style="flex: auto;"></div>
   </div>
 </body>
