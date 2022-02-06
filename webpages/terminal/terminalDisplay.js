@@ -33,33 +33,27 @@ window.addEventListener('load', function () {
     //First Task
     if (data.match(new RegExp('^127\\.0\\.0\\.1[\\s\\S]*localhost[\\s\\S]*ip6-localhost[\\s\\S]*localnet[\\s\\S]*allnodes[\\s\\S]*allrouters'))) {
       markTaskAsDone(1)
-      openTask(2)
     }
     if (data.match(new RegExp('/home/test/ CREATE,ISDIR ' + specificFolderRegex))) {
       markTaskAsDone(2)
-      openTask(3)
     }
     if (data.match(new RegExp('test/\\.ajutine/\\.h2sti_peidetud'))) {// \\.veel1Failon2ra_peidetud
       if (task3Progress[1]) {
         markTaskAsDone(3)
-        openTask(4)
       }
       else task3Progress[0] = true
     }
     if (data.match(new RegExp('\\.veel1Failon2ra_peidetud'))) {
       if (task3Progress[0]) {
         markTaskAsDone(3)
-        openTask(4)
       }
       else task3Progress[1] = true
     }
     if (data.match(new RegExp('\\.ajutine/\\.h2sti_peidetud.*parool'))) {
       markTaskAsDone(4)
-      openTask(5)
     }
     if (data.match(new RegExp('/usr/bin/nano'))) {
       markTaskAsDone(5)
-      openTask(6)
     }
     if (data.match(new RegExp('MODIFY andmeturve'))) {
       task6Progress = true
@@ -67,20 +61,16 @@ window.addEventListener('load', function () {
     if (data.match(new RegExp('-rw-rw----.*test.*root.*andmeturve'))) {
       if (task6Progress) {
         markTaskAsDone(6)
-        openTask(7)
       }
     }
     if (data.match(new RegExp('^160526'))) {
       markTaskAsDone(7)
-      openTask(8)
     }
     if (data.match(new RegExp('/home/ CREATE,ISDIR[\\s\\S]+/home/ ATTRIB,ISDIR'))) {
       markTaskAsDone(8)
-      openTask(9)
     }
     if (data.match(new RegExp('DELETE,ISDIR .ajutine'))) {
       markTaskAsDone(9)
-      openTask(10)
     }
     if (data.match(new RegExp('.+inotifywait'))) {
       markTaskAsDone(10)
@@ -101,23 +91,6 @@ window.addEventListener('load', function () {
   });
 }, false);
 
-
-
-window.onload = () => {
-  console.log(window.location.port)
-  fetch(`http://${HOST}:8080/${window.location.port - 1}`)
-    .then(response => response.json())
-    .then(data => {
-      if (data['userID'] == 'anonymous') {
-        document.getElementById('name').getElementsByTagName('strong')[0].innerHTML = "külaline"
-        document.getElementById('matriculation').style.display = "none";
-      }
-      else {
-        document.getElementById('matriculation').getElementsByTagName('strong')[0].innerHTML = data['userID']
-        document.getElementById('name').getElementsByTagName('strong')[0].innerHTML = data['userName']
-      }
-    })
-}
 
 //By W3Schools 
 //From https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_collapsible_symbol
@@ -147,11 +120,17 @@ function markTaskAsDone(taskNr) {
     taskButton.classList.toggle("active");
     content.style.maxHeight = null;
   }
+  const port = window.location.port
+  var doneTasks = window.localStorage.getItem(port) === null ? [] : JSON.parse(window.localStorage.getItem(port));
+  doneTasks.push(taskNr)
+  window.localStorage.setItem(port, JSON.stringify(doneTasks))
+
+  openTask(taskNr)
 }
 function openTask(taskNr) {
   if (taskNr > 10) return
   taskButton = document.getElementsByClassName("collapsible")[taskNr - 1]
-  if (taskButton.style.background == 'green') openTask(taskNr + 1)
+  if (taskButton.style.background === 'green') openTask(taskNr + 1)
   else {
     var content = taskButton.nextElementSibling;
     if (!content.style.maxHeight) {
@@ -161,4 +140,31 @@ function openTask(taskNr) {
   }
 }
 
-openTask(1)
+function markTasksAlreadyDone() {
+  const port = window.location.port
+  if (window.localStorage.getItem(port) === null) {
+    openTask(1)
+  }
+  else {
+    var doneTasks = JSON.parse(window.localStorage.getItem(port));
+    for (var task in doneTasks) {
+      markTaskAsDone(parseInt(doneTasks[task]));
+    }
+  }
+}
+    window.onload = () => {
+      console.log(window.location.port)
+      fetch(`http://${HOST}:8080/${window.location.port - 1}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data['userID'] == 'anonymous') {
+            document.getElementById('name').getElementsByTagName('strong')[0].innerHTML = "külaline"
+            document.getElementById('matriculation').style.display = "none";
+          }
+          else {
+            document.getElementById('matriculation').getElementsByTagName('strong')[0].innerHTML = data['userID']
+            document.getElementById('name').getElementsByTagName('strong')[0].innerHTML = data['userName']
+          }
+        })
+      markTasksAlreadyDone()
+    }
