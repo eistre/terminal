@@ -11,9 +11,9 @@ RUN apt update && apt install inotify-tools sudo -y
 
 RUN useradd -rm -s /bin/bash -g root -G sudo -u 1000 test 
 
-RUN  echo 'test:test' | chpasswd
+RUN  echo 'test:Test1234JaKa5' | chpasswd
 
-RUN echo "peidetud faili sisu Prakitkum1 veebruar 2022 \n...\n\nAdmin parool on test" > /home/test/.h2sti_peidetud; touch /home/.veel1Failon2ra_peidetud; touch /home/.sedaEiPeaksKuvamaMeidetud
+RUN mkdir /home/test/.ajutine && echo "peidetud faili sisu Prakitkum1 veebruar 2022 \n...\n\nAdmin parool on Test1234JaKa5" > /home/test/.ajutine/.h2sti_peidetud; touch /home/.veel1Failon2ra_peidetud /home/.sedaEiPeaksKuvamaMeidetud
 
 RUN service ssh start
 #Opens port nr 22 which is used for SSH connections.

@@ -4,7 +4,8 @@ const HOST = '172.20.137.204'
 Boilerplate copied from https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 Credit goes to Avishek Acharya aka Elliot404
 */
-var task8Progress = [false, false]
+var task3Progress = [false, false]
+var task6Progress = false
 window.addEventListener('load', function () {
   const terminalContainer = document.getElementById('terminal-container');
   const term = new Terminal({
@@ -38,43 +39,51 @@ window.addEventListener('load', function () {
       markTaskAsDone(2)
       openTask(3)
     }
-    if (data.match(new RegExp('/\\.h2sti_peidetud'))) {
-      markTaskAsDone(3)
-      openTask(4)
+    if (data.match(new RegExp('test/\\.ajutine/\\.h2sti_peidetud'))) {// \\.veel1Failon2ra_peidetud
+      if (task3Progress[1]) {
+        markTaskAsDone(3)
+        openTask(4)
+      }
+      else task3Progress[0] = true
     }
-    if (data.match(new RegExp('\\.h2sti_peidetud.*parool'))) {
+    if (data.match(new RegExp('\\.veel1Failon2ra_peidetud'))) {
+      if (task3Progress[0]) {
+        markTaskAsDone(3)
+        openTask(4)
+      }
+      else task3Progress[1] = true
+    }
+    if (data.match(new RegExp('\\.ajutine/\\.h2sti_peidetud.*parool'))) {
       markTaskAsDone(4)
       openTask(5)
     }
-    if (data.match(new RegExp('/usr/games/sl'))) {
+    if (data.match(new RegExp('/usr/bin/nano'))) {
       markTaskAsDone(5)
       openTask(6)
     }
+    if (data.match(new RegExp('MODIFY andmeturve'))) {
+      task6Progress = true
+    }
+    if (data.match(new RegExp('-rw-rw----.*test.*root.*andmeturve'))) {
+      if (task6Progress) {
+        markTaskAsDone(6)
+        openTask(7)
+      }
+    }
     if (data.match(new RegExp('^160526'))) {
-      markTaskAsDone(6)
-      openTask(7)
+      markTaskAsDone(7)
+      openTask(8)
     }
-    if (data.match(new RegExp('/home/test/' + specificFolderRegex + '(?=.*/ DELETE_SELF)'))) {
-      task8Progress[0] = true
-      console.log('esimene osa tehtud"')
-      console.log(task8Progress)
-      if (task8Progress[1]) {
-        markTaskAsDone(8)
-        openTask(9)
-      }
+    if (data.match(new RegExp('/home/ CREATE,ISDIR[\\s\\S]+/home/ ATTRIB,ISDIR'))) {
+      markTaskAsDone(8)
+      openTask(9)
     }
-    if (data.match(new RegExp('/home/test/ DELETE .h2sti_peidetud'))) {
-      task8Progress[1] = true
-      console.log(task8Progress)
-      console.log("Teine osa tehtud!")
-      if (task8Progress[0]) {
-        markTaskAsDone(8)
-        openTask(9)
-      }
-    }
-    if (data.match(new RegExp('.+inotifywait'))) {
+    if (data.match(new RegExp('DELETE,ISDIR .ajutine'))) {
       markTaskAsDone(9)
       openTask(10)
+    }
+    if (data.match(new RegExp('.+inotifywait'))) {
+      markTaskAsDone(10)
     }
     //console.log("ül1 hosts sisu leitud!")
     if (data.match(/\[Kfail.*:.*naidistekst/))
