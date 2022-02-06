@@ -122,10 +122,15 @@ function markTaskAsDone(taskNr) {
   }
   const port = window.location.port
   var doneTasks = window.localStorage.getItem(port) === null ? [] : JSON.parse(window.localStorage.getItem(port));
-  doneTasks.push(taskNr)
-  window.localStorage.setItem(port, JSON.stringify(doneTasks))
-
-  openTask(taskNr)
+  if (doneTasks.includes(taskNr)){
+    return;
+  }
+  else{
+    doneTasks.push(taskNr)
+    window.localStorage.setItem(port, JSON.stringify(doneTasks))
+  
+    openTask(taskNr+1)
+  }
 }
 function openTask(taskNr) {
   if (taskNr > 10) return
@@ -152,19 +157,19 @@ function markTasksAlreadyDone() {
     }
   }
 }
-    window.onload = () => {
-      console.log(window.location.port)
-      fetch(`http://${HOST}:8080/${window.location.port - 1}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data['userID'] == 'anonymous') {
-            document.getElementById('name').getElementsByTagName('strong')[0].innerHTML = "külaline"
-            document.getElementById('matriculation').style.display = "none";
-          }
-          else {
-            document.getElementById('matriculation').getElementsByTagName('strong')[0].innerHTML = data['userID']
-            document.getElementById('name').getElementsByTagName('strong')[0].innerHTML = data['userName']
-          }
-        })
-      markTasksAlreadyDone()
-    }
+window.onload = () => {
+  console.log(window.location.port)
+  fetch(`http://${HOST}:8080/${window.location.port - 1}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data['userID'] == 'anonymous') {
+        document.getElementById('name').getElementsByTagName('strong')[0].innerHTML = "külaline"
+        document.getElementById('matriculation').style.display = "none";
+      }
+      else {
+        document.getElementById('matriculation').getElementsByTagName('strong')[0].innerHTML = data['userID']
+        document.getElementById('name').getElementsByTagName('strong')[0].innerHTML = data['userName']
+      }
+    })
+  markTasksAlreadyDone()
+}
