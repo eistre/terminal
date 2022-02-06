@@ -74,3 +74,37 @@ Credit goes to W3Schools
   transition: max-height 0.2s ease-out;
   background-color: #f1f1f1;
 }
+
+/*
+Copied from
+https://www.w3schools.com/css/tryit.asp?filename=trycss_tooltip
+*/
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+  z-index: 10;
+
+}
+
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: relative;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  position: relative;
+  visibility: visible;
+  z-index: 1;
+  padding: 0 2px;
+}

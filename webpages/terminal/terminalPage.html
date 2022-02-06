@@ -48,8 +48,10 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
     <div id='tasks-container' style="flex: 1 1 0%; margin: 0 20px; width:33%">
       <button class="collapsible">Ülesanne 1</button>
       <div class="content">
-        <p id="task1">a)Liigu kausta <code>/etc</code> ning kuva <cod>hosts</cod> faili sisu terminali. (Vihje: kasuta
-          käsku <code>cat</code>)
+        <p id="task1">a)Liigu kausta <code>/etc</code> ning kuva <cod>hosts</cod> faili sisu terminali.
+        <div class="tooltip">(Vihje)
+          <span class="tooltiptext">kasuta käsku <code>cat</code> </span>
+        </div>
         </p>
         <!--cd ja cat-->
       </div>
@@ -77,7 +79,11 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
       <button class="collapsible">Ülesanne 5</button>
       <div class="content">
         <p id="task5">Paigaldage tarkvara nimega <code>nano</code>. Leidke, kus asuvad rakenduse <code>nano</code>
-          binaarid. (vihje: <code>sudo apt ...</code>, <code>whereis</code>, sudo parooli leidsite eelmises punktis)
+          binaarid.
+        <div class="tooltip">(Vihje)
+          <span class="tooltiptext"><code>sudo apt ...</code>, <code>whereis</code>, sudo parooli leidsite eelmises
+            punktis </span>
+        </div>
         </p>
         <!--apt install ja whereis-->
       </div>
@@ -92,12 +98,15 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
         <!--nano-->
       </div>
       <button class="collapsible">Ülesanne 7</button>
-      <div class="content">
+      <div class="content" style="z-index: 3;">
         <p id="task7">Laadige alla lehekülg
           <code>
             https://courses.cs.ut.ee/MTAT.TK.012/2015_fall/uploads/Main/anton_hansen_tammsaare_tode_ja_oigus_i.txt
           </code>.
-          Leidke allatõmmatud failis esinevate sõnade arv. Vihje: vaja läheb käske <code>wget</code> ja <code>wc</code>
+          Leidke allatõmmatud failis esinevate sõnade arv.
+        <div class="tooltip">(Vihje)
+          <span class="tooltiptext"> vaja läheb käske <code>wget</code> ja <code>wc</code> </span>
+        </div>
         </p>
         <!--wget ja wc-->
       </div>
@@ -114,7 +123,11 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
       </div>
       <button class="collapsible">Ülesanne 10</button>
       <div class="content">
-        <p id="task10">Kuvage kõik käimasolevad protsessid. (Vihje: uurige käsku <code>ps</code>)</p>
+        <p id="task10">Kuvage kõik käimasolevad protsessid.
+        <div class="tooltip">(Vihje)
+          <span class="tooltiptext"> uurige käsku <code>ps</code> </span>
+        </div>
+        </p>
         <!--ps-->
       </div>
     </div>
