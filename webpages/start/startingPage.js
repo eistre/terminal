@@ -4,8 +4,12 @@ const HOST = '172.20.137.204'
 // Authentication modification by Joonas.
 //TODO: can the POST action be done inside html using <form action="/ubuntuInstance/Unknown" method="post">
 function sendRequest(name, matriculationNr) {
+    const authButton = document.getElementById('authButton')
+    const anonButton = document.getElementById('anonButton')
+    authButton.disabled = true;
+    anonButton.disabled = true;
     var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true; //so  taht cookiees can be used.
+    xhr.withCredentials = true; //so the cookies can be used.
     if (matriculationNr)
         xhr.open("POST", `http://${HOST}:8080/ubuntuInstance/${matriculationNr}`, true);
     else
@@ -14,6 +18,10 @@ function sendRequest(name, matriculationNr) {
 
     xhr.send(name ? JSON.stringify({ name: name }) : null);
     xhr.onload = function () {
+        authButton.disabled = false;
+        anonButton.disabled = false;
+        if (this.status === 508)
+            alert(`${this.responseText}`)
         var data = JSON.parse(this.responseText);
         //localStorage.setItem('portID',data["yourAddress"].split(':').pop());
         window.open(data["yourAddress"]);

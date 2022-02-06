@@ -11,7 +11,7 @@ app.use(cookieParser())
 //From allowing cookies
 //https://stackoverflow.com/questions/9071969/using-express-and-node-how-to-maintain-a-session-across-subdomains-hostheaders/14627464#14627464
 // author : moka
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', req.headers.origin);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -31,6 +31,8 @@ var killTimers = {}
  */
 function getPortNumber(cookie) {
   if (cookie === undefined || isNaN(Number(cookie.split('%')[1]))) {
+    if (StartingPort >= 65530)//infinite loop, possible place for DDOS attack.
+      StartingPort = 49152
     StartingPort += 2;
     return StartingPort - 2;
   }
@@ -47,7 +49,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
    */
   function sendResponse(containerInfo, portNumber, exprMinFromNow) {
     exprSecFromNow = exprMinFromNow * 60000
-    res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { domain: process.env.HOST, path: '/', expires: new Date(Date.now() + exprSecFromNow)});
+    res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { domain: process.env.HOST, path: '/', expires: new Date(Date.now() + exprSecFromNow) });
     res.status(containerInfo['status']).send({
       yourAddress: `http://${process.env.HOST}:${portNumber + 1}`,
     });
@@ -74,7 +76,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
    * @param {String} containerID  Containers ID. null if missing.
    * @param {Number} portNumber Containers port number.
    */
-  function makeConnection(userID, containerID, portNumber) {
+  function makeConnection(userID, containerID, portNumber, recursiveDepth = 0) {
     //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
     //TODO: kusagil kunagi - avab samas aknas.
     const cookieAndContainerExprInMin = 300
@@ -101,7 +103,12 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
       }).catch((containerInfo) => {
         console.log(`Error code: ${containerInfo['status']}`)
         //Here we potentially loose 1 port if user had containerID but the actual container had a different ID.
-        makeConnection(containerInfo['userName'], containerInfo['containerID'], getPortNumber(undefined))
+        if (recursiveDepth > 70) {
+          res.status(508).send(
+            `Proovitud ${recursiveDepth} erineva pordi peal ning kõik olid juba kasutuses! Andke veast teada lehe administraatorile.`);
+        }
+        else
+          makeConnection(containerInfo['userName'], containerInfo['containerID'], getPortNumber(undefined), recursiveDepth + 1)
       });
   }
 
