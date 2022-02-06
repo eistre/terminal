@@ -21,7 +21,7 @@ async function buildImg() {
         t: "autogen_ubuntu_ssh",
         buildargs: {
             usr: 'test',
-            pwd: 'Test1234JaKa5',
+            pwd: 'Test1234',
         }
     })
 

@@ -87,7 +87,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
           portNumber = containerInfo['containerPort']
           routes.makeNewPage(portNumber + 1)
             .then(http => {
-              connectToContainer(host = process.env.HOST, port = portNumber, username = 'test', password = 'Test1234JaKa5', http = http)
+              connectToContainer(host = process.env.HOST, port = portNumber, username = 'test', password = 'Test1234', http = http)
             }).then(() => {
               sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
               updateKillTimers(containerInfo['containerID'], exprMinFromNow = cookieAndContainerExprInMin);
