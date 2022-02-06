@@ -123,14 +123,18 @@ function ensureContainerIsRunning(containerID) {
         docker.getContainer(containerID).inspect((err, data) => {
             if (err)
                 reject(err);
-            console.log(data.Name);
-            if (data.State.Status == 'running')
-                resolve();
-            else {
-                docker.getContainer(containerID).start();
-                resolve();
-                return;
+            if (data) {
+                console.log(data.Name);
+                if (data.State.Status == 'running')
+                    resolve();
+                else {
+                    docker.getContainer(containerID).start();
+                    resolve();
+                    return;
+                }
             }
+            else 
+                reject(`Container with Id ${containerID} was not found!`)
         });
     })
 }
@@ -169,7 +173,7 @@ function makeContainer(userID, containerPort) {
                         });
                         container.inspect((err, data) => {
                             //this is very bad...
-                            resolve({ 'status': 201, 'containerID': data.Id, 'userName': userID, 'containerPort': containerPort }) 
+                            resolve({ 'status': 201, 'containerID': data.Id, 'userName': userID, 'containerPort': containerPort })
                         })
                     });
                 }
