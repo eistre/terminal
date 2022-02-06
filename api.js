@@ -6,11 +6,19 @@ const routes = require('./routes')
 const dockerController = require('./dockerController')
 const Timer = require('./timer.js')
 var cookieParser = require('cookie-parser')
-var cors = require('cors')
-app.use(cors());
-app.options('*', cors());
 
 app.use(cookieParser())
+//From allowing cookies
+//https://stackoverflow.com/questions/9071969/using-express-and-node-how-to-maintain-a-session-across-subdomains-hostheaders/14627464#14627464
+// author : moka
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  next();
+});
+
 app.use(express.json()) //neccesary?
 
 //Global variables
@@ -39,7 +47,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
    */
   function sendResponse(containerInfo, portNumber, exprMinFromNow) {
     exprSecFromNow = exprMinFromNow * 60000
-    res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { expires: new Date(Date.now() + exprSecFromNow), httpOnly: true, sameSite: 'none', secure: true });
+    res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { domain: process.env.HOST, path: '/', expires: new Date(Date.now() + exprSecFromNow)});
     res.status(containerInfo['status']).send({
       yourAddress: `http://${process.env.HOST}:${portNumber + 1}`,
     });
@@ -76,7 +84,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
           console.log(containerInfo['status'] == 201 ? `New container has been created.` : `Using an existing container`)
           portNumber = containerInfo['containerPort']
           routes.makeNewPage(portNumber + 1)
-            .then(http => {//TODO: get the user/password from user.
+            .then(http => {
               connectToContainer(host = process.env.HOST, port = portNumber, username = 'test', password = 'test', http = http)
             }).then(() => {
               sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);

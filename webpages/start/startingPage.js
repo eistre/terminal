@@ -1,10 +1,11 @@
-const HOST = '172.27.16.146'
+const HOST = '172.20.137.204'
 //HTML request script taken from https://stackoverflow.com/questions/45697176/send-simple-http-request-with-html-submit-button
 //      Credit goes to thepi
 // Authentication modification by Joonas.
 //TODO: can the POST action be done inside html using <form action="/ubuntuInstance/Unknown" method="post">
 function sendRequest(name, matriculationNr) {
     var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true; //so  taht cookiees can be used.
     if (matriculationNr)
         xhr.open("POST", `http://${HOST}:8080/ubuntuInstance/${matriculationNr}`, true);
     else
