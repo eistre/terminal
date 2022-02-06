@@ -19,20 +19,24 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
 </head>
 
 <body>
+  <div style="display: flex; justify-content: center; margin-bottom: 6vh; margin-top: 2vh;">
+    <div style="position:relative ;">
+      <img style=" position: absolute; left: 1%; z-index: 1" src="https://comserv.cs.ut.ee/img/TY_est.gif" />
+      <img style="position: relative;" src="https://comserv.cs.ut.ee/img/ty_head_1100.png" />
+    </div>
+  </div>
+  <h2 style="margin: 0 auto ; text-align: center;">Harjutused ja Ubuntu terminal</h2>
   <div id="header" style="display:flex;  margin: 2vh 2vw;">
     <div style="display:flex;">
       <p id="name" style="display:flex;">
         Nimi:
-        <strong style="border: 1px solid; margin-left: 6px;"></strong>
+        <strong style="margin: 0 10px 0 6px;"></strong>
       </p>
       <p id="matriculation" style="display:flex;">
         Matriklinumber:
-        <strong style="border: 1px solid; margin-left: 6px;"></strong>
+        <strong style="margin-left: 6px;"></strong>
       </p>
     </div>
-    <h2 style="margin: 0 auto">Ubuntu 20.04 terminali harjutuskeskkond</h2>
-    <img src="https://cs.ut.ee/sites/default/files/2021-08/arvutiteaduse_instituut_est_white_2021-01.svg"
-      style="filter: brightness(0) saturate(100%) invert(26%) sepia(71%) saturate(846%) hue-rotate(184deg) brightness(95%) contrast(87%); height:5vh; float:right; margin-right: 3vw;" />
   </div>
   <!--TODO: Veebilehe poolel: 
     a) veebileht ilusamaks (ala reacti/vue peale vms)
@@ -42,7 +46,6 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
   -->
   <div style="display: flex;">
     <div id='tasks-container' style="flex: 1 1 0%; margin: 0 20px; width:33%">
-      <p style="margin: 20px 0;">Kiire sissejuhatus asja</p>
       <button class="collapsible">Ülesanne 1</button>
       <div class="content">
         <p id="task1">a)Liigu kausta <code>/etc</code> ning kuva <cod>hosts</cod> faili sisu terminali. (Vihje: kasuta
