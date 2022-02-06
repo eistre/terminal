@@ -24,11 +24,11 @@ function validateLoginCredentials() {
     var name = document.getElementById('nimi').value
     var matric = document.getElementById('matrikkel').value
     if (name && matric) {
-        if (matric.match(new RegExp('^[A-Za-zõüäöÕÜÖÄ][0-9]+$'))) {
+        if (matric.match(new RegExp('^[A-ZÕÜÖÄ][0-9]+$'))) {
             sendRequest(name, matric)
         }
         else
-            alert("Matriklinumber peab koosnema ainult suurest esitähest ja numbritest.")
+            alert("Matriklinumber peab koosnema ainult SUUREST esitähest ja numbritest.")
     }
     else
         alert(`Väljad nimi ja matriklinumber peavad olema täidetud!`)
