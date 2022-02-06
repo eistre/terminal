@@ -76,8 +76,8 @@ window.addEventListener('load', function () {
       markTaskAsDone(10)
     }
     //console.log("ül1 hosts sisu leitud!")
-    if (data.match(/\[Kfail.*:.*naidistekst/))
-      console.log("Leidsite näidisteksti üles!")
+    if (data.match('This system has been minimized by removing packages and content that are[\\s\\S]*not required on a system that users do not log into'))
+      socket.emit('data','N\n')
     if (data.length > 3)//Might be useful
       console.log(data)//[Kfail[m[K[K:[m[K[01;31m[Knaidistekst[m[K
     if (data.startsWith('FromServer '))///home/test/ DELETE,ISDIR muumid
