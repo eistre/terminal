@@ -170,6 +170,7 @@ function connectToContainer(host, port, username, password, http) {
       });
     }).on('close', function () {
       socket.emit('data', '\r\n*** SSH CONNECTION CLOSED ***\r\n');
+      socket.disconnect();
     }).on('error', function (err) {
       socket.emit('data', '\r\n*** SSH CONNECTION ERROR: ' + err.message + ' ***\r\n');
     }).connect({
