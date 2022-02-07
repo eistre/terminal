@@ -72,7 +72,7 @@ window.addEventListener('load', function () {
     if (data.match(new RegExp('DELETE,ISDIR .ajutine'))) {
       markTaskAsDone(9)
     }
-    if (data.match(new RegExp('\\d+.*\\d+:\\d+:\\d+.*inotifywait'))) {
+    if (data.match(new RegExp('\\d+.*\\d+:\\d+.*inotifywait'))) {
       markTaskAsDone(10)
     }
     //console.log("ül1 hosts sisu leitud!")

@@ -56,9 +56,13 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
       </div>
       <button class="collapsible">Ülesanne 3</button>
       <div class="content">
-        <p id="task3">Leia kõik failid, mis asuvad <code>/home</code> kaustas või selle
+        <p id="task3">Leia kõik failid koos suhtelise või absoluutse failiteega, mis asuvad <code>/home</code> kaustas või selle
           alamkaustades ja
-          lõppevad sõnega "peidetud" (jutumärkideta).</p>
+          lõppevad sõnega "peidetud" (jutumärkideta).
+          <div class="tooltip">(Vihje)
+            <span class="tooltiptext">Kasuta käsku <code>find</code></span>
+          </div>
+         </p>
       </div>
       <button class="collapsible">Ülesanne 4</button>
       <div class="content">
@@ -90,9 +94,9 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
           <code>
             https://courses.cs.ut.ee/MTAT.TK.012/2015_fall/uploads/Main/anton_hansen_tammsaare_tode_ja_oigus_i.txt
           </code>.
-          Leidke allatõmmatud failis esinevate sõnade arv.
+          Leidke <strong>ainult</strong> allatõmmatud failis esinevate <strong>sõnade</strong> arv.
         <div class="tooltip">(Vihje)
-          <span class="tooltiptext"> vaja läheb käske <code>wget</code> ja <code>wc</code> </span>
+          <span class="tooltiptext"> vaja läheb käske <code>wget</code> ja <code>wc</code> . Uurige <code>wc</code> lisaparameetreid.</span>
         </div>
         </p>
       </div>
@@ -113,7 +117,8 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
         </p>
       </div>
       <h3 style="margin: 2vh 0 0 1vw;">
-        Korduma kippuvad vead: kui terminali aken läheb "lolliks" käivita <code>cleaar</code> käsk või uuenda akent (F5).
+        Korduma kippuvad vead: kui terminali aken läheb "lolliks" käivita käsk <code>clear</code> või uuenda akent ( <code>F5</code> ).
+        Kui terminaliaknas lõppeb ühendus enneaegselt või ei looda ühendust üldse, uuenda akent (<code>Ctr + R</code> või <code>F5</code> )
       </h3>
     </div>
     <div id="terminal-container" style="flex: auto;"></div>
