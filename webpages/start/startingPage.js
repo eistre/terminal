@@ -1,4 +1,4 @@
-const HOST = '172.20.137.204'
+const HOST = '172.20.139.107'
 //HTML request script taken from https://stackoverflow.com/questions/45697176/send-simple-http-request-with-html-submit-button
 //      Credit goes to thepi
 // Authentication modification by Joonas.
@@ -25,6 +25,14 @@ function sendRequest(name, matriculationNr) {
         var data = JSON.parse(this.responseText);
         //localStorage.setItem('portID',data["yourAddress"].split(':').pop());
         window.open(data["yourAddress"]);
+    }
+    //Log it!
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true; //so the cookies can be used.
+    if (matriculationNr) {
+        xhr.open("PUT", `http://${HOST}:8080/logger`, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({ "matriculation": matriculationNr, "taskNr" : 0 }));
     }
 }
 

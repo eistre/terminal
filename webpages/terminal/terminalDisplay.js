@@ -1,4 +1,4 @@
-const HOST = '172.20.137.204'
+const HOST = '172.20.139.107'
 
 /*
 Boilerplate copied from https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
@@ -112,6 +112,17 @@ for (i = 0; i < coll.length; i++) {
   });
 }
 
+
+function logTask(matriculation ,taskNr){
+  var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true; //so the cookies can be used.
+    if (matriculation) {
+        xhr.open("PUT", `http://${HOST}:8080/logger`, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({ "matriculation": matriculation, "taskNr" : taskNr }));
+    }
+}
+
 function markTaskAsDone(taskNr) {
   taskButton = document.getElementsByClassName("collapsible")[taskNr - 1]
   taskButton.style.background = 'green'
@@ -128,6 +139,10 @@ function markTaskAsDone(taskNr) {
   else{
     doneTasks.push(taskNr)
     window.localStorage.setItem(port, JSON.stringify(doneTasks))
+    const matriculation = document.getElementById('matriculation').getElementsByTagName('strong')[0].innerHTML
+    if (matriculation){
+      logTask(matriculation, taskNr)
+    }
   
     openTask(taskNr+1)
   }

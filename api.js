@@ -5,6 +5,7 @@ const PORT = 8080;
 const routes = require('./routes')
 const dockerController = require('./dockerController')
 const Timer = require('./timer.js')
+const fs = require('fs');
 var cookieParser = require('cookie-parser')
 
 app.use(cookieParser())
@@ -119,6 +120,23 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
   const containerID = isCookieMissing ? null : req.cookies[userID].split('%')[0]
   makeConnection(userID, containerID, portNumber);
 
+})
+
+app.put('/logger', (req, res) => {
+  // HTTP post vastu võtmine ja faili parameetrite 
+  //timestamp, tudengi mateikkel, ülesanne \n 
+  // kirjutamine.
+
+  var matric = req.body.matriculation
+  var taskNr = req.body.taskNr
+
+  fs.writeFile('./taskCompletions.log', `${Date.now()},${matric},${taskNr}\n`, { flag: 'a+' }, function (err) {
+    if (err) {
+      console.log(err)
+      res.status(400).send("Could not save logs!")
+    }
+    res.status(200).send("OK");
+  });
 })
 
 function displayDataOnPage(data, pageUrl) {
