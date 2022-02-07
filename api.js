@@ -79,7 +79,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
   function makeConnection(userID, containerID, portNumber, recursiveDepth = 0) {
     //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
     //TODO: kusagil kunagi - avab samas aknas.
-    const cookieAndContainerExprInMin = 300
+    const cookieAndContainerExprInMin = 1440
     dockerController.handleContainer(userID, containerID, portNumber)
       .then(containerInfo => {
         if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
