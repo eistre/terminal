@@ -38,12 +38,6 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
       </p>
     </div>
   </div>
-  <!--TODO: Veebilehe poolel: 
-    a) veebileht ilusamaks (ala reacti/vue peale vms)
-    b) käskude kirjeldused ja valik drop-down menüüga.
-    c) käskude kirjeldused eraldada ja hoida "andmebaasis"
-    d) käivitada automaatkontroll mis kontrollib tehtud käsu õigsust ka eraldama. -refraktoreering
-  -->
   <div style="display: flex;">
     <div id='tasks-container' style="flex: 1 1 0%; margin: 0 20px; width:33%">
       <button class="collapsible">Ülesanne 1</button>
@@ -53,28 +47,24 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
           <span class="tooltiptext">kasuta käsku <code>cat</code> </span>
         </div>
         </p>
-        <!--cd ja cat-->
       </div>
       <button class="collapsible">Ülesanne 2</button>
       <div class="content">
         <p id="task2">Loo <code>test</code> kasutaja kodukausta alamkaust mille nimes esineb vähemalt üks inglise
           tähestiku väiketäht, number, tühik, võrdlusmärk ja lauselõpumärk.
         </p>
-        <!--cd ja character escape-->
       </div>
       <button class="collapsible">Ülesanne 3</button>
       <div class="content">
         <p id="task3">Leia kõik failid, mis asuvad <code>/home</code> kaustas või selle
           alamkaustades ja
           lõppevad sõnega "peidetud" (jutumärkideta).</p>
-        <!--find /home -name '*peidetud'-->
       </div>
       <button class="collapsible">Ülesanne 4</button>
       <div class="content">
         <p id="task4">Leia fail <code>/home</code> kaustast või alamkaustast mis sisaldab teksti
           <code>parool</code> (Jäta parool meelde, sul läheb seda hiljem vaja!).
         </p>
-        <!--grep-->
       </div>
       <button class="collapsible">Ülesanne 5</button>
       <div class="content">
@@ -85,7 +75,6 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
             punktis </span>
         </div>
         </p>
-        <!--apt install ja whereis-->
       </div>
       <button class="collapsible">Ülesanne 6</button>
       <div class="content">
@@ -94,8 +83,6 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
           kirjutada ja lugeda aga mitte käivitada ja teistele kasutajatele oleks keelatud failile ligipääs.
           Enesekontrolliks ja automaatkontrolli käivitamiseks käivitage käsk <code>ls -la /home/test/andmeturve</code>
           </s></p>
-        <!--faili õigused 660-->
-        <!--nano-->
       </div>
       <button class="collapsible">Ülesanne 7</button>
       <div class="content" style="z-index: 3;">
@@ -108,18 +95,14 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
           <span class="tooltiptext"> vaja läheb käske <code>wget</code> ja <code>wc</code> </span>
         </div>
         </p>
-        <!--wget ja wc-->
       </div>
       <button class="collapsible">Ülesanne 8</button>
       <div class="content">
         <p id="task8">Loo oma eesnimega kasutaja kelle kodukaustaks on <code>/home/[eesnimi]<code>.</p>
-        <!--ls ja head-->
       </div>
       <button class="collapsible">Ülesanne 9</button>
       <div class="content">
         <p id="task9">Kustutage kaust <code>/home/test/.ajutine</code> ja selle sisu.</p>
-        <!--Kontrolli et .ajutine on kustutatud.-->
-        <!--rm-->
       </div>
       <button class="collapsible">Ülesanne 10</button>
       <div class="content">
@@ -128,11 +111,8 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
           <span class="tooltiptext"> uurige käsku <code>ps</code> </span>
         </div>
         </p>
-        <!--ps-->
       </div>
     </div>
-    <!--TODO:Proovi unminimizeta panna man arvutisse. Keela unminimize käsk ära.-->
-    <!--TODO:Dockeritele max performance limitor mälu 512 Mb ja cpu 1 tuum 50% -->
     <div id="terminal-container" style="flex: auto;"></div>
   </div>
 </body>
