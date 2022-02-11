@@ -95,7 +95,9 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
               displayDataOnPage({ userID: userID, userName: name }, `/${portNumber}`)
             })
             .catch((error) => {
-              console.log("Webpage already existed.")
+              if (error.message.includes("address already in use"))
+                console.log("Webpage already existed.")
+              else console.log(error)
               sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
               updateKillTimers(containerID, exprMinFromNow = cookieAndContainerExprInMin);
               displayDataOnPage({ userID: userID, userName: name }, `/${portNumber}`)

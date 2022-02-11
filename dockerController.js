@@ -53,7 +53,6 @@ function runExec(container) {
 
             exec.inspect(function (err, data) {
                 if (err) return;
-                //console.log(data);
             });
         });
     });
@@ -95,22 +94,21 @@ var portInUse = function (port) {
  */
 function getContainerIdAndPortByUser(userID) {
     return new Promise((resolve, reject) => {
-        new Docker().listContainers({ all: true }, (err, containers) => {
-            containers.forEach((containerInfo) => {
-                var isTargetContainer = containerInfo.Names[0] == "/" + userID;
-                if (isTargetContainer) {
-                    if (containerInfo.State != 'running') {
-                        docker.getContainer(containerInfo.Id).start();
-                        console.log(`Restarted container ${containerInfo.Id} on port ${containerInfo.Ports[0].PublicPort}`);
-                    }
-                    resolve([containerInfo.Id, containerInfo.Ports[0].PublicPort]);
-                    return;
+        var docker = new Docker();
+        docker.getContainer(userID).inspect()
+            .then(containerInfo => {
+                if (containerInfo.State.Status != 'running') {
+                    docker.getContainer(userID).start();
+                    console.log(`Restarted container ${containerInfo.Id} on port ${containerInfo.HostConfig.PortBindings["22/tcp"][0].HostPort}`);
                 }
-            });
-            reject(`No contatiner found for user ${userID}`);
-        });
-    })
+                resolve([containerInfo.Id, parseInt(containerInfo.HostConfig.PortBindings["22/tcp"][0].HostPort)]);
+                return;
+            }).catch(err => {
+                reject(`No contatiner found for user ${userID}`);
+            })
+    });
 }
+
 
 /**
  * 
@@ -124,7 +122,7 @@ function ensureContainerIsRunning(containerID) {
             if (err)
                 reject(err);
             if (data) {
-                console.log(data.Name);
+                console.log(`Ensuring that container ${data.Name} is running`);
                 if (data.State.Status == 'running')
                     resolve();
                 else {
@@ -133,7 +131,7 @@ function ensureContainerIsRunning(containerID) {
                     return;
                 }
             }
-            else 
+            else
                 reject(`Container with Id ${containerID} was not found!`)
         });
     })
@@ -152,15 +150,19 @@ function makeContainer(userID, containerPort) {
                 if (inUse)
                     reject(`Port ${containerPort} was alerady used`)
                 else {
-                    console.log("Creating new container")
                     var docker = new Docker({ port: 22 })
                     docker.createContainer({
                         Image: 'autogen_ubuntu_ssh',
                         //Cmd: ['/usr/sbin/init'],//for privileged
                         Tty: true,
                         name: userID === 'anonymous' ? "" : userID,
-                        PortBindings: {
-                            "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
+                        HostConfig: {
+                            Memory: 512000000, // 512 Megabytes
+                            CpuPeriod: 100000, //default value.
+                            CpuQuota: 6250, // equals to maximum of 50% of 1 CPU core when running on 8 cores.
+                            PortBindings: {
+                                "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
+                            },
                         },
                         //Privileged: true,//for privileged
                     }, function (err, container) {
@@ -193,6 +195,7 @@ function handleContainer(userID, containerID, containerPort) {
     return new Promise((resolve, reject) => {
         const isKnownUser = userID != "anonymous" //|| userID === undefined || userID === null
         if (containerID) {
+            console.log("Searching for container via given cookie")
             ensureContainerIsRunning(containerID)
                 .then(() => {
                     console.log(`Container ${containerID} existed before!`)
@@ -203,9 +206,11 @@ function handleContainer(userID, containerID, containerPort) {
                 });
         }
         else if (isKnownUser) {
+            console.log("Searching for container by User ID")
             getContainerIdAndPortByUser(userID).then(idAndPort => {
                 resolve({ 'status': 200, 'containerID': idAndPort[0], 'userName': userID, 'containerPort': idAndPort[1] })
             }).catch(err => {
+                console.log(err)
                 makeContainer(userID, containerPort)
                     .then((data) => {
                         resolve(data)
@@ -216,6 +221,7 @@ function handleContainer(userID, containerID, containerPort) {
             });
         }
         else {
+            console.log("Starting to make the Container")
             makeContainer(userID, containerPort)
                 .then((data) => {
                     resolve(data)
