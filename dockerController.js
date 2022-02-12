@@ -159,7 +159,7 @@ function makeContainer(userID, containerPort) {
                         HostConfig: {
                             Memory: 512000000, // 512 Megabytes
                             CpuPeriod: 100000, //default value.
-                            CpuQuota: 6250, // equals to maximum of 50% of 1 CPU core when running on 8 cores.
+                            CpuQuota: 10000, // equals to maximum of 80% of 1 CPU core when running on 8 cores.
                             PortBindings: {
                                 "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
                             },
