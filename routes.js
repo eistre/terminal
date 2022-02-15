@@ -57,15 +57,13 @@ function createPage(port) {
       limit: '150mb'
     }));
     app.use(express.static(__dirname + '/webpages/terminal/'));
-    app.use('/xterm.css', express.static(require.resolve('xterm/css/xterm.css')));
-    app.use('/xterm.js', express.static(require.resolve('xterm')));
-    app.use('/xterm-addon-fit.js', express.static(require.resolve('xterm-addon-fit')));
-
+    app.use('/xterm.css', express.static(require.resolve('./node_modules/xterm/css/xterm.css')));
+    app.use('/xterm.js', express.static(require.resolve('./node_modules/xterm/lib/xterm.js')));
+    //app.use('/xterm-addon-fit.js', express.static(require.resolve('./node_modules/xterm-addon-fit/lib/xterm-addon-fit.js')));
+    app.use('/xterm-addon-webgl.js', express.static(require.resolve('./node_modules/xterm-addon-webgl/lib/xterm-addon-webgl.js')));
 
     app.get('/', (req, res) => {
       res.sendFile(__dirname + '/webpages/terminal/terminalPage.html');
-      //res.render('terminalPage');
-      // I am using ejs as my templating engine but HTML file work just fine.
     });
 
 

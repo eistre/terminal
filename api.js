@@ -183,7 +183,7 @@ function connectToContainer(host, port, username, password, http) {
           console.log('STDERR: ' + data);
         });
       });
-      conn.shell(function (err, stream) {
+      conn.shell({rows:30, cols:124},function (err, stream) {
         if (err)
           return socket.emit('data', '\r\n*** SSH SHELL ERROR: ' + err.message + ' ***\r\n');
         socket.on('data', function (data) {

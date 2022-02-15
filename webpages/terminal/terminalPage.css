@@ -12,6 +12,7 @@ body {
   font-family: Helvetica, sans-serif, arial;
   font-size: 1em;
   color: #111;
+  margin: 0 2%;
 }
 
 h1 {
@@ -19,20 +20,27 @@ h1 {
 }
 
 #terminal-container {
-  width: 960px;
-  height: 600px;
+  width: auto;
+  height: auto;
   margin: 0 auto;
   padding: 2px;
 }
 
 #terminal-container .terminal {
-  background-color: #111;
+  /* background-color: #111; pretty useless. only disturbs the eye*/
   color: #fafafa;
   padding: 2px;
 }
 
 #terminal-container .terminal:focus .terminal-cursor {
   background-color: #fafafa;
+}
+
+#content > code {
+  flex: 1 1 0%;
+  width: 55vw;
+  max-width: 1070px;
+  margin: 2vh 0;
 }
 
 /*

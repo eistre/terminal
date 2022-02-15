@@ -13,9 +13,10 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
   <link rel="stylesheet" href="/xterm.css" />
   <script defer src="/xterm.js"></script>
   <script defer src="/xterm-addon-fit.js"></script>
+  <script defer src="/xterm-addon-webgl.js"></script>
   <script defer src="/socket.io/socket.io.js"></script>
-  <link rel='stylesheet' href='terminalPage.css'>
   <script defer src='terminalDisplay.js'></script>
+  <link rel='stylesheet' href='terminalPage.css'>
 </head>
 
 <body>
@@ -25,21 +26,22 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
       <img style="position: relative;" src="https://comserv.cs.ut.ee/img/ty_head_1100.png" />
     </div>
   </div>
-  <h2 style="margin: 0 auto ; text-align: center;">Harjutused ja Ubuntu terminal</h2>
-  <div id="header" style="display:flex;  margin: 2vh 2vw;">
-    <div style="display:flex;">
-      <p id="name" style="display:flex;">
-        Nimi:
-        <strong style="margin: 0 10px 0 6px;"></strong>
-      </p>
-      <p id="matriculation" style="display:flex;">
-        Matriklinumber:
-        <strong style="margin-left: 6px;"></strong>
-      </p>
-    </div>
-  </div>
-  <div style="display: flex;">
-    <div id='tasks-container' style="flex: 1 1 0%; margin: 0 20px; width:33%">
+  <h2 style="margin: 2vh auto ; text-align: center;">Harjutused ja Ubuntu terminal</h2>
+  <div style="display: flex; justify-content: center;" id="content">
+    <div id='tasks-container'
+      style="flex: 1 1 0%; margin-right: 20px; padding-top: 2vh ;position: relative ; max-width:33%">
+      <div id="header" style="display:flex;position: absolute; top: 0;">
+        <div style="display:flex;">
+          <p id="name" style="display:flex;">
+            Nimi:
+            <strong style="margin: 0 10px 0 6px;"></strong>
+          </p>
+          <p id="matriculation" style="display:flex;">
+            Matrikkel:
+            <strong style="margin-left: 6px;"></strong>
+          </p>
+        </div>
+      </div>
       <button class="collapsible">Ülesanne 1</button>
       <div class="content">
         <p id="task1">a)Liigu kausta <code>/etc</code> ning kuva <cod>hosts</cod> faili sisu terminali.
@@ -83,7 +85,8 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
       </div>
       <button class="collapsible">Ülesanne 6</button>
       <div class="content">
-        <p id="task6"> Loo kasutaja <code>test</code> kodukausta fail nimega andmeturve ja faili sisuks pane oma nimi.
+        <p id="task6"> Loo kasutaja <code>test</code> kodukausta fail nimega andmeturve ja faili sisuks pane oma nimi
+          (täpitähtede asemel kasuta näiteks numbreid või teisi tähti).
           Muuda faili õigusi nii, et faili omanik (<code>test</code>) ja faili grupp (<code>root</code>) saaks faili
           kirjutada ja lugeda aga mitte käivitada ja teistele kasutajatele oleks keelatud failile ligipääs.
           Enesekontrolliks ja automaatkontrolli käivitamiseks käivitage käsk <code>ls -la /home/test/andmeturve</code>
@@ -120,10 +123,10 @@ Template credit goes to Elliot404. Modified by Joonas Halapuu-->
       </div>
       <span style="margin: 2vh 0 0 1vw;">
         <h3>
-          Korduma kippuvad vead: kui terminali aken läheb "lolliks" käivita käsk <code>clear</code> või uuenda akent (
-          <code>F5</code> ).
+          Korduma kippuvad vead: kui terminali aken läheb "lolliks" käivita käsk <code>clear</code> või uuenda akent
+          (<code>F5</code>).
           Kui terminaliaknas lõppeb ühendus enneaegselt või ei looda ühendust üldse, uuenda akent (<code>Ctr + R</code>
-          või <code>F5</code> )
+          või <code>F5</code>)
         </h3>
         <p style="margin: 2vh 0 0 0">Vigadest teatamiseks ning tagasiside andmiseks palun täitke <a
             href="https://forms.gle/sxXF8phFJHQcdExv7">tagasiside küsitlus</a> (kulub alla 3 minuti)</p>

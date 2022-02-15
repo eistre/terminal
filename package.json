@@ -28,6 +28,7 @@
     "socketio": "^1.0.0",
     "ssh2": "^1.6.0",
     "xterm": "^4.17.0",
-    "xterm-addon-fit": "^0.5.0"
+    "xterm-addon-fit": "^0.5.0",
+    "xterm-addon-webgl": "^0.11.4"
   }
 }
