@@ -217,7 +217,7 @@ function connectToContainer(host, port, username, password, http) {
       socket.emit('data', '\r\n*** SSH CONNECTION ERROR: ' + err.message + ' ***\r\n');
       if (err.message.startsWith('connect ECONNREFUSED')) {
         socket.emit('data', "To fix, reload the page!");
-        connectToContainer(host, port, username, password, http)
+        connectToContainer(host, port, username, password, http) //I think this fixes the slow loading and not connecting at first error
       }
     }).connect({
       host: host,
