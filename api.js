@@ -166,7 +166,9 @@ function connectToContainer(host, port, username, password, http) {
       origin: "*"
     }
   });
-
+  
+  const unminimizeCommand1 = new RegExp('This script restores content and packages that are found on a default')
+  const unminimizeCommand2 = new RegExp('Ubuntu server system in order to make this system more suitable for')
   io.on('connection', function (socket) {
     var conn = new SSHClient();
     conn.on('ready', function () {
@@ -183,14 +185,27 @@ function connectToContainer(host, port, username, password, http) {
           console.log('STDERR: ' + data);
         });
       });
-      conn.shell({rows:30, cols:124},function (err, stream) {
+      conn.shell({ rows: 30, cols: 124 }, function (err, stream) {
+        var userTryingToUnminimize = false;
         if (err)
           return socket.emit('data', '\r\n*** SSH SHELL ERROR: ' + err.message + ' ***\r\n');
         socket.on('data', function (data) {
           stream.write(data);
         });
         stream.on('data', function (d) {
-          socket.emit('data', d.toString('binary'));
+          var data = d.toString('binary'); 
+          if (data.match(unminimizeCommand2) && (userTryingToUnminimize || data.match(unminimizeCommand1))){
+            userTryingToUnminimize = false;
+            stream.write('\nThis command has been disabled.\n')
+            //socket.emit('data', "This command has been disabled. For ");
+          }
+          else if (data.match(unminimizeCommand1)){
+            userTryingToUnminimize = true;            
+          } 
+          else{
+            userTryingToUnminimize = false;
+            socket.emit('data', data);
+          }
         }).on('close', function () {
           conn.end();
         });
@@ -200,6 +215,10 @@ function connectToContainer(host, port, username, password, http) {
       socket.disconnect();
     }).on('error', function (err) {
       socket.emit('data', '\r\n*** SSH CONNECTION ERROR: ' + err.message + ' ***\r\n');
+      if (err.message.startsWith('connect ECONNREFUSED')) {
+        socket.emit('data', "To fix, reload the page!");
+        connectToContainer(host, port, username, password, http)
+      }
     }).connect({
       host: host,
       port: port,
