@@ -1,4 +1,4 @@
-const HOST = '172.18.57.217'
+const HOST = '172.18.55.145'
 
 
 /*
@@ -44,13 +44,13 @@ window.addEventListener('load', function () {
   const webgl = new window.WebglAddon.WebglAddon();
 
   const socket = io() //.connect();
-//  term.loadAddon(fitAddon);
+  //  term.loadAddon(fitAddon);
   term.open(document.getElementById('terminal-container'));
   term.loadAddon(webgl);
   term.onResize(function (evt) {
     socket.send({ cols: evt.cols });
   });
-//  fitAddon.fit()
+  //  fitAddon.fit()
 
   document.querySelector('.xterm').addEventListener('wheel', e => {
     if (term.buffer.active.baseY > 0) {
@@ -85,11 +85,13 @@ window.addEventListener('load', function () {
       else task3Progress[0] = true
     }
     if (data.match(new RegExp('\\.veel1Failon2ra_peidetud'))) {
-      if (task3Progress[0]) {
+      if (task3Progress[0] && ! data.match(new RegExp('\\.sedaEiPeaksKuvamaMeidetud'))) {
         markTaskAsDone(3)
       }
       else task3Progress[1] = true
     }
+    if (data.match(new RegExp('\\.sedaEiPeaksKuvamaMeidetud')))
+      task3Progress = [false, false]
     if (data.match(new RegExp('Admin[\\s\\S]+parool[\\s\\S]+on Test1234'))) { //Selle peaks panema kuhugi süsteemifailide sügavusse. Siis vähem obvious. Nt etc kausta või kuhugi mujale lampi kohta. Kust ikkagi pääseb ilma sudota lugema või greppima vms. Tegelt päris hea mõte. Panna see kausta, mida ei saa lugeda.
       markTaskAsDone(4)//Boonus ülesanne -> kirjuta rida lõppu mis paljastab et ohoo tegelikult kaustas mis on ainult 
     }
@@ -116,7 +118,7 @@ window.addEventListener('load', function () {
     if (data.match(new RegExp('\\d+.*\\d+:\\d+.*inotifywait'))) {
       markTaskAsDone(10)
     }
-    
+
     //For live debugging
     if (data.length > 3)//Not user typing
       console.log(data)
