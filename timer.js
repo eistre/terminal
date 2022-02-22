@@ -2,20 +2,14 @@
 //author: jfriend00
 //added function newTime.
 module.exports = class Timer {
-    constructor(t, fn) {
-        this.fn = fn;
-        this.time = Date.now() + t;
-        this.updateTimer();
-    }
-
-    addTime(t) {
-        this.time += t;
+    constructor(millis, functionToExecute) {
+        this.fn = functionToExecute;
+        this.time = Date.now() + millis;
         this.updateTimer();
     }
 
     /**
-     * Sets timer to t milliseconds from now.
-     * @param {Number} t milliseconds from which the function will execute.
+     * Resets timer to t milliSeconds from now.
      */
     newTime(t) {
         this.time = Date.now() + t;
@@ -41,7 +35,7 @@ module.exports = class Timer {
         }
     }
 }
-/**Tests
+/**Manual Tests 
  * 
  var killTimers = {}
  var timerz = new Timer(3000, ()=>{console.log("DoneZ!")})

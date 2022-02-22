@@ -1,19 +1,9 @@
-require('dotenv').config();
 var net = require('net');
 var Docker = require('dockerode');
-const fs = require('fs');
-
-var docker = new Docker({
-    // host: "http://127.0.0.14",
-    port: 22,
-    //ca: fs.readFileSync('ca.pem'),
-    //cert: fs.readFileSync('cert.pem'),
-    //key: fs.readFileSync('key.pem')
-});
 
 //Build an image and wait for it to finish.
-async function buildImg() {
-
+async function buildDockerImg() {
+    var docker = new Docker({ port: 22 });
     let stream = await docker.buildImage({
         context: __dirname,
         src: ['Dockerfile']
@@ -29,17 +19,10 @@ async function buildImg() {
         docker.modem.followProgress(stream, (err, res) => err ? reject(err) : resolve(res));
     })
 }
-buildImg().then(data => {
-    console.log("Ubuntu 20.04 has been built!")
-}).catch(err => {
-    console.log("Error!")
-    console.log(err)
-});
 
-// Build has finished
-function runExec(container) {
+function runExec(container, command) {
     var options = {
-        Cmd: ['bash', '-c', 'service ssh start'],
+        Cmd: ['bash', '-c', command],
         AttachStdout: true,
         AttachStderr: true
     };
@@ -61,12 +44,12 @@ function runExec(container) {
 
 /**
  * Checks if the port is used or not.
- * @param {Number} port port to be checked.
- * @returns a proomise with boolean response.
+ * @param {Number} port
+ * @returns a promise with boolean response.
  * Code from https://stackoverflow.com/questions/29860354/in-nodejs-how-do-i-check-if-a-port-is-listening-or-in-use
  * Author :R. Bernstein (rocky)
  */
-var portInUse = function (port) {
+var portInUse = function (host, port) {
     return new Promise((response, reject) => {
 
         var server = net.createServer(function (socket) {
@@ -74,7 +57,7 @@ var portInUse = function (port) {
             socket.pipe(socket);
         });
 
-        server.listen(port, process.env.HOST);
+        server.listen(port, host);
         server.on('error', function (e) {
             response(true);
             return true;
@@ -88,9 +71,8 @@ var portInUse = function (port) {
 };
 
 /**
- * Finds container ID when container name is given.
- * @param {String} userID name of the user what must match the containers name. Unique.
- * @returns Promise which resolves to containerID. Else rejected with error message.
+ * @param {String} userID
+ * @returns Promise with containerInfo in array or error message.
  */
 function getContainerIdAndPortByUser(userID) {
     return new Promise((resolve, reject) => {
@@ -103,7 +85,7 @@ function getContainerIdAndPortByUser(userID) {
                 }
                 resolve([containerInfo.Id, parseInt(containerInfo.HostConfig.PortBindings["22/tcp"][0].HostPort)]);
                 return;
-            }).catch(err => {
+            }).catch(err => { //if the error message is correct.
                 reject(`No contatiner found for user ${userID}`);
             })
     });
@@ -111,9 +93,7 @@ function getContainerIdAndPortByUser(userID) {
 
 
 /**
- * 
  * @param {String} containerID 
- * @returns Promise that rejects if container is not found, else resolves at nothing.
  */
 function ensureContainerIsRunning(containerID) {
     return new Promise((resolve, reject) => {
@@ -138,22 +118,22 @@ function ensureContainerIsRunning(containerID) {
 }
 
 /**
- * Makes a Ubuntu 20.04 container with given name and open port if the port is free.
+ * Makes a Ubuntu 20.04 container with given name and port if it's free.
  * @param {String} userID Name of the container to be created. In case of 'anonymous' the default name is set.
- * @param {Number} containerPort Port to which the Ubuntu is open to.
- * @returns A promise with the created ContainerID and UserID. Rejects if port was already used or docker has some internal troubles.
+ * @param {String} containerHost
+ * @param {Number} containerPort
+ * @returns A promise with created container ID. Rejects if port was already used or docker has some internal error.
  */
-function makeContainer(userID, containerPort) {
+function makeContainer(userID, containerHost, containerPort) {
     return new Promise((resolve, reject) => {
-        portInUse(containerPort)
-            .then((inUse) => {
-                if (inUse)
+        portInUse(containerHost, containerPort)
+            .then((isInUse) => {
+                if (isInUse)
                     reject(`Port ${containerPort} was alerady used`)
                 else {
                     var docker = new Docker({ port: 22 })
                     docker.createContainer({
                         Image: 'autogen_ubuntu_ssh',
-                        //Cmd: ['/usr/sbin/init'],//for privileged
                         Tty: true,
                         name: userID === 'anonymous' ? "" : userID,
                         HostConfig: {
@@ -161,21 +141,20 @@ function makeContainer(userID, containerPort) {
                             CpuPeriod: 100000, //default value.
                             CpuQuota: 10000, // equals to maximum of 80% of 1 CPU core when running on 8 cores.
                             PortBindings: {
-                                "22/tcp": [{ HostPort: containerPort.toString() }]//Binding the internal ssh to outside port.
+                                "22/tcp": [{ HostPort: containerPort.toString() }]
                             },
                         },
-                        //Privileged: true,//for privileged
                     }, function (err, container) {
                         container.start({}, function (err, data) {
                             if (err) {
                                 reject(err)
                                 return ""
                             }
-                            runExec(container);
+                            runExec(container, 'service ssh start');
                         });
                         container.inspect((err, data) => {
-                            //this is very bad...
-                            resolve({ 'status': 201, 'containerID': data.Id, 'userName': userID, 'containerPort': containerPort })
+                            if (err) reject(err)
+                            resolve(data.Id)
                         })
                     });
                 }
@@ -188,32 +167,31 @@ function makeContainer(userID, containerPort) {
  * Ensures that the container is running and if it does not exist, creates the container.
  * @param {String} userID  
  * @param {String} containerID 
+ * @param {String} containerHost
  * @param {Number} containerPort 
  * @returns Promise with dictonary containing status (function result), containerID and userName
  */
-function handleContainer(userID, containerID, containerPort) {
+function handleContainer(userID, containerID, containerHost, containerPort) {
     return new Promise((resolve, reject) => {
         const isKnownUser = userID != "anonymous" //|| userID === undefined || userID === null
         if (containerID) {
             console.log("Searching for container via given cookie")
             ensureContainerIsRunning(containerID)
                 .then(() => {
-                    console.log(`Container ${containerID} existed before!`)
                     resolve({ 'status': 200, 'containerID': containerID, 'userName': userID, 'containerPort': containerPort })
                 }).catch(err => {
-                    console.log(err)
+                    console.log(err) //The container did not exist.
                     reject({ 'status': 404, 'containerID': null, 'userName': userID, 'containerPort': containerPort })
                 });
         }
         else if (isKnownUser) {
-            console.log("Searching for container by User ID")
             getContainerIdAndPortByUser(userID).then(idAndPort => {
                 resolve({ 'status': 200, 'containerID': idAndPort[0], 'userName': userID, 'containerPort': idAndPort[1] })
             }).catch(err => {
                 console.log(err)
-                makeContainer(userID, containerPort)
-                    .then((data) => {
-                        resolve(data)
+                makeContainer(userID, containerHost, containerPort)
+                    .then((containerId) => {
+                        resolve({ 'status': 201, 'containerID': containerId, 'userName': userID, 'containerPort': containerPort })
                     }).catch((err) => {
                         console.log(err)
                         reject({ 'status': 403, 'containerID': null, 'userName': userID, 'containerPort': containerPort })
@@ -222,9 +200,9 @@ function handleContainer(userID, containerID, containerPort) {
         }
         else {
             console.log("Starting to make the Container")
-            makeContainer(userID, containerPort)
-                .then((data) => {
-                    resolve(data)
+            makeContainer(userID, containerHost, containerPort)
+                .then((containerId) => {
+                    resolve({ 'status': 201, 'containerID': containerId, 'userName': userID, 'containerPort': containerPort })
                 }).catch((err) => {
                     console.log(err)
                     reject({ 'status': 403, 'containerID': null, 'userName': userID, 'containerPort': containerPort })
@@ -233,8 +211,7 @@ function handleContainer(userID, containerID, containerPort) {
     });
 }
 /**
- * Stops the container with given ID and removes it.
- * @param {String} containerID ID of the container to be removed.
+ * @param {String} containerID
  */
 function killContainerById(containerID) {
     var container = new Docker().getContainer(containerID)
@@ -248,6 +225,6 @@ function killContainerById(containerID) {
         });
 }
 
-exports.handleContainer = handleContainer;
-exports.portInUse = portInUse;
+exports.getContainer = handleContainer;
 exports.killContainerById = killContainerById;
+exports.buildDockerImg = buildDockerImg;

@@ -5,6 +5,7 @@ const PORT = 8080;
 const routes = require('./routes')
 const dockerController = require('./dockerController')
 const Timer = require('./timer.js')
+const sshConnection = require('./sshConnection')
 const fs = require('fs');
 var cookieParser = require('cookie-parser')
 
@@ -19,8 +20,17 @@ app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
   next();
 });
+app.use(express.json()) //very neccesary!
 
-app.use(express.json()) //neccesary?
+//Start the webpage thingy
+routes.makeNewPage(process.env.HOST, 80);
+//Start the docker thingy
+dockerController.buildDockerImg().then(data => {
+  console.log("Ubuntu 20.04 has been built!")
+}).catch(err => {
+  console.log("Error!")
+  console.log(err)
+});
 
 //Global variables
 var StartingPort = 49152
@@ -28,7 +38,7 @@ var killTimers = {}
 
 /**
  * @param {String} cookie 
- * @returns Second part of the string(cookie) split at % sign.
+ * @returns Second part of the string (cookie) split at % sign.
  */
 function getPortNumber(cookie) {
   if (cookie === undefined || isNaN(Number(cookie.split('%')[1]))) {
@@ -58,10 +68,10 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
 
   /**
    * Creates a new kill timer if one doesn't already exist but extends if it already exists.
-   * @param {String} containerID ID of the container to be removed
-   * @param {Number} exprMinFromNow Nr of minutes from now after which the container will be removed.
+   * @param {String} containerID
+   * @param {Number} exprMinFromNow
    */
-  function updateKillTimers(containerID, exprMinFromNow) {
+  function upsertKillTimer(containerID, exprMinFromNow) {
     //TODO: When web session is closed, stopp the container but do not kill. 
     //TODO: While session is open stop the timer.
     if (killTimers[containerID])
@@ -72,35 +82,31 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
   }
 
   /**
-   * Main function. Start all the other functions.
    * @param {String} userID User's ID. If not authenticated then anonymous.
    * @param {String} containerID  Containers ID. null if missing.
    * @param {Number} portNumber Containers port number.
    */
   function makeConnection(userID, containerID, portNumber, recursiveDepth = 0) {
-    //TODO: kontrollida et tüüp oleks õige ja viga visata muidu.'
-    //TODO: kusagil kunagi - avab samas aknas.
     const cookieAndContainerExprInMin = 1440
-    dockerController.handleContainer(userID, containerID, portNumber)
+    dockerController.getContainer(userID, containerID, portHost = process.env.HOST, portNumber)
       .then(containerInfo => {
         if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
           console.log(containerInfo['status'] == 201 ? `New container has been created.` : `Using an existing container`)
           portNumber = containerInfo['containerPort']
-          routes.makeNewPage(portNumber + 1)
+          routes.makeNewPage(process.env.HOST, portNumber + 1)
             .then(http => {
-              connectToContainer(host = process.env.HOST, port = portNumber, username = 'test', password = 'Test1234', http = http)
+              sshConnection.startWebSocketConnection(host = process.env.HOST, port = portNumber, username = 'test', password = 'Test1234', http = http)
             }).then(() => {
               sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
-              updateKillTimers(containerInfo['containerID'], exprMinFromNow = cookieAndContainerExprInMin);
-              displayDataOnPage({ userID: userID, userName: name }, `/${portNumber}`)
-            })
-            .catch((error) => {
+              upsertKillTimer(containerInfo['containerID'], exprMinFromNow = cookieAndContainerExprInMin);
+              linkUserInfo({ userID: userID, userName: name }, `/${portNumber}`)
+            }).catch((error) => {
               if (error.message.includes("address already in use"))
                 console.log("Webpage already existed.")
               else console.log(error)
               sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
-              updateKillTimers(containerID, exprMinFromNow = cookieAndContainerExprInMin);
-              displayDataOnPage({ userID: userID, userName: name }, `/${portNumber}`)
+              upsertKillTimer(containerID, exprMinFromNow = cookieAndContainerExprInMin);
+              linkUserInfo({ userID: userID, userName: name }, `/${portNumber}`)
             })
         }
       }).catch((containerInfo) => {
@@ -108,7 +114,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
         //Here we potentially loose 1 port if user had containerID but the actual container had a different ID.
         if (recursiveDepth > 70) {
           res.status(508).send(
-            `Proovitud ${recursiveDepth} erineva pordi peal ning kõik olid juba kasutuses! Andke veast teada lehe administraatorile.`);
+            `Proovitud ${recursiveDepth} erineva pordi peal ning kõik olid juba kasutuses! Andke veast teada lehe haldajale.`);
         }
         else
           makeConnection(containerInfo['userName'], containerInfo['containerID'], getPortNumber(undefined), recursiveDepth + 1)
@@ -125,10 +131,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
 })
 
 app.put('/logger', (req, res) => {
-  // HTTP post vastu võtmine ja faili parameetrite 
-  //timestamp, tudengi mateikkel, ülesanne \n 
-  // kirjutamine.
-
+  //Logs all authorized users tasks with timestamps to file.
   var matric = req.body.matriculation
   var taskNr = req.body.taskNr
 
@@ -141,89 +144,12 @@ app.put('/logger', (req, res) => {
   });
 })
 
-function displayDataOnPage(data, pageUrl) {
+function linkUserInfo(data, pageUrl) {
   app.get(pageUrl, (req, res) => {
     res.json(data['userID'] === 'anonymous' ? { userID: 'anonymous' } : data)
   })
 }
 
-app.listen(
-  PORT,
-  //process.env.HOST,
+app.listen(PORT, process.env.HOST,
   () => console.log(`API is live on http://${process.env.HOST}:${PORT}`)
 )
-
-
-
-//Still bad practice. is here now for convenience. TODO: cleanup later.
-//copy-pasted from: https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
-//Credit goes to Elliot404
-//SSH connection.
-function connectToContainer(host, port, username, password, http) {
-  const SSHClient = require('ssh2').Client;
-  const io = require('socket.io')(http, {
-    cors: {
-      origin: "*"
-    }
-  });
-  
-  const unminimizeCommand1 = new RegExp('This script restores content and packages that are found on a default')
-  const unminimizeCommand2 = new RegExp('Ubuntu server system in order to make this system more suitable for')
-  io.on('connection', function (socket) {
-    var conn = new SSHClient();
-    conn.on('ready', function () {
-      socket.emit('data', '\r\n*** SSH CONNECTION ESTABLISHED ***\r\n');
-      //Start file watch system to check for changes in /home/test/ directory.
-      //conn.exec('inotifywait -rm /home/test/', (err, stream) => {  inotifywait -rm /home/test/
-      conn.exec(`inotifywait /home /home/test/ -m`, (err, stream) => { //weakspot.
-        if (err) console.log(err);
-        stream.on('close', (code, signal) => {
-          console.log("inotify instance closed.")
-        }).on('data', (data) => {
-          socket.emit('data', 'FromServer ' + data)
-        }).stderr.on('data', (data) => {
-          console.log('STDERR: ' + data);
-        });
-      });
-      conn.shell({ rows: 30, cols: 124 }, function (err, stream) {
-        var userTryingToUnminimize = false;
-        if (err)
-          return socket.emit('data', '\r\n*** SSH SHELL ERROR: ' + err.message + ' ***\r\n');
-        socket.on('data', function (data) {
-          stream.write(data);
-        });
-        stream.on('data', function (d) {
-          var data = d.toString('binary'); 
-          if (data.match(unminimizeCommand2) && (userTryingToUnminimize || data.match(unminimizeCommand1))){
-            userTryingToUnminimize = false;
-            stream.write('\nThis command has been disabled.\n')
-            //socket.emit('data', "This command has been disabled. For ");
-          }
-          else if (data.match(unminimizeCommand1)){
-            userTryingToUnminimize = true;            
-          } 
-          else{
-            userTryingToUnminimize = false;
-            socket.emit('data', data);
-          }
-        }).on('close', function () {
-          conn.end();
-        });
-      });
-    }).on('close', function () {
-      socket.emit('data', '\r\n*** SSH CONNECTION CLOSED ***\r\n');
-      socket.disconnect();
-    }).on('error', function (err) {
-      socket.emit('data', '\r\n*** SSH CONNECTION ERROR: ' + err.message + ' ***\r\n');
-      if (err.message.startsWith('connect ECONNREFUSED')) {
-        socket.emit('data', "To fix, reload the page!");
-        connectToContainer(host, port, username, password, http) //I think this fixes the slow loading and not connecting at first error
-      }
-    }).connect({
-      host: host,
-      port: port,
-      username: username,
-      password: password,
-    });
-  });
-}
