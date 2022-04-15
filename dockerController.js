@@ -131,32 +131,41 @@ function makeContainer(userID, containerHost, containerPort) {
                 if (isInUse)
                     reject(`Port ${containerPort} was alerady used`)
                 else {
-                    var docker = new Docker({ port: 22 })
-                    docker.createContainer({
-                        Image: 'autogen_ubuntu_ssh',
-                        Tty: true,
-                        name: userID === 'anonymous' ? "" : userID,
-                        HostConfig: {
-                            Memory: 512000000, // 512 Megabytes
-                            CpuPeriod: 100000, //default value.
-                            CpuQuota: 10000, // equals to maximum of 80% of 1 CPU core when running on 8 cores.
-                            PortBindings: {
-                                "22/tcp": [{ HostPort: containerPort.toString() }]
-                            },
-                        },
-                    }, function (err, container) {
-                        container.start({}, function (err, data) {
-                            if (err) {
-                                reject(err)
-                                return ""
+                    //Funky hack to ensure webpage is also not used
+                    portInUse(containerHost, containerPort + 1)
+                        .then((isInUse) => {
+                            if (isInUse)
+                                reject(`Port ${containerPort} was alerady used`)
+                            else {
+                    //please remove the upper part with a proper fix.
+                                var docker = new Docker({ port: 22 })
+                                docker.createContainer({
+                                    Image: 'autogen_ubuntu_ssh',
+                                    Tty: true,
+                                    name: userID === 'anonymous' ? "" : userID,
+                                    HostConfig: {
+                                        Memory: 512000000, // 512 Megabytes
+                                        CpuPeriod: 100000, //default value.
+                                        CpuQuota: 10000, // equals to maximum of 80% of 1 CPU core when running on 8 cores.
+                                        PortBindings: {
+                                            "22/tcp": [{ HostPort: containerPort.toString() }]
+                                        },
+                                    },
+                                }, function (err, container) {
+                                    container.start({}, function (err, data) {
+                                        if (err) {
+                                            reject(err)
+                                            return ""
+                                        }
+                                        runExec(container, 'service ssh start');
+                                    });
+                                    container.inspect((err, data) => {
+                                        if (err) reject(err)
+                                        resolve(data.Id)
+                                    })
+                                });
                             }
-                            runExec(container, 'service ssh start');
-                        });
-                        container.inspect((err, data) => {
-                            if (err) reject(err)
-                            resolve(data.Id)
                         })
-                    });
                 }
             })
     });
