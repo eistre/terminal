@@ -17,6 +17,13 @@ RUN mkdir /home/test/.ajutine && echo "peidetud faili sisu Prakitkum1 veebruar 2
 
 RUN service ssh start
 #Opens port nr 22 which is used for SSH connections.
+
 EXPOSE 22
+
+RUN yes | unminimize
+
+RUN apt update && apt install less
+
+RUN apt update && yes | apt install man-db
 
 CMD ["/usr/sbin/sshd","-D"]
