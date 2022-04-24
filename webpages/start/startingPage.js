@@ -1,4 +1,4 @@
-const HOST = '172.20.139.107'
+const HOST = '172.27.250.215'
 //HTML request script taken from https://stackoverflow.com/questions/45697176/send-simple-http-request-with-html-submit-button
 //      Credit goes to thepi
 // Authentication modification by Joonas.
