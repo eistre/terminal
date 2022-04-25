@@ -1,0 +1,48 @@
+/* color palette from <https://github.com/vuejs/theme> */
+p {
+  font-size:large;
+  text-align: justify;
+  text-justify: inter-word;
+  margin-bottom: 1.5em;
+  line-height: 1.5;
+}
+
+button {
+  font-size:x-large;
+  margin: 0.5em;
+}
+
+input {
+  margin: 1em 1em 0 0 ;
+}
+
+.main {
+  width:50%; height: 80%; margin: 0 auto; padding: 3vh 3em;
+}
+
+.loginInput {
+  margin: auto;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-background);
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  font-family: Questrial, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
