@@ -6,4 +6,10 @@ const app = createApp(App)
 
 app.use(router)
 
+const routes = [
+    {
+        
+    }
+]
+
 app.mount('#app')

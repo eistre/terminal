@@ -1,14 +1,18 @@
 //template from: https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 //Credit goes to Elliot404
 //Modifications made by Joonas Halapuu
-function startWebSocketConnection(host, port, username, password, http) {
+function startWebSocketConnection(host, port, username, password) {
   const SSHClient = require('ssh2').Client;
-  const io = require('socket.io')(http, {
+  const express = require('express')
+  const app = express()
+  const http = require('http').createServer(app);
+  const { Server } = require('socket.io');
+  const io = new Server(http, {
     cors: {
-      origin: "*"
+      origin: "*",
+      methods: ['GET', 'POST', 'PUT']
     }
   });
-
   io.on('connection', function (socket) {
     var conn = new SSHClient();
     conn.on('ready', function () {
@@ -22,7 +26,7 @@ function startWebSocketConnection(host, port, username, password, http) {
       socket.emit('data', '\r\n*** SSH CONNECTION ERROR: ' + err.message + ' ***\r\n');
       if (err.message.startsWith('connect ECONNREFUSED')) {
         socket.emit('data', "To fix, reload the page!");
-        startWebSocketConnection(host, port, username, password, http); //I think this fixes the slow loading and not connecting at first error
+        startWebSocketConnection(host, port, username, password); //I think this fixes the slow loading and not connecting at first error
       }
     }).connect({
       host: host,
@@ -30,6 +34,10 @@ function startWebSocketConnection(host, port, username, password, http) {
       username: username,
       password: password,
     });
+  });
+
+  http.listen(5000, () => {
+    console.log(`Websocket is ready on ${HOST}:5000`)
   });
 
   function startShellSession(conn, socket) {

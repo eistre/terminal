@@ -59,6 +59,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
    * @param {Number} exprMinFromNow  Minutes from now after which the cookie will expire
    */
   function sendResponse(containerInfo, portNumber, exprMinFromNow) {
+    console.log(`Sending response: ${containerInfo['ContainerID']},${containerInfo['userName']},${containerInfo['status']}, ${portNumber}`)
     exprSecFromNow = exprMinFromNow * 60000
     res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { domain: process.env.HOST, path: '/', expires: new Date(Date.now() + exprSecFromNow) });
     res.status(containerInfo['status']).send({
@@ -93,26 +94,15 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
         if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
           console.log(containerInfo['status'] == 201 ? `New container has been created.` : `Using an existing container`)
           portNumber = containerInfo['containerPort']
-          routes.makeNewPage(process.env.HOST, portNumber + 1)
-            .then(http => {
-              sshConnection.startWebSocketConnection(host = process.env.HOST, port = portNumber, username = 'test', password = 'Test1234', http = http)
-            }).then(() => {
-              sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
-              upsertKillTimer(containerInfo['containerID'], exprMinFromNow = cookieAndContainerExprInMin);
-              linkUserInfo({ userID: userID, userName: name }, `/${portNumber}`)
-            }).catch((error) => {
-              if (error.message.includes("address already in use"))
-                console.log("Webpage already existed.")
-              else console.log(error)
-              sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
-              upsertKillTimer(containerID, exprMinFromNow = cookieAndContainerExprInMin);
-              linkUserInfo({ userID: userID, userName: name }, `/${portNumber}`)
-            })
+          sshConnection.startWebSocketConnection(host = process.env.HOST, port = portNumber, username = 'test', password = 'Test1234')
+          sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
+          upsertKillTimer(containerInfo['containerID'], exprMinFromNow = cookieAndContainerExprInMin);
+          linkUserInfo({ userID: userID, userName: name }, `/${portNumber}`)
         }
       }).catch((containerInfo) => {
-        console.log(`Error code: ${containerInfo['status']}`)
+        console.log(`Error code: ${containerInfo['status']}  \n ${containerInfo}`)
         //Here we potentially loose 1 port if user had containerID but the actual container had a different ID.
-        if (recursiveDepth > 70) {
+        if (recursiveDepth > 0) {
           res.status(508).send(
             `Proovitud ${recursiveDepth} erineva pordi peal ning kõik olid juba kasutuses! Andke veast teada lehe haldajale.`);
         }
