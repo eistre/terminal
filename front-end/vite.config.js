@@ -13,8 +13,9 @@ export default defineConfig({
   },
   //Because on WSL2. Otherwise the hmr doens't work.
   server: {
+    host:"172.21.154.161",
     watch: {
       usePolling: true,
     }
-  }
+  },
 })
