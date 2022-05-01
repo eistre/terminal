@@ -1,5 +1,5 @@
 <script>
-const HOST = "172.25.181.199";
+const HOST = "172.21.154.161";
 export default {
   name: "WelcomePageScripts",
   props: {
@@ -47,12 +47,11 @@ export default {
     },
 
     validateLoginCredentials: function () {
-      console.log("hello!");
       var name = document.getElementById("nimi").value;
       var matric = document.getElementById("matrikkel").value;
       if (name && matric) {
         if (matric.match(new RegExp("^[A-ZÕÜÖÄ][0-9]+$"))) {
-          sendRequest(name, matric);
+          this.sendRequest(name, matric);
         } else
           alert(
             "Matriklinumber peab koosnema ainult SUUREST esitähest ja numbritest."
