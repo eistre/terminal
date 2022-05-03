@@ -10,11 +10,10 @@ To start the project run the following commands in this directory:
 
     0. make sure that docker is up.
 
+    1. change variables HOST in .env, ./webpages/start/startingPage.js and in ./webpages/terminal/terminalDisplay.js to your public IP address
 
-    1. npm install
+    2. npm install
     
-    
-    2. node api.js
-    
-    
-    3. Open browser with web security disabled (in Windows & Chrome for example Win+R and type *chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security*)
+    3. node api.js
+
+    4. Open browser in http://{your IP address} or localhost (the correct address will be written to console as well)
