@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express')
 const app = express()
 const PORT = 8080;
-const routes = require('./routes')
 const dockerController = require('./dockerController')
 const Timer = require('./timer.js')
 const sshConnection = require('./sshConnection')
@@ -22,8 +21,6 @@ app.use(function (req, res, next) {
 });
 app.use(express.json()) //very neccesary!
 
-//Start the webpage thingy
-routes.makeNewPage(process.env.HOST, 80);
 //Start the docker thingy
 dockerController.buildDockerImg().then(data => {
   console.log("Ubuntu 20.04 has been built!")
@@ -44,8 +41,7 @@ function getPortNumber(cookie) {
   if (cookie === undefined || isNaN(Number(cookie.split('%')[1]))) {
     if (StartingPort >= 65530)//infinite loop, possible place for DDOS attack.
       StartingPort = 49152
-    StartingPort += 2;
-    return StartingPort - 2;
+    return StartingPort++;
   }
   return Number(cookie.split('%')[1])
 }
@@ -57,13 +53,14 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
    * @param {dict} containerInfo Information about the container (ContainerID, userName, status)
    * @param {Number} portNumber Port of the Ubuntu container.
    * @param {Number} exprMinFromNow  Minutes from now after which the cookie will expire
+   * @param socketKey Socket.io unique ID of the socket connection. For only one connection per page.
    */
   function sendResponse(containerInfo, portNumber, exprMinFromNow) {
-    console.log(`Sending response: ${containerInfo['ContainerID']},${containerInfo['userName']},${containerInfo['status']}, ${portNumber}`)
-    exprSecFromNow = exprMinFromNow * 60000
+    console.log(`Sending response: ${containerInfo['userName']},${containerInfo['status']}, ${portNumber}`)
+    exprSecFromNow = exprMinFromNow *  60000
     res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { domain: process.env.HOST, path: '/', expires: new Date(Date.now() + exprSecFromNow) });
     res.status(containerInfo['status']).send({
-      yourAddress: `http://${process.env.HOST}:${portNumber + 1}`,
+      port: portNumber
     });
   }
 
@@ -94,7 +91,6 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
         if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
           console.log(containerInfo['status'] == 201 ? `New container has been created.` : `Using an existing container`)
           portNumber = containerInfo['containerPort']
-          sshConnection.startWebSocketConnection(host = process.env.HOST, port = portNumber, username = 'test', password = 'Test1234')
           sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
           upsertKillTimer(containerInfo['containerID'], exprMinFromNow = cookieAndContainerExprInMin);
           linkUserInfo({ userID: userID, userName: name }, `/${portNumber}`)
@@ -102,7 +98,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
       }).catch((containerInfo) => {
         console.log(`Error code: ${containerInfo['status']}  \n ${containerInfo}`)
         //Here we potentially loose 1 port if user had containerID but the actual container had a different ID.
-        if (recursiveDepth > 0) {
+        if (recursiveDepth > 70) {
           res.status(508).send(
             `Proovitud ${recursiveDepth} erineva pordi peal ning kõik olid juba kasutuses! Andke veast teada lehe haldajale.`);
         }
