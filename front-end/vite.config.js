@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+require('dotenv').config();
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,7 +14,8 @@ export default defineConfig({
   },
   //Because on WSL2. Otherwise the hmr doens't work.
   server: {
-    host:"172.21.154.161",
+    host: process.env.VITE_HOST,
+    port: 80,
     watch: {
       usePolling: true,
     }

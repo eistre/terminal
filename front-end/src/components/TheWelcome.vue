@@ -1,9 +1,13 @@
 <script>
-const HOST = "172.21.154.161";
 export default {
   name: "WelcomePageScripts",
   props: {
     post: Object,
+  },
+  data() {
+    return {
+      HOST: import.meta.env.VITE_HOST,
+    };
   },
   methods: {
     //HTML request script taken from https://stackoverflow.com/questions/45697176/send-simple-http-request-with-html-submit-button
@@ -20,27 +24,36 @@ export default {
       if (matriculationNr)
         xhr.open(
           "POST",
-          `http://${HOST}:8080/ubuntuInstance/${matriculationNr}`,
+          `http://${this.HOST}:8080/ubuntuInstance/${matriculationNr}`,
           true
         );
       else
-        xhr.open("POST", `http://${HOST}:8080/ubuntuInstance/anonymous`, true);
+        xhr.open(
+          "POST",
+          `http://${this.HOST}:8080/ubuntuInstance/anonymous`,
+          true
+        );
       xhr.setRequestHeader("Content-Type", "application/json");
-
       xhr.send(name ? JSON.stringify({ name: name }) : null);
-      xhr.onload = function () {
+      var trueRouter = this.$router
+      xhr.onload = function() {
         authButton.disabled = false;
         anonButton.disabled = false;
-        if (this.status === 508) alert(`${this.responseText}`);
-        var data = JSON.parse(this.responseText);
-        //localStorage.setItem('portID',data["yourAddress"].split(':').pop());
-        window.open(data["yourAddress"]);
+        if (this.status === 508) {
+          alert(`${this.responseText}`);
+          return;
+        }
+        var data = JSON.parse(this.response);
+        if (matriculationNr)
+          trueRouter.replace(`/terminal?port=${data.port}&name=${name}&mat=${matriculationNr}`);
+        else
+          trueRouter.replace(`/terminal?port=${data.port}&name=külaline`);
       };
       //Log it!
       var xhr = new XMLHttpRequest();
       xhr.withCredentials = true; //so the cookies can be used.
       if (matriculationNr) {
-        xhr.open("PUT", `http://${HOST}:8080/logger`, true);
+        xhr.open("PUT", `http://${this.HOST}:8080/logger`, true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(JSON.stringify({ matriculation: matriculationNr, taskNr: 0 }));
       }
@@ -125,7 +138,7 @@ export default {
           </button>
           <button
             id="anonButton"
-            @click="sendRequest"
+            @click="sendRequest(null, null)"
             style="margin-left: 1em; margin-right: auto"
           >
             Jätka külalisena

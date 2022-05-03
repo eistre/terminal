@@ -1,11 +1,5 @@
 <template>
-  <div class="about">
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
+  <div class="terminal">
     <div
       style="
         display: flex;
@@ -43,11 +37,11 @@
           <div style="display: flex">
             <p id="name" style="display: flex">
               Nimi:
-              <strong style="margin: 0 10px 0 6px"></strong>
+              <strong style="margin: 0 10px 0 6px">{{this.$route.query.name}}</strong>
             </p>
-            <p id="matriculation" style="display: flex">
+            <p v-if="this.$route.query.name!='külaline'" id="matriculation" style="display: flex">
               Matrikkel:
-              <strong style="margin-left: 6px"></strong>
+              <strong style="margin-left: 6px">{{this.$route.query.mat}}</strong>
             </p>
           </div>
         </div>
@@ -186,7 +180,7 @@
 import Terminal from "@/components/Terminal.vue";
 export default {
   components: {
-    Terminal
-  }
-}
+    Terminal,
+  },
+};
 </script>
