@@ -85,7 +85,7 @@ window.addEventListener('load', function () {
       else task3Progress[0] = true
     }
     if (data.match(new RegExp('\\.veel1Failon2ra_peidetud'))) {
-      if (task3Progress[0] && ! data.match(new RegExp('\\.sedaEiPeaksKuvamaMeidetud'))) {
+      if (task3Progress[0] && !data.match(new RegExp('\\.sedaEiPeaksKuvamaMeidetud'))) {
         markTaskAsDone(3)
       }
       else task3Progress[1] = true
@@ -176,7 +176,7 @@ function markTaskAsDone(taskNr) {
   const port = window.location.port
   var doneTasks = window.localStorage.getItem(port) === null ? [] : JSON.parse(window.localStorage.getItem(port));
   if (doneTasks.includes(taskNr)) {
-    return;
+    openTask(taskNr + 1)
   }
   else {
     doneTasks.push(taskNr)
@@ -204,14 +204,11 @@ function openTask(taskNr) {
 
 function markTasksAlreadyDone() {
   const port = window.location.port
-  if (window.localStorage.getItem(port) === null) {
-    openTask(1)
-  }
-  else {
-    var doneTasks = JSON.parse(window.localStorage.getItem(port));
-    for (var task in doneTasks) {
-      markTaskAsDone(parseInt(doneTasks[task]));
-    }
+  openTask(1)
+
+  var doneTasks = JSON.parse(window.localStorage.getItem(port));
+  for (var task in doneTasks) {
+    markTaskAsDone(parseInt(doneTasks[task]));
   }
 }
 window.onload = () => {
