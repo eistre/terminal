@@ -45,6 +45,9 @@ function startWebSocketConnection(host, port, username, password, http) {
       }).on('close', function () {
         conn.end();
       });
+      socket.on('disconnecting', (reason) => {
+        stream.write('exit\n');
+      });
     });
   }
 
