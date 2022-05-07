@@ -32,6 +32,8 @@ dockerController.buildDockerImg().then(data => {
   console.log(err)
 });
 
+startAllContainersAndUpdateKillTimers()
+
 //Global variables
 var StartingPort = 49152
 var killTimers = {}
@@ -50,7 +52,27 @@ function getPortNumber(cookie) {
   return Number(cookie.split('%')[1])
 }
 
+function startAllContainersAndUpdateKillTimers() {
+  dockerController.getAllContainersRunning().then(zombieContainers => {
+    zombieContainers.forEach(zombie => upsertKillTimer(zombie, 1440))
+    console.log("KillTimers updated and all previous containers are running!")
+  }).catch((err) => { console.log(err) })
+}
 
+/**
+ * Creates a new kill timer if one doesn't already exist but extends if it already exists.
+ * @param {String} containerID
+ * @param {Number} exprMinFromNow
+ */
+function upsertKillTimer(containerID, exprMinFromNow) {
+  //TODO: When web session is closed, stopp the container but do not kill. 
+  //TODO: While session is open stop the timer.
+  if (killTimers[containerID])
+    killTimers[containerID].newTime(exprSecFromNow);
+
+  else
+    killTimers[containerID] = new Timer(exprMinFromNow * 60000, () => { dockerController.killContainerById(containerID); });
+}
 app.post('/ubuntuInstance/:userID', (req, res) => {
   /**
    * Updates the cookie and sends back the response.
@@ -66,20 +88,6 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
     });
   }
 
-  /**
-   * Creates a new kill timer if one doesn't already exist but extends if it already exists.
-   * @param {String} containerID
-   * @param {Number} exprMinFromNow
-   */
-  function upsertKillTimer(containerID, exprMinFromNow) {
-    //TODO: When web session is closed, stopp the container but do not kill. 
-    //TODO: While session is open stop the timer.
-    if (killTimers[containerID])
-      killTimers[containerID].newTime(exprSecFromNow);
-
-    else
-      killTimers[containerID] = new Timer(exprMinFromNow * 60000, () => { dockerController.killContainerById(containerID); });
-  }
 
   /**
    * @param {String} userID User's ID. If not authenticated then anonymous.

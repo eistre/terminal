@@ -137,7 +137,7 @@ function makeContainer(userID, containerHost, containerPort) {
                             if (isInUse)
                                 reject(`Port ${containerPort} was alerady used`)
                             else {
-                    //please remove the upper part with a proper fix.
+                                //please remove the upper part with a proper fix.
                                 var docker = new Docker({ port: 22 })
                                 docker.createContainer({
                                     Image: 'autogen_ubuntu_ssh',
@@ -234,6 +234,26 @@ function killContainerById(containerID) {
         });
 }
 
+function getAllContainersRunning() {
+    return new Promise((resolve, reject) => {
+        var docker = new Docker();
+        var containerIDs = []
+        docker.listContainers({ 'all': true }, function (err, containers) {
+            if (err) reject(err)
+            containers.forEach(function (containerInfo) {
+                if (containerInfo.Image == 'autogen_ubuntu_ssh') {
+                    containerIDs.push(containerInfo.Id)
+                    if (containerInfo.State != 'running')
+                        docker.getContainer(containerInfo.Id).start();
+                }
+            });
+            resolve(containerIDs);
+        });
+        
+    });
+}
+
 exports.getContainer = handleContainer;
 exports.killContainerById = killContainerById;
 exports.buildDockerImg = buildDockerImg;
+exports.getAllContainersRunning = getAllContainersRunning;
