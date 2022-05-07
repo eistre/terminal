@@ -84,7 +84,7 @@ window.addEventListener('load', function () {
       }
       else task3Progress[0] = true
     }
-    if (data.match(new RegExp('\\.veel1Failon2ra_peidetud'))) {
+    if (data.match(new RegExp('(?<!CLOSE )\\.veel1Failon2ra_peidetud'))) {
       if (task3Progress[0] && !data.match(new RegExp('\\.sedaEiPeaksKuvamaMeidetud'))) {
         markTaskAsDone(3)
       }
