@@ -139,3 +139,15 @@ function linkUserInfo(data, pageUrl) {
 app.listen(PORT, process.env.HOST,
   () => console.log(`API is live on http://${process.env.HOST}:${PORT}`)
 )
+
+const app2 = express()
+const http = require('http').Server(app2);
+var cors = require('cors')
+app2.use(cors());
+app2.options('*', cors());
+app2.use(express.static(__dirname + '/front-end/dist'));
+http.listen(80, process.env.HOST,
+    () => {console.log(`Page is ready on http://${process.env.HOST}:` + 80);});
+http.on('error', (error) => {
+    throw error;
+});
