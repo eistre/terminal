@@ -21,8 +21,7 @@ function startWebSocketConnection(host, port, username, password, http) {
     }).on('error', function (err) {
       socket.emit('data', '\r\n*** SSH CONNECTION ERROR: ' + err.message + ' ***\r\n');
       if (err.message.startsWith('connect ECONNREFUSED')) {
-        socket.emit('data', "To fix, reload the page!");
-        startWebSocketConnection(host, port, username, password, http); //I think this fixes the slow loading and not connecting at first error
+        startWebSocketConnection(host, port, username, password, http); //fixes the slow loading
       }
     }).connect({
       host: host,
@@ -34,14 +33,13 @@ function startWebSocketConnection(host, port, username, password, http) {
 
   function startShellSession(conn, socket) {
     conn.shell({ rows: 30, cols: 124 }, function (err, stream) {
-      var userTryingToUnminimize = false;
       if (err)
         return socket.emit('data', '\r\n*** SSH SHELL ERROR: ' + err.message + ' ***\r\n');
       socket.on('data', function (data) {
         stream.write(data);
       });
       stream.on('data', function (d) {
-        userTryingToUnminimize = sendDataToFrontend(d, userTryingToUnminimize, stream, socket);
+        socket.emit('data', d.toString('binary'));
       }).on('close', function () {
         conn.end();
       });
@@ -64,24 +62,7 @@ function startWebSocketConnection(host, port, username, password, http) {
       });
     });
   }
-
-  function sendDataToFrontend(d, userTryingToUnminimize, stream, socket) {
-    const unminimizeResponse1 = 'This script restores content and packages that are found on a default';
-    const unminimizeResponse2 = 'Ubuntu server system in order to make this system more suitable for';
-    var data = d.toString('binary');
-    if (data.includes(unminimizeResponse2) && (userTryingToUnminimize || data.includes(unminimizeResponse1))) {
-      userTryingToUnminimize = false;
-      stream.write('\nThis command has been disabled.\n');
-    }
-    else if (data.includes(unminimizeResponse1)) {
-      userTryingToUnminimize = true;
-    }
-    else {
-      userTryingToUnminimize = false;
-      socket.emit('data', data);
-    }
-    return userTryingToUnminimize;
-  }
+    
 }
 
 exports.startWebSocketConnection = startWebSocketConnection;

@@ -1,4 +1,4 @@
-const HOST = '172.18.55.145'
+const HOST = '172.22.78.36'
 
 
 /*
@@ -78,7 +78,7 @@ window.addEventListener('load', function () {
     if (data.match(new RegExp('/home/test/ CREATE,ISDIR ' + specificFolderRegex))) {
       markTaskAsDone(2)
     }
-    if (data.match(new RegExp('test/\\.ajutine/\\.h2sti_peidetud'))) {// \\.veel1Failon2ra_peidetud
+    if (data.match(new RegExp('test/\\.ajutine/\\.h2sti_peidetud'))) {
       if (task3Progress[1]) {
         markTaskAsDone(3)
       }
@@ -92,8 +92,8 @@ window.addEventListener('load', function () {
     }
     if (data.match(new RegExp('\\.sedaEiPeaksKuvamaMeidetud')))
       task3Progress = [false, false]
-    if (data.match(new RegExp('Admin[\\s\\S]+parool[\\s\\S]+on Test1234'))) { //Selle peaks panema kuhugi süsteemifailide sügavusse. Siis vähem obvious. Nt etc kausta või kuhugi mujale lampi kohta. Kust ikkagi pääseb ilma sudota lugema või greppima vms. Tegelt päris hea mõte. Panna see kausta, mida ei saa lugeda.
-      markTaskAsDone(4)//Boonus ülesanne -> kirjuta rida lõppu mis paljastab et ohoo tegelikult kaustas mis on ainult 
+    if (data.match(new RegExp('Admin[\\s\\S]+parool[\\s\\S]+on Test1234'))) {
+      markTaskAsDone(4)
     }
     if (data.match(new RegExp('/usr/bin/nano'))) {
       markTaskAsDone(5)
@@ -120,7 +120,7 @@ window.addEventListener('load', function () {
     }
 
     //For live debugging
-    if (data.length > 3)//Not user typing
+    if (data.length > 3 && !data.startsWith('FromServer '))//Only user typing
       console.log(data)
     if (data.startsWith('FromServer ')) //inotify messages
       console.log(data)

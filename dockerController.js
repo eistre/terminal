@@ -153,10 +153,7 @@ function makeContainer(userID, containerHost, containerPort) {
                                     },
                                 }, function (err, container) {
                                     container.start({}, function (err, data) {
-                                        if (err) {
-                                            reject(err)
-                                            return ""
-                                        }
+                                        if (err) reject(err)
                                         runExec(container, 'service ssh start');
                                     });
                                     container.inspect((err, data) => {
