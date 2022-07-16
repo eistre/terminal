@@ -225,7 +225,7 @@ export default {
 };
 </script>
 <template>
-  <div id="terminal-container" style="flex: auto">
+  <div id="terminal-container">
   </div>
 </template>
 <style>
@@ -255,6 +255,7 @@ h1 {
   height: auto;
   margin: 0 auto;
   padding: 2px;
+  flex: auto
 }
 
 #terminal-container .terminal {
