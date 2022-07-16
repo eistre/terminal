@@ -1,4 +1,5 @@
 <script>
+import Banner from "./Banner.vue";
 export default {
   name: "WelcomePageScripts",
   props: {
@@ -22,21 +23,13 @@ export default {
       var xhr = new XMLHttpRequest();
       xhr.withCredentials = true; //so the cookies can be used.
       if (matriculationNr)
-        xhr.open(
-          "POST",
-          `http://${this.HOST}:8080/ubuntuInstance/${matriculationNr}`,
-          true
-        );
+        xhr.open("POST", `http://${this.HOST}:8080/ubuntuInstance/${matriculationNr}`, true);
       else
-        xhr.open(
-          "POST",
-          `http://${this.HOST}:8080/ubuntuInstance/anonymous`,
-          true
-        );
+        xhr.open("POST", `http://${this.HOST}:8080/ubuntuInstance/anonymous`, true);
       xhr.setRequestHeader("Content-Type", "application/json");
       xhr.send(name ? JSON.stringify({ name: name }) : null);
-      var trueRouter = this.$router
-      xhr.onload = function() {
+      var trueRouter = this.$router;
+      xhr.onload = function () {
         authButton.disabled = false;
         anonButton.disabled = false;
         if (this.status === 508) {
@@ -58,38 +51,28 @@ export default {
         xhr.send(JSON.stringify({ matriculation: matriculationNr, taskNr: 0 }));
       }
     },
-
     validateLoginCredentials: function () {
       var name = document.getElementById("nimi").value;
       var matric = document.getElementById("matrikkel").value;
       if (name && matric) {
         if (matric.match(new RegExp("^[A-ZÕÜÖÄ][0-9]+$"))) {
           this.sendRequest(name, matric);
-        } else
-          alert(
-            "Matriklinumber peab koosnema ainult SUUREST esitähest ja numbritest."
-          );
-      } else alert(`Väljad nimi ja matriklinumber peavad olema täidetud!`);
+        }
+        else
+          alert("Matriklinumber peab koosnema ainult SUUREST esitähest ja numbritest.");
+      }
+      else
+        alert(`Väljad nimi ja matriklinumber peavad olema täidetud!`);
     },
   },
+  components: { Banner }
 };
 </script>
 
 <template>
   <div>
     <div style="padding: 2vh 2vw">
-      <div style="display: flex; justify-content: center">
-        <div style="position: relative">
-          <img
-            style="position: absolute; left: 1%; z-index: 1"
-            src="https://comserv.cs.ut.ee/img/TY_est.gif"
-          />
-          <img
-            style="position: relative"
-            src="https://comserv.cs.ut.ee/img/ty_head_1100.png"
-          />
-        </div>
-      </div>
+      <Banner />
       <h2 style="width: 50%; margin: 4vh auto; text-align: center">
         Linuxi käsurea harjutuskeskkond - Ubuntu terminal veebibrauseris
       </h2>
@@ -104,8 +87,7 @@ export default {
         </p>
         <p>
           Pärast ülesannete läbi tegemist palun täitke ka
-          <a href="https://forms.gle/sxXF8phFJHQcdExv7"> tagasiside küsitlus</a
-          >.
+          <a href="https://forms.gle/sxXF8phFJHQcdExv7"> tagasiside küsitlus</a>.
         </p>
       </div>
       <h3 style="text-align: center">Registreerimisinfo</h3>
@@ -129,18 +111,10 @@ export default {
           </span>
         </div>
         <div style="display: flex; margin: auto">
-          <button
-            id="authButton"
-            @click="validateLoginCredentials"
-            style="margin-left: auto; margin-right: 1em"
-          >
+          <button id="authButton" @click="validateLoginCredentials" style="margin-left: auto; margin-right: 1em">
             Logi sisse
           </button>
-          <button
-            id="anonButton"
-            @click="sendRequest(null, null)"
-            style="margin-left: 1em; margin-right: auto"
-          >
+          <button id="anonButton" @click="sendRequest(null, null)" style="margin-left: 1em; margin-right: auto">
             Jätka külalisena
           </button>
         </div>

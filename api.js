@@ -144,7 +144,8 @@ app.listen(PORT, process.env.HOST,
 /** 
  * Front-end webpage generation.
  *  
-*/
+ */
+ /*
 const app2 = express()
 const http = require('http').Server(app2);
 var cors = require('cors')
@@ -156,5 +157,4 @@ http.listen(80, process.env.HOST,
 http.on('error', (error) => {
   throw error;
 });
-/*
 */

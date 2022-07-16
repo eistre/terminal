@@ -1,16 +1,6 @@
 <template>
   <div class="terminal">
-    <div style="
-        display: flex;
-        justify-content: center;
-        margin-bottom: 6vh;
-        margin-top: 2vh;
-      ">
-      <div style="position: relative">
-        <img style="position: absolute; left: 1%; z-index: 1" src="https://comserv.cs.ut.ee/img/TY_est.gif" />
-        <img style="position: relative" src="https://comserv.cs.ut.ee/img/ty_head_1100.png" />
-      </div>
-    </div>
+    <Banner />
     <h2 style="margin: 3vh auto; text-align: center">
       Harjutused ja Ubuntu terminal
     </h2>
@@ -68,10 +58,13 @@ strong {
 <script>
 import Terminal from "@/components/Terminal.vue";
 import Task from "../components/Task.vue";
+import Banner from "../components/Banner.vue";
+
 export default {
   components: {
     Terminal,
-    Task
+    Task,
+    Banner
   },
   data() {
     return {
