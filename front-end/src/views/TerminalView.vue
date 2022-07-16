@@ -1,29 +1,12 @@
 <template>
   <div class="terminal">
     <Banner />
-    <h2 style="margin: 3vh auto; text-align: center">
+    <h2>
       Harjutused ja Ubuntu terminal
     </h2>
-    <div style="display: flex; justify-content: center" id="content">
-      <div id="tasks-container" style="
-          flex: 1 1 0%;
-          margin-right: 20px;
-          padding-top: 2em;
-          position: relative;
-          max-width: 33%;
-        ">
-        <div id="header">
-          <div>
-            <p id="name">
-              Nimi:
-              <strong>{{ this.$route.query.name }}</strong>
-            </p>
-            <p v-if="this.$route.query.name != 'külaline'" id="matriculation">
-              Matrikkel:
-              <strong>{{ this.$route.query.mat }}</strong>
-            </p>
-          </div>
-        </div>
+    <div id="content">
+      <div id="tasks-container">
+        <UserCredentials />
         <Task v-for="(item, index) in items" :nr="index + 1" :desc="item.desc" :hint="item.hint" />
       </div>
       <Terminal></Terminal>
@@ -32,26 +15,22 @@
 </template>
 
 <style>
-#header {
+h2 {
+  margin: 3vh auto;
+  text-align: center
+}
+
+#content {
   display: flex;
-  position: absolute;
-  top: 0
+  justify-content: center
 }
 
-#header>div {
-  display: flex
-}
-
-#name {
-  display: flex;
-}
-
-#name>strong {
-  margin: 0 10px 0 6px
-}
-
-strong {
-  margin-left: 6px
+#tasks-container {
+  flex: 1 1 0%;
+  margin-right: 20px;
+  padding-top: 2em;
+  position: relative;
+  max-width: 33%;
 }
 </style>
 
@@ -59,12 +38,14 @@ strong {
 import Terminal from "@/components/Terminal.vue";
 import Task from "../components/Task.vue";
 import Banner from "../components/Banner.vue";
+import UserCredentials from "../components/UserCredentials.vue";
 
 export default {
   components: {
     Terminal,
     Task,
-    Banner
+    Banner,
+    UserCredentials
   },
   data() {
     return {
