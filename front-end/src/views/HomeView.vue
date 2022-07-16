@@ -37,7 +37,7 @@ export default {
         Muutes matriklit luuakse uus ühendus uude arvutisse. 24h pärast viimast
         sisselogimist kustutatakse masin koos failidega.
       </p>
-      <LoginButtons />
+      <LoginButtons></LoginButtons>
     </div>
   </div>
 </template>
