@@ -140,6 +140,11 @@ app.listen(PORT, process.env.HOST,
   () => console.log(`API is live on http://${process.env.HOST}:${PORT}`)
 )
 
+
+/** 
+ * Front-end webpage generation.
+ *  
+*/
 const app2 = express()
 const http = require('http').Server(app2);
 var cors = require('cors')
@@ -149,5 +154,7 @@ app2.use(express.static(__dirname + '/front-end/dist'));
 http.listen(80, process.env.HOST,
     () => {console.log(`Page is ready on http://${process.env.HOST}:` + 80);});
 http.on('error', (error) => {
-    throw error;
+  throw error;
 });
+/*
+*/
