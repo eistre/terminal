@@ -33,9 +33,9 @@ export default {
                 }
                 var data = JSON.parse(this.response);
                 if (matriculationNr)
-                    trueRouter.replace(`/terminal?port=${data.port}&name=${name}&mat=${matriculationNr}`);
+                    trueRouter.push(`/terminal?port=${data.port}&name=${name}&mat=${matriculationNr}`);
                 else
-                    trueRouter.replace(`/terminal?port=${data.port}&name=külaline`);
+                    trueRouter.push(`/terminal?port=${data.port}&name=külaline`);
             };
             //Log it!
             var xhr = new XMLHttpRequest();

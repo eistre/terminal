@@ -144,8 +144,8 @@ app.listen(PORT, process.env.HOST,
 /** 
  * Front-end webpage generation.
  *  
- */
- /*
+*/
+
 const app2 = express()
 const http = require('http').Server(app2);
 var cors = require('cors')
@@ -153,8 +153,10 @@ app2.use(cors());
 app2.options('*', cors());
 app2.use(express.static(__dirname + '/front-end/dist'));
 http.listen(80, process.env.HOST,
-    () => {console.log(`Page is ready on http://${process.env.HOST}:` + 80);});
-http.on('error', (error) => {
-  throw error;
-});
-*/
+  () => {console.log(`Page is ready on http://${process.env.HOST}:` + 80);});
+  http.on('error', (error) => {
+    throw error;
+  });
+  
+  //Redirects any hostaddress/terminal.* get request to main page to handle. Makes terminal page refreshing possible.
+  app2.get(/terminal.*/, (req, res) => res.sendFile(__dirname + '/front-end/dist/index.html'));
