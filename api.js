@@ -57,7 +57,7 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
    */
   function sendResponse(containerInfo, portNumber, exprMinFromNow) {
     console.log(`Sending response: ${containerInfo['userName']},${containerInfo['status']}, ${portNumber}`)
-    exprSecFromNow = exprMinFromNow *  60000
+    exprSecFromNow = exprMinFromNow * 60000
     res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { domain: process.env.HOST, path: '/', expires: new Date(Date.now() + exprSecFromNow) });
     res.status(containerInfo['status']).send({
       port: portNumber
@@ -153,10 +153,10 @@ app2.use(cors());
 app2.options('*', cors());
 app2.use(express.static(__dirname + '/front-end/dist'));
 http.listen(80, process.env.HOST,
-  () => {console.log(`Page is ready on http://${process.env.HOST}:` + 80);});
-  http.on('error', (error) => {
-    throw error;
-  });
-  
-  //Redirects any hostaddress/terminal.* get request to main page to handle. Makes terminal page refreshing possible.
-  app2.get(/terminal.*/, (req, res) => res.sendFile(__dirname + '/front-end/dist/index.html'));
+  () => { console.log(`Page is ready on http://${process.env.HOST}:` + 80); });
+http.on('error', (error) => {
+  throw error;
+});
+
+//Redirects any hostaddress/terminal.* get request to main page to handle. Makes terminal page refreshing possible.
+app2.get(/terminal.*/, (req, res) => res.sendFile(__dirname + '/front-end/dist/index.html'));

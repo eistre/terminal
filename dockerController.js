@@ -137,7 +137,7 @@ function makeContainer(userID, containerHost, containerPort) {
                             if (isInUse)
                                 reject(`Port ${containerPort} was alerady used`)
                             else {
-                    //please remove the upper part with a proper fix.
+                                //please remove the upper part with a proper fix.
                                 var docker = new Docker({ port: 22 })
                                 docker.createContainer({
                                     Image: 'autogen_ubuntu_ssh',

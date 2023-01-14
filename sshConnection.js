@@ -3,14 +3,14 @@ const SSHClient = require('ssh2').Client;
 
 const io = require('socket.io')(5000, {
   cors: {
-    origin: [`http://${process.env.HOST}:80`, `http://${process.env.HOST}:8080`,`http://${process.env.HOST}`],
+    origin: [`http://${process.env.HOST}:80`, `http://${process.env.HOST}:8080`, `http://${process.env.HOST}`],
   }
 });
 
 //template from: https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 //Credit goes to Elliot404
 //Modifications made by Joonas Halapuu
-const host = process.env.HOST 
+const host = process.env.HOST
 const username = 'test'
 const password = 'Test1234'
 
