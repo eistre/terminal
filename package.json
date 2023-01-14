@@ -1,6 +1,6 @@
 {
   "name": "ubuntuterminal",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Part of bachelor's thesis. For the basics of Linux terminal on Ubuntu 20.04",
   "main": "api.js",
   "scripts": {
