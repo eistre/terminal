@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model DoneTask {
+  id             Int      @id @default(autoincrement())
+  taskNr         Int      
+  completionTime DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int
+}
+
+model User {
+  id            Int        @id @default(autoincrement())
+  matriculation String     @unique
+  name          String?
+  port          Int        @unique @default(autoincrement())
+  containerId   String?    @unique
+  lastLogin     DateTime   @default(now())
+  DoneTasks     DoneTask[]
+}

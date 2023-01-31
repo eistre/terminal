@@ -1,0 +1,49 @@
+#Copied from https://github.com/alexeagleson/docker-node-postgres-template#useful-docker-commands and modified
+version: '3.8'
+services:
+    app:
+        build: .
+        depends_on:
+            # Our app does not work without our database
+            # so this ensures our database is loaded first
+            - postgres_container
+        ports:
+            - "8085:8080"
+        volumes:
+            # Maps our current project directory `.` to
+            # our working directory in the container
+            - ./:/usr/src/app/
+
+    # This is the configuration for our PostgreSQL database container
+    # Note the `postgres_container` name is important, in out Node app when we refer
+    # to  `host: "postgres_container"` that value is mapped on the network to the 
+    # address of this container.
+    postgres_container:
+        image: postgres:14
+        restart: always
+        environment:
+            # You can set the value of environment variables
+            # in your docker-compose.yml file
+            # Our Node app will use these to connect
+            # to the database
+            - POSTGRES_USER=root
+            - POSTGRES_PASSWORD=root
+            - POSTGRES_DB=root
+        ports:
+            # Standard port for PostgreSQL databases
+            - "5432:5432"
+        volumes:
+            # When the PostgresSQL container is started it will run any scripts
+            # provided in the `docker-entrypoint-initdb.d` directory, this connects
+            # our seed file to that directory so that it gets run
+            - ./prisma/migrations/20230126163138_initial_schema/migration.sql:/docker-entrypoint-initdb.d/init.sql
+
+    pgadmin-compose:
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: "haldur@mail.com"
+            PGADMIN_DEFAULT_PASSWORD: "raskeparool"
+        ports:
+            - "16543:80"
+        depends_on:
+            - postgres_container

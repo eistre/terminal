@@ -72,3 +72,12 @@ Steps 1-7 only need to be done the first time. Steps 8 and 9 need to be done eve
     ```
     or on WSL `sudo service docker restart`
 13. Run the command 1-9 starting with npm install.
+
+
+
+Install docker compose -> https://docs.docker.com/compose/install/ ; run docker compose up
+
+Database stuff. -> in the root directory run "docker compose up".
+To connect with pgAdmin go to  http://localhost:16543/
+login with haldur@mail.com and raskeparool
+Object -> register -> server. Name: whaterver you want, hostname/address: postgres_container, port: 5432, maintanace db: root, usr: root, pass:root

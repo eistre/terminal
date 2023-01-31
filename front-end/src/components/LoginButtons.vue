@@ -10,7 +10,7 @@ export default {
         //      Credit goes to thepi
         // Authentication modification by Joonas.
         //TODO: can the POST action be done inside html using <form action="/ubuntuInstance/Unknown" method="post">
-        sendRequest: function (name, matriculationNr) {
+        sendRequest: async function (name, matriculationNr) {
             const authButton = document.getElementById("authButton");
             const anonButton = document.getElementById("anonButton");
             authButton.disabled = true;
@@ -18,11 +18,11 @@ export default {
             var xhr = new XMLHttpRequest();
             xhr.withCredentials = true; //so the cookies can be used.
             if (matriculationNr)
-                xhr.open("POST", `http://${this.HOST}:8080/ubuntuInstance/${matriculationNr}`, true);
+                xhr.open("POST", `http://${this.HOST}:8080/ubuntuInstance/`, true);
             else
-                xhr.open("POST", `http://${this.HOST}:8080/ubuntuInstance/anonymous`, true);
+                xhr.open("POST", `http://${this.HOST}:8080/ubuntuInstance/`, true);
             xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.send(name ? JSON.stringify({ name: name }) : null);
+            xhr.send(name ? JSON.stringify({ name: name, matriculation: matriculationNr }) : null);
             var trueRouter = this.$router;
             xhr.onload = function () {
                 authButton.disabled = false;
@@ -32,19 +32,15 @@ export default {
                     return;
                 }
                 var data = JSON.parse(this.response);
+                var userId = data.userId
+                console.log("Saved user Id "+userId)
+                
                 if (matriculationNr)
-                    trueRouter.push(`/terminal?port=${data.port}&name=${name}&mat=${matriculationNr}`);
+                    trueRouter.push(`/terminal?port=${data.port}&name=${name}&mat=${matriculationNr}&id=${userId}`);
                 else
                     trueRouter.push(`/terminal?port=${data.port}&name=külaline`);
             };
             //Log it!
-            var xhr = new XMLHttpRequest();
-            xhr.withCredentials = true; //so the cookies can be used.
-            if (matriculationNr) {
-                xhr.open("PUT", `http://${this.HOST}:8080/logger`, true);
-                xhr.setRequestHeader("Content-Type", "application/json");
-                xhr.send(JSON.stringify({ matriculation: matriculationNr, taskNr: 0 }));
-            }
         },
         validateLoginCredentials: function () {
             var name = document.getElementById("nimi").value;

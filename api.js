@@ -1,8 +1,11 @@
 require('dotenv').config();
 const express = require('express')
-const app = express()
+const app = express();
+exports.app = app;
 const PORT = 8080;
+exports.PORT = PORT;
 const dockerController = require('./dockerController')
+const dbClient = require('./dbClient')
 const Timer = require('./timer.js')
 const sshConnection = require('./sshConnection')
 const fs = require('fs');
@@ -47,20 +50,22 @@ function getPortNumber(cookie) {
 }
 
 
-app.post('/ubuntuInstance/:userID', (req, res) => {
+app.post('/ubuntuInstance/', async (req, res) => {
   /**
    * Updates the cookie and sends back the response.
    * @param {dict} containerInfo Information about the container (ContainerID, userName, status)
    * @param {Number} portNumber Port of the Ubuntu container.
    * @param {Number} exprMinFromNow  Minutes from now after which the cookie will expire
+   * @param {Number} userId
    * @param socketKey Socket.io unique ID of the socket connection. For only one connection per page.
    */
-  function sendResponse(containerInfo, portNumber, exprMinFromNow) {
+  function sendResponse(containerInfo, portNumber, exprMinFromNow, userId) {
     console.log(`Sending response: ${containerInfo['userName']},${containerInfo['status']}, ${portNumber}`)
     exprSecFromNow = exprMinFromNow * 60000
     res.cookie(`${containerInfo['userName']}`, `${containerInfo['containerID']}%${portNumber}`, { domain: process.env.HOST, path: '/', expires: new Date(Date.now() + exprSecFromNow) });
     res.status(containerInfo['status']).send({
-      port: portNumber
+      port: portNumber,
+      userId: userId,
     });
   }
 
@@ -80,22 +85,25 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
   }
 
   /**
-   * @param {String} userID User's ID. If not authenticated then anonymous.
+   * @param {String} userMatric User's ID. If not authenticated then anonymous.
    * @param {String} containerID  Containers ID. null if missing.
    * @param {Number} portNumber Containers port number.
    */
-  function makeConnection(userID, containerID, portNumber, recursiveDepth = 0) {
+  function makeConnection(userID, userMatric, containerID, portNumber, recursiveDepth = 0) {
     const cookieAndContainerExprInMin = 1440
-    dockerController.getContainer(userID, containerID, portHost = process.env.HOST, portNumber)
+    dockerController.getContainer(userMatric, containerID, portHost = process.env.HOST, portNumber)
       .then(containerInfo => {
         if (containerInfo['status'] == 201 || containerInfo['status'] == 200) {
           console.log(containerInfo['status'] == 201 ? `New container has been created.` : `Using an existing container`)
-          portNumber = containerInfo['containerPort']
-          sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin);
-          upsertKillTimer(containerInfo['containerID'], exprMinFromNow = cookieAndContainerExprInMin);
-          linkUserInfo({ userID: userID, userName: name }, `/${portNumber}`)
+          const portNumber = containerInfo['containerPort']
+          const newContainerId = containerInfo['containerID'];
+          dbClient.updateContainerInfo(userID, portNumber, newContainerId)
+          sendResponse(containerInfo, portNumber, exprMinFromNow = cookieAndContainerExprInMin, userID);
+          upsertKillTimer(newContainerId, exprMinFromNow = cookieAndContainerExprInMin);
+          linkUserInfo({ userMatric: userMatric, userName: name }, `/${portNumber}`)
         }
       }).catch((containerInfo) => {
+        //Should never end up in here :) due to DB unique port numbers.
         console.log(`Error code: ${containerInfo['status']}  \n ${containerInfo}`)
         //Here we potentially loose 1 port if user had containerID but the actual container had a different ID.
         if (recursiveDepth > 70) {
@@ -103,32 +111,16 @@ app.post('/ubuntuInstance/:userID', (req, res) => {
             `Proovitud ${recursiveDepth} erineva pordi peal ning kõik olid juba kasutuses! Andke veast teada lehe haldajale.`);
         }
         else
-          makeConnection(containerInfo['userName'], containerInfo['containerID'], getPortNumber(undefined), recursiveDepth + 1)
+          makeConnection(userID, containerInfo['userName'], containerInfo['containerID'], getPortNumber(undefined), recursiveDepth + 1)
       });
   }
 
-  const { userID } = req.params;
-  const name = req.body.name ? req.body.name : "anonymous";
-  const portNumber = getPortNumber(req.cookies[userID]);
-  const isCookieMissing = req.cookies[userID] === undefined;
-  const containerID = isCookieMissing ? null : req.cookies[userID].split('%')[0]
-  makeConnection(userID, containerID, portNumber);
+  const name = req.body.name;
+  const matric = req.body.matriculation;
+  const user = await dbClient.getUser(name, matric)
+  makeConnection(user.id, matric, user.containerId, user.port);
+});
 
-})
-
-app.put('/logger', (req, res) => {
-  //Logs all authorized users tasks with timestamps to file.
-  var matric = req.body.matriculation
-  var taskNr = req.body.taskNr
-
-  fs.writeFile('./taskCompletions.log', `${Date.now()},${matric},${taskNr}\n`, { flag: 'a+' }, function (err) {
-    if (err) {
-      console.log(err)
-      res.status(400).send("Could not save logs!")
-    }
-    res.status(200).send("OK");
-  });
-})
 
 function linkUserInfo(data, pageUrl) {
   app.get(pageUrl, (req, res) => {
@@ -136,9 +128,6 @@ function linkUserInfo(data, pageUrl) {
   })
 }
 
-app.listen(PORT, process.env.HOST,
-  () => console.log(`API is live on http://${process.env.HOST}:${PORT}`)
-)
 
 
 /** 

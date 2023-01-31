@@ -1,5 +1,6 @@
 require('dotenv').config();
 const SSHClient = require('ssh2').Client;
+const dbClient = require('./dbClient')
 
 const io = require('socket.io')(5000, {
   cors: {
@@ -21,7 +22,8 @@ io.on('connection', socket => {
     conn.on('ready', function () {
       socket.emit('data', '\r\n*** SSH CONNECTION ESTABLISHED ***\r\n');
       startInotify(conn, socket);
-      startShellSession(conn, socket);
+      startShellSession(conn, socket, port);
+      dbClient.saveDoneTask(port, 0)//Workaround for now.
     }).on('close', function () {
       socket.emit('data', '\r\n*** SSH CONNECTION CLOSED ***\r\n');
       socket.disconnect();
@@ -45,7 +47,7 @@ io.on('connection', socket => {
 //});
 
 
-function startShellSession(conn, socket) {
+function startShellSession(conn, socket, port) {
   conn.shell({ rows: 30, cols: 124 }, function (err, stream) {
     var userTryingToUnminimize = false;
     if (err)
@@ -54,7 +56,9 @@ function startShellSession(conn, socket) {
       stream.write(data);
     });
     stream.on('data', function (d) {
-      userTryingToUnminimize = sendDataToFrontend(d, userTryingToUnminimize, stream, socket);
+      checkTasks(d, port, socket);
+
+      sendDataToFrontend(d, socket);
     }).on('close', function () {
       conn.end();
     });
@@ -75,20 +79,93 @@ function startInotify(conn, socket) {
   });
 }
 
-function sendDataToFrontend(d, userTryingToUnminimize, stream, socket) {
-  const unminimizeResponse1 = 'This script restores content and packages that are found on a default';
-  const unminimizeResponse2 = 'Ubuntu server system in order to make this system more suitable for';
+function sendDataToFrontend(d, socket) {
   var data = d.toString('binary');
-  if (data.includes(unminimizeResponse2) && (userTryingToUnminimize || data.includes(unminimizeResponse1))) {
-    userTryingToUnminimize = false;
-    stream.write('\nThis command has been disabled.\n');
+  socket.emit('data', data);
+
+}
+
+function checkTasks(d, port, socket) {
+  var data = d.toString('binary');
+
+  var task3Progress = [false, false];
+  var task6Progress = false;
+  const specificFolderRegex =
+    "(?=.*[a-z])(?=.*\\d)(?=.*[ ])(?=.*[\\<\\>\\=])(?=.*[\\.\\!\\?])";
+  //First Task
+  if (
+    data.match(
+      new RegExp(
+        "^127\\.0\\.0\\.1[\\s\\S]*localhost[\\s\\S]*ip6-localhost[\\s\\S]*localnet[\\s\\S]*allnodes[\\s\\S]*allrouters"
+      )
+    )
+  ) {
+    socket.emit('data', 'FromServer 1');
+    dbClient.saveDoneTask(port, 1)
   }
-  else if (data.includes(unminimizeResponse1)) {
-    userTryingToUnminimize = true;
+  if (
+    data.match(
+      new RegExp("/home/test/ CREATE,ISDIR " + specificFolderRegex)
+    )
+  ) {
+    socket.emit('data', 'FromServer 2');
+    dbClient.saveDoneTask(port, 2)
   }
-  else {
-    userTryingToUnminimize = false;
-    socket.emit('data', data);
+  if (data.match(new RegExp("test/\\.ajutine/\\.h2sti_peidetud"))) {
+    // \\.veel1Failon2ra_peidetud
+    if (task3Progress[1]) {
+      socket.emit('data', 'FromServer 3');
+      dbClient.saveDoneTask(port, 3)
+    } else task3Progress[0] = true;
   }
-  return userTryingToUnminimize;
+  if (data.match(new RegExp("\\.veel1Failon2ra_peidetud"))) {
+    if (
+      task3Progress[0] &&
+      !data.match(new RegExp("\\.sedaEiPeaksKuvamaMeidetud"))
+    ) {
+      socket.emit('data', 'FromServer 3');
+      dbClient.saveDoneTask(port, 3)
+    } else task3Progress[1] = true;
+  }
+  if (data.match(new RegExp("\\.sedaEiPeaksKuvamaMeidetud")))
+    task3Progress = [false, false];
+  if (data.match(new RegExp("Admin[\\s\\S]+parool[\\s\\S]+on Test1234"))) {
+    //Selle peaks panema kuhugi süsteemifailide sügavusse. Siis vähem obvious. Nt etc kausta või kuhugi mujale lampi kohta. Kust ikkagi pääseb ilma sudota lugema või greppima vms. Tegelt päris hea mõte. Panna see kausta, mida ei saa lugeda.
+    socket.emit('data', 'FromServer 4');
+    dbClient.saveDoneTask(port, 4)
+    //Boonus ülesanne -> kirjuta rida lõppu mis paljastab et ohoo tegelikult kaustas mis on ainult
+  }
+  if (data.match(new RegExp("/usr/bin/nano"))) {
+    socket.emit('data', 'FromServer 5');
+    dbClient.saveDoneTask(port, 5)
+  }
+  if (data.match(new RegExp("MODIFY andmeturve"))) {
+    task6Progress = true;
+  }
+  if (data.match(new RegExp("-rw-rw----.*test.*root.*andmeturve"))) {
+    if (task6Progress) {
+      socket.emit('data', 'FromServer 6');
+      dbClient.saveDoneTask(port, 6)
+    }
+  }
+  if (data.match(new RegExp("^160526"))) {
+    socket.emit('data', 'FromServer 7');
+    dbClient.saveDoneTask(port, 7)
+  }
+  if (
+    data.match(
+      new RegExp("/home/ CREATE,ISDIR[\\s\\S]+/home/ ATTRIB,ISDIR")
+    )
+  ) {
+    socket.emit('data', 'FromServer 8');
+    dbClient.saveDoneTask(port, 8)
+  }
+  if (data.match(new RegExp("DELETE,ISDIR .ajutine"))) {
+    socket.emit('data', 'FromServer 9');
+    dbClient.saveDoneTask(port, 9)
+  }
+  if (data.match(new RegExp("\\d+.*\\d+:\\d+.*inotifywait"))) {
+    socket.emit('data', 'FromServer 10');
+    dbClient.saveDoneTask(port, 10)
+  }
 }
