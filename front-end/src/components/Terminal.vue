@@ -7,7 +7,7 @@ export default {
   data() {
     return {
       taskButton: null,
-      HOST: import.meta.env.VITE_HOST,
+      HOST: import.meta.env.VITE_API_ADDRESS,
     };
   },
   mounted() {
@@ -22,7 +22,6 @@ export default {
     });
     //const fitAddon = new FitAddon();
     const webgl = new WebglAddon();
-
     const socket = io(`http://${this.HOST}:5000`); //.connect();
     //  term.loadAddon(fitAddon);
     term.open(document.getElementById("terminal-container"));
@@ -39,13 +38,23 @@ export default {
     });
 
     const port = this.$route.query.port
+    const id = this.$route.query.id
+    const matriculation = this.$route.query.mat
 
+    /**
+     * TODO: This here connects to backend sshConnection (line 16 socket.on(connect to port').
+     * the port is actually useless and we can do everything based on the matriculation
+     *  and use it as a hostname.
+     * Refactor this place to only use the hostname param (matriculation).
+     * First get it to work and push it up.
+     * Right now get it to work. For that allow CORS in some nifhty thrifty way.
+     * 
+     */
     socket.on("connect", function () {
       term.write("\r\n*** Connected to backend ***\r\n");
-      socket.emit("connect to port", port)
-      console.log("connected to port", port)
+      socket.emit("connect to user", id)
+      console.log("Connected to user", matriculation, id)
     });
-
     // Browser -> Backend //allows copy paste as well with ctrl + shift + v
     term.onData((data) => {
       socket.emit("data", data);
@@ -58,9 +67,9 @@ export default {
       if (data.length > 3)
         //Not user typing
         console.log(data);
-      if (data.startsWith("FromServer ")){
+      if (data.startsWith("FromServer ")) {
         if (!isNaN(parseInt(data.split(' ')[1])))
-        this.markTaskAsDone(parseInt(data.split(' ')[1]))
+          this.markTaskAsDone(parseInt(data.split(' ')[1]))
         //inotify messages
         console.log(data);
       }
@@ -71,7 +80,7 @@ export default {
       term.write("\r\n*** Disconnected from backend ***\r\n");
     });
 
-    this.markTasksAlreadyDone();
+    this.markTasksAlreadyDone(id);
     var coll = document.getElementsByClassName("collapsible");
     var i;
 
@@ -129,16 +138,24 @@ export default {
       }
     },
 
-    markTasksAlreadyDone: function () {
-      const port = window.location.port;
-      if (window.localStorage.getItem(port) === null) {
-        this.openTask(1);
-      } else {
-        var doneTasks = JSON.parse(window.localStorage.getItem(port));
-        for (var task in doneTasks) {
-          this.markTaskAsDone(parseInt(doneTasks[task]));
-        }
-      }
+    markTasksAlreadyDone: function (userId) {
+      fetch(`http://${this.HOST}:8080/tasksDone/${userId}`, {
+        credentials: 'same-origin'
+      })
+        .then((response) => {
+          const contentType = response.headers.get('content-type');
+          if (!contentType || !contentType.includes('application/json')) {
+            throw new TypeError("Oops, we haven't got JSON!");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          data.forEach(task => {
+            if (task > 0)
+              this.markTaskAsDone(task)
+          });
+        })
+        .catch((error) => console.error(error));
     },
   },
 };

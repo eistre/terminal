@@ -1,18 +1,37 @@
 #Copied from https://github.com/alexeagleson/docker-node-postgres-template#useful-docker-commands and modified
 version: '3.8'
 services:
+    vue-front:
+        build:
+            context: front-end
+        ports:
+            - "80:80"
+        volumes:
+            - ./front-end/:/app
+
     app:
-        build: .
+        build:
+            context: back-end
         depends_on:
             # Our app does not work without our database
             # so this ensures our database is loaded first
-            - postgres_container
+            postgres_container:
+                condition: service_healthy
         ports:
-            - "8085:8080"
+            - "8080:8080"
+            - "5000:5000"
+            - "9229:9229"
         volumes:
             # Maps our current project directory `.` to
             # our working directory in the container
-            - ./:/usr/src/app/
+            - ./back-end/:/usr/src/app/
+            - /usr/src/app/node_modules
+            - //var/run/docker.sock:/var/run/docker.sock
+
+        #environment:
+        #    - NODE_ENV=development
+        #command:
+        #    - nodemon
 
     # This is the configuration for our PostgreSQL database container
     # Note the `postgres_container` name is important, in out Node app when we refer
@@ -29,14 +48,18 @@ services:
             - POSTGRES_USER=root
             - POSTGRES_PASSWORD=root
             - POSTGRES_DB=root
-        ports:
-            # Standard port for PostgreSQL databases
+        ports: #Enable for development / migrations
             - "5432:5432"
         volumes:
             # When the PostgresSQL container is started it will run any scripts
             # provided in the `docker-entrypoint-initdb.d` directory, this connects
             # our seed file to that directory so that it gets run
-            - ./prisma/migrations/20230126163138_initial_schema/migration.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./back-end/prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U root"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
 
     pgadmin-compose:
         image: dpage/pgadmin4

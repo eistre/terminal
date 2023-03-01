@@ -12,7 +12,7 @@ export default {
     <div>
       <Banner />
       <h2>
-        Linuxi käsurea harjutuskeskkond - Ubuntu terminal veebibrauseris
+        Linuxi Käsurea harjutuskeskkond - Ubuntu terminal veebibrauseris
       </h2>
     </div>
     <div class="main">

@@ -2,7 +2,7 @@
 export default {
     data() {
         return {
-            HOST: import.meta.env.VITE_HOST,
+            API: import.meta.env.VITE_API_ADDRESS,
         };
     },
     methods: {
@@ -17,10 +17,13 @@ export default {
             anonButton.disabled = true;
             var xhr = new XMLHttpRequest();
             xhr.withCredentials = true; //so the cookies can be used.
-            if (matriculationNr)
-                xhr.open("POST", `http://${this.HOST}:8080/ubuntuInstance/`, true);
+            console.log(this.API)
+            if (matriculationNr) {
+                console.log("Posting to " + this.API);
+                xhr.open("POST", `http://${this.API}:8080/ubuntuInstance/`, true);
+            }
             else
-                xhr.open("POST", `http://${this.HOST}:8080/ubuntuInstance/`, true);
+                xhr.open("POST", `http://${this.API}:8080/ubuntuInstance/`, true);
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send(name ? JSON.stringify({ name: name, matriculation: matriculationNr }) : null);
             var trueRouter = this.$router;
@@ -33,14 +36,10 @@ export default {
                 }
                 var data = JSON.parse(this.response);
                 var userId = data.userId
-                console.log("Saved user Id "+userId)
-                
-                if (matriculationNr)
-                    trueRouter.push(`/terminal?port=${data.port}&name=${name}&mat=${matriculationNr}&id=${userId}`);
-                else
-                    trueRouter.push(`/terminal?port=${data.port}&name=külaline`);
+                console.log("Saved user Id " + userId)
+                trueRouter.push(`/terminal?id=${userId}`);
+
             };
-            //Log it!
         },
         validateLoginCredentials: function () {
             var name = document.getElementById("nimi").value;

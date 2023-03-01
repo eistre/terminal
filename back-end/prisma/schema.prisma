@@ -9,18 +9,17 @@ datasource db {
 
 model DoneTask {
   id             Int      @id @default(autoincrement())
-  taskNr         Int      
+  taskNr         Int
   completionTime DateTime @default(now())
+  userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         Int
 }
 
 model User {
-  id            Int        @id @default(autoincrement())
+  id            String     @id @default(uuid())
   matriculation String     @unique
   name          String?
-  port          Int        @unique @default(autoincrement())
-  containerId   String?    @unique
   lastLogin     DateTime   @default(now())
+  containerId   String?    @unique
   DoneTasks     DoneTask[]
 }

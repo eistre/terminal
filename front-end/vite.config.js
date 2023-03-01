@@ -12,9 +12,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  //Because on WSL2. Otherwise the hmr doens't work.
   server: {
-    host: process.env.VITE_HOST,
+    host: "0.0.0.0",
     port: 80,
     watch: {
       usePolling: true,

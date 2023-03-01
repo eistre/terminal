@@ -3,27 +3,26 @@ const SSHClient = require('ssh2').Client;
 const dbClient = require('./dbClient')
 
 const io = require('socket.io')(5000, {
-  cors: {
-    origin: [`http://${process.env.HOST}:80`, `http://${process.env.HOST}:8080`, `http://${process.env.HOST}`],
-  }
+  cors: {origin: [`http://${process.env.FRONT_HOST}`],
+  methods: ["GET", "POST"],
+  credentials:true}
 });
 
 //template from: https://stackoverflow.com/questions/38689707/connecting-to-remote-ssh-server-via-node-js-html5-console
 //Credit goes to Elliot404
 //Modifications made by Joonas Halapuu
-const host = process.env.HOST
 const username = 'test'
 const password = 'Test1234'
 
 io.on('connection', socket => {
-  socket.on('connect to port', port => {
+  socket.on('connect to user', (userId) => {
     var conn = new SSHClient();
-    //socket.join(socketKey);
+    console.log("Reached connection with user: "+userId)
     conn.on('ready', function () {
       socket.emit('data', '\r\n*** SSH CONNECTION ESTABLISHED ***\r\n');
       startInotify(conn, socket);
-      startShellSession(conn, socket, port);
-      dbClient.saveDoneTask(port, 0)//Workaround for now.
+      startShellSession(conn, socket, userId);
+      dbClient.saveDoneTask(userId, 0)
     }).on('close', function () {
       socket.emit('data', '\r\n*** SSH CONNECTION CLOSED ***\r\n');
       socket.disconnect();
@@ -34,8 +33,8 @@ io.on('connection', socket => {
         //startWebSocketConnection(host, port, username, password); //I think this fixes the slow loading and not connecting at first error
       }
     }).connect({
-      host: host,
-      port: port,
+      host: userId,
+      port: 22,
       username: username,
       password: password,
     });
@@ -47,16 +46,15 @@ io.on('connection', socket => {
 //});
 
 
-function startShellSession(conn, socket, port) {
+function startShellSession(conn, socket, id) {
   conn.shell({ rows: 30, cols: 124 }, function (err, stream) {
-    var userTryingToUnminimize = false;
     if (err)
       return socket.emit('data', '\r\n*** SSH SHELL ERROR: ' + err.message + ' ***\r\n');
     socket.on('data', function (data) {
       stream.write(data);
     });
     stream.on('data', function (d) {
-      checkTasks(d, port, socket);
+      checkTasks(d, id, socket);
 
       sendDataToFrontend(d, socket);
     }).on('close', function () {
@@ -85,7 +83,7 @@ function sendDataToFrontend(d, socket) {
 
 }
 
-function checkTasks(d, port, socket) {
+function checkTasks(d, id, socket) {
   var data = d.toString('binary');
 
   var task3Progress = [false, false];
@@ -101,7 +99,7 @@ function checkTasks(d, port, socket) {
     )
   ) {
     socket.emit('data', 'FromServer 1');
-    dbClient.saveDoneTask(port, 1)
+    dbClient.saveDoneTask(id, 1)
   }
   if (
     data.match(
@@ -109,13 +107,13 @@ function checkTasks(d, port, socket) {
     )
   ) {
     socket.emit('data', 'FromServer 2');
-    dbClient.saveDoneTask(port, 2)
+    dbClient.saveDoneTask(id, 2)
   }
   if (data.match(new RegExp("test/\\.ajutine/\\.h2sti_peidetud"))) {
     // \\.veel1Failon2ra_peidetud
     if (task3Progress[1]) {
       socket.emit('data', 'FromServer 3');
-      dbClient.saveDoneTask(port, 3)
+      dbClient.saveDoneTask(id, 3)
     } else task3Progress[0] = true;
   }
   if (data.match(new RegExp("\\.veel1Failon2ra_peidetud"))) {
@@ -124,7 +122,7 @@ function checkTasks(d, port, socket) {
       !data.match(new RegExp("\\.sedaEiPeaksKuvamaMeidetud"))
     ) {
       socket.emit('data', 'FromServer 3');
-      dbClient.saveDoneTask(port, 3)
+      dbClient.saveDoneTask(id, 3)
     } else task3Progress[1] = true;
   }
   if (data.match(new RegExp("\\.sedaEiPeaksKuvamaMeidetud")))
@@ -132,12 +130,12 @@ function checkTasks(d, port, socket) {
   if (data.match(new RegExp("Admin[\\s\\S]+parool[\\s\\S]+on Test1234"))) {
     //Selle peaks panema kuhugi süsteemifailide sügavusse. Siis vähem obvious. Nt etc kausta või kuhugi mujale lampi kohta. Kust ikkagi pääseb ilma sudota lugema või greppima vms. Tegelt päris hea mõte. Panna see kausta, mida ei saa lugeda.
     socket.emit('data', 'FromServer 4');
-    dbClient.saveDoneTask(port, 4)
+    dbClient.saveDoneTask(id, 4)
     //Boonus ülesanne -> kirjuta rida lõppu mis paljastab et ohoo tegelikult kaustas mis on ainult
   }
   if (data.match(new RegExp("/usr/bin/nano"))) {
     socket.emit('data', 'FromServer 5');
-    dbClient.saveDoneTask(port, 5)
+    dbClient.saveDoneTask(id, 5)
   }
   if (data.match(new RegExp("MODIFY andmeturve"))) {
     task6Progress = true;
@@ -145,12 +143,12 @@ function checkTasks(d, port, socket) {
   if (data.match(new RegExp("-rw-rw----.*test.*root.*andmeturve"))) {
     if (task6Progress) {
       socket.emit('data', 'FromServer 6');
-      dbClient.saveDoneTask(port, 6)
+      dbClient.saveDoneTask(id, 6)
     }
   }
   if (data.match(new RegExp("^160526"))) {
     socket.emit('data', 'FromServer 7');
-    dbClient.saveDoneTask(port, 7)
+    dbClient.saveDoneTask(id, 7)
   }
   if (
     data.match(
@@ -158,14 +156,14 @@ function checkTasks(d, port, socket) {
     )
   ) {
     socket.emit('data', 'FromServer 8');
-    dbClient.saveDoneTask(port, 8)
+    dbClient.saveDoneTask(id, 8)
   }
   if (data.match(new RegExp("DELETE,ISDIR .ajutine"))) {
     socket.emit('data', 'FromServer 9');
-    dbClient.saveDoneTask(port, 9)
+    dbClient.saveDoneTask(id, 9)
   }
   if (data.match(new RegExp("\\d+.*\\d+:\\d+.*inotifywait"))) {
     socket.emit('data', 'FromServer 10');
-    dbClient.saveDoneTask(port, 10)
+    dbClient.saveDoneTask(id, 10)
   }
 }
