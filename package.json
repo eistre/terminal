@@ -1,34 +1,18 @@
 {
-  "name": "ubuntuterminal",
-  "version": "1.0.0",
-  "description": "Part of bachelor's thesis. For the basics of Linux terminal on Ubuntu 20.04",
-  "main": "api.js",
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@gitlab.com/JoonasHalapuu/ubuntuterminal.git"
-  },
-  "author": "Joonas Halapuu",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://gitlab.com/JoonasHalapuu/ubuntuterminal/issues"
-  },
-  "homepage": "https://gitlab.com/JoonasHalapuu/ubuntuterminal#readme",
-  "dependencies": {
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "dockerode": "^3.3.1",
-    "dotenv": "^16.0.0",
-    "express": "^4.17.2",
-    "fs": "^0.0.1-security",
-    "http": "^0.0.1-security",
-    "net": "^1.0.2",
-    "socketio": "^1.0.0",
-    "ssh2": "^1.6.0",
-    "xterm": "^4.17.0",
-    "xterm-addon-fit": "^0.5.0",
-    "xterm-addon-webgl": "^0.11.4"
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "nuxt": "^3.8.0",
+    "vue": "^3.3.7",
+    "vue-router": "^4.2.5"
   }
 }

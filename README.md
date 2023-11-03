@@ -1,19 +1,75 @@
-# UbuntuTerminal_WebPage
+# Nuxt 3 Minimal Starter
 
-Bachelor's thesis project
+Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
-On first button click a Ubuntu instance will be built and connected to from the web browser.
-Most useful for learning the Ubuntu terminal commands.
+## Setup
 
-To start the project run the following commands in this directory: 
+Make sure to install the dependencies:
 
+```bash
+# npm
+npm install
 
-    0. make sure that docker is up.
+# pnpm
+pnpm install
 
-    1. change variables HOST in .env, ./webpages/start/startingPage.js and in ./webpages/terminal/terminalDisplay.js to your public IP address
+# yarn
+yarn install
 
-    2. npm install
-    
-    3. node api.js
+# bun
+bun install
+```
 
-    4. Open browser in http://{your IP address} or localhost (the correct address will be written to console as well)
+## Development Server
+
+Start the development server on `http://localhost:3000`:
+
+```bash
+# npm
+npm run dev
+
+# pnpm
+pnpm run dev
+
+# yarn
+yarn dev
+
+# bun
+bun run dev
+```
+
+## Production
+
+Build the application for production:
+
+```bash
+# npm
+npm run build
+
+# pnpm
+pnpm run build
+
+# yarn
+yarn build
+
+# bun
+bun run build
+```
+
+Locally preview production build:
+
+```bash
+# npm
+npm run preview
+
+# pnpm
+pnpm run preview
+
+# yarn
+yarn preview
+
+# bun
+bun run preview
+```
+
+Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
