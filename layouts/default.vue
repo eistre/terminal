@@ -1,6 +1,8 @@
 // https://nuxt.com/docs/guide/directory-structure/layouts
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+  <div>
+    <p>test header</p>
+    <slot />
+    <p>test footer</p>
+  </div>
 </template>
