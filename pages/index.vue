@@ -1,3 +1,5 @@
 <template>
-  <div>page</div>
+  <UContainer>
+    <div>page</div>
+  </UContainer>
 </template>
