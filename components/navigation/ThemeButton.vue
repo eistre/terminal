@@ -14,13 +14,18 @@ const isDark = computed({
 
 <template>
   <ClientOnly>
-    <UButton
-      :icon="isDark ? 'i-heroicons-moon-solid' : 'i-heroicons-sun-solid'"
-      variant="ghost"
-      color="gray"
-      class="text-white"
-      size="xl"
-      @click="isDark = !isDark"
-    />
+    <UTooltip
+      :text="isDark ? 'Lülituge heledale režiimile' : 'Lülituge tumedale režiimile'"
+      :popper="{ arrow: true, placement: 'bottom' }"
+    >
+      <UButton
+        :icon="isDark ? 'i-heroicons-moon-solid' : 'i-heroicons-sun-solid'"
+        variant="ghost"
+        color="gray"
+        class="text-white"
+        size="xl"
+        @click="isDark = !isDark"
+      />
+    </UTooltip>
   </ClientOnly>
 </template>
