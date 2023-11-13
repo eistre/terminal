@@ -14,5 +14,3 @@
     <UDivider :ui="{ border: { size: { horizontal: 'border-t-2' } } }" />
   </div>
 </template>
-<script setup lang="ts">
-</script>
