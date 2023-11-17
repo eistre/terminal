@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-cool-900/75">
+  <div class="bg-blue-600 dark:bg-cool-900/75">
     <UContainer class="p-2 h-20 flex justify-between">
       <NuxtImg
         alt="Tartu Ülikool arvutiteaduse instituut"

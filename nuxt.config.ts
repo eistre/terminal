@@ -15,5 +15,24 @@ export default defineNuxtConfig({
     }
   },
   devtools: { enabled: true },
-  modules: ['@nuxt/ui', '@nuxt/image']
+  routeRules: {
+    '/terminal': { ssr: false, prerender: false }
+  },
+  modules: ['@nuxt/ui', '@nuxt/image'],
+  imports: {
+    presets: [
+      {
+        from: 'xterm',
+        imports: ['Terminal']
+      },
+      {
+        from: 'xterm-addon-webgl',
+        imports: ['WebglAddon']
+      },
+      {
+        from: 'xterm-addon-fit',
+        imports: ['FitAddon']
+      }
+    ]
+  }
 })
