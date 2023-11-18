@@ -1,11 +1,5 @@
 <script setup lang="ts">
-export interface Task {
-  label: string
-  defaultOpen?: boolean
-  variant: 'outline' | 'solid'
-  content: string
-  hint?: string
-}
+import type { Task } from '#imports'
 
 const { tasks } = defineProps<{ tasks: Task[] }>()
 </script>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Task } from '~/components/terminal/tasks.vue'
+import type { Task } from '#imports'
 
 const colorMode = useColorMode()
 const variant = computed(() => colorMode.preference === 'dark' ? 'outline' : 'solid')
