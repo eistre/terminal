@@ -3,7 +3,7 @@
     <UContainer class="p-2 h-20 flex justify-between">
       <NuxtImg
         alt="Tartu Ülikool arvutiteaduse instituut"
-        src="https://cs.ut.ee/sites/default/files/svg_image/arvutiteaduse_instituut_est_white_2021.svg"
+        src="/arvutiteaduse_instituut_est_white_2021.svg"
       />
       <div class="flex items-center">
         <NavigationThemeButton />

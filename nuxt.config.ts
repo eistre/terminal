@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   app: {
     head: {
-      title: 'Linuxi harjutuse',
+      title: 'Linuxi harjutused',
       meta: [
         {
           name: 'description',
@@ -10,7 +10,7 @@ export default defineNuxtConfig({
         }
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: 'https://i.imgur.com/uy6Ntdz.png' }
+        { rel: 'icon', type: 'image/png', href: '/terminal.png' }
       ]
     }
   },
@@ -18,7 +18,13 @@ export default defineNuxtConfig({
   routeRules: {
     '/terminal': { ssr: false, prerender: false }
   },
-  modules: ['@nuxt/ui', '@nuxt/image'],
+  modules: ['@nuxt/ui', '@nuxt/image', 'nuxt-security'],
+  // https://nuxt-security.vercel.app/documentation/getting-started/setup
+  security: {
+    headers: {
+      crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp'
+    }
+  },
   imports: {
     presets: [
       {
