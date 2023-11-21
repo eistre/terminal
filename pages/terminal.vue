@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { Task } from '#imports'
 
+// Work around to build fail when importing css
+useHead({
+  link: [{ rel: 'stylesheet', type: 'text/css', href: 'css/xterm.css' }]
+})
+
 const colorMode = useColorMode()
 const variant = computed(() => colorMode.preference === 'dark' ? 'outline' : 'solid')
 
@@ -101,16 +106,3 @@ onMounted(() => {
     </UCard>
   </UContainer>
 </template>
-
-<style>
-@import 'xterm/css/xterm.css';
-
-.xterm-viewport, .xterm-screen {
-  overflow: hidden !important;
-  border-radius: 16px;
-}
-
-.xterm-screen canvas {
-  padding-left: 16px;
-}
-</style>
