@@ -6,29 +6,49 @@ import type { FormSubmitEvent } from '#ui/types'
 const schema = z.object({
   name: z.string({ required_error: 'Sisestage oma nimi' })
     .min(1, 'Sisestage oma nimi'),
-  matriculation: z.string({ required_error: 'Sisestage korrektne matrikkel' })
-    .regex(/^[A-ZÕÜÖÄ]\d+$/, 'Sisestage korrektne matrikkel')
+  password: z.string({ required_error: 'Sisestage parool' })
+    .min(8, 'Parool peab olema vähemalt 8 sümbolit pikk')
 })
 
 type Schema = z.output<typeof schema>
 
 const state = reactive({
   name: undefined,
-  matriculation: undefined
+  password: undefined
 })
 
 const isDisabled = computed(() => !schema.safeParse(state).success)
 
-function onSubmit (event: FormSubmitEvent<Schema>) {
-  // TODO create pod
+async function onSubmit (event: FormSubmitEvent<Schema>) {
+  const data = schema.safeParse(event.data)
+
+  if (!data.success) {
+    // TODO
+    return
+  }
+
+  const { error } = await useFetch('/api/login', {
+    method: 'POST',
+    body: {
+      name: data.data.name,
+      password: data.data.password
+    }
+  })
+
+  if (error.value) {
+    // TODO
+    return
+  }
+
+  await navigateTo('/terminal')
 }
 </script>
 
 <template>
-  <UCard>
+  <UCard class="w-1/2">
     <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-      <div class="flex gap-4">
-        <UFormGroup label="Nimi" name="name">
+      <div class="flex gap-4 w-full">
+        <UFormGroup label="Nimi" name="fullName" class="w-1/2">
           <UInput
             v-model="state.name"
             placeholder="Juhan"
@@ -37,11 +57,12 @@ function onSubmit (event: FormSubmitEvent<Schema>) {
           />
         </UFormGroup>
 
-        <UFormGroup label="Matrikkel" name="matriculation">
+        <UFormGroup label="Parool" name="password" class="w-1/2">
           <UInput
-            v-model="state.matriculation"
-            placeholder="X00000"
+            v-model="state.password"
+            placeholder="********"
             size="md"
+            type="password"
           />
         </UFormGroup>
       </div>
@@ -50,10 +71,11 @@ function onSubmit (event: FormSubmitEvent<Schema>) {
         <UButton
           type="submit"
           variant="outline"
+          class="w-1/4"
           size="md"
-          :disabled="!isDisabled"
+          :disabled="isDisabled"
         >
-          Logi sisse
+          Alusta
         </UButton>
       </div>
     </UForm>
