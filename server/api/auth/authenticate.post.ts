@@ -23,8 +23,8 @@ const login = async (event: H3Event<EventHandlerRequest>, name: string, password
     const { userId } = await auth.useKey('name', name.toLowerCase(), password)
 
     await createAndSetSession(event, userId)
-  } catch (e) {
-    if (e instanceof LuciaError && e.message === 'AUTH_INVALID_PASSWORD') {
+  } catch (error) {
+    if (error instanceof LuciaError && error.message === 'AUTH_INVALID_PASSWORD') {
       throw createError({
         statusCode: 401,
         statusMessage: 'Unauthorized',
@@ -69,9 +69,9 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
     })
 
     await createAndSetSession(event, userId)
-  } catch (e) {
+  } catch (error) {
     // if login attempt
-    if (e instanceof LuciaError && e.message === 'AUTH_DUPLICATE_KEY_ID') {
+    if (error instanceof LuciaError && error.message === 'AUTH_DUPLICATE_KEY_ID') {
       await login(event, name, password)
       return
     }

@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const user = useUser()
+</script>
+
 <template>
   <div class="bg-blue-600 dark:bg-cool-900/75">
     <UContainer class="p-2 h-20 flex justify-between">
@@ -7,6 +11,8 @@
       />
       <div class="flex items-center">
         <NavigationThemeButton />
+        <NavigationLogoutButton v-if="user" />
+        <NavigationDeleteButton v-if="user" />
       </div>
     </UContainer>
 

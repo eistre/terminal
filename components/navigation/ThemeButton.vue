@@ -1,5 +1,5 @@
 // https://ui.nuxt.com/getting-started/examples
-<script setup>
+<script setup lang="ts">
 const colorMode = useColorMode()
 
 const isDark = computed({
@@ -15,7 +15,7 @@ const isDark = computed({
 <template>
   <ClientOnly>
     <UTooltip
-      :text="isDark ? 'Lülituge heledale režiimile' : 'Lülituge tumedale režiimile'"
+      :text="isDark ? 'Lülitu heledale režiimile' : 'Lülitu tumedale režiimile'"
       :popper="{ arrow: true, placement: 'bottom' }"
     >
       <UButton
