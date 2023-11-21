@@ -4,7 +4,7 @@ import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 
 const schema = z.object({
-  name: z.string({ required_error: 'Sisestage oma nimi' })
+  username: z.string({ required_error: 'Sisestage oma nimi' })
     .min(1, 'Sisestage oma nimi'),
   password: z.string({ required_error: 'Sisestage parool' })
     .min(8, 'Parool peab olema vähemalt 8 sümbolit pikk')
@@ -13,7 +13,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>
 
 const state = reactive({
-  name: undefined,
+  username: undefined,
   password: undefined
 })
 
@@ -27,10 +27,10 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     return
   }
 
-  const { error } = await useFetch('/api/login', {
+  const { error } = await useFetch('/api/auth', {
     method: 'POST',
     body: {
-      name: data.data.name,
+      name: data.data.username,
       password: data.data.password
     }
   })
@@ -48,9 +48,9 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
   <UCard class="w-1/2">
     <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
       <div class="flex gap-4 w-full">
-        <UFormGroup label="Nimi" name="fullName" class="w-1/2">
+        <UFormGroup label="Nimi" name="username" class="w-1/2">
           <UInput
-            v-model="state.name"
+            v-model="state.username"
             placeholder="Juhan"
             variant="outline"
             size="md"
