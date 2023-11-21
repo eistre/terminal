@@ -27,7 +27,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     return
   }
 
-  const { error } = await useFetch('/api/auth', {
+  const { error } = await useFetch('/api/auth/authenticate', {
     method: 'POST',
     body: {
       name: data.data.username,

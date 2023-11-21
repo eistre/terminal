@@ -1,3 +1,10 @@
+<script setup lang="ts">
+// https://lucia-auth.com/guidebook/sign-in-with-username-and-password/nuxt/
+definePageMeta({
+  middleware: 'unprotected'
+})
+</script>
+
 <template>
   <UContainer>
     <UCard :ui="{ ring: '', shadow: '' }">

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { Task } from '#imports'
 
+definePageMeta({
+  middleware: 'protected'
+})
+
 // Work around to build fail when importing css
 useHead({
   link: [{ rel: 'stylesheet', type: 'text/css', href: 'css/xterm.css' }]
