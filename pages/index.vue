@@ -24,7 +24,7 @@ definePageMeta({
 
       <template #footer>
         <div class="flex justify-center">
-          <AuthLogin />
+          <AuthAuthenticate />
         </div>
       </template>
     </UCard>

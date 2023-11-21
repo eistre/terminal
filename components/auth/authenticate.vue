@@ -19,7 +19,7 @@ const state = reactive({
 
 const isDisabled = computed(() => !schema.safeParse(state).success)
 
-async function onSubmit (event: FormSubmitEvent<Schema>) {
+const onSubmit = async (event: FormSubmitEvent<Schema>) => {
   const data = schema.safeParse(event.data)
 
   if (!data.success) {
