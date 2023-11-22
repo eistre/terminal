@@ -13,6 +13,7 @@
     "@nuxt/devtools": "latest",
     "@nuxt/image": "^1.0.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@types/dockerode": "^3.3.23",
     "eslint": "^8.53.0",
     "eslint-plugin-anti-trojan-source": "^1.1.1",
     "eslint-plugin-security-node": "^1.1.1",
@@ -25,6 +26,7 @@
   "dependencies": {
     "@lucia-auth/adapter-prisma": "^3.0.2",
     "@nuxt/ui": "^2.10.0",
+    "dockerode": "^4.0.0",
     "lucia": "^2.7.4",
     "xterm": "^5.3.0",
     "xterm-addon-fit": "^0.8.0",
