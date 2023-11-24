@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Task } from '#imports'
+import type { Task } from '~/utils/task'
 
 const { tasks } = defineProps<{ tasks: Task[] }>()
 </script>

@@ -1,5 +1,7 @@
 // Builds docker image at startup
 // https://github.com/apocas/dockerode
+import { ImageEvent } from '~/server/utils/image'
+
 export default defineNitroPlugin(async () => {
   // TODO block client if no image available
   // TODO log 'Starting docker image build'
@@ -19,10 +21,11 @@ export default defineNitroPlugin(async () => {
           // TODO log 'Docker image built successfully in time ms'
         }
       },
-      (event) => {
-        const data: string = event.stream
-
-        if (/^Step \d+\/\d+ :/.test(data)) {
+      (event: ImageEvent) => {
+        if (event.type === 'error') {
+          // TODO log
+          // TODO retry
+        } else if (/^Step \d+\/\d+ :/.test(event.stream)) {
           // TODO log
         }
       }
