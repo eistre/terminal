@@ -3,8 +3,11 @@
 import { ImageEvent } from '~/server/utils/image'
 
 export default defineNitroPlugin(async () => {
+  const logger = pino.child({ caller: 'docker' })
+
   // TODO block client if no image available
-  // TODO log 'Starting docker image build'
+  logger.info('Starting docker image build')
+  const startTime = Date.now()
 
   try {
     const stream = await docker.buildImage(
@@ -16,21 +19,22 @@ export default defineNitroPlugin(async () => {
       stream,
       (error) => {
         if (error) {
-          // TODO log error
+          logger.error(error)
         } else {
-          // TODO log 'Docker image built successfully in time ms'
+          const executionTime = Date.now() - startTime
+          logger.info(`Docker image built successfully in time ${executionTime} ms`)
         }
       },
       (event: ImageEvent) => {
         if (event.type === 'error') {
-          // TODO log
           // TODO retry
+          logger.error(event)
         } else if (/^Step \d+\/\d+ :/.test(event.stream)) {
-          // TODO log
+          logger.info(event.stream)
         }
       }
     )
   } catch (error) {
-    // TODO log error
+    logger.error(error)
   }
 })

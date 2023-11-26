@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev | pino-pretty --colorize --singleLine",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
@@ -28,6 +28,8 @@
     "@nuxt/ui": "^2.11.0",
     "dockerode": "^4.0.0",
     "lucia": "^2.7.4",
+    "pino": "^8.16.2",
+    "pino-pretty": "^10.2.3",
     "xterm": "^5.3.0",
     "xterm-addon-fit": "^0.8.0",
     "xterm-addon-webgl": "^0.16.0",
