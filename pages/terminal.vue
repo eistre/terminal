@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { io } from 'socket.io-client'
 import type { Task } from '~/utils/task'
 
 definePageMeta({
@@ -77,13 +78,38 @@ const webglAddon = new WebglAddon()
 const fitAddon = new FitAddon()
 const term = ref<HTMLElement | null>(null)
 
+const user = useAuthenticatedUser()
+const port = parseInt(process.env.SOCKET_PORT ?? '3001')
+
 onMounted(() => {
   terminal.open(term.value)
   terminal.loadAddon(webglAddon)
   terminal.loadAddon(fitAddon)
 
   fitAddon.fit()
-  terminal.write('\n*** Testing ***')
+
+  const socket = io(`localhost:${port}`, {
+    auth: {
+      token: user.value.token
+    }
+  })
+
+  // TODO make component
+  socket.on('connect', () => {
+    terminal.write('\r\n*** Connected to backend ***\r\n')
+  })
+
+  terminal.onData((data: string) => {
+    socket.send(data)
+  })
+
+  socket.on('message', (data: string) => {
+    terminal.write(data)
+  })
+
+  socket.on('disconnect', () => {
+    terminal.write('\r\n*** Disconnected from backend ***\r\n')
+  })
 })
 </script>
 
