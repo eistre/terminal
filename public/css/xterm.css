@@ -247,12 +247,7 @@
 
 /*
     Additions
- */
-.xterm-viewport, .xterm-screen {
+*/
+.xterm-viewport {
     overflow: hidden !important;
-    border-radius: 16px;
-}
-
-.xterm-screen canvas {
-    padding-left: 16px;
 }

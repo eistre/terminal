@@ -102,10 +102,12 @@ onMounted(() => {
           :tasks="tasks"
         />
 
-        <div
-          ref="term"
-          class="w-2/3 h-auto"
-        />
+        <div class="w-2/3 h-auto p-4 bg-black rounded-xl">
+          <div
+            ref="term"
+            class="w-full h-auto"
+          />
+        </div>
       </div>
     </UCard>
   </UContainer>
