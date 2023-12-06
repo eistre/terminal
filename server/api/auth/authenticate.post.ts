@@ -2,6 +2,10 @@
 import { z } from 'zod'
 import { LuciaError } from 'lucia'
 import { EventHandlerRequest, H3Event } from 'h3'
+import dayjs from 'dayjs'
+
+const USER_DATE_VALUE: number = Number(process.env.USER_DATE_VALUE) || 1
+const USER_DATE_UNIT:dayjs.ManipulateType = process.env.USER_DATE_UNIT as dayjs.ManipulateType || 'month'
 
 const schema = z.object({
   name: z.string().min(1),
@@ -64,7 +68,8 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
         password
       },
       attributes: {
-        name
+        name,
+        expireTime: getExpireDateTime(USER_DATE_VALUE, USER_DATE_UNIT)
       }
     })
 

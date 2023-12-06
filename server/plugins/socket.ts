@@ -42,7 +42,8 @@ export default defineNitroPlugin(() => {
   })
 
   io.on('connection', async (socket) => {
-    const namespace: string = socket.data.client.id
+    const clientId: string = socket.data.client.id
+    const namespace = `ubuntu-${clientId}`
 
     // Create or update deployment
     try {
@@ -59,7 +60,7 @@ export default defineNitroPlugin(() => {
       const client = new Client()
 
       client.on('ready', () => {
-        logger.info(`Created ssh connection for client: ${namespace}`)
+        logger.info(`Created ssh connection for client: ${clientId}`)
         socket.send('\r\n*** SSH Connected established ***\r\n\n')
 
         // TODO inotify
@@ -90,7 +91,7 @@ export default defineNitroPlugin(() => {
       })
 
       client.on('close', () => {
-        logger.info(`Connection closed for client: ${namespace}`)
+        logger.info(`Connection closed for client: ${clientId}`)
         socket.send('\r\n*** SSH Connection terminated ***\r\n')
         socket.disconnect()
       })
@@ -100,7 +101,7 @@ export default defineNitroPlugin(() => {
 
         // If connection refused - try again
         if (error.message.includes('ECONNREFUSED')) {
-          logger.warn(`Connection refused for client: ${namespace} - retrying`)
+          logger.warn(`Connection refused for client: ${clientId} - retrying`)
           createPodConnection()
         } else {
           logger.error(error)

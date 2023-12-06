@@ -1,5 +1,9 @@
+// https://github.com/kubernetes-client/javascript
 import * as k8s from '@kubernetes/client-node'
 import dayjs from 'dayjs'
+
+const POD_DATE_VALUE: number = Number(process.env.POD_DATE_VALUE) || 1
+const POD_DATE_UNIT: dayjs.ManipulateType = process.env.POD_DATE_UNIT as dayjs.ManipulateType || 'day'
 
 export class Kubernetes {
   private api: k8s.CoreV1Api
@@ -49,13 +53,15 @@ export class Kubernetes {
     await this.api.deleteNamespace(namespace)
   }
 
-  private async doesNamespaceExist (namespace: string): Promise<boolean> {
-    const namespaces = (await this.api.listNamespace())
-      .body
-      .items
-      .map(namespace => namespace.metadata?.name)
+  async getNamespaces (): Promise<k8s.V1Namespace[]> {
+    const namespaces = await this.api.listNamespace()
+    return namespaces.body.items.filter(namespace => namespace.metadata?.name?.startsWith('ubuntu-'))
+  }
 
-    return namespaces.includes(namespace)
+  // TODO what if namespace is terminating
+  private async doesNamespaceExist (namespace: string): Promise<boolean> {
+    const namespaces = await this.getNamespaces()
+    return namespaces.some(k8sNamespace => k8sNamespace.metadata?.name === namespace)
   }
 
   private async createDeployment (namespace: string) {
@@ -64,7 +70,7 @@ export class Kubernetes {
       metadata: {
         name: namespace,
         annotations: {
-          expiresIn: dayjs().add(1, 'day').format()
+          expireTime: getExpireDateTime(POD_DATE_VALUE, POD_DATE_UNIT)
         }
       }
     })
@@ -108,7 +114,11 @@ export class Kubernetes {
   private async updateDeployment (namespace: string) {
     await this.api.patchNamespace(
       namespace,
-      [{ op: 'replace', path: '/metadata/annotations', value: { expiresIn: dayjs().add(1, 'day').format() } }],
+      [{
+        op: 'replace',
+        path: '/metadata/annotations',
+        value: { expireTime: getExpireDateTime(POD_DATE_VALUE, POD_DATE_UNIT) }
+      }],
       undefined, // pretty
       undefined, // dryRun
       undefined, // fieldManager
