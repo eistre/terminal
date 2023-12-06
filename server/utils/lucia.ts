@@ -5,7 +5,7 @@ import { prisma } from '@lucia-auth/adapter-prisma'
 import jwt from 'jsonwebtoken'
 import db from '../../prisma/db'
 
-const secret = process.env.JWT_SECRET ?? 'secret_example'
+const secret = process.env.JWT_SECRET || 'secret_example'
 
 export const auth = lucia({
   env: process.env ? 'DEV' : 'PROD',

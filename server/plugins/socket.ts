@@ -7,8 +7,8 @@ import jwt, { VerifyErrors } from 'jsonwebtoken'
 export default defineNitroPlugin(() => {
   const logger = pino.child({ caller: 'socket' })
 
-  const socketPort = parseInt(process.env.SOCKET_PORT ?? '3001')
-  const secret = process.env.JWT_SECRET ?? 'secret_example'
+  const socketPort = Number(process.env.SOCKET_PORT || '3001')
+  const secret = process.env.JWT_SECRET || 'secret_example'
 
   // Create websocket
   const io = new Server(socketPort, {
