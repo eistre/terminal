@@ -1,6 +1,6 @@
 import Pino, { LoggerOptions } from 'pino'
 
-const getPinoConfig = (): LoggerOptions => {
+function getPinoConfig (): LoggerOptions {
   if (process.env.NODE_ENV === 'development') {
     return {
       level: 'debug',

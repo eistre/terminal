@@ -10,20 +10,7 @@ const userLogger = pino.child({ caller: 'user_delete_job' })
 const POD_CRON_TIMER = process.env.POD_CRON_TIMER || '0 0 * * * *'
 const USER_CRON_TIMER = process.env.USER_CRON_TIMER || '0 0 0 * * *'
 
-export default defineNitroPlugin(async () => {
-  // Run jobs during startup
-  await podDeleteJob()
-  await userDeleteJob()
-
-  // Schedule the jobs
-  Cron(POD_CRON_TIMER, { name: 'podDeleteJob' }, podDeleteJob)
-  Cron(USER_CRON_TIMER, { name: 'userDeleteJob' }, userDeleteJob)
-
-  const jobs = Cron.scheduledJobs.map(job => job.name)
-  logger.info(`Scheduled following jobs: ${jobs}`)
-})
-
-const deleteExpiredNamespaces = async (namespaces: string[]): Promise<number> => {
+async function deleteExpiredNamespaces (namespaces: string[]): Promise<number> {
   let count = 0
 
   for (const namespace of namespaces) {
@@ -39,7 +26,7 @@ const deleteExpiredNamespaces = async (namespaces: string[]): Promise<number> =>
   return count
 }
 
-const podDeleteJob = async () => {
+async function podDeleteJob () {
   const namespaces = (await kubernetes.getNamespaces())
     .filter(namespace => dayjs().isAfter(namespace.metadata?.annotations?.expireTime))
     .map(namespace => namespace.metadata!.name!)
@@ -51,7 +38,7 @@ const podDeleteJob = async () => {
   }
 }
 
-const userDeleteJob = async () => {
+async function userDeleteJob () {
   const { count } = await db.user.deleteMany({
     where: {
       expireTime: {
@@ -64,3 +51,16 @@ const userDeleteJob = async () => {
     userLogger.info(`Deleted ${count} old ${count === 1 ? 'user' : 'users'}`)
   }
 }
+
+export default defineNitroPlugin(async () => {
+  // Run jobs during startup
+  await podDeleteJob()
+  await userDeleteJob()
+
+  // Schedule the jobs
+  Cron(POD_CRON_TIMER, { name: 'podDeleteJob' }, podDeleteJob)
+  Cron(USER_CRON_TIMER, { name: 'userDeleteJob' }, userDeleteJob)
+
+  const jobs = Cron.scheduledJobs.map(job => job.name)
+  logger.info(`Scheduled following jobs: ${jobs}`)
+})

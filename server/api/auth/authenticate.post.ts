@@ -12,7 +12,7 @@ const schema = z.object({
   password: z.string().min(8)
 })
 
-const createAndSetSession = async (event: H3Event<EventHandlerRequest>, userId: string) => {
+async function createAndSetSession (event: H3Event<EventHandlerRequest>, userId: string) {
   const session = await auth.createSession({
     userId,
     attributes: {}
@@ -22,7 +22,7 @@ const createAndSetSession = async (event: H3Event<EventHandlerRequest>, userId: 
   authRequest.setSession(session)
 }
 
-const login = async (event: H3Event<EventHandlerRequest>, name: string, password: string) => {
+async function login (event: H3Event<EventHandlerRequest>, name: string, password: string) {
   try {
     const { userId } = await auth.useKey('name', name.toLowerCase(), password)
 

@@ -28,16 +28,6 @@ function verifyToken (socket: Socket, next: (err?: ExtendedError | undefined) =>
   })
 }
 
-export default defineNitroPlugin(() => {
-  const client = socket.of('terminal')
-
-  // For socket authentication
-  // https://socket.io/docs/v4/middlewares/
-  client.use(verifyToken)
-
-  client.on('connection', handleClientConnection)
-})
-
 async function handleClientConnection (socket: Socket) {
   const clientId: string = socket.data.client.id
   const namespace = `ubuntu-${clientId}`
@@ -121,3 +111,13 @@ function handleProxy (socket: Socket, pod: Client, port: number, clientId: strin
     }
   })
 }
+
+export default defineNitroPlugin(() => {
+  const client = socket.of('terminal')
+
+  // For socket authentication
+  // https://socket.io/docs/v4/middlewares/
+  client.use(verifyToken)
+
+  client.on('connection', handleClientConnection)
+})
