@@ -79,7 +79,7 @@ const fitAddon = new FitAddon()
 const term = ref<HTMLElement | null>(null)
 
 const user = useAuthenticatedUser()
-const port = process.env.SOCKET_PORT || '3001'
+const port = Number(process.env.SOCKET_PORT) || 3001
 
 onMounted(() => {
   terminal.open(term.value)
@@ -88,7 +88,7 @@ onMounted(() => {
 
   fitAddon.fit()
 
-  const socket = io(`localhost:${Number(port)}`, {
+  const socket = io(`localhost:${port}/terminal`, {
     auth: {
       token: user.value.token
     }
