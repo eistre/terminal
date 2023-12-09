@@ -13,6 +13,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
   }
 
   const exercises = await db.exercise.findMany({
+    orderBy: [{ id: 'asc' }],
     include: {
       tasks: {
         include: {
