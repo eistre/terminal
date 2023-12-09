@@ -14,6 +14,9 @@ export default defineNuxtConfig({
       ]
     }
   },
+  routeRules: {
+    '/exercises/**': { ssr: false, prerender: false }
+  },
   devtools: { enabled: true },
   modules: ['@nuxt/ui', '@nuxt/image', 'nuxt-security'],
   // https://nuxt-security.vercel.app/documentation/getting-started/setup
