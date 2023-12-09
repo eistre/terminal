@@ -11,7 +11,8 @@ useHead({
 })
 
 const route = useRoute()
-const { data: exercise } = await useFetch(`/api/exercises/${route.params.id}`, { method: 'GET' })
+const exerciseId = route.params.id
+const { data: exercise } = await useFetch(`/api/exercises/${exerciseId}`, { method: 'GET' })
 
 const terminal = ref<HTMLElement | null>(null)
 const term = new Terminal({ fontFamily: '"Cascadia Mono", Menlo, monospace' })
@@ -24,6 +25,7 @@ const port = Number(process.env.SOCKET_PORT) || 3001
 
 const socket = io(`localhost:${port}/terminal`, {
   auth: {
+    exerciseId,
     token: user.value.token
   }
 })
@@ -42,11 +44,19 @@ socket.on('disconnect', () => {
 
 socket.on('ready', () => {
   term.onData((data: string) => {
-    socket.send(data)
+    socket.send({ data })
   })
 
-  socket.on('message', (data: string) => {
+  socket.on('message', ({ data }: { data: string }) => {
     term.write(data)
+  })
+
+  socket.on('complete', ({ data }: { data: number[] }) => {
+    exercise.value?.tasks.forEach((task) => {
+      if (data.includes(task.id)) {
+        task.completed = true
+      }
+    })
   })
 })
 

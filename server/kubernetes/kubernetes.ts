@@ -15,7 +15,8 @@ export class Kubernetes {
     this.api = kc.makeApiClient(k8s.CoreV1Api)
   }
 
-  async createOrUpdateDeployment (namespace: string) {
+  async createOrUpdateDeployment (clientId: string) {
+    const namespace = `ubuntu-${clientId}`
     const namespaceExists = await this.doesNamespaceExist(namespace)
 
     if (namespaceExists) {
@@ -30,7 +31,8 @@ export class Kubernetes {
     })
   }
 
-  async getPort (namespace: string): Promise<number> {
+  async getPort (clientId: string): Promise<number> {
+    const namespace = `ubuntu-${clientId}`
     const service = (await this.api.listNamespacedService(namespace))
       .body
       .items

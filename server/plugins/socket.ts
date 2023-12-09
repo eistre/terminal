@@ -4,13 +4,14 @@ import { Client } from 'ssh2'
 import jwt, { VerifyErrors } from 'jsonwebtoken'
 import { Server, Socket } from 'socket.io'
 import { ExtendedError } from 'socket.io/dist/namespace'
+import db from '~/prisma/db'
 
 const logger = pino.child({ caller: 'socket' })
 const SECRET = process.env.JWT_SECRET || 'secret_example'
 const SOCKET_PORT = Number(process.env.SOCKET_PORT) || 3001
 
 function verifyToken (socket: Socket, next: (err?: ExtendedError | undefined) => void) {
-  const token = socket.handshake.auth.token
+  const { token, exerciseId } = socket.handshake.auth
 
   if (!token) {
     next(new Error('Token not provided'))
@@ -24,12 +25,15 @@ function verifyToken (socket: Socket, next: (err?: ExtendedError | undefined) =>
       return
     }
 
-    socket.data.client = decoded
+    socket.data = {
+      clientId: decoded.id,
+      exerciseId
+    }
     next()
   })
 }
 
-function waitForImageReady () {
+function waitForImage () {
   return new Promise<void>((resolve) => {
     if (docker.isImageReady) {
       resolve()
@@ -46,36 +50,17 @@ function waitForImageReady () {
   })
 }
 
-async function handleClientConnection (socket: Socket) {
-  const clientId: string = socket.data.client.id
-  const namespace = `ubuntu-${clientId}`
-
-  await waitForImageReady()
-  await createAndConnect(socket, namespace, clientId)
-}
-
-async function createAndConnect (socket: Socket, namespace: string, clientId: string) {
+async function createPod (clientId: string) {
   // Create or update deployment
-  try {
-    await kubernetes.createOrUpdateDeployment(namespace)
-  } catch (error) {
-    logger.error(error)
-    socket.disconnect()
-  }
+  await kubernetes.createOrUpdateDeployment(clientId)
 
-  const port = await kubernetes.getPort(namespace)
-
-  // Create ssh connection
-  if (!socket.disconnected) {
-    socket.emit('ready')
-    connectPod(socket, port, clientId)
-  }
+  return await kubernetes.getPort(clientId)
 }
 
-function connectPod (socket: Socket, port: number, clientId: string) {
+async function connectToPod (socket: Socket, port: number) {
   const pod = new Client()
 
-  handleProxy(socket, pod, port, clientId)
+  await setProxy(socket, pod, port)
 
   // TODO ssh keys
   pod.connect({
@@ -86,21 +71,53 @@ function connectPod (socket: Socket, port: number, clientId: string) {
   })
 }
 
-function handleProxy (socket: Socket, pod: Client, port: number, clientId: string) {
+async function setProxy (socket: Socket, pod: Client, port: number) {
+  const { clientId, exerciseId } = socket.data
+  const tasks = await db.task.findMany({
+    where: {
+      exercise_id: Number(exerciseId),
+      completed_by: {
+        none: {
+          user_id: clientId
+        }
+      }
+    },
+    select: {
+      id: true,
+      regex: true
+    }
+  })
+
   pod.on('ready', () => {
     logger.info(`Created ssh connection for client: ${clientId}`)
-    socket.send('\r\n*** SSH Connected established ***\r\n\n')
+    socket.send({ data: '\r\n*** SSH Connected established ***\r\n\n' })
 
-    // TODO inotify
+    pod.exec('inotifywait /home /home/test -m', (error, channel) => {
+      if (error) {
+        logger.error(error)
+      }
+
+      channel.on('close', () => {
+        logger.debug('inotify instance closed')
+      })
+
+      channel.on('data', (data: Buffer) => {
+        evaluate(socket, data.toString('binary'), tasks)
+      })
+
+      channel.stderr.on('data', (data: Buffer) => {
+        logger.debug(data.toString('binary'))
+      })
+    })
 
     pod.shell((error, stream) => {
       if (error) {
         logger.error(error)
-        socket.send(`\r\n*** SSH Shell error: ${error.message} ***\r\n`)
+        socket.send({ data: `\r\n*** SSH Shell error: ${error.message} ***\r\n` })
         return
       }
 
-      socket.on('message', (data: string) => {
+      socket.on('message', ({ data }: { data: string }) => {
         stream.write(data)
       })
 
@@ -109,7 +126,8 @@ function handleProxy (socket: Socket, pod: Client, port: number, clientId: strin
       })
 
       stream.on('data', (data: Buffer) => {
-        socket.send(data.toString('binary'))
+        evaluate(socket, data.toString('binary'), tasks)
+        socket.send({ data: data.toString('binary') })
       })
 
       stream.on('close', () => {
@@ -120,21 +138,44 @@ function handleProxy (socket: Socket, pod: Client, port: number, clientId: strin
 
   pod.on('close', () => {
     logger.info(`Connection closed for client: ${clientId}`)
-    socket.send('\r\n*** SSH Connection terminated ***\r\n')
+    socket.send({ data: '\r\n*** SSH Connection terminated ***\r\n' })
     socket.disconnect()
   })
 
-  pod.on('error', (error) => {
-    socket.send(`\r\n*** SSH Connection error: ${error.message} ***\r\n`)
+  pod.on('error', async (error) => {
+    socket.send({ data: `\r\n*** SSH Connection error: ${error.message} ***\r\n` })
 
     // If connection refused - try again
     if (error.message.includes('ECONNREFUSED')) {
       logger.warn(`Connection refused for client: ${clientId} - retrying`)
-      connectPod(socket, port, clientId)
+      await connectToPod(socket, port)
     } else {
       logger.error(error)
     }
   })
+}
+
+async function evaluate (socket: Socket, data: string, tasks: { id: number, regex: string }[]) {
+  const completed = tasks
+    // eslint-disable-next-line security-node/non-literal-reg-expr
+    .filter(task => new RegExp(task.regex).test(data))
+    .map(task => ({ user_id: socket.data.clientId, task_id: task.id }))
+
+  if (completed.length > 0) {
+    await db.completedTask.createMany({
+      data: completed,
+      skipDuplicates: true
+    })
+
+    const taskIds = completed.map(task => task.task_id)
+
+    taskIds.forEach((id) => {
+      const index = tasks.findIndex(task => task.id === id)
+      tasks.splice(index, 1)
+    })
+
+    socket.emit('complete', { data: taskIds })
+  }
 }
 
 export default defineNitroPlugin(() => {
@@ -158,5 +199,20 @@ export default defineNitroPlugin(() => {
   const client = socket.of('terminal')
   client.use(verifyToken)
 
-  client.on('connection', handleClientConnection)
+  client.on('connection', async (socket) => {
+    await waitForImage()
+
+    try {
+      const port = await createPod(socket.data.clientId)
+
+      // Create ssh connection
+      if (!socket.disconnected) {
+        socket.emit('ready')
+        await connectToPod(socket, port)
+      }
+    } catch (error) {
+      logger.error(error)
+      socket.disconnect()
+    }
+  })
 })

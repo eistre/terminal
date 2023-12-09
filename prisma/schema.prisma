@@ -58,6 +58,7 @@ model Task {
   exercise     Exercise        @relation(references: [id], fields: [exercise_id], onDelete: Cascade)
   completed_by CompletedTask[]
 
+  @@index([id])
   @@index([exercise_id])
 }
 
@@ -68,5 +69,7 @@ model CompletedTask {
   task_id Int
   task    Task   @relation(references: [id], fields: [task_id], onDelete: Cascade)
 
+  @@unique([task_id, user_id])
+  @@index([id])
   @@index([task_id, user_id])
 }
