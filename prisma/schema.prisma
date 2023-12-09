@@ -12,11 +12,12 @@ datasource db {
 
 // https://lucia-auth.com/database-adapters/prisma/
 model User {
-  id           String    @id @unique
-  name         String
+  id            String          @id @unique
+  name          String
   expireTime    DateTime
-  auth_session Session[]
-  key          Key[]
+  auth_session  Session[]
+  key           Key[]
+  CompletedTask CompletedTask[]
 }
 
 model Session {
@@ -36,4 +37,36 @@ model Key {
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
+}
+
+model Exercise {
+  id          Int    @id @default(autoincrement())
+  title       String @unique
+  description String
+  tasks       Task[]
+
+  @@index([id])
+}
+
+model Task {
+  id           Int             @id @default(autoincrement())
+  title        String
+  content      String
+  hint         String?
+  regex        String
+  exercise_id  Int
+  exercise     Exercise        @relation(references: [id], fields: [exercise_id], onDelete: Cascade)
+  completed_by CompletedTask[]
+
+  @@index([exercise_id])
+}
+
+model CompletedTask {
+  id      Int    @id @default(autoincrement())
+  user_id String
+  user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  task_id Int
+  task    Task   @relation(references: [id], fields: [task_id], onDelete: Cascade)
+
+  @@index([task_id, user_id])
 }

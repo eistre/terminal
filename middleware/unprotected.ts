@@ -2,6 +2,6 @@
 export default defineNuxtRouteMiddleware(() => {
   const user = useUser()
   if (user.value) {
-    return navigateTo('/terminal')
+    return navigateTo('/exercises')
   }
 })

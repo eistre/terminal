@@ -40,7 +40,7 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
     return
   }
 
-  await navigateTo('/terminal')
+  await navigateTo('/exercises')
 }
 </script>
 

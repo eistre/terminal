@@ -15,9 +15,6 @@ export default defineNuxtConfig({
     }
   },
   devtools: { enabled: true },
-  routeRules: {
-    '/terminal': { ssr: false, prerender: false }
-  },
   modules: ['@nuxt/ui', '@nuxt/image', 'nuxt-security'],
   // https://nuxt-security.vercel.app/documentation/getting-started/setup
   security: {
