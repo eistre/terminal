@@ -2,11 +2,12 @@
 // Modified from: https://gitlab.com/JoonasHalapuu/ubuntuterminal/-/blob/main/sshConnection.js?ref_type=heads
 import { Client } from 'ssh2'
 import jwt, { VerifyErrors } from 'jsonwebtoken'
-import { Socket } from 'socket.io'
+import { Server, Socket } from 'socket.io'
 import { ExtendedError } from 'socket.io/dist/namespace'
 
 const logger = pino.child({ caller: 'socket' })
 const SECRET = process.env.JWT_SECRET || 'secret_example'
+const SOCKET_PORT = Number(process.env.SOCKET_PORT) || 3001
 
 function verifyToken (socket: Socket, next: (err?: ExtendedError | undefined) => void) {
   const token = socket.handshake.auth.token
@@ -28,10 +29,32 @@ function verifyToken (socket: Socket, next: (err?: ExtendedError | undefined) =>
   })
 }
 
+function waitForImageReady () {
+  return new Promise<void>((resolve) => {
+    if (docker.isImageReady) {
+      resolve()
+    }
+
+    const listener = () => {
+      if (docker.isImageReady) {
+        resolve()
+        emitter.off('image', listener)
+      }
+    }
+
+    emitter.on('image', listener)
+  })
+}
+
 async function handleClientConnection (socket: Socket) {
   const clientId: string = socket.data.client.id
   const namespace = `ubuntu-${clientId}`
 
+  await waitForImageReady()
+  await createAndConnect(socket, namespace, clientId)
+}
+
+async function createAndConnect (socket: Socket, namespace: string, clientId: string) {
   // Create or update deployment
   try {
     await kubernetes.createOrUpdateDeployment(namespace)
@@ -43,7 +66,10 @@ async function handleClientConnection (socket: Socket) {
   const port = await kubernetes.getPort(namespace)
 
   // Create ssh connection
-  connectPod(socket, port, clientId)
+  if (!socket.disconnected) {
+    socket.emit('ready')
+    connectPod(socket, port, clientId)
+  }
 }
 
 function connectPod (socket: Socket, port: number, clientId: string) {
@@ -51,7 +77,6 @@ function connectPod (socket: Socket, port: number, clientId: string) {
 
   handleProxy(socket, pod, port, clientId)
 
-  // TODO terminate socket on logout - currently socket is terminated only if client closes tab
   // TODO ssh keys
   pod.connect({
     host: 'localhost',
@@ -113,10 +138,24 @@ function handleProxy (socket: Socket, pod: Client, port: number, clientId: strin
 }
 
 export default defineNitroPlugin(() => {
-  const client = socket.of('terminal')
+  // Create websocket
+  const socket = new Server(SOCKET_PORT, {
+    cors: {
+      origin: '*'
+    }
+  })
+
+  socket.on('connection', (socket) => {
+    socket.emit('image', { status: docker.isImageReady })
+  })
+
+  emitter.on('image', () => {
+    socket.emit('image', { status: docker.isImageReady })
+  })
 
   // For socket authentication
   // https://socket.io/docs/v4/middlewares/
+  const client = socket.of('terminal')
   client.use(verifyToken)
 
   client.on('connection', handleClientConnection)

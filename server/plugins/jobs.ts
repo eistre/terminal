@@ -60,7 +60,7 @@ async function build (startTime: Dayjs, tries = 0) {
           await build(startTime, tries + 1)
         } else {
           docker.isImageReady = true
-          socket.emit('image', { status: docker.isImageReady })
+          emitter.emit('image')
 
           const executionTime = dayjs().diff(startTime, 'seconds')
           dockerLogger.info(`Docker image built successfully in ${executionTime} s`)
@@ -84,7 +84,7 @@ async function build (startTime: Dayjs, tries = 0) {
 async function dockerBuildJob () {
   dockerLogger.info('Starting docker image build')
   docker.isImageReady = false
-  socket.emit('image', { status: docker.isImageReady })
+  emitter.emit('image')
 
   const startTime = dayjs()
   await build(startTime)
