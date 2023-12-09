@@ -18,6 +18,7 @@ const { data: exercises } = await useFetch('/api/exercises', { method: 'GET' })
           v-for="exercise in exercises"
           :key="exercise.id"
           :ui="{ body: { padding: 'px-4 py-4 sm:p-4' }, header: { padding: 'px-4 py-4 sm:px-4' } }"
+          class="hover:ring-primary-600/90 hover:divide-primary-600/90 dark:hover:ring-primary-900/90 dark:hover:divide-primary-900/90"
         >
           <template #header>
             <div class="flex justify-between items-center">
