@@ -10,6 +10,7 @@ const user = useUser()
         src="/arvutiteaduse_instituut_est_white_2021.svg"
       />
       <div class="flex items-center">
+        <NavigationDockerImageStatus />
         <NavigationThemeButton />
         <NavigationLogoutButton v-if="user" />
         <NavigationDeleteButton v-if="user" />

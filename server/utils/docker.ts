@@ -3,7 +3,10 @@
 import Docker from 'dockerode'
 
 const dockerClientSingleton = () => {
-  return new Docker()
+  return {
+    isImageReady: false,
+    docker: new Docker()
+  }
 }
 
 type DockerClientSingleton = ReturnType<typeof dockerClientSingleton>

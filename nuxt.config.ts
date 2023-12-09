@@ -25,6 +25,9 @@ export default defineNuxtConfig({
       crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp'
     }
   },
+  ui: {
+    icons: ['simple-icons']
+  },
   imports: {
     presets: [
       { from: 'xterm', imports: ['Terminal'] },
