@@ -14,6 +14,18 @@ export default defineNuxtConfig({
       ]
     }
   },
+  nitro: {
+    storage: {
+      k8s: {
+        driver: 'fs',
+        base: './kubernetes'
+      },
+      ssh: {
+        driver: 'fs',
+        base: './.ssh'
+      }
+    }
+  },
   routeRules: {
     '/exercises/**': { ssr: false, prerender: false }
   },

@@ -1,6 +1,6 @@
 // Used as a template:
 // https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
-import { Kubernetes } from '~/server/kubernetes/kubernetes'
+import { Kubernetes } from '~/kubernetes/kubernetes'
 
 const kubernetesClientSingleton = () => {
   return new Kubernetes()

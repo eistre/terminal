@@ -1,6 +1,8 @@
 // https://github.com/kubernetes-client/javascript
 import * as k8s from '@kubernetes/client-node'
 import dayjs from 'dayjs'
+import forge from 'node-forge'
+import { parse } from 'yaml'
 
 const POD_DATE_VALUE: number = Number(process.env.POD_DATE_VALUE) || 1
 const POD_DATE_UNIT: dayjs.ManipulateType = process.env.POD_DATE_UNIT as dayjs.ManipulateType || 'day'
@@ -15,14 +17,14 @@ export class Kubernetes {
     this.api = kc.makeApiClient(k8s.CoreV1Api)
   }
 
-  async createOrUpdateDeployment (clientId: string) {
+  async createOrUpdatePod (clientId: string) {
     const namespace = `ubuntu-${clientId}`
     const namespaceExists = await this.doesNamespaceExist(namespace)
 
     if (namespaceExists) {
-      await this.updateDeployment(namespace)
+      await this.updatePod(namespace)
     } else {
-      await this.createDeployment(namespace)
+      await this.createPod(namespace)
     }
 
     // Wait for pod to start
@@ -53,6 +55,7 @@ export class Kubernetes {
 
   async deleteNamespace (namespace: string) {
     await this.api.deleteNamespace(namespace)
+    await useStorage('ssh').removeItem(namespace)
   }
 
   async getNamespaces (): Promise<k8s.V1Namespace[]> {
@@ -66,7 +69,21 @@ export class Kubernetes {
     return namespaces.some(k8sNamespace => k8sNamespace.metadata?.name === namespace)
   }
 
-  private async createDeployment (namespace: string) {
+  private async createPod (namespace: string) {
+    // Read namespace spec
+    const secretYaml = await useStorage('k8s').getItem<string>('secret.yaml')
+    const podYaml = await useStorage('k8s').getItem<string>('pod.yaml')
+    const serviceYaml = await useStorage('k8s').getItem<string>('service.yaml')
+
+    if (!secretYaml || !podYaml || !serviceYaml) {
+      throw new Error('Namespace spec not found')
+    }
+
+    // Parse namespace spec
+    const secret = parse(secretYaml)
+    const pod = parse(podYaml)
+    const service = parse(serviceYaml)
+
     // Create namespace
     await this.api.createNamespace({
       metadata: {
@@ -77,43 +94,22 @@ export class Kubernetes {
       }
     })
 
+    // Create ssh keys
+    const { publicKey, privateKey } = forge.pki.rsa.generateKeyPair({ bits: 2048 })
+
+    secret.data.id_rsa = Buffer.from(forge.ssh.publicKeyToOpenSSH(publicKey)).toString('base64')
+    await useStorage('ssh').setItem<string>(namespace, forge.ssh.privateKeyToOpenSSH(privateKey))
+
+    await this.api.createNamespacedSecret(namespace, secret)
+
     // Create pod
-    await this.api.createNamespacedPod(namespace, {
-      metadata: {
-        name: 'ubuntu',
-        labels: {
-          app: 'ubuntu'
-        }
-      },
-      spec: {
-        containers: [{
-          name: 'ubuntu',
-          image: 'terminal/ubuntu',
-          imagePullPolicy: 'Never'
-        }]
-      }
-    })
+    await this.api.createNamespacedPod(namespace, pod)
 
     // Create service for ssh
-    await this.api.createNamespacedService(namespace, {
-      metadata: {
-        name: 'ssh'
-      },
-      spec: {
-        type: 'NodePort',
-        selector: {
-          app: 'ubuntu'
-        },
-        ports: [{
-          name: 'ssh',
-          port: 22,
-          targetPort: 22
-        }]
-      }
-    })
+    await this.api.createNamespacedService(namespace, service)
   }
 
-  private async updateDeployment (namespace: string) {
+  private async updatePod (namespace: string) {
     await this.api.patchNamespace(
       namespace,
       [{

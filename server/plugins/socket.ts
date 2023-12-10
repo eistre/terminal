@@ -52,7 +52,7 @@ function waitForImage () {
 
 async function createPod (clientId: string) {
   // Create or update deployment
-  await kubernetes.createOrUpdateDeployment(clientId)
+  await kubernetes.createOrUpdatePod(clientId)
 
   return await kubernetes.getPort(clientId)
 }
@@ -62,12 +62,19 @@ async function connectToPod (socket: Socket, port: number) {
 
   await setProxy(socket, pod, port)
 
-  // TODO ssh keys
+  const privateKey = await useStorage('ssh').getItem<string>(`ubuntu-${socket.data.clientId}`)
+
+  if (!privateKey) {
+    logger.error('Private key not found')
+    socket.disconnect()
+    return
+  }
+
   pod.connect({
     host: 'localhost',
     port,
     username: 'test',
-    password: 'Test1234'
+    privateKey
   })
 }
 
