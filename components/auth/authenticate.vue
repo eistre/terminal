@@ -48,7 +48,7 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
   <UCard class="w-1/2">
     <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
       <div class="flex gap-4 w-full">
-        <UFormGroup label="Nimi" name="username" class="w-1/2">
+        <UFormGroup label="Nimi" name="username" class="w-1/2" eager-validation>
           <UInput
             v-model="state.username"
             placeholder="Juhan"
@@ -57,7 +57,7 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
           />
         </UFormGroup>
 
-        <UFormGroup label="Parool" name="password" class="w-1/2">
+        <UFormGroup label="Parool" name="password" class="w-1/2" eager-validation>
           <UInput
             v-model="state.password"
             placeholder="********"
