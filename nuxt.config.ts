@@ -1,5 +1,24 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { useLogger } from '@nuxt/kit'
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'terminal_admin'
+const logger = useLogger()
+
 export default defineNuxtConfig({
+  hooks: {
+    ready: () => {
+      const length = ADMIN_PASSWORD.length
+      const line = '-'.repeat(length)
+      const space = ' '.repeat(length)
+      logger.info(`
+      |--------------------------${line}|
+      |                          ${space}|
+      |     Admin password: ${process.env.ADMIN_PASSWORD}     |
+      |                          ${space}|
+      |--------------------------${line}|
+      `)
+    }
+  },
   app: {
     head: {
       title: 'Linuxi harjutused',

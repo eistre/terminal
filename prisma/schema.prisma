@@ -14,7 +14,8 @@ datasource db {
 model User {
   id            String          @id @unique
   name          String
-  expireTime    DateTime
+  expireTime    DateTime?
+  role          Role            @default(USER)
   auth_session  Session[]
   key           Key[]
   CompletedTask CompletedTask[]
@@ -72,4 +73,9 @@ model CompletedTask {
   @@unique([task_id, user_id])
   @@index([id])
   @@index([task_id, user_id])
+}
+
+enum Role {
+  USER
+  ADMIN
 }

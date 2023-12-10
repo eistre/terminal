@@ -12,9 +12,10 @@ export const auth = lucia({
   middleware: h3(),
   adapter: prisma(db),
 
-  getUserAttributes: ({ id, name }) => {
+  getUserAttributes: ({ id, name, role }) => {
     return {
       name,
+      role,
       // eslint-disable-next-line import/no-named-as-default-member
       token: jwt.sign({ id }, secret, { expiresIn: '6h' })
     }

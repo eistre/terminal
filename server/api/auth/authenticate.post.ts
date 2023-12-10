@@ -45,8 +45,7 @@ async function login (event: H3Event<EventHandlerRequest>, name: string, passwor
 }
 
 export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) => {
-  const invalidBody = await readBody(event)
-  const body = schema.safeParse(invalidBody)
+  const body = await readValidatedBody(event, schema.safeParse)
 
   if (!body.success) {
     // TODO LOG 'Invalid login request from', getRequestIP(event, { xForwardedFor: true }), 'with body:', invalidBody
