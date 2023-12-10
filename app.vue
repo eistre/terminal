@@ -1,6 +1,10 @@
 // https://nuxt.com/docs/guide/directory-structure/layouts
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+  <div>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+
+    <UNotifications />
+  </div>
 </template>

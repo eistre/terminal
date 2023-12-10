@@ -18,12 +18,20 @@ const state = reactive({
 })
 
 const isDisabled = computed(() => !schema.safeParse(state).success)
+const toast = useToast()
 
 const onSubmit = async (event: FormSubmitEvent<Schema>) => {
   const data = schema.safeParse(event.data)
 
   if (!data.success) {
-    // TODO
+    toast.add({
+      id: 'auth_failed',
+      icon: 'i-heroicons-x-mark',
+      title: data.error.name,
+      description: data.error.message,
+      timeout: 5000,
+      color: 'red'
+    })
     return
   }
 
@@ -36,7 +44,14 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
   })
 
   if (error.value) {
-    // TODO
+    toast.add({
+      id: 'auth_login_failed',
+      icon: 'i-heroicons-x-mark',
+      title: error.value.statusMessage,
+      description: error.value.data.message,
+      timeout: 5000,
+      color: 'red'
+    })
     return
   }
 

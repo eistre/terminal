@@ -1,11 +1,20 @@
 <script setup lang="ts">
+const toast = useToast()
+
 const logout = async () => {
   const { error } = await useFetch('/api/auth/logout', {
     method: 'POST'
   })
 
   if (error.value) {
-    // TODO
+    toast.add({
+      id: 'auth_logout_failed',
+      icon: 'i-heroicons-x-mark',
+      title: error.value.statusMessage,
+      description: error.value.data.message,
+      timeout: 5000,
+      color: 'red'
+    })
     return
   }
 

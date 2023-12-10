@@ -3,7 +3,20 @@ definePageMeta({
   middleware: 'protected'
 })
 
-const { data: exercises } = await useFetch('/api/exercises', { method: 'GET' })
+const { data: exercises, error } = await useFetch('/api/exercises', { method: 'GET' })
+
+const toast = useToast()
+
+if (error.value) {
+  toast.add({
+    id: 'exercises_failed',
+    icon: 'i-heroicons-x-mark',
+    title: error.value.statusMessage,
+    description: error.value.data.message,
+    timeout: 5000,
+    color: 'red'
+  })
+}
 </script>
 
 <template>

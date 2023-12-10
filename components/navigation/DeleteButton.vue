@@ -1,11 +1,31 @@
 <script setup lang="ts">
+const toast = useToast()
+
 const deleteUser = async () => {
   const { error } = await useFetch('/api/auth/delete', {
-    method: 'POST'
+    method: 'POST',
+    onResponse: ({ response }) => {
+      if (response.status === 204) {
+        toast.add({
+          id: 'auth_delete_success',
+          icon: 'i-heroicons-check',
+          title: 'Account deleted successfully',
+          timeout: 5000,
+          color: 'green'
+        })
+      }
+    }
   })
 
   if (error.value) {
-    // TODO
+    toast.add({
+      id: 'auth_delete_failed',
+      icon: 'i-heroicons-x-mark',
+      title: error.value.statusMessage,
+      description: error.value.data.message,
+      timeout: 5000,
+      color: 'red'
+    })
     return
   }
 
