@@ -10,11 +10,23 @@ const logger = pino.child({ caller: 'socket' })
 const SECRET = process.env.JWT_SECRET || 'secret_example'
 const SOCKET_PORT = Number(process.env.SOCKET_PORT) || 3001
 
-function verifyToken (socket: Socket, next: (err?: ExtendedError | undefined) => void) {
+async function verifyToken (socket: Socket, next: (err?: ExtendedError | undefined) => void) {
   const { token, exerciseId } = socket.handshake.auth
 
   if (!token) {
     next(new Error('Token not provided'))
+    return
+  }
+
+  if (!exerciseId) {
+    next(new Error('Exercise id not provided'))
+    return
+  }
+
+  const count = await db.exercise.count({ where: { id: Number(exerciseId) } })
+
+  if (count === 0) {
+    next(new Error('Exercise not found'))
     return
   }
 

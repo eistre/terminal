@@ -5,9 +5,23 @@ definePageMeta({
   middleware: 'protected'
 })
 
+const toast = useToast()
 const route = useRoute()
 const exerciseId = route.params.id
-const { data: exercise } = await useFetch(`/api/exercises/${exerciseId}`, { method: 'GET' })
+const { data: exercise, error } = await useFetch(`/api/exercises/${exerciseId}`, { method: 'GET' })
+
+if (error.value) {
+  toast.add({
+    id: 'exercise_failed',
+    icon: 'i-heroicons-x-mark',
+    title: error.value.statusMessage,
+    description: error.value.data.message,
+    timeout: 5000,
+    color: 'red'
+  })
+
+  await navigateTo('/')
+}
 
 const terminal = ref<HTMLElement | null>(null)
 const term = new Terminal({ fontFamily: '"Cascadia Mono", Menlo, monospace' })
