@@ -5,11 +5,6 @@ definePageMeta({
   middleware: 'protected'
 })
 
-// Work around to build fail when importing css
-useHead({
-  link: [{ rel: 'stylesheet', type: 'text/css', href: 'css/xterm.css' }]
-})
-
 const route = useRoute()
 const exerciseId = route.params.id
 const { data: exercise } = await useFetch(`/api/exercises/${exerciseId}`, { method: 'GET' })
@@ -99,3 +94,11 @@ onUnmounted(() => {
     </UCard>
   </UContainer>
 </template>
+
+<style>
+@import "xterm/css/xterm.css";
+
+.xterm-viewport {
+  overflow: hidden !important;
+}
+</style>
