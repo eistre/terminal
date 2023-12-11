@@ -3,14 +3,14 @@ import { z } from 'zod'
 import db from '~/prisma/db'
 
 const schema = z.object({
-  title: z.string(),
-  description: z.string(),
+  title: z.string().min(1),
+  description: z.string().min(1),
   tasks: z.array(
     z.object({
-      title: z.string(),
-      content: z.string(),
+      title: z.string().min(1),
+      content: z.string().min(1),
       hint: z.string().optional(),
-      regex: z.string()
+      regex: z.string().min(1)
     })
   ).min(1)
 })
