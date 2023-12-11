@@ -3,7 +3,7 @@ const user = useUser()
 </script>
 
 <template>
-  <div class="bg-primary-600/90 dark:bg-gray-900/90">
+  <div class="z-50 bg-primary-600/90 dark:bg-gray-900/90">
     <UContainer class="p-2 h-20 flex justify-between">
       <NuxtImg
         alt="Tartu Ülikool arvutiteaduse instituut"

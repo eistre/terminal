@@ -45,6 +45,7 @@ function deleteExercise (id: number) {
             v-if="user.role === 'ADMIN'"
             variant="outline"
             size="lg"
+            @click="navigateTo('/exercises/new')"
           >
             Loo uus
           </UButton>
@@ -79,7 +80,7 @@ function deleteExercise (id: number) {
 
           <template v-if="user.role === 'ADMIN'" #footer>
             <div class="flex justify-end items-center gap-2">
-              <ExerciseEditButton />
+              <ExerciseEditButton :id="exercise.id" />
               <ExerciseDeleteButton :id="exercise.id" @delete="deleteExercise(exercise.id)" />
             </div>
           </template>

@@ -20,7 +20,7 @@ const state = reactive({
 const isDisabled = computed(() => !schema.safeParse(state).success)
 const toast = useToast()
 
-const onSubmit = async (event: FormSubmitEvent<Schema>) => {
+async function onSubmit (event: FormSubmitEvent<Schema>) {
   const data = schema.safeParse(event.data)
 
   if (!data.success) {
