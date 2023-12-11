@@ -29,7 +29,7 @@ const ui = {
 function deleteExercise (id: number) {
   const index = exercises.value?.findIndex(exercise => exercise.id === id)
 
-  if (index) {
+  if (index !== undefined) {
     exercises.value?.splice(index, 1)
   }
 }

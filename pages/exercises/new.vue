@@ -21,12 +21,12 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>
 
-const idCount = ref(0)
+const keyCount = ref(0)
 const state = reactive({
   title: undefined,
   description: undefined,
   tasks: [{
-    id: idCount.value++,
+    key: keyCount.value++,
     title: undefined,
     content: undefined,
     hint: undefined,
@@ -39,7 +39,7 @@ const toast = useToast()
 
 function add () {
   state.tasks.push({
-    id: idCount.value++,
+    key: keyCount.value++,
     title: undefined,
     content: undefined,
     hint: undefined,
@@ -49,8 +49,8 @@ function add () {
 
 const tasks = computed(() => state.tasks.map((task, index) => ({ ...task, label: `Ülesanne ${index + 1}` })))
 
-function remove (id: number) {
-  const index = state.tasks.findIndex(task => task.id === id)
+function remove (key: number) {
+  const index = state.tasks.findIndex(task => task.key === key)
   state.tasks.splice(index, 1)
 }
 
@@ -202,7 +202,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
                           variant="ghost"
                           color="red"
                           size="xl"
-                          @click="remove(item.id)"
+                          @click="remove(item.key)"
                         />
                       </UTooltip>
                     </div>

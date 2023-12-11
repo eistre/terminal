@@ -20,7 +20,7 @@ if (error.value) {
     color: 'red'
   })
 
-  await navigateTo('/')
+  await navigateTo('/exercises')
 }
 
 const terminal = ref<HTMLElement | null>(null)
