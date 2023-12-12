@@ -62,13 +62,6 @@ function waitForImage () {
   })
 }
 
-async function createPod (clientId: string) {
-  // Create or update deployment
-  await kubernetes.createOrUpdatePod(clientId)
-
-  return await kubernetes.getPort(clientId)
-}
-
 async function connectToPod (socket: Socket, port: number) {
   const pod = new Client()
 
@@ -222,7 +215,7 @@ export default defineNitroPlugin(() => {
     await waitForImage()
 
     try {
-      const port = await createPod(socket.data.clientId)
+      const port = await kubernetes.createOrUpdatePod(socket.data.clientId)
 
       // Create ssh connection
       if (!socket.disconnected) {

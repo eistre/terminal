@@ -9,15 +9,17 @@ const POD_DATE_UNIT: dayjs.ManipulateType = process.env.POD_DATE_UNIT as dayjs.M
 
 export class Kubernetes {
   private api: k8s.CoreV1Api
+  private watch: k8s.Watch
 
   constructor () {
     const kc = new k8s.KubeConfig()
     kc.loadFromDefault()
 
     this.api = kc.makeApiClient(k8s.CoreV1Api)
+    this.watch = new k8s.Watch(kc)
   }
 
-  async createOrUpdatePod (clientId: string) {
+  async createOrUpdatePod (clientId: string): Promise<number> {
     const namespace = `ubuntu-${clientId}`
     const namespaceExists = await this.doesNamespaceExist(namespace)
 
@@ -25,32 +27,14 @@ export class Kubernetes {
       await this.updatePod(namespace)
     } else {
       await this.createPod(namespace)
+
+      // Wait for pod to start
+      await new Promise((resolve) => {
+        setTimeout(resolve, 3000)
+      })
     }
 
-    // Wait for pod to start
-    await new Promise((resolve) => {
-      setTimeout(resolve, 3000)
-    })
-  }
-
-  async getPort (clientId: string): Promise<number> {
-    const namespace = `ubuntu-${clientId}`
-    const service = (await this.api.listNamespacedService(namespace))
-      .body
-      .items
-      .find(item => item.metadata?.name === 'ssh')
-
-    if (!service) {
-      throw new Error('Pod service not found')
-    }
-
-    const port = service.spec?.ports?.find(port => port.name === 'ssh')
-
-    if (!port?.nodePort) {
-      throw new Error('Pod port not found')
-    }
-
-    return port.nodePort
+    return this.getPort(clientId)
   }
 
   async deleteNamespace (namespace: string) {
@@ -63,10 +47,45 @@ export class Kubernetes {
     return namespaces.body.items.filter(namespace => namespace.metadata?.name?.startsWith('ubuntu-'))
   }
 
-  // TODO what if namespace is terminating
-  private async doesNamespaceExist (namespace: string): Promise<boolean> {
-    const namespaces = await this.getNamespaces()
-    return namespaces.some(k8sNamespace => k8sNamespace.metadata?.name === namespace)
+  private async doesNamespaceExist (name: string): Promise<boolean> {
+    const namespace = (await this.getNamespaces())
+      .find(k8sNamespace => k8sNamespace.metadata?.name === name)
+
+    if (!namespace) {
+      return false
+    }
+
+    if (namespace.metadata?.deletionTimestamp) {
+      // Wait for namespace to terminate
+      await new Promise<void>((resolve, reject) => {
+        const watch = async () => {
+          try {
+            const req = await this.watch.watch(
+              '/api/v1/namespaces',
+              {},
+              (type, apiObj) => {
+                if (type === 'DELETED' && apiObj.metadata.name === name) {
+                  req.abort()
+                  resolve()
+                }
+              },
+              (error) => {
+                req.abort()
+                reject(error)
+              }
+            )
+          } catch (error) {
+            reject(error)
+          }
+        }
+
+        watch()
+      })
+
+      return false
+    }
+
+    return true
   }
 
   private async createPod (namespace: string) {
@@ -124,5 +143,25 @@ export class Kubernetes {
       undefined, // force
       { headers: { 'Content-type': k8s.PatchUtils.PATCH_FORMAT_JSON_PATCH } }
     )
+  }
+
+  private async getPort (clientId: string): Promise<number> {
+    const namespace = `ubuntu-${clientId}`
+    const service = (await this.api.listNamespacedService(namespace))
+      .body
+      .items
+      .find(item => item.metadata?.name === 'ssh')
+
+    if (!service) {
+      throw new Error('Pod service not found')
+    }
+
+    const port = service.spec?.ports?.find(port => port.name === 'ssh')
+
+    if (!port?.nodePort) {
+      throw new Error('Pod port not found')
+    }
+
+    return port.nodePort
   }
 }
