@@ -7,13 +7,13 @@ const { data: exercises, error } = await useFetch('/api/exercises', { method: 'G
 
 const user = useAuthenticatedUser()
 const toast = useToast()
+const i18n = useI18n()
 
 if (error.value) {
   toast.add({
     id: 'exercises_failed',
     icon: 'i-heroicons-x-mark',
-    title: error.value.statusMessage,
-    description: error.value.data.message,
+    title: i18n.t('exercises.exercises_error'),
     timeout: 5000,
     color: 'red'
   })
@@ -40,14 +40,14 @@ function deleteExercise (id: number) {
     <UCard :ui="{ ring: '', shadow: '' }">
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-3xl font-semibold">Harjutused</span>
+          <span class="text-3xl font-semibold">{{ $t('exercises.exercises') }}</span>
           <UButton
             v-if="user.role === 'ADMIN'"
             variant="outline"
             size="lg"
             @click="navigateTo('/exercises/new')"
           >
-            Loo uus
+            {{ $t('exercises.create_new') }}
           </UButton>
         </div>
       </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const toast = useToast()
+const i18n = useI18n()
 const emit = defineEmits(['delete'])
 const { id } = defineProps<{ id: number }>()
 const isOpen = ref(false)
@@ -12,7 +13,7 @@ const deleteExercise = async () => {
         toast.add({
           id: 'exercise_delete_success',
           icon: 'i-heroicons-check',
-          title: 'Exercise deleted successfully',
+          title: i18n.t('exercises.delete_success'),
           timeout: 5000,
           color: 'green'
         })
@@ -24,8 +25,7 @@ const deleteExercise = async () => {
     toast.add({
       id: 'exercise_delete_failed',
       icon: 'i-heroicons-x-mark',
-      title: error.value.statusMessage,
-      description: error.value.data.message,
+      title: i18n.t('exercises.delete_error'),
       timeout: 5000,
       color: 'red'
     })
@@ -41,7 +41,7 @@ const deleteExercise = async () => {
     :popper="{ arrow: true, placement: 'bottom' }"
   >
     <UTooltip
-      text="Kustuta"
+      :text="$t('exercises.edit.delete')"
       :popper="{ arrow: true, placement: 'bottom' }"
     >
       <UButton
@@ -60,7 +60,7 @@ const deleteExercise = async () => {
       >
         <template #header>
           <span class="flex justify-center text-primary font-semibold">
-            Kinnitage kustutamine
+            {{ $t('exercises.delete_confirm') }}
           </span>
         </template>
 
@@ -71,7 +71,7 @@ const deleteExercise = async () => {
             size="xl"
             @click="close"
           >
-            Tühista
+            {{ $t('exercises.cancel') }}
           </UButton>
           <UButton
             variant="outline"
@@ -79,7 +79,7 @@ const deleteExercise = async () => {
             size="xl"
             @click="deleteExercise"
           >
-            Kinnita
+            {{ $t('exercises.confirm') }}
           </UButton>
         </div>
       </UCard>

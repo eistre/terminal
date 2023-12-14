@@ -5,7 +5,7 @@ const ready = useImageReady()
 <template>
   <ClientOnly>
     <UTooltip
-      :text="ready ? 'Kettapilt valmis' : 'Kettapilti ehitatakse'"
+      :text="ready ? $t('docker.image_ready') : $t('docker.image_building')"
       :popper="{ arrow: true, placement: 'bottom' }"
     >
       <UButton

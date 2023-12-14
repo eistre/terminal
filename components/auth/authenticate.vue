@@ -3,11 +3,13 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 
+const i18n = useI18n()
+
 const schema = z.object({
-  username: z.string({ required_error: 'Sisestage oma nimi' })
-    .min(1, 'Sisestage oma nimi'),
-  password: z.string({ required_error: 'Sisestage parool' })
-    .min(8, 'Parool peab olema vähemalt 8 sümbolit pikk')
+  username: z.string({ required_error: i18n.t('auth.enter_name') })
+    .min(1, i18n.t('auth.enter_name')),
+  password: z.string({ required_error: i18n.t('auth.enter_password') })
+    .min(8, i18n.t('auth.password_error'))
 })
 
 type Schema = z.output<typeof schema>
@@ -47,8 +49,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     toast.add({
       id: 'auth_login_failed',
       icon: 'i-heroicons-x-mark',
-      title: error.value.statusMessage,
-      description: error.value.data.message,
+      title: i18n.t('auth.auth_error'),
       timeout: 5000,
       color: 'red'
     })
@@ -63,16 +64,16 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
   <UCard class="w-1/2">
     <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
       <div class="flex gap-4 w-full">
-        <UFormGroup label="Nimi" name="username" class="w-1/2" eager-validation>
+        <UFormGroup :label="$t('auth.name')" name="username" class="w-1/2" eager-validation>
           <UInput
             v-model="state.username"
-            placeholder="Juhan"
+            :placeholder="$t('auth.john')"
             variant="outline"
             size="md"
           />
         </UFormGroup>
 
-        <UFormGroup label="Parool" name="password" class="w-1/2" eager-validation>
+        <UFormGroup :label="$t('auth.password')" name="password" class="w-1/2" eager-validation>
           <UInput
             v-model="state.password"
             placeholder="********"
@@ -90,7 +91,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
           size="md"
           :disabled="isDisabled"
         >
-          Alusta
+          {{ $t('auth.begin') }}
         </UButton>
       </div>
     </UForm>

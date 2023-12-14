@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const toast = useToast()
+const i18n = useI18n()
 
 const deleteUser = async () => {
   const { error } = await useFetch('/api/auth/delete', {
@@ -9,7 +10,7 @@ const deleteUser = async () => {
         toast.add({
           id: 'auth_delete_success',
           icon: 'i-heroicons-check',
-          title: 'Account deleted successfully',
+          title: i18n.t('auth.delete_success'),
           timeout: 5000,
           color: 'green'
         })
@@ -21,8 +22,7 @@ const deleteUser = async () => {
     toast.add({
       id: 'auth_delete_failed',
       icon: 'i-heroicons-x-mark',
-      title: error.value.statusMessage,
-      description: error.value.data.message,
+      title: i18n.t('auth.delete_error'),
       timeout: 5000,
       color: 'red'
     })
@@ -35,7 +35,7 @@ const deleteUser = async () => {
 
 <template>
   <UTooltip
-    text="Kustuta kasutaja"
+    :text="$t('auth.delete_user')"
     :popper="{ arrow: true, placement: 'bottom' }"
   >
     <UButton

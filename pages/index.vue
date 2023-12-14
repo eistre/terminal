@@ -10,16 +10,15 @@ definePageMeta({
     <UCard :ui="{ ring: '', shadow: '' }">
       <template #header>
         <div class="flex flex-col items-center gap-2 text-3xl font-semibold">
-          <span>Linuxi Käsurea harjutuskeskkond</span>
-          <span>Ubuntu terminal veebibrauseris</span>
+          <span>{{ $t('main.title1') }}</span>
+          <span>{{ $t('main.title2') }}</span>
         </div>
       </template>
 
       <div class="flex flex-col items-center gap-5">
-        <span class="flex justify-center text-2xl font-semibold">Tuleviku info</span>
-        <span>Info konteineri kohta</span>
-        <span>Info konteineri kohta</span>
-        <span>Info konteineri kohta</span>
+        <!-- TODO -->
+        <span class="flex justify-center text-2xl font-semibold">{{ $t('main.info1') }}</span>
+        <span>{{ $t('main.info2') }}</span>
       </div>
 
       <template #footer>

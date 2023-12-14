@@ -4,7 +4,7 @@ const { id } = defineProps<{ id: number }>()
 
 <template>
   <UTooltip
-    text="Muuda"
+    :text="$t('exercises.edit_text')"
     :popper="{ arrow: true, placement: 'bottom' }"
   >
     <UButton

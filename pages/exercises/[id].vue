@@ -6,6 +6,7 @@ definePageMeta({
 })
 
 const toast = useToast()
+const i18n = useI18n()
 const route = useRoute()
 const exerciseId = route.params.id
 const { data: exercise, error } = await useFetch(`/api/exercises/${exerciseId}`, { method: 'GET' })
@@ -14,8 +15,7 @@ if (error.value) {
   toast.add({
     id: 'exercise_failed',
     icon: 'i-heroicons-x-mark',
-    title: error.value.statusMessage,
-    description: error.value.data.message,
+    title: i18n.t('exercises.exercise_error'),
     timeout: 5000,
     color: 'red'
   })

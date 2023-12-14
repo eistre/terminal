@@ -6,12 +6,13 @@ const user = useUser()
   <div class="z-50 bg-primary-600/90 dark:bg-gray-900/90">
     <UContainer class="p-2 h-20 flex justify-between">
       <NuxtImg
-        alt="Tartu Ülikool arvutiteaduse instituut"
-        src="/arvutiteaduse_instituut_est_white_2021.svg"
+        :alt="$t('bar.university')"
+        :src="$t('bar.img')"
       />
       <div class="flex items-center">
         <NavigationDockerImageStatus />
         <NavigationThemeButton />
+        <NavigationLocaleButton />
         <NavigationLogoutButton v-if="user" />
         <NavigationDeleteButton v-if="user" />
       </div>

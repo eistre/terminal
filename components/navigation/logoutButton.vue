@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const toast = useToast()
+const i18n = useI18n()
 
 const logout = async () => {
   const { error } = await useFetch('/api/auth/logout', {
@@ -10,8 +11,7 @@ const logout = async () => {
     toast.add({
       id: 'auth_logout_failed',
       icon: 'i-heroicons-x-mark',
-      title: error.value.statusMessage,
-      description: error.value.data.message,
+      title: i18n.t('auth.logout_failed'),
       timeout: 5000,
       color: 'red'
     })
@@ -24,7 +24,7 @@ const logout = async () => {
 
 <template>
   <UTooltip
-    text="Logi välja"
+    :text="$t('auth.logout')"
     :popper="{ arrow: true, placement: 'bottom' }"
   >
     <UButton

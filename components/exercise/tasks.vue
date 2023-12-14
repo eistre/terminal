@@ -37,7 +37,7 @@ const items = computed(() => {
             mode="hover"
             class="w-20"
           >
-            <span>(Vihje)</span>
+            <span>({{ $t('exercises.edit.task_hint') }})</span>
 
             <template #panel>
               <div class="p-2 w-fit">

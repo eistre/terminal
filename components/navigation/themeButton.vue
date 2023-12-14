@@ -15,7 +15,7 @@ const isDark = computed({
 <template>
   <ClientOnly>
     <UTooltip
-      :text="isDark ? 'Lülitu heledale režiimile' : 'Lülitu tumedale režiimile'"
+      :text="isDark ? $t('bar.light') : $t('bar.dark')"
       :popper="{ arrow: true, placement: 'bottom' }"
     >
       <UButton

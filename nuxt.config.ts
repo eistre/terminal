@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: 'Linuxi harjutused',
+      title: 'Linux terminal',
       meta: [
         {
           name: 'description',
@@ -49,7 +49,7 @@ export default defineNuxtConfig({
     '/exercises/**': { ssr: false, prerender: false }
   },
   devtools: { enabled: true },
-  modules: ['@nuxt/ui', '@nuxt/image', 'nuxt-security'],
+  modules: ['@nuxt/ui', '@nuxt/image', 'nuxt-security', '@nuxtjs/i18n'],
   // https://nuxt-security.vercel.app/documentation/getting-started/setup
   security: {
     headers: {
@@ -57,7 +57,10 @@ export default defineNuxtConfig({
     }
   },
   ui: {
-    icons: ['simple-icons']
+    icons: ['simple-icons', 'twemoji']
+  },
+  i18n: {
+    vueI18n: './i18n.config.ts'
   },
   imports: {
     presets: [

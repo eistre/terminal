@@ -13,6 +13,7 @@
     "@nuxt/devtools": "^1.0.5",
     "@nuxt/image": "^1.1.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@nuxtjs/i18n": "^8.0.0-rc.9",
     "@types/dockerode": "^3.3.23",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node-forge": "^1.3.10",
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "@iconify-json/simple-icons": "^1.1.82",
+    "@iconify-json/twemoji": "^1.1.15",
     "@kubernetes/client-node": "^0.20.0",
     "@lucia-auth/adapter-prisma": "^3.0.2",
     "@nuxt/ui": "^2.11.0",

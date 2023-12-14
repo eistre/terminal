@@ -36,6 +36,7 @@ const state = reactive({
 
 const isDisabled = computed(() => !schema.safeParse(state).success)
 const toast = useToast()
+const i18n = useI18n()
 
 function add () {
   state.tasks.push({
@@ -47,7 +48,7 @@ function add () {
   })
 }
 
-const tasks = computed(() => state.tasks.map((task, index) => ({ ...task, label: `Ülesanne ${index + 1}` })))
+const tasks = computed(() => state.tasks.map((task, index) => ({ ...task, label: `${i18n.t('exercises.edit.task')} ${index + 1}` })))
 
 function remove (key: number) {
   const index = state.tasks.findIndex(task => task.key === key)
@@ -78,8 +79,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     toast.add({
       id: 'create_exercise_failed',
       icon: 'i-heroicons-x-mark',
-      title: error.value.statusMessage,
-      description: error.value.data.message,
+      title: i18n.t('exercises.edit.create_fail'),
       timeout: 5000,
       color: 'red'
     })
@@ -91,7 +91,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
   toast.add({
     id: 'create_exercise_success',
     icon: 'i-heroicons-check',
-    title: 'Exercise created successfully',
+    title: i18n.t('exercises.edit.success'),
     timeout: 5000,
     color: 'green'
   })
@@ -104,19 +104,19 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
       <UCard :ui="{ ring: '', shadow: '' }">
         <template #header>
           <div class="flex justify-between items-center">
-            <span class="text-3xl font-semibold">Uus harjutus</span>
+            <span class="text-3xl font-semibold">{{ $t('exercises.edit.new') }}</span>
             <div class="flex gap-4">
               <UButton
                 variant="outline"
                 size="lg"
                 @click="add"
               >
-                Lisa ülesanne
+                {{ $t('exercises.edit.add_task') }}
               </UButton>
 
               <UTooltip
                 :prevent="!isDisabled"
-                :text="state.tasks.length > 0 ? 'Kõik vajalikud väljad peavad olema täidetud' : 'Harjutus peab sisaldama vähemalt ühte ülesannet'"
+                :text="state.tasks.length > 0 ? $t('exercises.edit.save_error1') : $t('exercises.edit.save_error2')"
                 :popper="{ arrow: true, placement: 'bottom' }"
               >
                 <UButton
@@ -126,7 +126,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
                   :color="isDisabled ? 'red' : 'primary'"
                   :disabled="isDisabled"
                 >
-                  Salvesta
+                  {{ $t('exercises.edit.save') }}
                 </UButton>
               </UTooltip>
             </div>
@@ -135,18 +135,18 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
 
         <UCard>
           <div class="grid grid-cols-1 gap-6">
-            <UFormGroup label="Pealkiri" name="title" :error="state.title ? false : 'Sisestage harjutuse pealkiri'">
+            <UFormGroup :label="$t('exercises.edit.title')" name="title" :error="state.title ? false : $t('exercises.edit.title_error')">
               <UInput
                 v-model="state.title"
-                placeholder="Harjutus"
+                :placeholder="$t('exercises.edit.exercise')"
                 variant="outline"
               />
             </UFormGroup>
 
-            <UFormGroup label="Lühikirjeldus" name="description" :error="state.description ? false : 'Sisestage harjutuse lühikirjeldus'">
+            <UFormGroup :label="$t('exercises.edit.description')" name="description" :error="state.description ? false : $t('exercises.edit.description_error')">
               <UTextarea
                 v-model="state.description"
-                placeholder="Linuxi käsurea ülesanded"
+                :placeholder="$t('exercises.edit.description_placeholder')"
               />
             </UFormGroup>
 
@@ -154,17 +154,17 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
               <template #item="{ item, index }">
                 <div class="p-2 grid grid-cols-2 gap-4">
                   <div class="flex flex-col gap-2">
-                    <UFormGroup label="Nimi" :error="item.title ? false : 'Sisestage ülesande nimi'">
+                    <UFormGroup :label="$t('exercises.edit.task_name')" :error="item.title ? false : $t('exercises.edit.task_name_error')">
                       <UInput
                         v-model="state.tasks[index].title"
-                        placeholder="Nimi"
+                        :placeholder="$t('exercises.edit.task_name')"
                       />
                     </UFormGroup>
 
                     <UFormGroup
                       label="Regex"
-                      description="Automaatkontrolliks vajalik regex väärtus"
-                      :error="item.regex ? false : 'Sisestage ülesannet tuvastav regex'"
+                      :description="$t('exercises.edit.task_regex_description')"
+                      :error="item.regex ? false : $t('exercises.edit.task_regex_error')"
                     >
                       <UInput
                         v-model="state.tasks[index].regex"
@@ -173,28 +173,28 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
                     </UFormGroup>
 
                     <UFormGroup
-                      label="Vihje"
-                      description="Valikuline vihje, mida saab kasutada ülesande lahendamiseks"
+                      :label="$t('exercises.edit.task_hint')"
+                      :description="$t('exercises.edit.task_hint_description')"
                     >
                       <UInput
                         v-model="state.tasks[index].hint"
-                        placeholder="Vihje"
+                        :placeholder="$t('exercises.edit.task_hint')"
                       />
                     </UFormGroup>
                   </div>
 
                   <div class="flex flex-col justify-between gap-2">
-                    <UFormGroup label="Kirjeldus" :error="item.content ? false : 'Sisestage ülesande kirjeldus'">
+                    <UFormGroup :label="$t('exercises.edit.task_content')" :error="item.content ? false : $t('exercises.edit.task_content_error')">
                       <UTextarea
                         v-model="state.tasks[index].content"
-                        placeholder="Kuva kausta sisu"
+                        :placeholder="$t('exercises.edit.task_content_placeholder')"
                         :rows="7"
                       />
                     </UFormGroup>
 
                     <div class="w-full flex justify-end">
                       <UTooltip
-                        text="Kustuta"
+                        :text="$t('exercises.edit.delete')"
                         :popper="{ arrow: true, placement: 'bottom' }"
                       >
                         <UButton
