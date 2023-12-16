@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { io } from 'socket.io-client'
+import { useResizeObserver } from '@vueuse/core'
 
 definePageMeta({
   middleware: 'protected'
@@ -27,6 +28,10 @@ const terminal = ref<HTMLElement | null>(null)
 const term = new Terminal({ fontFamily: '"Cascadia Mono", Menlo, monospace' })
 const webglAddon = new WebglAddon()
 const fitAddon = new FitAddon()
+term.loadAddon(webglAddon)
+term.loadAddon(fitAddon)
+const height = ref(0)
+const width = ref(0)
 
 const user = useAuthenticatedUser()
 const isImageReady = useImageReady()
@@ -67,13 +72,26 @@ socket.on('ready', () => {
       }
     })
   })
+
+  useResizeObserver(terminal, (entries) => {
+    height.value = entries[0].contentRect.height
+    width.value = entries[0].contentRect.width
+    fitAddon.fit()
+  })
+
+  term.onResize((event: { cols: number, rows: number }) => {
+    const { rows, cols } = event
+    socket.emit('resize', {
+      rows,
+      cols,
+      width,
+      height
+    })
+  })
 })
 
 onMounted(() => {
   term.open(terminal.value)
-  term.loadAddon(webglAddon)
-  term.loadAddon(fitAddon)
-
   fitAddon.fit()
 })
 

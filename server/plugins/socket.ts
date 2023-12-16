@@ -137,6 +137,10 @@ async function setProxy (socket: Socket, pod: Client, port: number) {
         stream.write('exit\n')
       })
 
+      socket.on('resize', ({ rows, cols, height, width }: { rows: number, cols: number, height: number, width: number }) => {
+        stream.setWindow(rows, cols, height, width)
+      })
+
       stream.on('data', (data: Buffer) => {
         evaluate(socket, data.toString('binary'), tasks)
         socket.send({ data: data.toString('binary') })

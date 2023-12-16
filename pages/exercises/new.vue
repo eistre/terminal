@@ -70,7 +70,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     return
   }
 
-  const { error, data } = await useFetch('/api/exercises/new', {
+  const { error } = await useFetch('/api/exercises/new', {
     method: 'POST',
     body: body.data
   })
@@ -86,7 +86,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     return
   }
 
-  await navigateTo(`/exercises/edit/${data.value!.id}`)
+  await navigateTo('/exercises')
 
   toast.add({
     id: 'create_exercise_success',
