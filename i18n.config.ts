@@ -31,8 +31,8 @@ export default defineI18nConfig(() => ({
         logout_failed: 'Välja logimine ebaõnnestus'
       },
       docker: {
-        image_building: 'Kettapilt ehitamisel',
-        image_success: 'kettapilt valmis'
+        image_ready: 'Kettapilt valmis',
+        image_building: 'Kettapilt ehitamisel'
       },
       exercises: {
         exercise_error: 'Harjutust ei leitud',

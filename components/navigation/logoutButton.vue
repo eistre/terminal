@@ -23,17 +23,12 @@ const logout = async () => {
 </script>
 
 <template>
-  <UTooltip
-    :text="$t('auth.logout')"
-    :popper="{ arrow: true, placement: 'bottom' }"
-  >
-    <UButton
-      icon="i-heroicons-arrow-left-on-rectangle-solid"
-      variant="ghost"
-      color="gray"
-      class="text-white"
-      size="xl"
-      @click="logout"
-    />
-  </UTooltip>
+  <UButton
+    icon="i-heroicons-arrow-left-on-rectangle-solid"
+    variant="ghost"
+    color="gray"
+    size="lg"
+    :label="$t('auth.logout')"
+    @click="logout"
+  />
 </template>

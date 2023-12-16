@@ -13,8 +13,7 @@ const user = useUser()
         <NavigationDockerImageStatus />
         <NavigationThemeButton />
         <NavigationLocaleButton />
-        <NavigationLogoutButton v-if="user" />
-        <NavigationDeleteButton v-if="user" />
+        <NavigationUser v-if="user" />
       </div>
     </UContainer>
 

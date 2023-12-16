@@ -34,17 +34,12 @@ const deleteUser = async () => {
 </script>
 
 <template>
-  <UTooltip
-    :text="$t('auth.delete_user')"
-    :popper="{ arrow: true, placement: 'bottom' }"
-  >
-    <UButton
-      icon="i-heroicons-trash-solid"
-      variant="ghost"
-      color="gray"
-      class="text-white"
-      size="xl"
-      @click="deleteUser"
-    />
-  </UTooltip>
+  <UButton
+    icon="i-heroicons-trash-solid"
+    variant="ghost"
+    color="gray"
+    size="lg"
+    :label="$t('auth.delete_user')"
+    @click="deleteUser"
+  />
 </template>
