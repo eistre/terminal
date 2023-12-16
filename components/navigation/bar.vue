@@ -8,6 +8,8 @@ const user = useUser()
       <NuxtImg
         :alt="$t('bar.university')"
         :src="$t('bar.img')"
+        class="hover:cursor-pointer"
+        @click="navigateTo('/')"
       />
       <div class="flex items-center">
         <NavigationDockerImageStatus />
