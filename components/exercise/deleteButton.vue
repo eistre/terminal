@@ -3,7 +3,6 @@ const toast = useToast()
 const i18n = useI18n()
 const emit = defineEmits(['delete'])
 const { id } = defineProps<{ id: number }>()
-const isOpen = ref(false)
 
 const deleteExercise = async () => {
   const { error } = await useFetch(`/api/exercises/${id}`, {
@@ -49,7 +48,6 @@ const deleteExercise = async () => {
         variant="ghost"
         color="primary"
         size="xl"
-        @click="isOpen = true"
       />
     </UTooltip>
 
