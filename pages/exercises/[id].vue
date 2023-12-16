@@ -2,6 +2,19 @@
 import { io } from 'socket.io-client'
 import { useResizeObserver } from '@vueuse/core'
 
+type Task = {
+  id: number,
+  title: string,
+  content: string,
+  hint: string,
+  completed: boolean
+}
+
+type Exercise = {
+  title: string,
+  tasks: Task[]
+}
+
 definePageMeta({
   middleware: 'protected'
 })
@@ -10,7 +23,7 @@ const toast = useToast()
 const i18n = useI18n()
 const route = useRoute()
 const exerciseId = route.params.id
-const { data: exercise, error } = await useFetch(`/api/exercises/${exerciseId}`, { method: 'GET' })
+const { data, error } = await useFetch(`/api/exercises/${exerciseId}`, { method: 'GET' })
 
 if (error.value) {
   toast.add({
@@ -24,6 +37,8 @@ if (error.value) {
   await navigateTo('/exercises')
 }
 
+const exercise = data.value as Exercise
+
 const terminal = ref<HTMLElement | null>(null)
 const term = new Terminal({ fontFamily: '"Cascadia Mono", Menlo, monospace' })
 const webglAddon = new WebglAddon()
@@ -32,6 +47,7 @@ term.loadAddon(webglAddon)
 term.loadAddon(fitAddon)
 const height = ref(0)
 const width = ref(0)
+const updated = ref(true)
 
 const user = useAuthenticatedUser()
 const isImageReady = useImageReady()
@@ -66,10 +82,17 @@ socket.on('ready', () => {
   })
 
   socket.on('complete', ({ data }: { data: number[] }) => {
-    exercise.value?.tasks.forEach((task) => {
+    updated.value = false
+    exercise.tasks.forEach((task) => {
       if (data.includes(task.id)) {
         task.completed = true
       }
+    })
+
+    // Workaround for closing task if completed
+    // as nuxt ui doesn't support programmatic closing
+    nextTick(() => {
+      updated.value = true
     })
   })
 
@@ -113,6 +136,7 @@ onUnmounted(() => {
         <div class="w-1/3">
           <ExerciseTasks
             :tasks="exercise.tasks"
+            :updated="updated"
           />
         </div>
 

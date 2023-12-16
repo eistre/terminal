@@ -8,7 +8,7 @@ type Task = {
 }
 
 const colorMode = useColorMode()
-const { tasks } = defineProps<{ tasks: Task[] }>()
+const { tasks, updated } = defineProps<{ tasks: Task[], updated: boolean }>()
 
 const firstIncomplete = computed(() => tasks.find(task => !task.completed)?.id)
 const variant = computed(() => colorMode.preference === 'dark' ? 'outline' : 'solid')
@@ -27,7 +27,7 @@ const items = computed(() => {
 
 <template>
   <ClientOnly>
-    <UAccordion :items="items">
+    <UAccordion v-if="updated" :items="items">
       <template #item="{ item }">
         <div class="px-4">
           <span style="overflow-wrap: break-word">{{ item.content }}</span>
