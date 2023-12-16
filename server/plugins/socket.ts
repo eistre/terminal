@@ -85,7 +85,7 @@ async function connectToPod (socket: Socket, port: number) {
 
 async function setProxy (socket: Socket, pod: Client, port: number) {
   const { clientId, exerciseId } = socket.data
-  const tasks = await db.task.findMany({
+  let tasks = await db.task.findMany({
     where: {
       exercise_id: Number(exerciseId),
       completed_by: {
@@ -100,9 +100,39 @@ async function setProxy (socket: Socket, pod: Client, port: number) {
     }
   })
 
+  socket.on('reset_exercise', async () => {
+    try {
+      logger.debug(`Resetting exercise ${exerciseId} for client ${clientId}`)
+
+      const ids = await db.task.findMany({ where: { exercise_id: Number(exerciseId) }, select: { id: true } })
+      await db.completedTask.deleteMany({ where: { user_id: clientId, task_id: { in: ids.map(id => id.id) } } })
+
+      tasks = await db.task.findMany({
+        where: {
+          exercise_id: Number(exerciseId),
+          completed_by: {
+            none: {
+              user_id: clientId
+            }
+          }
+        },
+        select: {
+          id: true,
+          regex: true
+        }
+      })
+
+      socket.emit('reset_exercise', { status: true })
+    } catch (error) {
+      logger.error(error)
+      socket.emit('reset_exercise', { status: false })
+    }
+  })
+
   pod.on('ready', () => {
     logger.info(`Created ssh connection for client: ${clientId}`)
     socket.send({ data: '\r\n*** SSH Connected established ***\r\n\n' })
+    socket.emit('ready')
 
     pod.exec('inotifywait /home /home/test -m', (error, channel) => {
       if (error) {
@@ -139,6 +169,12 @@ async function setProxy (socket: Socket, pod: Client, port: number) {
 
       socket.on('resize', ({ rows, cols, height, width }: { rows: number, cols: number, height: number, width: number }) => {
         stream.setWindow(rows, cols, height, width)
+      })
+
+      socket.on('reset_pod', async () => {
+        stream.write('exit\n')
+        logger.debug(`Resetting pod for client ${clientId}`)
+        await kubernetes.deleteNamespace(`ubuntu-${clientId}`)
       })
 
       stream.on('data', (data: Buffer) => {
@@ -223,7 +259,6 @@ export default defineNitroPlugin(() => {
 
       // Create ssh connection
       if (!socket.disconnected) {
-        socket.emit('ready')
         await connectToPod(socket, port)
       }
     } catch (error) {

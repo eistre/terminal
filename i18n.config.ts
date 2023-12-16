@@ -35,6 +35,10 @@ export default defineI18nConfig(() => ({
         image_building: 'Kettapilt ehitamisel'
       },
       exercises: {
+        exercise_reset_error: 'Tulemuste lähtestamine ebaõnnestus',
+        exercise_reset_success: 'Tulemused lähtestatud edukalt',
+        exercise_reset: 'Lähtesta tulemused',
+        pod_reset: 'Lähtesta kapsel',
         exercise_error: 'Harjutust ei leitud',
         exercises_error: 'Harjutuste päring ebaõnnestus',
         exercises: 'Harjutused',
@@ -108,6 +112,10 @@ export default defineI18nConfig(() => ({
         image_building: 'Image building'
       },
       exercises: {
+        exercise_reset_error: 'Resetting results failed',
+        exercise_reset_success: 'Results reset successfully',
+        exercise_reset: 'Reset results',
+        pod_reset: 'Reset pod',
         exercise_error: 'Exercise not found',
         exercises_error: 'Fetching exercises failed',
         exercises: 'Exercises',

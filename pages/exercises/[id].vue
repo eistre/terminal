@@ -38,6 +38,7 @@ if (error.value) {
 }
 
 const exercise = data.value as Exercise
+const someCompleted = computed(() => exercise.tasks.some(task => task.completed))
 
 const terminal = ref<HTMLElement | null>(null)
 const term = new Terminal({ fontFamily: '"Cascadia Mono", Menlo, monospace' })
@@ -47,7 +48,9 @@ term.loadAddon(webglAddon)
 term.loadAddon(fitAddon)
 const height = ref(0)
 const width = ref(0)
+
 const updated = ref(true)
+const connected = ref(false)
 
 const user = useAuthenticatedUser()
 const isImageReady = useImageReady()
@@ -72,44 +75,44 @@ socket.on('disconnect', () => {
   term.write('\r\n*** Disconnected from backend ***\r\n')
 })
 
-socket.on('ready', () => {
-  term.onData((data: string) => {
-    socket.send({ data })
+socket.on('ready', () => connected.value = true)
+
+term.onData((data: string) => {
+  socket.send({ data })
+})
+
+socket.on('message', ({ data }: { data: string }) => {
+  term.write(data)
+})
+
+socket.on('complete', ({ data }: { data: number[] }) => {
+  updated.value = false
+  exercise.tasks.forEach((task) => {
+    if (data.includes(task.id)) {
+      task.completed = true
+    }
   })
 
-  socket.on('message', ({ data }: { data: string }) => {
-    term.write(data)
+  // Workaround for closing task if completed
+  // as nuxt ui doesn't support programmatic closing
+  nextTick(() => {
+    updated.value = true
   })
+})
 
-  socket.on('complete', ({ data }: { data: number[] }) => {
-    updated.value = false
-    exercise.tasks.forEach((task) => {
-      if (data.includes(task.id)) {
-        task.completed = true
-      }
-    })
+useResizeObserver(terminal, (entries) => {
+  height.value = entries[0].contentRect.height
+  width.value = entries[0].contentRect.width
+  fitAddon.fit()
+})
 
-    // Workaround for closing task if completed
-    // as nuxt ui doesn't support programmatic closing
-    nextTick(() => {
-      updated.value = true
-    })
-  })
-
-  useResizeObserver(terminal, (entries) => {
-    height.value = entries[0].contentRect.height
-    width.value = entries[0].contentRect.width
-    fitAddon.fit()
-  })
-
-  term.onResize((event: { cols: number, rows: number }) => {
-    const { rows, cols } = event
-    socket.emit('resize', {
-      rows,
-      cols,
-      width,
-      height
-    })
+term.onResize((event: { cols: number, rows: number }) => {
+  const { rows, cols } = event
+  socket.emit('resize', {
+    rows,
+    cols,
+    width,
+    height
   })
 })
 
@@ -121,14 +124,69 @@ onMounted(() => {
 onUnmounted(() => {
   socket.disconnect()
 })
+
+function resetExercise () {
+  socket.emit('reset_exercise')
+
+  updated.value = false
+  exercise.tasks.forEach(task => task.completed = false)
+  nextTick(() => {
+    updated.value = true
+  })
+
+  socket.once('reset_exercise', ({ status }) => {
+    if (status) {
+      toast.add({
+        id: 'reset_success',
+        icon: 'i-heroicons-check',
+        title: i18n.t('exercises.exercise_reset_success'),
+        timeout: 5000,
+        color: 'green'
+      })
+    } else {
+      toast.add({
+        id: 'reset_failed',
+        icon: 'i-heroicons-x-mark',
+        title: i18n.t('exercises.exercise_reset_error'),
+        timeout: 5000,
+        color: 'red'
+      })
+    }
+  })
+}
+
+function resetPod () {
+  if (connected.value) {
+    connected.value = false
+
+    socket.emit('reset_pod')
+    term.write('\n\r\n*** Resetting pod ***\r\n')
+
+    socket.disconnect().connect()
+  }
+}
 </script>
 
 <template>
   <UContainer>
     <UCard :ui="{ ring: '', shadow: '' }">
       <template #header>
-        <div class="flex justify-center text-3xl font-semibold">
+        <div class="flex justify-between text-3xl font-semibold">
           <span>{{ exercise.title }}</span>
+          <div class="flex gap-4">
+            <UButton
+              :label="$t('exercises.exercise_reset')"
+              variant="outline"
+              :disabled="!someCompleted"
+              @click="resetExercise"
+            />
+            <UButton
+              :label="$t('exercises.pod_reset')"
+              variant="outline"
+              :disabled="!connected"
+              @click="resetPod"
+            />
+          </div>
         </div>
       </template>
 
