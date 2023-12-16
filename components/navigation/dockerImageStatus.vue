@@ -9,7 +9,7 @@ const ready = useImageReady()
       :popper="{ arrow: true, placement: 'bottom' }"
     >
       <UButton
-        icon="i-simple-icons-docker"
+        icon="i-ion-logo-docker"
         :loading="!ready"
         variant="ghost"
         color="gray"
