@@ -1,0 +1,25 @@
+INSERT INTO terminal.public."Exercise" (id, title, description) VALUES(1, 'Operatsioonisüsteemid ja Andmeturve', 'Operatsioonisüsteemide ja Andmeturve ainete Linuxi käsurea harjutusülesanded');
+INSERT INTO terminal.public."Task" (title, content, hint, regex, exercise_id) VALUES
+('Ülesanne 1', 'Kuva faili `/etc/hosts` faili sisu käsureale.', 'Kasuta käsku `cat`', '127\.0\.0\.1[\s\S]*localhost[\s\S]*ip6-localhost[\s\S]*localnet[\s\S]*allnodes[\s\S]*allrouters', 1),
+('Ülesanne 2', 'Loo `user` kasutaja kodukausta alamkaust, mille nimes esineb vähemalt üks inglise tähestiku väiketäht, number, tühik, võrdlusmärk ja lauselõpumärk.', null, '/home/user/ CREATE,ISDIR (?=.*[a-z])(?=.*\d)(?=.*[ ])(?=.*[\<\>\=])(?=.*[\.\!\?])', 1),
+('Ülesanne 3', 'Leia salajane fail koos absoluutse failiteega, mis asub `/` kaustas või selle alamkaustades ja mis lõppeb sõnega `hidden_secret`.', 'Kasuta käsku `find`, permission denied ridade mitte kuvamiseks lisa käsu lõppu `2>/dev/null`', '/var/.secrets/.super_hidden_secret', 1),
+('Ülesanne 4', 'Leia `/var` kaustast või selle alamkaustadest fail, mis sisaldab teksti `Sudo password`. Jäta parool meelde, kuna seda läheb hiljem vaja!', 'Permission denied ridade mitte kuvamiseks lisa käsu lõppu `2>/dev/null`', 'Sudo[\s\S]+password[\s\S]+is[\s\S]+password123', 1),
+('Ülesanne 5', 'Paigalda tarkvara nimega `nano` ja leia, kus asuvad selle binaarid.', 'Kasuta käske `sudo apt` ja `whereis`', '/usr/bin/nano', 1),
+('Ülesanne 6', 'Loo kasutaja `user` kodukausta fail nimega `test_file` ja faili sisuks pane oma nimi. Muuda faili õigusi nii, et faili omanik ja grupp saaks faili lugeda ja kirjutada, kuid mitte käivitada. Teistele kasutajatele keela failile ligipääs. Enese- ja automaatkontrolliks käivita käsk `ls -la /home/user/test_file`', null, '-rw-rw----.*user.*user.*test_file', 1),
+('Ülesanne 7', 'Lae alla fail `https://raw.githubusercontent.com/eistre/terminal/master/public/tammsaare.txt` ja leia selles esinevate sõnade arv.', 'Kasuta käske `wget` ja `wc`', '^412320', 1),
+('Ülesanne 8', 'Loe `tammsaare.txt` faili sisu, sorteeri see, võta viimased 15 rida ning leia väljundis esinevate sõnade arv.', 'Kasuta torusid (pipes)', '^494', 1),
+('Ülesanne 9', 'Kustuta kaust `/home/test/.temporary` ja selle sisu.', null, 'DELETE,ISDIR .temporary', 1),
+('Ülesanne 10', 'Kuva kõik käimasolevad protsessid.', 'Uuri käsku `ps`', '\d+.*\d+:\d+.*inotifywait', 1);
+
+INSERT INTO terminal.public."Exercise" (id, title, description) VALUES(2, 'Operating Systems ja Computer Security', 'Linux command line tasks for the Operating Systems and Computer Security subjects');
+INSERT INTO terminal.public."Task" (title, content, hint, regex, exercise_id) VALUES
+('Task 1', 'Display the contents of `/etc/hosts` to the command line.', 'Use the `cat` command.', '127\.0\.0\.1[\s\S]*localhost[\s\S]*ip6-localhost[\s\S]*localnet[\s\S]*allnodes[\s\S]*allrouters', 2),
+('Task 2', 'Create a new directory inside the home directory of `user` account with a name that contains at least one lowercase letter of the English alphabet, a number, a space, a comparison symbol and an end-of-sentence symbol.', null, '/home/user/ CREATE,ISDIR (?=.*[a-z])(?=.*\d)(?=.*[ ])(?=.*[\<\>\=])(?=.*[\.\!\?])', 2),
+('Task 3', 'Find a secret file with its absolute file path, that is located in the `/` directory or one of its subdirectories and ends with `hidden_secret`.', 'Use the `find` command, to avoid the permission denied messages, add `2>/dev/null` to the end of the command', '/var/.secrets/.super_hidden_secret', 2),
+('Task 4', 'Find a file containing the text `Sudo password` inside `/var` directory or one of its subdirectories. Remember the password, you will need it later!', 'To avoid the permission denied messages, add `2>/dev/null` to the end of the command', 'Sudo[\s\S]+password[\s\S]+is[\s\S]+password123', 2),
+('Task 5', 'Install the package called `nano` and find out where its binaries are located.', 'Use the `sudo apt` and `whereis` commands', '/usr/bin/nano', 2),
+('Task 6', 'Create a file called `test_file` inside the `user` account home directory and put your name inside it. Change the file permissions so that the owner and group of the file can read and write, but not execute it. Deny other users access. Run `ls -la /home/user/test_file` for self- and automatic testing.', null, '-rw-rw----.*user.*user.*test_file', 2),
+('Task 7', 'Download the file `https://raw.githubusercontent.com/eistre/terminal/master/public/tammsaare.txt` and find the number of words in it.', 'Use the `wget` and `wc` commands', '^412320', 2),
+('Task 8', 'Read the contents of the `tammsaare.txt` file, sort it, take the last 15 lines and find the number of words in the output.', 'Use pipes', '^494', 2),
+('Task 9', 'Delete the `/home/test/.temporary` directory and its content.', null, 'DELETE,ISDIR .temporary', 2),
+('Task 10', 'Display all running processes.', 'Learn about the `ps` command', '\d+.*\d+:\d+.*inotifywait', 2);

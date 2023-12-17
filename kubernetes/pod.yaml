@@ -17,10 +17,10 @@ spec:
         - '/bin/bash'
         - '-c'
         - |
-          cat /etc/.ssh/id_rsa > /home/test/.ssh/authorized_keys && \
-          chown -R test:test /home/test/.ssh && \
-          chmod 700 /home/test/.ssh && \
-          chmod 600 /home/test/.ssh/authorized_keys && \
+          cat /etc/.ssh/id_rsa > /home/user/.ssh/authorized_keys && \
+          chown -R user:user /home/user/.ssh && \
+          chmod 700 /home/user/.ssh && \
+          chmod 600 /home/user/.ssh/authorized_keys && \
           /usr/sbin/sshd -D
       resources:
         requests:

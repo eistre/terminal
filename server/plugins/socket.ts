@@ -78,7 +78,7 @@ async function connectToPod (socket: Socket, port: number) {
   pod.connect({
     host: 'localhost',
     port,
-    username: 'test',
+    username: 'user',
     privateKey
   })
 }
@@ -134,7 +134,7 @@ async function setProxy (socket: Socket, pod: Client, port: number) {
     socket.send({ data: '\r\n*** SSH Connected established ***\r\n\n' })
     socket.emit('ready')
 
-    pod.exec('inotifywait /home /home/test -m', (error, channel) => {
+    pod.exec('inotifywait /home /home/user -m', (error, channel) => {
       if (error) {
         logger.error(error)
       }
