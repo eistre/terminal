@@ -63,8 +63,8 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
 <template>
   <UCard class="w-1/2">
     <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-      <div class="flex gap-4 w-full">
-        <UFormGroup :label="$t('auth.name')" name="username" class="w-1/2" eager-validation>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+        <UFormGroup :label="$t('auth.name')" name="username" eager-validation>
           <UInput
             v-model="state.username"
             :placeholder="$t('auth.john')"
@@ -73,7 +73,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
           />
         </UFormGroup>
 
-        <UFormGroup :label="$t('auth.password')" name="password" class="w-1/2" eager-validation>
+        <UFormGroup :label="$t('auth.password')" name="password" eager-validation>
           <UInput
             v-model="state.password"
             placeholder="********"
