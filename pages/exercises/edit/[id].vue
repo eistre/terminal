@@ -191,9 +191,26 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
 
                     <UFormGroup
                       label="Regex"
-                      :description="$t('exercises.edit.task_regex_description')"
                       :error="item.regex ? false : $t('exercises.edit.task_regex_error')"
                     >
+                      <template #description>
+                        <div class="flex justify-between">
+                          {{ $t('exercises.edit.task_regex_description') }}
+                          <UPopover mode="hover">
+                            <UIcon name="i-heroicons-information-circle-solid" />
+
+                            <template #panel>
+                              <div class="p-2 w-72">
+                                {{ $t('exercises.edit.task_regex_hint') }}
+                                <NuxtLink class="text-primary" to="https://linux.die.net/man/7/inotify" target="_blank">
+                                  {{ $t('exercises.edit.task_regex_link') }}
+                                </NuxtLink>
+                              </div>
+                            </template>
+                          </UPopover>
+                        </div>
+                      </template>
+
                       <UInput
                         v-model="state.tasks[index].regex"
                         placeholder="Regex"
