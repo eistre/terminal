@@ -16,7 +16,7 @@ const TOTAL_TRIES = 5
 
 type ImageEvent = {
   stream?: string
-  errorDetails?: {
+  errorDetail?: {
     code: number
     message: string
   }
@@ -54,9 +54,11 @@ async function build (startTime: Dayjs, tries = 0) {
 
     docker.docker.modem.followProgress(
       stream,
-      async (error) => {
-        if (error) {
-          dockerLogger.error('Error during image build - retrying', error)
+      async (error, result) => {
+        const last: ImageEvent = result.pop()
+
+        if (error || last.errorDetail) {
+          dockerLogger.error('Error during image build - retrying', last.errorDetail?.message)
           await build(startTime, tries + 1)
         } else {
           docker.isImageReady = true
@@ -66,11 +68,8 @@ async function build (startTime: Dayjs, tries = 0) {
           dockerLogger.info(`Docker image built successfully in ${executionTime} s`)
         }
       },
-      async (event: ImageEvent) => {
-        if (event.errorDetails) {
-          dockerLogger.error(`Error during image build: ${event.errorDetails.message} - retrying`)
-          await build(startTime, tries + 1)
-        } else if (/^Step \d+\/\d+ :/.test(event.stream!)) {
+      (event) => {
+        if (event.stream && /^Step \d+\/\d+ :/.test(event.stream)) {
           dockerLogger.info(event.stream)
         }
       }
