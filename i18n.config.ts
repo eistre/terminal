@@ -13,7 +13,9 @@ export default defineI18nConfig(() => ({
         title1: 'Linuxi käsurea harjutuskeskkond',
         title2: 'Ubuntu terminal veebibrauseris',
         info1: 'Info',
-        info2: 'TODO'
+        info2: 'Veebirakendus on valminud varasema bakalaureusetöö edasiarendusena. Selle eesmärgiks on õpetada ja meelde tuletada põhilisemad Linuxi käsurea käsud ning nende kasutusjuhud.',
+        info3: 'Esmasel sisselogimisel luuakse teile konto, mille abiga talletatakse teie harjutuste tulemused. Harjutuste kontrolliks on olemas automaatkontroll, mis muudab edukalt sooritatud ülesanded roheliseks.',
+        info4: 'Peale harjutuse avamist luuakse teie kasutajale isiklik ubuntu kapsel, mille abiga saate te ülesandeid lahendada.'
       },
       auth: {
         name: 'Nimi',
@@ -90,7 +92,9 @@ export default defineI18nConfig(() => ({
         title1: 'Linux command line practice environment',
         title2: 'Ubuntu terminal in the web browser',
         info1: 'Info',
-        info2: 'TODO'
+        info2: 'This web application has been made as a further development of an earlier bachelor\'s thesis. Its purpose is to teach and revise some of the basic Linux command line commands and their use cases.',
+        info3: 'When logging in for the first time, an account will be created for you, which will be used to store your exercise results. There are automatic checks which will turn the task green when completed successfully.',
+        info4: 'After opening an exercise, a personal ubuntu pod will be created for your account, which you can use to solve the tasks.'
       },
       auth: {
         name: 'Name',

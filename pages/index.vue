@@ -15,10 +15,11 @@ definePageMeta({
         </div>
       </template>
 
-      <div class="flex flex-col items-center gap-5">
-        <!-- TODO -->
+      <div class="flex flex-col items-center gap-4">
         <span class="flex justify-center text-2xl font-semibold">{{ $t('main.info1') }}</span>
-        <span>{{ $t('main.info2') }}</span>
+        <span class="w-2/3">{{ $t('main.info2') }}</span>
+        <span class="w-2/3">{{ $t('main.info3') }}</span>
+        <span class="w-2/3">{{ $t('main.info4') }}</span>
       </div>
 
       <template #footer>
