@@ -5,25 +5,27 @@ import type { FormSubmitEvent } from '#ui/types'
 
 const i18n = useI18n()
 
-const schema = z.object({
-  username: z.string({ required_error: i18n.t('auth.enter_name') })
-    .min(1, i18n.t('auth.enter_name')),
-  password: z.string({ required_error: i18n.t('auth.enter_password') })
-    .min(8, i18n.t('auth.password_error'))
+const schema = computed(() => {
+  return z.object({
+    username: z.string({ required_error: i18n.t('auth.enter_name') })
+      .min(1, i18n.t('auth.enter_name')),
+    password: z.string({ required_error: i18n.t('auth.enter_password') })
+      .min(8, i18n.t('auth.password_error'))
+  })
 })
 
-type Schema = z.output<typeof schema>
+type Schema = z.output<typeof schema.value>
 
 const state = reactive({
   username: undefined,
   password: undefined
 })
 
-const isDisabled = computed(() => !schema.safeParse(state).success)
+const isDisabled = computed(() => !schema.value.safeParse(state).success)
 const toast = useToast()
 
 async function onSubmit (event: FormSubmitEvent<Schema>) {
-  const data = schema.safeParse(event.data)
+  const data = schema.value.safeParse(event.data)
 
   if (!data.success) {
     toast.add({

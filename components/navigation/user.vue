@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const user = useAuthenticatedUser()
+const user = useUser()
 </script>
 
 <template>
@@ -10,7 +10,7 @@ const user = useAuthenticatedUser()
       color="gray"
       class="text-white"
       size="lg"
-      :label="user.name"
+      :label="user?.name"
     />
 
     <template #panel>

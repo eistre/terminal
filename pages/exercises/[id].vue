@@ -52,14 +52,14 @@ const width = ref(0)
 const updated = ref(true)
 const connected = ref(false)
 
-const user = useAuthenticatedUser()
+const user = useUser()
 const isImageReady = useImageReady()
 const port = Number(process.env.SOCKET_PORT) || 3001
 
-const socket = io(`localhost:${port}/terminal`, {
+const socket = io(`${location.hostname}:${port}/terminal`, {
   auth: {
     exerciseId,
-    token: user.value.token
+    token: user.value?.token
   }
 })
 
@@ -75,7 +75,9 @@ socket.on('disconnect', () => {
   term.write('\r\n*** Disconnected from backend ***\r\n')
 })
 
-socket.on('ready', () => connected.value = true)
+socket.on('ready', () => {
+  connected.value = true
+})
 
 term.onData((data: string) => {
   socket.send({ data })
@@ -129,7 +131,9 @@ function resetExercise () {
   socket.emit('reset_exercise')
 
   updated.value = false
-  exercise.tasks.forEach(task => task.completed = false)
+  exercise.tasks.forEach((task) => {
+    task.completed = false
+  })
   nextTick(() => {
     updated.value = true
   })

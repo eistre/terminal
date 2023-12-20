@@ -37,6 +37,11 @@ async function verifyToken (socket: Socket, next: (err?: ExtendedError | undefin
       return
     }
 
+    if (!decoded.role || decoded.role === 'UNVERIFIED') {
+      next(new Error('Unauthorized'))
+      return
+    }
+
     socket.data = {
       clientId: decoded.id,
       exerciseId

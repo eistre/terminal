@@ -5,7 +5,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
   const authRequest = auth.handleRequest(event)
   const session = await authRequest.validate()
 
-  if (!session) {
+  if (!session || session.user.role === 'UNVERIFIED') {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'

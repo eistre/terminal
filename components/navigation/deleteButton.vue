@@ -29,6 +29,7 @@ const deleteUser = async () => {
     return
   }
 
+  await fetchUser()
   await navigateTo('/')
 }
 </script>

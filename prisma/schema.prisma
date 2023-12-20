@@ -14,11 +14,13 @@ datasource db {
 model User {
   id            String          @id @unique
   name          String
+  email         String?
   expireTime    DateTime?
-  role          Role            @default(USER)
+  role          Role
   auth_session  Session[]
   key           Key[]
   CompletedTask CompletedTask[]
+  Verification  Verification[]
 }
 
 model Session {
@@ -36,6 +38,16 @@ model Key {
   hashed_password String?
   user_id         String
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+}
+
+model Verification {
+  id      String @id @unique @default(uuid())
+  code    String
+  expires BigInt
+  user_id String
+  user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
 }
@@ -76,6 +88,7 @@ model CompletedTask {
 }
 
 enum Role {
+  UNVERIFIED
   USER
   ADMIN
 }

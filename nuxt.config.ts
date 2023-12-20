@@ -14,6 +14,11 @@ export default defineNuxtConfig({
       ]
     }
   },
+  runtimeConfig: {
+    public: {
+      runtime: process.env.RUNTIME
+    }
+  },
   nitro: {
     storage: {
       k8s: {
@@ -34,6 +39,9 @@ export default defineNuxtConfig({
   // https://nuxt-security.vercel.app/documentation/getting-started/setup
   security: {
     headers: {
+      originAgentCluster: false,
+      crossOriginOpenerPolicy: false,
+      contentSecurityPolicy: false,
       crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp'
     }
   },

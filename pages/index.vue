@@ -3,6 +3,9 @@
 definePageMeta({
   middleware: 'unprotected'
 })
+
+const config = useRuntimeConfig()
+const isCloud = config.public.runtime === 'CLOUD'
 </script>
 
 <template>
@@ -24,7 +27,8 @@ definePageMeta({
 
       <template #footer>
         <div class="flex justify-center">
-          <AuthAuthenticate />
+          <AuthEmail v-if="isCloud" />
+          <AuthUsername v-else />
         </div>
       </template>
     </UCard>

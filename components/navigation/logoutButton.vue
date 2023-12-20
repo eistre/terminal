@@ -18,6 +18,7 @@ const logout = async () => {
     return
   }
 
+  await fetchUser()
   await navigateTo('/')
 }
 </script>

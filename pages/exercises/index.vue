@@ -5,7 +5,7 @@ definePageMeta({
 
 const { data: exercises, error } = await useFetch('/api/exercises', { method: 'GET' })
 
-const user = useAuthenticatedUser()
+const user = useUser()
 const toast = useToast()
 const i18n = useI18n()
 
@@ -42,7 +42,7 @@ function deleteExercise (id: number) {
         <div class="flex justify-between items-center">
           <span class="text-3xl font-semibold">{{ $t('exercises.exercises') }}</span>
           <UButton
-            v-if="user.role === 'ADMIN'"
+            v-if="user?.role === 'ADMIN'"
             variant="outline"
             size="lg"
             @click="navigateTo('/exercises/new')"
@@ -78,7 +78,7 @@ function deleteExercise (id: number) {
 
           {{ exercise.description }}
 
-          <template v-if="user.role === 'ADMIN'" #footer>
+          <template v-if="user?.role === 'ADMIN'" #footer>
             <div class="flex justify-end items-center gap-2">
               <ExerciseEditButton :id="exercise.id" />
               <ExerciseDeleteButton :id="exercise.id" @delete="deleteExercise(exercise.id)" />
