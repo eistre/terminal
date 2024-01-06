@@ -1,5 +1,5 @@
-INSERT INTO terminal.public."Exercise" (id, title, description) VALUES(1, 'Operatsioonisüsteemid ja Andmeturve', 'Operatsioonisüsteemide ja Andmeturve ainete Linuxi käsurea harjutusülesanded');
-INSERT INTO terminal.public."Task" (title, content, hint, regex, exercise_id) VALUES
+INSERT INTO "Exercise" (title, description) VALUES('Operatsioonisüsteemid ja Andmeturve', 'Operatsioonisüsteemide ja Andmeturve ainete Linuxi käsurea harjutusülesanded');
+INSERT INTO "Task" (title, content, hint, regex, exercise_id) VALUES
 ('Ülesanne 1', 'Kuva faili `/etc/hosts` faili sisu käsureale.', 'Kasuta käsku `cat`', '127\.0\.0\.1[\s\S]*localhost[\s\S]*ip6-localhost[\s\S]*localnet[\s\S]*allnodes[\s\S]*allrouters', 1),
 ('Ülesanne 2', 'Loo `user` kasutaja kodukausta alamkaust, mille nimes esineb vähemalt üks inglise tähestiku väiketäht, number, tühik, võrdlusmärk ja lauselõpumärk.', null, '/home/user/ CREATE,ISDIR (?=.*[a-z])(?=.*\d)(?=.*[ ])(?=.*[\<\>\=])(?=.*[\.\!\?])', 1),
 ('Ülesanne 3', 'Leia salajane fail koos absoluutse failiteega, mis asub `/` kaustas või selle alamkaustades ja mis lõppeb sõnega `hidden_secret`.', 'Kasuta käsku `find`, permission denied ridade mitte kuvamiseks lisa käsu lõppu `2>/dev/null`', '/var/.secrets/.super_hidden_secret', 1),
@@ -11,8 +11,8 @@ INSERT INTO terminal.public."Task" (title, content, hint, regex, exercise_id) VA
 ('Ülesanne 9', 'Kustuta kaust `/home/test/.temporary` ja selle sisu.', null, 'DELETE,ISDIR .temporary', 1),
 ('Ülesanne 10', 'Kuva kõik käimasolevad protsessid.', 'Uuri käsku `ps`', '\d+.*\d+:\d+.*inotifywait', 1);
 
-INSERT INTO terminal.public."Exercise" (id, title, description) VALUES(2, 'Operating Systems ja Computer Security', 'Linux command line tasks for the Operating Systems and Computer Security subjects');
-INSERT INTO terminal.public."Task" (title, content, hint, regex, exercise_id) VALUES
+INSERT INTO "Exercise" (title, description) VALUES('Operating Systems ja Computer Security', 'Linux command line tasks for the Operating Systems and Computer Security subjects');
+INSERT INTO "Task" (title, content, hint, regex, exercise_id) VALUES
 ('Task 1', 'Display the contents of `/etc/hosts` to the command line.', 'Use the `cat` command.', '127\.0\.0\.1[\s\S]*localhost[\s\S]*ip6-localhost[\s\S]*localnet[\s\S]*allnodes[\s\S]*allrouters', 2),
 ('Task 2', 'Create a new directory inside the home directory of `user` account with a name that contains at least one lowercase letter of the English alphabet, a number, a space, a comparison symbol and an end-of-sentence symbol.', null, '/home/user/ CREATE,ISDIR (?=.*[a-z])(?=.*\d)(?=.*[ ])(?=.*[\<\>\=])(?=.*[\.\!\?])', 2),
 ('Task 3', 'Find a secret file with its absolute file path, that is located in the `/` directory or one of its subdirectories and ends with `hidden_secret`.', 'Use the `find` command, to avoid the permission denied messages, add `2>/dev/null` to the end of the command', '/var/.secrets/.super_hidden_secret', 2),

@@ -3,10 +3,11 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client/sqlserver"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlserver"
   url      = env("DATABASE_URL")
 }
 
@@ -16,7 +17,7 @@ model User {
   name          String
   email         String?
   expireTime    DateTime?
-  role          Role
+  role          String
   auth_session  Session[]
   key           Key[]
   CompletedTask CompletedTask[]
@@ -85,10 +86,4 @@ model CompletedTask {
   @@unique([task_id, user_id])
   @@index([id])
   @@index([task_id, user_id])
-}
-
-enum Role {
-  UNVERIFIED
-  USER
-  ADMIN
 }

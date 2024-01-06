@@ -3,6 +3,13 @@
 import Docker from 'dockerode'
 
 const dockerClientSingleton = () => {
+  if (process.env.RUNTIME === 'CLOUD') {
+    return {
+      isImageReady: true,
+      docker: new Docker()
+    }
+  }
+
   return {
     isImageReady: false,
     docker: new Docker()

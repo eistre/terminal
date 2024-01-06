@@ -1,8 +1,13 @@
 // https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient as PrismaClientSqlServer } from '@prisma/client/sqlserver/index.js'
+import { PrismaClient as PrismaClientPg } from '@prisma/client/pg/index.js'
 
 const prismaClientSingleton = () => {
-  return new PrismaClient()
+  if (process.env.DATABASE_URL?.startsWith('sqlserver')) {
+    return new PrismaClientSqlServer()
+  }
+
+  return new PrismaClientPg()
 }
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>
