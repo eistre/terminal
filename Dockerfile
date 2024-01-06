@@ -12,8 +12,8 @@ RUN npm install
 
 COPY --chown=node:node . .
 
-RUN npx prisma generate --schema .\prisma\schema_pg.prisma
-RUN npx prisma generate --schema .\prisma\schema_sqlserver.prisma
+RUN npx prisma generate --schema ./prisma/schema_pg.prisma
+RUN npx prisma generate --schema ./prisma/schema_sqlserver.prisma
 
 RUN npm run build
 
