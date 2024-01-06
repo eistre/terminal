@@ -6,6 +6,7 @@ import { parse } from 'yaml'
 
 const POD_DATE_VALUE: number = Number(process.env.POD_DATE_VALUE) || 1
 const POD_DATE_UNIT: dayjs.ManipulateType = process.env.POD_DATE_UNIT as dayjs.ManipulateType || 'day'
+const KUBE_CONFIG = process.env.KUBE_CONFIG || ''
 
 export class Kubernetes {
   private api: k8s.CoreV1Api
@@ -13,7 +14,12 @@ export class Kubernetes {
 
   constructor () {
     const kc = new k8s.KubeConfig()
-    kc.loadFromDefault()
+
+    if (process.env.RUNTIME === 'CLOUD') {
+      kc.loadFromString(KUBE_CONFIG)
+    } else {
+      kc.loadFromDefault()
+    }
 
     this.api = kc.makeApiClient(k8s.CoreV1Api)
     this.watch = new k8s.Watch(kc)
