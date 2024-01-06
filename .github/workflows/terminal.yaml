@@ -1,0 +1,16 @@
+name: Image for Linux Terminal Application
+
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker login
+        run: docker login --username eistre --password ${{ secrets.GHCR_TOKEN }} ghcr.io
+      - name: Build the application image
+        run: docker build . --file Dockerfile --tag ghcr.io/eistre/terminal:latest
+      - name: Push application image
+        run: docker push ghcr.io/eistre/terminal:latest
