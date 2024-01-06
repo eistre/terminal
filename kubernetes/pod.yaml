@@ -7,8 +7,8 @@ metadata:
 spec:
   containers:
     - name: ubuntu
-      image: terminal/ubuntu
-      imagePullPolicy: Never
+      image: ghcr.io/eistre/terminal-ubuntu
+      imagePullPolicy: IfNotPresent
       volumeMounts:
         - mountPath: /etc/.ssh
           name: ssh

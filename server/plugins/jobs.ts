@@ -4,7 +4,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import db from '~/prisma/db'
 
 const logger = pino.child({ caller: 'scheduler' })
-const dockerLogger = pino.child({ caller: 'docker_build_job' })
+const dockerLogger = pino.child({ caller: 'docker_pull_job' })
 const podLogger = pino.child({ caller: 'pod_delete_job' })
 const userLogger = pino.child({ caller: 'user_delete_job' })
 
@@ -13,14 +13,6 @@ const POD_CRON_TIMER = process.env.POD_CRON_TIMER || '0 0 * * * *'
 const USER_CRON_TIMER = process.env.USER_CRON_TIMER || '0 0 0 * * *'
 
 const TOTAL_TRIES = 5
-
-type ImageEvent = {
-  stream?: string
-  errorDetail?: {
-    code: number
-    message: string
-  }
-}
 
 async function deleteExpiredNamespaces (namespaces: string[]): Promise<number> {
   let count = 0
@@ -38,55 +30,45 @@ async function deleteExpiredNamespaces (namespaces: string[]): Promise<number> {
   return count
 }
 
-// Builds docker image
+// Pulls docker image
 // https://github.com/apocas/dockerode
-async function build (startTime: Dayjs, tries = 0) {
+function pull (startTime: Dayjs, tries = 0) {
   if (tries > TOTAL_TRIES) {
     dockerLogger.error('Maximum number of tries exceeded')
     return
   }
 
-  try {
-    const stream = await docker.docker.buildImage(
-      { context: '.', src: ['Dockerfile.ubuntu'] },
-      { t: 'terminal/ubuntu', dockerfile: 'Dockerfile.ubuntu' }
-    )
+  docker.docker.pull('ghcr.io/eistre/terminal-ubuntu', {}, (error, stream) => {
+    if (error) {
+      dockerLogger.error(`Error during image pull - retrying: ${error}`)
+      pull(startTime, tries + 1)
+    }
 
     docker.docker.modem.followProgress(
       stream,
-      async (error, result) => {
-        const last: ImageEvent = result.pop()
-
-        if (error || last.errorDetail) {
-          dockerLogger.error(`Error during image build - retrying: ${last.errorDetail?.message || error}`)
-          await build(startTime, tries + 1)
+      (error) => {
+        if (error) {
+          dockerLogger.error(`Error during image pull - retrying: ${error}`)
+          pull(startTime, tries + 1)
         } else {
           docker.isImageReady = true
           emitter.emit('image')
 
           const executionTime = dayjs().diff(startTime, 'seconds')
-          dockerLogger.info(`Docker image built successfully in ${executionTime} s`)
-        }
-      },
-      (event) => {
-        if (event.stream && /^Step \d+\/\d+ :/.test(event.stream)) {
-          dockerLogger.info(event.stream)
+          dockerLogger.info(`Docker image pulled successfully in ${executionTime} s`)
         }
       }
     )
-  } catch (error) {
-    dockerLogger.error(`Error during image build - retrying: ${error}`)
-    await build(startTime, tries + 1)
-  }
+  })
 }
 
-async function dockerBuildJob () {
-  dockerLogger.info('Starting docker image build')
+function dockerPullJob () {
+  dockerLogger.info('Pulling Docker image')
   docker.isImageReady = false
   emitter.emit('image')
 
   const startTime = dayjs()
-  await build(startTime)
+  pull(startTime)
 }
 
 async function podDeleteJob () {
@@ -117,12 +99,12 @@ async function userDeleteJob () {
 
 export default defineNitroPlugin(async () => {
   // Run jobs during startup
-  await dockerBuildJob()
+  dockerPullJob()
   await podDeleteJob()
   await userDeleteJob()
 
   // Schedule the jobs
-  Cron(DOCKER_CRON_TIMER, { name: 'dockerBuildJob' }, dockerBuildJob)
+  Cron(DOCKER_CRON_TIMER, { name: 'dockerPullJob' }, dockerPullJob)
   Cron(POD_CRON_TIMER, { name: 'podDeleteJob' }, podDeleteJob)
   Cron(USER_CRON_TIMER, { name: 'userDeleteJob' }, userDeleteJob)
 

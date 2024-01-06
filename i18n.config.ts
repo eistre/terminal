@@ -55,7 +55,7 @@ export default defineI18nConfig(() => ({
       },
       docker: {
         image_ready: 'Kettapilt valmis',
-        image_building: 'Kettapilt ehitamisel'
+        image_pulling: 'Kettapildi tõmbamine'
       },
       exercises: {
         exercise_reset_error: 'Tulemuste lähtestamine ebaõnnestus',
@@ -155,7 +155,7 @@ export default defineI18nConfig(() => ({
       },
       docker: {
         image_ready: 'Image ready',
-        image_building: 'Image building'
+        image_pulling: 'Image pulling'
       },
       exercises: {
         exercise_reset_error: 'Resetting results failed',

@@ -67,7 +67,7 @@ socket.on('connect', () => {
   term.write('\r\n*** Connected to backend ***\r\n')
 
   if (!isImageReady.value) {
-    term.write('\r\n*** Waiting on docker image build ***\r\n')
+    term.write('\r\n*** Waiting on docker image pull ***\r\n')
   }
 })
 
