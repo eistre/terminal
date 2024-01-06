@@ -19,7 +19,7 @@ export class Kubernetes {
     this.watch = new k8s.Watch(kc)
   }
 
-  async createOrUpdatePod (clientId: string): Promise<number> {
+  async createOrUpdatePod (clientId: string): Promise<{ ip: string, port: number }> {
     const namespace = `ubuntu-${clientId}`
     const namespaceExists = await this.doesNamespaceExist(namespace)
 
@@ -34,7 +34,7 @@ export class Kubernetes {
       })
     }
 
-    return this.getPort(clientId)
+    return this.getConnectionDetails(clientId)
   }
 
   async deleteNamespace (namespace: string) {
@@ -145,23 +145,37 @@ export class Kubernetes {
     )
   }
 
-  private async getPort (clientId: string): Promise<number> {
+  private async getConnectionDetails (clientId: string): Promise<{ ip: string, port: number }> {
     const namespace = `ubuntu-${clientId}`
-    const service = (await this.api.listNamespacedService(namespace))
-      .body
-      .items
+
+    const pod = (await this.api.listNamespacedPod(namespace)).body.items
+      .find(item => item.metadata?.name === 'ubuntu')
+
+    const service = (await this.api.listNamespacedService(namespace)).body.items
       .find(item => item.metadata?.name === 'ssh')
 
-    if (!service) {
-      throw new Error('Pod service not found')
+    const node = (await this.api.listNode()).body.items
+      .find(item => item.metadata?.name === pod?.spec?.nodeName)
+
+    if (!pod || !service || !node) {
+      throw new Error('Pod, service or node not found')
     }
 
-    const port = service.spec?.ports?.find(port => port.name === 'ssh')
+    const ip = node.status?.addresses
+      ?.find(item => item.type === 'ExternalIP')
+      ?.address || 'localhost'
 
-    if (!port?.nodePort) {
-      throw new Error('Pod port not found')
+    const port = service.spec?.ports
+      ?.find(port => port.name === 'ssh')
+      ?.nodePort
+
+    if (!port) {
+      throw new Error('Pod ip or port not found')
     }
 
-    return port.nodePort
+    return {
+      ip,
+      port
+    }
   }
 }

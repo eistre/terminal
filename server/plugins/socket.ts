@@ -67,10 +67,10 @@ function waitForImage () {
   })
 }
 
-async function connectToPod (socket: Socket, port: number) {
+async function connectToPod (socket: Socket, connection: { ip: string, port: number }) {
   const pod = new Client()
 
-  await setProxy(socket, pod, port)
+  await setProxy(socket, pod, connection)
 
   const privateKey = await useStorage('ssh').getItem<string>(`ubuntu-${socket.data.clientId}`)
 
@@ -81,14 +81,14 @@ async function connectToPod (socket: Socket, port: number) {
   }
 
   pod.connect({
-    host: 'localhost',
-    port,
+    host: connection.ip,
+    port: connection.port,
     username: 'user',
     privateKey
   })
 }
 
-async function setProxy (socket: Socket, pod: Client, port: number) {
+async function setProxy (socket: Socket, pod: Client, connection: { ip: string, port: number }) {
   const { clientId, exerciseId } = socket.data
   let tasks = await db.task.findMany({
     where: {
@@ -205,7 +205,7 @@ async function setProxy (socket: Socket, pod: Client, port: number) {
     // If connection refused - try again
     if (error.message.includes('ECONNREFUSED')) {
       logger.warn(`Connection refused for client: ${clientId} - retrying`)
-      await connectToPod(socket, port)
+      await connectToPod(socket, connection)
     } else {
       logger.error(error)
     }
@@ -260,11 +260,11 @@ export default defineNitroPlugin(() => {
     await waitForImage()
 
     try {
-      const port = await kubernetes.createOrUpdatePod(socket.data.clientId)
+      const connection = await kubernetes.createOrUpdatePod(socket.data.clientId)
 
       // Create ssh connection
       if (!socket.disconnected) {
-        await connectToPod(socket, port)
+        await connectToPod(socket, connection)
       }
     } catch (error) {
       logger.error(error)
