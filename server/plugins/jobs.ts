@@ -99,12 +99,18 @@ async function userDeleteJob () {
 
 export default defineNitroPlugin(async () => {
   // Run jobs during startup
-  dockerPullJob()
+  if (process.env.RUNTIME !== 'CLOUD') {
+    dockerPullJob()
+  }
+
   await podDeleteJob()
   await userDeleteJob()
 
   // Schedule the jobs
-  Cron(DOCKER_CRON_TIMER, { name: 'dockerPullJob' }, dockerPullJob)
+  if (process.env.RUNTIME !== 'CLOUD') {
+    Cron(DOCKER_CRON_TIMER, { name: 'dockerPullJob' }, dockerPullJob)
+  }
+
   Cron(POD_CRON_TIMER, { name: 'podDeleteJob' }, podDeleteJob)
   Cron(USER_CRON_TIMER, { name: 'userDeleteJob' }, userDeleteJob)
 
