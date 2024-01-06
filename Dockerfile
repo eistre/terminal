@@ -1,33 +1,34 @@
-FROM ubuntu:24.04
+# Build step
+FROM node:21-alpine AS build
 
-# Unminimize container
-RUN yes | unminimize
+USER node
 
-# Update and install necessary packages
-RUN apt update && apt upgrade -y
-RUN apt install -y inotify-tools sudo less man-db openssh-server && apt clean
+WORKDIR /usr/src/app
 
-# Create user
-RUN useradd -m -s /bin/bash user && echo 'user:password123' | chpasswd
+COPY --chown=node:node package.json .
+COPY --chown=node:node package-lock.json .
 
-# Create files for tasks
-USER user
-RUN mkdir /home/user/.temporary && echo "Temporary file" > /home/user/.temporary/temporary_file
+RUN npm install
 
-USER root
-RUN mkdir /var/.secrets && echo "Hidden secret" > /var/.secrets/.super_hidden_secret
-RUN mkdir /var/.hidden && echo "Password file content \n...\n\nSudo password is password123" > /var/.hidden/.hidden_password
+COPY --chown=node:node . .
 
-# Only allow sudo apt install
-RUN echo 'user ALL=(ALL) /usr/bin/apt install nano' > /etc/sudoers.d/apt-install && chmod 440 /etc/sudoers.d/apt-install
+RUN npx prisma generate
 
-# Disable password auth and root login
-RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config \
-    && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
+RUN npm run build
 
-# Create ssh directory for user
-RUN mkdir -p /home/user/.ssh
+# Prod image
+FROM node:21-alpine AS final
 
-# Restart ssh service
-RUN service ssh restart
-CMD ["/usr/sbin/sshd", "-D"]
+RUN apk add --update --no-cache openssh-client
+
+USER node
+
+WORKDIR /usr/src/app
+
+COPY --from=build --chown=node:node /usr/src/app/.output .
+COPY --from=build --chown=node:node /usr/src/app/kubernetes ./kubernetes
+
+EXPOSE 3000
+EXPOSE 3001
+
+CMD ["node", "server/index.mjs"]

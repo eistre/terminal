@@ -48,8 +48,8 @@ async function build (startTime: Dayjs, tries = 0) {
 
   try {
     const stream = await docker.docker.buildImage(
-      { context: '.', src: ['Dockerfile'] },
-      { t: 'terminal/ubuntu' }
+      { context: '.', src: ['Dockerfile.ubuntu'] },
+      { t: 'terminal/ubuntu', dockerfile: 'Dockerfile.ubuntu' }
     )
 
     docker.docker.modem.followProgress(
@@ -58,7 +58,7 @@ async function build (startTime: Dayjs, tries = 0) {
         const last: ImageEvent = result.pop()
 
         if (error || last.errorDetail) {
-          dockerLogger.error('Error during image build - retrying', last.errorDetail?.message)
+          dockerLogger.error(`Error during image build - retrying: ${last.errorDetail?.message || error}`)
           await build(startTime, tries + 1)
         } else {
           docker.isImageReady = true
@@ -75,7 +75,7 @@ async function build (startTime: Dayjs, tries = 0) {
       }
     )
   } catch (error) {
-    dockerLogger.error('Error during image build - retrying', error)
+    dockerLogger.error(`Error during image build - retrying: ${error}`)
     await build(startTime, tries + 1)
   }
 }
