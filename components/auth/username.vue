@@ -48,10 +48,17 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
   })
 
   if (error.value) {
+    const { message } = error.value.data
+    let title = i18n.t('auth.auth_error')
+
+    if (message === 'Incorrect password') {
+      title = i18n.t('auth.auth_error_password')
+    }
+
     toast.add({
-      id: 'auth_login_failed',
+      id: `auth_login_${title}`,
       icon: 'i-heroicons-x-mark',
-      title: i18n.t('auth.auth_error'),
+      title,
       timeout: 5000,
       color: 'red'
     })
