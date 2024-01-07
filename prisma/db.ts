@@ -2,21 +2,22 @@
 import { PrismaClient as PrismaClientSqlServer } from '@prisma/client/sqlserver/index.js'
 import { PrismaClient as PrismaClientPg } from '@prisma/client/pg/index.js'
 
-const prismaClientSingleton = () => {
-  if (process.env.DATABASE_URL?.startsWith('sqlserver')) {
-    return new PrismaClientSqlServer()
-  }
-
+const prismaClientPostgres = () => {
   return new PrismaClientPg()
 }
 
-type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClientSingleton | undefined
+const prismaClientSqlServer = () => {
+  return new PrismaClientSqlServer()
 }
 
-const db = globalForPrisma.prisma ?? prismaClientSingleton()
+type PrismaClientPostgres = ReturnType<typeof prismaClientPostgres>
+type PrismaClientSql = ReturnType<typeof prismaClientSqlServer>
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClientPostgres | PrismaClientSql | undefined
+}
+
+const db = globalForPrisma.prisma ?? (process.env.DATABASE_URL?.startsWith('sqlserver') ? prismaClientSqlServer() : prismaClientPostgres())
 
 export default db
 

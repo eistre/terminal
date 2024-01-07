@@ -220,8 +220,7 @@ async function evaluate (socket: Socket, data: string, tasks: { id: number, rege
 
   if (completed.length > 0) {
     await db.completedTask.createMany({
-      data: completed,
-      skipDuplicates: true
+      data: completed
     })
 
     const taskIds = completed.map(task => task.task_id)

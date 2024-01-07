@@ -56,7 +56,10 @@ const user = useUser()
 const isImageReady = useImageReady()
 const port = Number(process.env.SOCKET_PORT) || 3001
 
-const socket = io(`${location.hostname}:${port}/terminal`, {
+const config = useRuntimeConfig()
+const protocol = config.public.runtime === 'CLOUD' ? 'wss' : 'ws'
+
+const socket = io(`${protocol}://${location.hostname}:${port}/terminal`, {
   auth: {
     exerciseId,
     token: user.value?.token
