@@ -15,8 +15,8 @@ export class Kubernetes {
   constructor () {
     const kc = new k8s.KubeConfig()
 
-    if (process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD') {
-      kc.loadFromString(KUBE_CONFIG)
+    if (KUBE_CONFIG) {
+      kc.loadFromString(Buffer.from(KUBE_CONFIG, 'base64').toString())
     } else {
       kc.loadFromDefault()
     }
