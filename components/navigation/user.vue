@@ -16,7 +16,7 @@ const user = useUser()
     <template #panel>
       <div class="flex flex-col p-1">
         <NavigationLogoutButton />
-        <NavigationDeleteButton />
+        <NavigationDeleteButton v-if="user?.name !== 'admin'" />
       </div>
     </template>
   </UPopover>
