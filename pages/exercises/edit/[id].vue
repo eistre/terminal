@@ -29,7 +29,7 @@ const { data, error } = await useFetch(`/api/exercises/edit/${exerciseId}`, { me
 
 if (error.value) {
   toast.add({
-    id: 'exercise_failed',
+    id: `exercise_failed_${exerciseId}`,
     icon: 'i-heroicons-x-mark',
     title: i18n.t('exercises.exercise_error'),
     timeout: 5000,
@@ -97,7 +97,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
 
   if (!body.success) {
     toast.add({
-      id: 'edit_exercise_failed',
+      id: `edit_exercise_failed_${exerciseId}`,
       icon: 'i-heroicons-x-mark',
       title: body.error.name,
       description: body.error.message,
@@ -114,7 +114,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
 
   if (error.value) {
     toast.add({
-      id: 'edit_exercise_failed',
+      id: `edit_exercise_failed_${exerciseId}`,
       icon: 'i-heroicons-x-mark',
       title: i18n.t('exercises.edit.update_fail'),
       timeout: 5000,
@@ -126,7 +126,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
   await navigateTo('/exercises')
 
   toast.add({
-    id: 'create_exercise_success',
+    id: `create_exercise_success_${exerciseId}`,
     icon: 'i-heroicons-check',
     title: i18n.t('exercises.edit.update_success'),
     timeout: 5000,

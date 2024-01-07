@@ -10,7 +10,7 @@ const deleteExercise = async () => {
     onResponse: ({ response }) => {
       if (response.status === 204) {
         toast.add({
-          id: 'exercise_delete_success',
+          id: `exercise_delete_success_${id}`,
           icon: 'i-heroicons-check',
           title: i18n.t('exercises.delete_success'),
           timeout: 5000,
@@ -22,7 +22,7 @@ const deleteExercise = async () => {
 
   if (error.value) {
     toast.add({
-      id: 'exercise_delete_failed',
+      id: `exercise_delete_failed_${id}`,
       icon: 'i-heroicons-x-mark',
       title: i18n.t('exercises.delete_error'),
       timeout: 5000,

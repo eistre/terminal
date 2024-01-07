@@ -27,7 +27,7 @@ const { data, error } = await useFetch(`/api/exercises/${exerciseId}`, { method:
 
 if (error.value) {
   toast.add({
-    id: 'exercise_failed',
+    id: `exercise_failed_${exerciseId}`,
     icon: 'i-heroicons-x-mark',
     title: i18n.t('exercises.exercise_error'),
     timeout: 5000,

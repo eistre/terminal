@@ -2,6 +2,8 @@ import { EventHandlerRequest, H3Event } from 'h3'
 import { z } from 'zod'
 import db from '~/prisma/db'
 
+const logger = pino.child({ caller: 'exercise' })
+
 const schema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
@@ -51,44 +53,55 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
   const newTasks = tasks.filter(task => !task.id)
 
   try {
-    // @ts-ignore
-    await db.task.deleteMany({
-      where: {
-        id: {
-          in: removed
-        }
-      }
-    })
+    const promises = []
 
-    for (const task of existingTasks) {
+    promises.push(
       // @ts-ignore
-      await db.task.update({
+      db.task.deleteMany({
         where: {
-          id: task.id
-        },
-        data: {
-          title: task.title,
-          content: task.content,
-          hint: task.hint,
-          regex: task.regex
+          id: {
+            in: removed
+          }
         }
       })
+    )
+
+    for (const task of existingTasks) {
+      promises.push(
+        // @ts-ignore
+        db.task.update({
+          where: {
+            id: task.id
+          },
+          data: {
+            title: task.title,
+            content: task.content,
+            hint: task.hint,
+            regex: task.regex
+          }
+        })
+      )
     }
 
-    // @ts-ignore
-    await db.exercise.update({
-      where: {
-        id: Number(id)
-      },
-      data: {
-        title,
-        description,
-        tasks: {
-          create: newTasks
+    promises.push(
+      // @ts-ignore
+      db.exercise.update({
+        where: {
+          id: Number(id)
+        },
+        data: {
+          title,
+          description,
+          tasks: {
+            create: newTasks
+          }
         }
-      }
-    })
+      })
+    )
+
+    await Promise.all(promises)
   } catch (error) {
+    logger.error(error)
     throw createError({
       statusCode: 500,
       statusMessage: 'Internal server error'

@@ -40,6 +40,7 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@nuxt/image', 'nuxt-security', '@nuxtjs/i18n'],
   // https://nuxt-security.vercel.app/documentation/getting-started/setup
   security: {
+    xssValidator: false,
     headers: {
       originAgentCluster: false,
       crossOriginOpenerPolicy: false,

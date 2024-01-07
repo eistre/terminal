@@ -6,7 +6,7 @@ import { parse } from 'yaml'
 
 const POD_DATE_VALUE: number = Number(process.env.POD_DATE_VALUE) || 1
 const POD_DATE_UNIT: dayjs.ManipulateType = process.env.POD_DATE_UNIT as dayjs.ManipulateType || 'day'
-const KUBE_CONFIG = process.env.KUBE_CONFIG || ''
+const KUBE_CONFIG = process.env.KUBE_CONFIG
 
 export class Kubernetes {
   private api: k8s.CoreV1Api
