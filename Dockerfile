@@ -30,6 +30,5 @@ COPY --from=build --chown=node:node /usr/src/app/.output .
 COPY --from=build --chown=node:node /usr/src/app/kubernetes ./kubernetes
 
 EXPOSE 3000
-EXPOSE 3001
 
 CMD ["node", "server/index.mjs"]

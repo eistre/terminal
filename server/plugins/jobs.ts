@@ -84,6 +84,7 @@ async function podDeleteJob () {
 }
 
 async function userDeleteJob () {
+  // @ts-ignore
   const { count } = await db.user.deleteMany({
     where: {
       expireTime: {
@@ -99,7 +100,7 @@ async function userDeleteJob () {
 
 export default defineNitroPlugin(async () => {
   // Run jobs during startup
-  if (process.env.RUNTIME !== 'CLOUD') {
+  if (process.env.NUXT_PUBLIC_RUNTIME !== 'CLOUD') {
     dockerPullJob()
   }
 
@@ -107,7 +108,7 @@ export default defineNitroPlugin(async () => {
   await userDeleteJob()
 
   // Schedule the jobs
-  if (process.env.RUNTIME !== 'CLOUD') {
+  if (process.env.NUXT_PUBLIC_RUNTIME !== 'CLOUD') {
     Cron(DOCKER_CRON_TIMER, { name: 'dockerPullJob' }, dockerPullJob)
   }
 

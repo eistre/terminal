@@ -16,10 +16,12 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      runtime: process.env.RUNTIME
+      runtime: ''
     }
   },
   nitro: {
+    entry: process.env.NODE_ENV === 'production' ? undefined : '../preset/entry.dev',
+    preset: './preset',
     storage: {
       k8s: {
         driver: 'fs',

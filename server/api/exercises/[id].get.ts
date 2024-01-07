@@ -22,6 +22,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
     })
   }
 
+  // @ts-ignore
   const exercise = await db.exercise.findUnique({
     where: {
       id: Number(id)
@@ -51,6 +52,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
   return {
     id: exercise.id,
     title: exercise.title,
+    // @ts-ignore
     tasks: exercise.tasks.map((task) => {
       return {
         id: task.id,

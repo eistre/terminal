@@ -75,9 +75,12 @@ export const login = async (event: H3Event<EventHandlerRequest>, providerId: str
 
 // https://lucia-auth.com/guidebook/email-verification-codes/
 export const generateEmailVerificationCode = async (userId: string): Promise<string> => {
+  // @ts-ignore
   await db.verification.deleteMany({ where: { user_id: userId } })
 
   const code = randomBytes(4).toString('hex').toUpperCase()
+
+  // @ts-ignore
   await db.verification.create({
     data: {
       code,
@@ -110,12 +113,14 @@ export const validateEmailVerificationCode = async (userId: string, code: string
     })
   }
 
+  // @ts-ignore
   const storedCode = await db.verification.findFirst({ where: { user_id: userId } })
 
   if (!storedCode || storedCode.code !== code) {
     throw new Error('Invalid code')
   }
 
+  // @ts-ignore
   await db.verification.deleteMany({ where: { user_id: storedCode.user_id } })
   verificationTimeout.delete(userId)
 

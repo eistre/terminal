@@ -22,6 +22,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
   }
 
   try {
+    // @ts-ignore
     await db.exercise.delete({
       where: {
         id: Number(id)

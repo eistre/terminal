@@ -27,6 +27,7 @@ const ui = {
 }
 
 function deleteExercise (id: number) {
+  // @ts-ignore
   const index = exercises.value?.findIndex(exercise => exercise.id === id)
 
   if (index !== undefined) {

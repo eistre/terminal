@@ -1,14 +1,13 @@
 // https://github.com/nuxt/nuxt/pull/19230
 // Modified from: https://gitlab.com/JoonasHalapuu/ubuntuterminal/-/blob/main/sshConnection.js?ref_type=heads
 import { Client } from 'ssh2'
-import jwt, { VerifyErrors } from 'jsonwebtoken'
-import { Server, Socket } from 'socket.io'
-import { ExtendedError } from 'socket.io/dist/namespace'
+import jwt, { type VerifyErrors } from 'jsonwebtoken'
+import { type Server, Socket } from 'socket.io'
+import type { ExtendedError } from 'socket.io/dist/namespace'
 import db from '~/prisma/db'
 
 const logger = pino.child({ caller: 'socket' })
 const SECRET = process.env.JWT_SECRET || 'secret_example'
-const SOCKET_PORT = Number(process.env.SOCKET_PORT) || 3001
 
 async function verifyToken (socket: Socket, next: (err?: ExtendedError | undefined) => void) {
   const { token, exerciseId } = socket.handshake.auth
@@ -23,6 +22,7 @@ async function verifyToken (socket: Socket, next: (err?: ExtendedError | undefin
     return
   }
 
+  // @ts-ignore
   const count = await db.exercise.count({ where: { id: Number(exerciseId) } })
 
   if (count === 0) {
@@ -90,6 +90,7 @@ async function connectToPod (socket: Socket, connection: { ip: string, port: num
 
 async function setProxy (socket: Socket, pod: Client, connection: { ip: string, port: number }) {
   const { clientId, exerciseId } = socket.data
+  // @ts-ignore
   let tasks = await db.task.findMany({
     where: {
       exercise_id: Number(exerciseId),
@@ -109,9 +110,12 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
     try {
       logger.debug(`Resetting exercise ${exerciseId} for client ${clientId}`)
 
+      // @ts-ignore
       const ids = await db.task.findMany({ where: { exercise_id: Number(exerciseId) }, select: { id: true } })
+      // @ts-ignore
       await db.completedTask.deleteMany({ where: { user_id: clientId, task_id: { in: ids.map(id => id.id) } } })
 
+      // @ts-ignore
       tasks = await db.task.findMany({
         where: {
           exercise_id: Number(exerciseId),
@@ -219,6 +223,7 @@ async function evaluate (socket: Socket, data: string, tasks: { id: number, rege
     .map(task => ({ user_id: socket.data.clientId, task_id: task.id }))
 
   if (completed.length > 0) {
+    // @ts-ignore
     await db.completedTask.createMany({
       data: completed
     })
@@ -234,25 +239,18 @@ async function evaluate (socket: Socket, data: string, tasks: { id: number, rege
   }
 }
 
-export default defineNitroPlugin(() => {
-  // Create websocket
-  const socket = new Server(SOCKET_PORT, {
-    cors: {
-      origin: '*'
-    }
-  })
-
-  socket.on('connection', (socket) => {
+export default function handleSocket (server: Server) {
+  server.on('connection', (socket) => {
     socket.emit('image', { status: docker.isImageReady })
   })
 
   emitter.on('image', () => {
-    socket.emit('image', { status: docker.isImageReady })
+    server.emit('image', { status: docker.isImageReady })
   })
 
   // For socket authentication
   // https://socket.io/docs/v4/middlewares/
-  const client = socket.of('terminal')
+  const client = server.of('terminal')
   client.use(verifyToken)
 
   client.on('connection', async (socket) => {
@@ -270,4 +268,4 @@ export default defineNitroPlugin(() => {
       socket.disconnect()
     }
   })
-})
+}

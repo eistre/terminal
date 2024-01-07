@@ -10,6 +10,13 @@ type Task = {
   regex: string | undefined
 }
 
+type Exercise = {
+  id: number
+  title: string
+  description: string
+  tasks: Task[]
+}
+
 definePageMeta({
   middleware: 'admin'
 })
@@ -19,7 +26,6 @@ const route = useRoute()
 const i18n = useI18n()
 const exerciseId = route.params.id
 const { data, error } = await useFetch(`/api/exercises/edit/${exerciseId}`, { method: 'GET' })
-const title = data.value?.title
 
 if (error.value) {
   toast.add({
@@ -50,11 +56,14 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>
 
+const exercise = data.value as Exercise
+
+const title = exercise.title
 const keyCount = ref(0)
 const state = reactive({
-  title: data.value?.title,
-  description: data.value?.description,
-  tasks: data.value?.tasks.map(task => ({ ...task, key: keyCount.value++ })) as (Task & { key: number })[],
+  title: exercise.title,
+  description: exercise.description,
+  tasks: exercise.tasks.map(task => ({ ...task, key: keyCount.value++ })) as (Task & { key: number })[],
   removed: [] as number[]
 })
 

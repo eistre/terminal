@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { EventHandlerRequest, H3Event } from 'h3'
 
-const RUNTIME = process.env.RUNTIME
+const RUNTIME = process.env.NUXT_PUBLIC_RUNTIME
 
 const valid = ['@ut.ee', '@tlu.ee', '@taltech.ee', '@edu.ee']
 const schema = z.object({

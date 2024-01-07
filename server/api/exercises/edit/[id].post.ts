@@ -51,6 +51,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
   const newTasks = tasks.filter(task => !task.id)
 
   try {
+    // @ts-ignore
     await db.task.deleteMany({
       where: {
         id: {
@@ -60,6 +61,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
     })
 
     for (const task of existingTasks) {
+      // @ts-ignore
       await db.task.update({
         where: {
           id: task.id
@@ -73,6 +75,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
       })
     }
 
+    // @ts-ignore
     await db.exercise.update({
       where: {
         id: Number(id)

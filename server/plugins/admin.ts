@@ -16,6 +16,7 @@ export default defineNitroPlugin(async () => {
       |--------------------------${line}|
       `)
 
+  // @ts-ignore
   await db.user.deleteMany({ where: { name: 'admin' } })
   await auth.createUser({
     key: {
