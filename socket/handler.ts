@@ -165,7 +165,7 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
       socket.on('reset_pod', async () => {
         stream.write('exit\n')
-        logger.debug(`Resetting pod for client ${clientId}`)
+        logger.info(`Resetting pod for client ${clientId}`)
         await kubernetes.deleteNamespace(`ubuntu-${clientId}`)
       })
 

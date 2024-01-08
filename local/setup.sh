@@ -2,7 +2,7 @@
 
 read -r -p 'Enter password for database: ' dbpass
 read -r -p 'Enter password for admin account: ' adminpass
-read -r -p 'Launch app at startup [Y/n]' startup
+read -r -p 'Launch app at startup [Y/n]: ' startup
 
 # Update
 sudo apt update && sudo apt upgrade -y
