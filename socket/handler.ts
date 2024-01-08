@@ -50,23 +50,6 @@ async function verifyToken (socket: Socket, next: (err?: ExtendedError | undefin
   })
 }
 
-function waitForImage () {
-  return new Promise<void>((resolve) => {
-    if (docker.isImageReady) {
-      resolve()
-    }
-
-    const listener = () => {
-      if (docker.isImageReady) {
-        resolve()
-        emitter.off('image', listener)
-      }
-    }
-
-    emitter.on('image', listener)
-  })
-}
-
 async function connectToPod (socket: Socket, connection: { ip: string, port: number }) {
   const pod = new Client()
 
@@ -240,23 +223,13 @@ async function evaluate (socket: Socket, data: string, tasks: { id: number, rege
 }
 
 export default function handleSocket (server: Server) {
-  server.on('connection', (socket) => {
-    socket.emit('image', { status: docker.isImageReady })
-  })
-
-  emitter.on('image', () => {
-    server.emit('image', { status: docker.isImageReady })
-  })
-
   // For socket authentication
   // https://socket.io/docs/v4/middlewares/
-  const client = server.of('terminal')
-  client.use(verifyToken)
+  server.use(verifyToken)
 
-  client.on('connection', async (socket) => {
-    await waitForImage()
-
+  server.on('connection', async (socket) => {
     try {
+      socket.send({ data: '\r\n*** Starting Ubuntu pod ***\r\n' })
       const connection = await kubernetes.createOrUpdatePod(socket.data.clientId)
 
       // Create ssh connection

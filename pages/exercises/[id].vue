@@ -53,9 +53,8 @@ const updated = ref(true)
 const connected = ref(false)
 
 const user = useUser()
-const isImageReady = useImageReady()
 
-const socket = io('/terminal', {
+const socket = io({
   auth: {
     exerciseId,
     token: user.value?.token
@@ -64,10 +63,6 @@ const socket = io('/terminal', {
 
 socket.on('connect', () => {
   term.write('\r\n*** Connected to backend ***\r\n')
-
-  if (!isImageReady.value) {
-    term.write('\r\n*** Waiting on docker image pull ***\r\n')
-  }
 })
 
 socket.on('disconnect', () => {

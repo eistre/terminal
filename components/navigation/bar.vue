@@ -12,7 +12,6 @@ const user = useUser()
         @click="navigateTo('/')"
       />
       <div class="flex items-center">
-        <NavigationDockerImageStatus />
         <NavigationThemeButton />
         <NavigationLocaleButton />
         <NavigationUser v-if="user" />

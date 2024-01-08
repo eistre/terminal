@@ -54,10 +54,6 @@ export default defineI18nConfig(() => ({
         verify_expired: 'Aegunud kood',
         verify_error: 'Kinnitamine ebaõnnestus'
       },
-      docker: {
-        image_ready: 'Kettapilt valmis',
-        image_pulling: 'Kettapildi tõmbamine'
-      },
       exercises: {
         exercise_reset_error: 'Tulemuste lähtestamine ebaõnnestus',
         exercise_reset_success: 'Tulemused lähtestatud edukalt',
@@ -154,10 +150,6 @@ export default defineI18nConfig(() => ({
         verify_invalid: 'Invalid code',
         verify_expired: 'Expired code',
         verify_error: 'Verification unsuccessful'
-      },
-      docker: {
-        image_ready: 'Image ready',
-        image_pulling: 'Image pulling'
       },
       exercises: {
         exercise_reset_error: 'Resetting results failed',

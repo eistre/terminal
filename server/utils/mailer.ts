@@ -6,7 +6,6 @@ const AZURE_CONNECTION_STRING = process.env.AZURE_CONNECTION_STRING || ''
 const AZURE_SENDER = process.env.AZURE_SENDER || ''
 const RESEND_COOLDOWN = Number(process.env.RESEND_COOLDOWN) || 20
 
-const client = new EmailClient(AZURE_CONNECTION_STRING)
 const logger = pino.child({ caller: 'mailer' })
 
 export const codeSent = new Set<string>()
@@ -34,6 +33,8 @@ function localeMessages (locale: string): string[] {
 }
 
 export async function sendMail (userId: string, token: string, recipient: string, locale: string) {
+  const client = new EmailClient(AZURE_CONNECTION_STRING)
+
   const messages = localeMessages(locale)
 
   const message: EmailMessage = {

@@ -3,6 +3,7 @@ import * as k8s from '@kubernetes/client-node'
 import dayjs from 'dayjs'
 import forge from 'node-forge'
 import { parse } from 'yaml'
+import { V1Node } from '@kubernetes/client-node'
 
 const POD_DATE_VALUE: number = Number(process.env.POD_DATE_VALUE) || 1
 const POD_DATE_UNIT: dayjs.ManipulateType = process.env.POD_DATE_UNIT as dayjs.ManipulateType || 'day'
@@ -33,6 +34,32 @@ export class Kubernetes {
       await this.updatePod(namespace)
     } else {
       await this.createPod(namespace)
+
+      // Wait for pod to create
+      await new Promise<void>((resolve, reject) => {
+        const watch = async () => {
+          try {
+            const req = await this.watch.watch(
+              `/api/v1/namespaces/${namespace}/pods`,
+              {},
+              (type, apiObj) => {
+                if (type === 'MODIFIED' && apiObj.metadata.name === 'ubuntu' && apiObj.status.phase === 'Running') {
+                  req.abort()
+                  resolve()
+                }
+              },
+              (error) => {
+                req.abort()
+                reject(error)
+              }
+            )
+          } catch (error) {
+            reject(error)
+          }
+        }
+
+        watch()
+      })
 
       // Wait for pod to start
       await new Promise((resolve) => {
@@ -167,9 +194,7 @@ export class Kubernetes {
       throw new Error('Pod, service or node not found')
     }
 
-    const ip = node.status?.addresses
-      ?.find(item => item.type === 'ExternalIP')
-      ?.address || 'localhost'
+    const ip = this.getIp(node)
 
     const port = service.spec?.ports
       ?.find(port => port.name === 'ssh')
@@ -183,5 +208,15 @@ export class Kubernetes {
       ip,
       port
     }
+  }
+
+  private getIp (node: V1Node) {
+    const type = process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD' ? 'ExternalIP' : 'InternalIP'
+
+    if (node.status?.nodeInfo?.containerRuntimeVersion.startsWith('docker:')) {
+      return 'localhost'
+    }
+
+    return node.status?.addresses?.find(item => item.type === type)?.address || 'localhost'
   }
 }

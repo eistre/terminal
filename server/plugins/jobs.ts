@@ -1,18 +1,14 @@
 // https://github.com/hexagon/croner
 import { Cron } from 'croner'
-import dayjs, { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import db from '~/prisma/db'
 
 const logger = pino.child({ caller: 'scheduler' })
-const dockerLogger = pino.child({ caller: 'docker_pull_job' })
 const podLogger = pino.child({ caller: 'pod_delete_job' })
 const userLogger = pino.child({ caller: 'user_delete_job' })
 
-const DOCKER_CRON_TIMER = process.env.DOCKER_CRON_TIMER || '0 0 3 * * 7'
 const POD_CRON_TIMER = process.env.POD_CRON_TIMER || '0 0 * * * *'
 const USER_CRON_TIMER = process.env.USER_CRON_TIMER || '0 0 0 * * *'
-
-const TOTAL_TRIES = 5
 
 async function deleteExpiredNamespaces (namespaces: string[]): Promise<number> {
   let count = 0
@@ -28,47 +24,6 @@ async function deleteExpiredNamespaces (namespaces: string[]): Promise<number> {
   }
 
   return count
-}
-
-// Pulls docker image
-// https://github.com/apocas/dockerode
-function pull (startTime: Dayjs, tries = 0) {
-  if (tries > TOTAL_TRIES) {
-    dockerLogger.error('Maximum number of tries exceeded')
-    return
-  }
-
-  docker.docker.pull('ghcr.io/eistre/terminal-ubuntu', {}, (error, stream) => {
-    if (error) {
-      dockerLogger.error(`Error during image pull - retrying: ${error}`)
-      pull(startTime, tries + 1)
-    }
-
-    docker.docker.modem.followProgress(
-      stream,
-      (error) => {
-        if (error) {
-          dockerLogger.error(`Error during image pull - retrying: ${error}`)
-          pull(startTime, tries + 1)
-        } else {
-          docker.isImageReady = true
-          emitter.emit('image')
-
-          const executionTime = dayjs().diff(startTime, 'seconds')
-          dockerLogger.info(`Docker image pulled successfully in ${executionTime} s`)
-        }
-      }
-    )
-  })
-}
-
-function dockerPullJob () {
-  dockerLogger.info('Pulling Docker image')
-  docker.isImageReady = false
-  emitter.emit('image')
-
-  const startTime = dayjs()
-  pull(startTime)
 }
 
 async function podDeleteJob () {
@@ -99,19 +54,10 @@ async function userDeleteJob () {
 }
 
 export default defineNitroPlugin(async () => {
-  // Run jobs during startup
-  if (process.env.NUXT_PUBLIC_RUNTIME !== 'CLOUD') {
-    dockerPullJob()
-  }
-
   await podDeleteJob()
   await userDeleteJob()
 
   // Schedule the jobs
-  if (process.env.NUXT_PUBLIC_RUNTIME !== 'CLOUD') {
-    Cron(DOCKER_CRON_TIMER, { name: 'dockerPullJob' }, dockerPullJob)
-  }
-
   Cron(POD_CRON_TIMER, { name: 'podDeleteJob' }, podDeleteJob)
   Cron(USER_CRON_TIMER, { name: 'userDeleteJob' }, userDeleteJob)
 
