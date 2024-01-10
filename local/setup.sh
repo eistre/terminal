@@ -65,6 +65,7 @@ npm run build
 cat > .env <<- END
 DATABASE_URL='postgresql://terminal_root:$dbpass@localhost:30000/terminal'
 ADMIN_PASSWORD='$adminpass'
+LOG_PRETTY=TRUE
 KUBE_CONFIG='$kube_config'
 JWT_SECRET='$(openssl rand -base64 24)'
 POD_DATE_VALUE=2
@@ -81,8 +82,8 @@ npx prisma db push --schema ./prisma/schema_pg.prisma
 # If no run at startup
 if ! [[ -z ${startup,,} || ${startup,,} == 'y' || ${startup,,} == 'yes' ]]; then
     # Allow user to communicate with Microk8s
-    sudo usermod -a -G microk8s $USER
-    sudo chown -f -R $USER ~/.kube
+    sudo usermod -a -G microk8s "$USER"
+    sudo chown -f -R "$USER" ~/.kube
     newgrp microk8s
     exit
 fi
@@ -91,9 +92,9 @@ fi
 cat > ./local/startup.sh <<- END
 #!/bin/bash
 
-echo Waiting 90 seconds for database to start
+echo Waiting 120 seconds for database to start
 
-sleep 90s
+sleep 120s
 
 ip_address=\$(ip a | grep inet.*enp | awk '/inet / {print \$2}' | cut -d '/' -f 1)
 echo Running app on \$ip_address
@@ -103,9 +104,9 @@ npm run preview
 END
 
 chmod u+x ./local/startup.sh
-mkdir -p $HOME/.config/autostart
+mkdir -p "$HOME"/.config/autostart
 
-cat > $HOME/.config/autostart/terminal_app.desktop <<- END
+cat > "$HOME"/.config/autostart/terminal_app.desktop <<- END
 [Desktop Entry]
 Type=Application
 Name=Linux Terminal Exercise Application
@@ -115,6 +116,6 @@ Terminal=true
 END
 
 # Allow user to communicate with Microk8s
-sudo usermod -a -G microk8s $USER
-sudo chown -f -R $USER ~/.kube
+sudo usermod -a -G microk8s "$USER"
+sudo chown -f -R "$USER" ~/.kube
 newgrp microk8s

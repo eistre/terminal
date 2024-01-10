@@ -1,7 +1,7 @@
 import Pino, { LoggerOptions } from 'pino'
 
 function getPinoConfig (): LoggerOptions {
-  if (process.env.NUXT_PUBLIC_RUNTIME !== 'CLOUD') {
+  if (process.env.LOG_PRETTY) {
     return {
       level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
       transport: {
