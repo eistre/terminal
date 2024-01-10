@@ -3,12 +3,12 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/@prisma/client/sqlserver"
 }
 
 datasource db {
-  provider = "sqlserver"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 // https://lucia-auth.com/database-adapters/prisma/
@@ -17,7 +17,7 @@ model User {
   name          String
   email         String?
   expireTime    DateTime?
-  role          String
+  role          Role
   auth_session  Session[]
   key           Key[]
   CompletedTask CompletedTask[]
@@ -56,7 +56,7 @@ model Verification {
 model Exercise {
   id          Int    @id @default(autoincrement())
   title       String @unique
-  description String
+  description String @db.Text
   tasks       Task[]
 
   @@index([id])
@@ -64,10 +64,10 @@ model Exercise {
 
 model Task {
   id           Int             @id @default(autoincrement())
-  title        String
-  content      String
-  hint         String?
-  regex        String
+  title        String          @db.Text
+  content      String          @db.Text
+  hint         String?         @db.Text
+  regex        String          @db.Text
   exercise_id  Int
   exercise     Exercise        @relation(references: [id], fields: [exercise_id], onDelete: Cascade)
   completed_by CompletedTask[]
@@ -86,4 +86,11 @@ model CompletedTask {
   @@unique([task_id, user_id])
   @@index([id])
   @@index([task_id, user_id])
+  @@index([user_id])
+}
+
+enum Role {
+  UNVERIFIED
+  USER
+  ADMIN
 }

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: pvolume
-  namespace: postgres
+  namespace: mysql
 spec:
   storageClassName: manual
   capacity:
@@ -15,8 +15,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc
-  namespace: postgres
+  name: mysql-pvc
+  namespace: mysql
 spec:
   storageClassName: manual
   accessModes:
@@ -28,52 +28,50 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
-  namespace: postgres
+  name: mysql
+  namespace: mysql
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: mysql
   template:
     metadata:
       labels:
-        app: postgres
+        app: mysql
     spec:
       containers:
-        - name: postgres
-          image: postgres:16.1-alpine
+        - name: mysql
+          image: mysql:8
           ports:
-            - containerPort: 5432
+            - containerPort: 3306
           env:
-            - name: POSTGRES_USER
-              value: terminal_root
-            - name: POSTGRES_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: dbpass
                   name: dbpass
-            - name: POSTGRES_DB
+            - name: MYSQL_DATABASE
               value: terminal
           volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
       volumes:
-        - name: postgres-storage
+        - name: mysql-storage
           persistentVolumeClaim:
-            claimName: postgres-pvc
+            claimName: mysql-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-service
-  namespace: postgres
+  name: mysql-service
+  namespace: mysql
 spec:
   selector:
-    app: postgres
+    app: mysql
   ports:
     - protocol: TCP
-      port: 5432
-      targetPort: 5432
+      port: 3306
+      targetPort: 3306
       nodePort: 30000
   type: NodePort

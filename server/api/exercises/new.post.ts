@@ -38,7 +38,6 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
   const { title, description, tasks } = body.data
 
   try {
-    // @ts-ignore
     const { id } = await db.exercise.create({
       data: {
         title,

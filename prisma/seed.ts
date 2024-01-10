@@ -1,7 +1,6 @@
 import db from '~/prisma/db'
 
 export const seed = async () => {
-  // @ts-ignore
   const { id: ee } = await db.exercise.create({
     data: {
       title: 'Operatsioonisüsteemid ja Andmeturve',
@@ -9,7 +8,6 @@ export const seed = async () => {
     }
   })
 
-  // @ts-ignore
   const { id: en } = await db.exercise.create({
     data: {
       title: 'Operating Systems ja Computer Security',
@@ -18,7 +16,6 @@ export const seed = async () => {
   })
 
   // Create ee tasks
-  // @ts-ignore
   await db.task.createMany({
     data: [
       {
@@ -86,7 +83,6 @@ export const seed = async () => {
   })
 
   // Create en tasks
-  // @ts-ignore
   await db.task.createMany({
     data: [
       {

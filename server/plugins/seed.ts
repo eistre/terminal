@@ -4,7 +4,6 @@ import db from '~/prisma/db'
 const logger = pino.child({ caller: 'seed' })
 
 export default defineNitroPlugin(async () => {
-  // @ts-ignore
   const count = await db.exercise.count()
 
   if (count === 0) {

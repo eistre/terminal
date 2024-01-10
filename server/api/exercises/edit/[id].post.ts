@@ -56,7 +56,6 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
     const promises = []
 
     promises.push(
-      // @ts-ignore
       db.task.deleteMany({
         where: {
           id: {
@@ -68,7 +67,6 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
 
     for (const task of existingTasks) {
       promises.push(
-        // @ts-ignore
         db.task.update({
           where: {
             id: task.id
@@ -84,7 +82,6 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
     }
 
     promises.push(
-      // @ts-ignore
       db.exercise.update({
         where: {
           id: Number(id)

@@ -22,7 +22,6 @@ async function verifyToken (socket: Socket, next: (err?: ExtendedError | undefin
     return
   }
 
-  // @ts-ignore
   const count = await db.exercise.count({ where: { id: Number(exerciseId) } })
 
   if (count === 0) {
@@ -73,7 +72,6 @@ async function connectToPod (socket: Socket, connection: { ip: string, port: num
 
 async function setProxy (socket: Socket, pod: Client, connection: { ip: string, port: number }) {
   const { clientId, exerciseId } = socket.data
-  // @ts-ignore
   let tasks = await db.task.findMany({
     where: {
       exercise_id: Number(exerciseId),
@@ -93,12 +91,9 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
     try {
       logger.debug(`Resetting exercise ${exerciseId} for client ${clientId}`)
 
-      // @ts-ignore
       const ids = await db.task.findMany({ where: { exercise_id: Number(exerciseId) }, select: { id: true } })
-      // @ts-ignore
       await db.completedTask.deleteMany({ where: { user_id: clientId, task_id: { in: ids.map(id => id.id) } } })
 
-      // @ts-ignore
       tasks = await db.task.findMany({
         where: {
           exercise_id: Number(exerciseId),
@@ -206,11 +201,6 @@ async function evaluate (socket: Socket, data: string, tasks: { id: number, rege
     .map(task => ({ user_id: socket.data.clientId, task_id: task.id }))
 
   if (completed.length > 0) {
-    // @ts-ignore
-    await db.completedTask.createMany({
-      data: completed
-    })
-
     const taskIds = completed.map(task => task.task_id)
 
     taskIds.forEach((id) => {
@@ -219,6 +209,10 @@ async function evaluate (socket: Socket, data: string, tasks: { id: number, rege
     })
 
     socket.emit('complete', { data: taskIds })
+
+    await db.completedTask.createMany({
+      data: completed
+    })
   }
 }
 

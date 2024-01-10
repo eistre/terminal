@@ -12,7 +12,6 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
     })
   }
 
-  // @ts-ignore
   const exercises = await db.exercise.findMany({
     orderBy: [{ id: 'asc' }],
     include: {
@@ -28,12 +27,10 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
     }
   })
 
-  // @ts-ignore
   return exercises.map((exercise) => {
     const tasks = exercise.tasks.length
     const completed = exercise
       .tasks
-      // @ts-ignore
       .reduce((acc, task) => acc + task.completed_by.length, 0)
 
     return {

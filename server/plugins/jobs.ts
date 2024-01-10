@@ -39,7 +39,6 @@ async function podDeleteJob () {
 }
 
 async function userDeleteJob () {
-  // @ts-ignore
   const { count } = await db.user.deleteMany({
     where: {
       expireTime: {

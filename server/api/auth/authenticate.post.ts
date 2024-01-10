@@ -1,14 +1,11 @@
 // https://lucia-auth.com/guidebook/sign-in-with-username-and-password/nuxt/
 import { z } from 'zod'
-import { LuciaError } from 'lucia'
-import { EventHandlerRequest, H3Event } from 'h3'
+import { EventHandlerRequest, H3Error, H3Event } from 'h3'
 import dayjs from 'dayjs'
 
 const RUNTIME = process.env.NUXT_PUBLIC_RUNTIME
 const USER_DATE_VALUE: number = Number(process.env.USER_DATE_VALUE) || 1
 const USER_DATE_UNIT:dayjs.ManipulateType = process.env.USER_DATE_UNIT as dayjs.ManipulateType || 'month'
-
-const logger = pino.child({ caller: 'auth' })
 
 const schema = z.object({
   name: z.string().min(1),
@@ -36,31 +33,26 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
   const { name, password } = body.data
 
   try {
-    const { userId } = await auth.createUser({
-      key: {
-        providerId: 'name',
-        providerUserId: name.toLowerCase(),
-        password
-      },
-      attributes: {
-        name,
-        role: 'USER',
-        expireTime: getExpireDateTime(USER_DATE_VALUE, USER_DATE_UNIT)
-      }
-    })
-
-    await createAndSetSession(event, userId)
+    await login(event, 'name', name, password)
   } catch (error) {
-    // if login attempt
-    if (error instanceof LuciaError && error.message === 'AUTH_DUPLICATE_KEY_ID') {
-      await login(event, 'name', name, password)
+    if (error instanceof H3Error && error.message === 'User not found') {
+      const { userId } = await auth.createUser({
+        key: {
+          providerId: 'name',
+          providerUserId: name.toLowerCase(),
+          password
+        },
+        attributes: {
+          name,
+          role: 'USER',
+          expireTime: getExpireDateTime(USER_DATE_VALUE, USER_DATE_UNIT)
+        }
+      })
+
+      await createAndSetSession(event, userId)
       return
     }
 
-    logger.error(error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Internal server error'
-    })
+    throw error
   }
 })

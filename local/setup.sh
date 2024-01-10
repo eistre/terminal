@@ -51,19 +51,18 @@ git clone https://github.com/eistre/terminal.git
 cd terminal || exit
 
 # Launch database
-sudo microk8s kubectl create namespace postgres
-sudo microk8s kubectl create secret generic dbpass --from-literal=dbpass="$dbpass" -n postgres
-sudo microk8s kubectl apply -f ./local/postgres.yaml
+sudo microk8s kubectl create namespace mysql
+sudo microk8s kubectl create secret generic dbpass --from-literal=dbpass="$dbpass" -n mysql
+sudo microk8s kubectl apply -f ./local/mysql.yaml
 
 # NPM install and build
 npm install
-npx prisma generate --schema ./prisma/schema_pg.prisma
-npx prisma generate --schema ./prisma/schema_sqlserver.prisma
+npx prisma generate
 npm run build
 
 # Create environment
 cat > .env <<- END
-DATABASE_URL='postgresql://terminal_root:$dbpass@localhost:30000/terminal'
+DATABASE_URL='mysql://root:$dbpass@localhost:30000/terminal'
 ADMIN_PASSWORD='$adminpass'
 LOG_PRETTY=TRUE
 KUBE_CONFIG='$kube_config'
@@ -77,7 +76,7 @@ USER_CRON_TIMER='0 0/15 * * * *'
 END
 
 # Sync database
-npx prisma db push --schema ./prisma/schema_pg.prisma
+npx prisma db push
 
 # If no run at startup
 if ! [[ -z ${startup,,} || ${startup,,} == 'y' || ${startup,,} == 'yes' ]]; then
