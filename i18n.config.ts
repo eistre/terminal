@@ -17,7 +17,7 @@ export default defineI18nConfig(() => ({
         info1: 'Info',
         info2: 'Veebirakendus on valminud varasema bakalaureusetöö edasiarendusena. Selle eesmärgiks on õpetada ja meelde tuletada põhilisemad Linuxi käsurea käsud ning nende kasutusjuhud.',
         info3: 'Esmasel sisselogimisel luuakse teile konto, mille abiga talletatakse teie harjutuste tulemused. Harjutuste kontrolliks on olemas automaatkontroll, mis muudab edukalt sooritatud ülesanded roheliseks.',
-        info4: 'Peale harjutuse avamist luuakse teie kasutajale isiklik ubuntu kapsel, mille abiga saate te ülesandeid lahendada.'
+        info4: 'Peale harjutuse avamist luuakse teie kasutajale isiklik ubuntu konteiner, mille abiga saate te ülesandeid lahendada.'
       },
       auth: {
         name: 'Nimi',
@@ -63,7 +63,7 @@ export default defineI18nConfig(() => ({
         exercise_reset_error: 'Tulemuste lähtestamine ebaõnnestus',
         exercise_reset_success: 'Tulemused lähtestatud edukalt',
         exercise_reset: 'Lähtesta tulemused',
-        pod_reset: 'Lähtesta kapsel',
+        pod_reset: 'Lähtesta konteiner',
         exercise_error: 'Harjutust ei leitud',
         exercises_error: 'Harjutuste päring ebaõnnestus',
         exercises: 'Harjutused',
@@ -119,7 +119,7 @@ export default defineI18nConfig(() => ({
         info1: 'Info',
         info2: 'This web application has been made as a further development of an earlier bachelor\'s thesis. Its purpose is to teach and revise some of the basic Linux command line commands and their use cases.',
         info3: 'When logging in for the first time, an account will be created for you, which will be used to store your exercise results. There are automatic checks which will turn the task green when completed successfully.',
-        info4: 'After opening an exercise, a personal ubuntu pod will be created for your account, which you can use to solve the tasks.'
+        info4: 'After opening an exercise, a personal ubuntu container will be created for your account, which you can use to solve the tasks.'
       },
       auth: {
         name: 'Name',
@@ -165,7 +165,7 @@ export default defineI18nConfig(() => ({
         exercise_reset_error: 'Resetting results failed',
         exercise_reset_success: 'Results reset successfully',
         exercise_reset: 'Reset results',
-        pod_reset: 'Reset pod',
+        pod_reset: 'Reset container',
         exercise_error: 'Exercise not found',
         exercises_error: 'Fetching exercises failed',
         exercises: 'Exercises',
