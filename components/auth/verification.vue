@@ -85,7 +85,7 @@ async function resend () {
   sent.value = true
   toast.add({
     id: 'verify_success',
-    icon: 'i-heroicons-x-mark',
+    icon: 'i-heroicons-check',
     title: i18n.t('auth.resend_successful'),
     timeout: 5000,
     color: 'green'

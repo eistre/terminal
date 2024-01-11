@@ -1,6 +1,6 @@
 import db from '~/prisma/db'
 
-export const seed = async () => {
+export const createExercises = async () => {
   const { id: ee } = await db.exercise.create({
     data: {
       title: 'Operatsioonisüsteemid ja Andmeturve',
@@ -147,5 +147,19 @@ export const seed = async () => {
         exercise_id: en
       }
     ]
+  })
+}
+
+export const createDomains = async () => {
+  await db.domain.createMany({
+    data: [{
+      name: '@ut.ee'
+    }, {
+      name: '@tlu.ee'
+    }, {
+      name: '@taltech.ee'
+    }, {
+      name: '@edu.ee'
+    }]
   })
 }

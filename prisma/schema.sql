@@ -96,3 +96,16 @@ CREATE TABLE `CompletedTask`
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Domain`
+(
+    `id`       INTEGER      NOT NULL AUTO_INCREMENT,
+    `name`     VARCHAR(191) NOT NULL,
+    `verified` BOOLEAN      NOT NULL DEFAULT false,
+
+    UNIQUE INDEX `Domain_name_key` (`name`),
+    INDEX `Domain_id_idx` (`id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;

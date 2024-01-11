@@ -89,6 +89,14 @@ model CompletedTask {
   @@index([user_id])
 }
 
+model Domain {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  verified Boolean @default(false)
+
+  @@index([id])
+}
+
 enum Role {
   UNVERIFIED
   USER
