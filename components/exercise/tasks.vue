@@ -28,6 +28,20 @@ const items = computed(() => {
 <template>
   <ClientOnly>
     <UAccordion v-if="updated" :items="items">
+      <template #default="{ item, open }">
+        <UButton :variant="item.variant" :color="item.color" class="mb-1.5 w-full">
+          <span class="truncate">{{ item.label }}</span>
+
+          <template #trailing>
+            <UIcon
+              name="i-heroicons-chevron-right-20-solid"
+              class="w-5 h-5 ms-auto transform transition-transform duration-200"
+              :class="[open && 'rotate-90']"
+            />
+          </template>
+        </UButton>
+      </template>
+
       <template #item="{ item }">
         <div class="px-4">
           <span style="overflow-wrap: break-word">{{ item.content }}</span>
