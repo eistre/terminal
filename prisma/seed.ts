@@ -62,9 +62,9 @@ export const createExercises = async () => {
         exercise_id: ee
       }, {
         title: 'Ülesanne 8 - Torud',
-        content: 'Kuva ainult `lsblk` käsu väljundi `NAME` veerg.',
+        content: 'Kuva ainult `df -h` käsu väljundi `Filesystem` veerg.',
         hint: 'Kasuta torusid (pipes) ja `cut` käsku',
-        regex: /NAME\r\nloop0[\s\S]+?sde/.source,
+        regex: /Filesystem\r\noverlay[\s\S]+?tmpfs/.source,
         exercise_id: ee
       }, {
         title: 'Ülesanne 9 - Kustutamine',
@@ -129,9 +129,9 @@ export const createExercises = async () => {
         exercise_id: en
       }, {
         title: 'Task 8 - Pipes',
-        content: 'Only show the `NAME` column of the `lsblk` command.',
+        content: 'Only show the `Filesystem` column of the `df -h` command.',
         hint: 'Use pipes and the `cut` command',
-        regex: /NAME\r\nloop0[\s\S]+?sde/.source,
+        regex: /Filesystem\r\noverlay[\s\S]+?tmpfs/.source,
         exercise_id: en
       }, {
         title: 'Task 9 - Deletion',
