@@ -64,7 +64,7 @@ export const createExercises = async () => {
         title: 'Ülesanne 8 - Torud',
         content: 'Kuva ainult `df -h` käsu väljundi `Filesystem` veerg.',
         hint: 'Kasuta torusid (pipes) ja `cut` käsku',
-        regex: /Filesystem\r\noverlay[\s\S]+?tmpfs/.source,
+        regex: /Filesystem[\s\S]+?overlay[\s\S]+?tmpfs/.source,
         exercise_id: ee
       }, {
         title: 'Ülesanne 9 - Kustutamine',
@@ -131,7 +131,7 @@ export const createExercises = async () => {
         title: 'Task 8 - Pipes',
         content: 'Only show the `Filesystem` column of the `df -h` command.',
         hint: 'Use pipes and the `cut` command',
-        regex: /Filesystem\r\noverlay[\s\S]+?tmpfs/.source,
+        regex: /Filesystem[\s\S]+?overlay[\s\S]+?tmpfs/.source,
         exercise_id: en
       }, {
         title: 'Task 9 - Deletion',
