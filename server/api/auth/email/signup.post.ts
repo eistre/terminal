@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { EventHandlerRequest, H3Event } from 'h3'
 import { z } from 'zod'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { Prisma } from '@prisma/client'
 import db from '~/prisma/db'
 
 const RUNTIME = process.env.NUXT_PUBLIC_RUNTIME
@@ -62,7 +62,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
     }
   } catch (error) {
     // In case user already exists
-    if (error instanceof PrismaClientKnownRequestError && error.message.includes('PRIMARY')) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.message.includes('PRIMARY')) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Unauthorized',
