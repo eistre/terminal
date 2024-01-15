@@ -47,6 +47,7 @@ sudo service nginx restart
 sudo apt update && sudo apt upgrade -y && sudo apt clean
 
 # Clone repository
+cd "$HOME" || exit
 git clone https://github.com/eistre/terminal.git
 cd terminal || exit
 
