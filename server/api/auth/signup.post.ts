@@ -51,7 +51,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
     await createAndSetSession(event, userId)
   } catch (error) {
     // In case user already exists
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.message.includes('PRIMARY')) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.message.includes('Unique constraint')) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Unauthorized',
