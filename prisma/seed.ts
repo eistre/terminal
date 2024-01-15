@@ -62,9 +62,9 @@ export const createExercises = async () => {
         exercise_id: ee
       }, {
         title: 'Ülesanne 8 - Torud',
-        content: 'Kuva ainult `df -h` käsu väljundi `Filesystem` veerg.',
-        hint: 'Kasuta torusid (pipes) ja `cut` käsku',
-        regex: /Filesystem\s*?overlay\s*?tmpfs/.source,
+        content: 'Kuva ainult `df -h` käsu väljundi `Size` veerg.',
+        hint: 'Kasuta torusid (pipes) ja `tr` ning `cut` käske',
+        regex: /^Size/.source,
         exercise_id: ee
       }, {
         title: 'Ülesanne 9 - Kustutamine',
@@ -129,9 +129,9 @@ export const createExercises = async () => {
         exercise_id: en
       }, {
         title: 'Task 8 - Pipes',
-        content: 'Only show the `Filesystem` column of the `df -h` command.',
-        hint: 'Use pipes and the `cut` command',
-        regex: /Filesystem\s*?overlay\s*?tmpfs/.source,
+        content: 'Only show the `Size` column of the `df -h` command.',
+        hint: 'Use pipes and the `tr` and `cut` commands',
+        regex: /^Size/.source,
         exercise_id: en
       }, {
         title: 'Task 9 - Deletion',
