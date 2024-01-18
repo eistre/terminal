@@ -72,6 +72,7 @@ async function connectToPod (socket: Socket, connection: { ip: string, port: num
 
 async function setProxy (socket: Socket, pod: Client, connection: { ip: string, port: number }) {
   const { clientId, exerciseId } = socket.data
+  let buffer = Buffer.alloc(0)
   let tasks = await db.task.findMany({
     where: {
       exercise_id: Number(exerciseId),
@@ -165,8 +166,15 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
       })
 
       stream.on('data', (data: Buffer) => {
-        evaluate(socket, data.toString('binary'), tasks)
-        socket.send({ data: data.toString('binary') })
+        const dataString = data.toString('binary')
+        buffer = Buffer.concat([buffer, data])
+
+        if (buffer.length > 2048 || dataString.includes('user@ubuntu:~$')) {
+          evaluate(socket, buffer.toString('binary'), tasks)
+          buffer = Buffer.alloc(0)
+        }
+
+        socket.send({ data: dataString })
       })
 
       stream.on('close', () => {
