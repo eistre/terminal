@@ -10,7 +10,7 @@ export const createExercises = async () => {
 
   const { id: en } = await db.exercise.create({
     data: {
-      title: 'Operating Systems ja Computer Security',
+      title: 'Operating Systems and Computer Security',
       description: 'Linux command line tasks for the Operating Systems and Computer Security subjects'
     }
   })
@@ -40,7 +40,7 @@ export const createExercises = async () => {
         title: 'Ülesanne 4 - Faili sisu leidmine',
         content: 'Leia `/var` kaustast või selle alamkaustadest fail, mis sisaldab teksti `Sudo password`. Jäta parool meelde, kuna seda läheb hiljem vaja!',
         hint: 'Uuri käsku `grep`, permission denied ridade mitte kuvamiseks lisa käsu lõppu `2>/dev/null`',
-        regex: /Sudo[\s\S]+password[\s\S]+is[\s\S]+password123/.source,
+        regex: /Sudo\s+password\s+is\s+password123/.source,
         exercise_id: ee
       }, {
         title: 'Ülesanne 5 - Tarkvara paigaldamine',
@@ -56,15 +56,15 @@ export const createExercises = async () => {
         exercise_id: ee
       }, {
         title: 'Ülesanne 7 - Failide töötlemine',
-        content: 'Lae alla fail `https://raw.githubusercontent.com/eistre/terminal/master/public/tammsaare.txt` ja leia selles esinevate sõnade arv.',
+        content: 'Lae alla fail `https://raw.githubusercontent.com/eistre/terminal/master/public/tammsaare.txt` ja kuva ainult selles esinevate sõnade arv.',
         hint: 'Kasuta käske `wget` ja `wc`',
-        regex: /^412320/.source,
+        regex: /412320/.source,
         exercise_id: ee
       }, {
         title: 'Ülesanne 8 - Torud',
-        content: 'Kuva ainult `df -h` käsu väljundi `Size` veerg.',
-        hint: 'Kasuta torusid (pipes) ja `tr` ning `cut` käske',
-        regex: /^Size/.source,
+        content: 'Kuva ainult `df -h` käsu väljundi `Filesystem` veerg.',
+        hint: 'Kasuta torusid (pipes) ja `cut` käsku',
+        regex: /Filesystem\s+overlay\s+tmpfs[\s\S]+?\/dev\//.source,
         exercise_id: ee
       }, {
         title: 'Ülesanne 9 - Kustutamine',
@@ -107,7 +107,7 @@ export const createExercises = async () => {
         title: 'Task 4 - Finding file content',
         content: 'Find a file containing the text `Sudo password` inside `/var` directory or one of its subdirectories. Remember the password, you will need it later!',
         hint: 'Learn about `grep`, to avoid the permission denied messages, add `2>/dev/null` to the end of the command',
-        regex: /Sudo[\s\S]+password[\s\S]+is[\s\S]+password123/.source,
+        regex: /Sudo\s+password\s+is\s+password123/.source,
         exercise_id: en
       }, {
         title: 'Task 5 - Installing software',
@@ -123,15 +123,15 @@ export const createExercises = async () => {
         exercise_id: en
       }, {
         title: 'Task 7 - Working with files',
-        content: 'Download the file `https://raw.githubusercontent.com/eistre/terminal/master/public/tammsaare.txt` and find the number of words in it.',
+        content: 'Download the file `https://raw.githubusercontent.com/eistre/terminal/master/public/tammsaare.txt` and only show the number of words in it.',
         hint: 'Use the `wget` and `wc` commands',
-        regex: /^412320/.source,
+        regex: /412320/.source,
         exercise_id: en
       }, {
         title: 'Task 8 - Pipes',
-        content: 'Only show the `Size` column of the `df -h` command.',
-        hint: 'Use pipes and the `tr` and `cut` commands',
-        regex: /^Size/.source,
+        content: 'Only show the `Filesystem` column of the `df -h` command.',
+        hint: 'Use pipes and the `cut` command',
+        regex: /Filesystem\s+overlay\s+tmpfs[\s\S]+?\/dev\//.source,
         exercise_id: en
       }, {
         title: 'Task 9 - Deletion',
