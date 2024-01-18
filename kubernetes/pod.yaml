@@ -8,7 +8,7 @@ spec:
   containers:
     - name: ubuntu
       image: ghcr.io/eistre/terminal-ubuntu
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always
       volumeMounts:
         - mountPath: /etc/.ssh
           name: ssh
