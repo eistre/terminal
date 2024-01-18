@@ -20,6 +20,7 @@ RUN mkdir /var/.hidden && echo "Password file content \n...\n\nSudo password is 
 
 # Only allow sudo apt install
 RUN echo 'user ALL=(ALL) /usr/bin/apt install nano' > /etc/sudoers.d/apt-install && chmod 440 /etc/sudoers.d/apt-install
+RUN echo 'user ALL=(ALL) /usr/bin/apt-get install nano' > /etc/sudoers.d/apt-get-install && chmod 440 /etc/sudoers.d/apt-get-install
 
 # Disable password auth and root login
 RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config \
