@@ -153,13 +153,14 @@ export const createExercises = async () => {
 export const createDomains = async () => {
   await db.domain.createMany({
     data: [{
-      name: 'ut.ee'
+      name: 'ut.ee',
+      hidden: false
     }, {
-      name: 'tlu.ee'
+      name: 'tlu.ee',
+      hidden: false
     }, {
-      name: 'taltech.ee'
-    }, {
-      name: 'edu.ee'
+      name: 'taltech.ee',
+      hidden: false
     }]
   })
 }

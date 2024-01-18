@@ -70,21 +70,16 @@ const createState = reactive({
 const isLoginDisabled = computed(() => !loginSchema.value.safeParse(loginState).success)
 const isCreateDisabled = computed(() => !createSchema.value.safeParse(createState).success)
 
-const allowedDomains = computed(() => {
-  const visibleDomains = domains?.filter(domain => !domain.verified)
+const visibleDomains = computed(() => {
+  const visibleDomains = domains?.filter(domain => !domain.hidden)
 
   const length = visibleDomains?.length
   if (!length || length === 0) {
     return undefined
   }
 
-  if (length === 1) {
-    return `${i18n.t('auth.only')} ${visibleDomains[0].name} ${i18n.t('auth.are_allowed')}`
-  }
-
-  const text = visibleDomains.slice(0, length - 1).map(domain => domain.name).join(', ')
-
-  return `${i18n.t('auth.only')} ${text} ${i18n.t('auth.and')} ${visibleDomains[length - 1].name} ${i18n.t('auth.are_allowed')}`
+  const text = visibleDomains.map(domain => domain.name).join(', ')
+  return `${i18n.t('auth.only')} ${text} ${i18n.t('auth.are_allowed')}`
 })
 
 async function onLoginSubmit (event: FormSubmitEvent<LoginSchema>) {
@@ -200,12 +195,12 @@ async function onCreateSubmit (event: FormSubmitEvent<CreateSchema>) {
               />
 
               <template #hint>
-                <UPopover v-if="allowedDomains" :popper="{ placement: 'top'}" mode="hover">
+                <UPopover v-if="visibleDomains" :popper="{ placement: 'top'}" mode="hover">
                   <UIcon name="i-heroicons-information-circle" />
 
                   <template #panel>
                     <div class="p-2 text-center max-w-60">
-                      {{ allowedDomains }}
+                      {{ visibleDomains }}
                     </div>
                   </template>
                 </UPopover>
@@ -246,12 +241,12 @@ async function onCreateSubmit (event: FormSubmitEvent<CreateSchema>) {
               />
 
               <template #hint>
-                <UPopover v-if="allowedDomains" :popper="{ placement: 'top'}" mode="hover">
+                <UPopover v-if="visibleDomains" :popper="{ placement: 'top'}" mode="hover">
                   <UIcon name="i-heroicons-information-circle" />
 
                   <template #panel>
                     <div class="p-2 text-center max-w-60">
-                      {{ allowedDomains }}
+                      {{ visibleDomains }}
                     </div>
                   </template>
                 </UPopover>

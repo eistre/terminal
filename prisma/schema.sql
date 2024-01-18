@@ -102,6 +102,7 @@ CREATE TABLE `Domain`
 (
     `id`       INTEGER      NOT NULL AUTO_INCREMENT,
     `name`     VARCHAR(191) NOT NULL,
+    `hidden`   BOOLEAN      NOT NULL DEFAULT true,
     `verified` BOOLEAN      NOT NULL DEFAULT false,
 
     UNIQUE INDEX `Domain_name_key` (`name`),
