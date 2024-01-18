@@ -1,7 +1,6 @@
-import { useLogger } from '@nuxt/kit'
 import db from '~/prisma/db'
 
-const logger = useLogger()
+const logger = pino.child({ caller: 'admin' })
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'terminal_admin'
 
 export default defineNitroPlugin(async () => {
