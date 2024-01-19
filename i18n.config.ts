@@ -9,7 +9,10 @@ export default defineI18nConfig(() => ({
         university: 'Tartu Ülikool arvutiteaduse instituut',
         img: '/arvutiteaduse_instituut_est_white_2021.svg',
         light: 'Lülitu heledale režiimile',
-        dark: 'Lülitu tumedale režiimile'
+        dark: 'Lülitu tumedale režiimile',
+        cluster_starting: 'Klastrit käivitatakse, palun oodake paar minutit',
+        cluster_stopping: 'Klastrit peatatakse, palun oodake paar minutit',
+        cluster_stopped: 'Klaster on peatatud, palun värskendage lehte'
       },
       main: {
         title1: 'Linuxi käsurea harjutuskeskkond',
@@ -110,7 +113,10 @@ export default defineI18nConfig(() => ({
         university: 'University of Tartu Institute of Computer Science',
         img: '/arvutiteaduse_instituut_eng_white_2021.svg',
         light: 'Switch to light theme',
-        dark: 'Switch to dark theme'
+        dark: 'Switch to dark theme',
+        cluster_starting: 'Starting cluster, please wait a few minutes',
+        cluster_stopping: 'Stopping cluster, please wait a few minutes',
+        cluster_stopped: 'Cluster has been stopped, please refresh the page'
       },
       main: {
         title1: 'Linux command line practice environment',

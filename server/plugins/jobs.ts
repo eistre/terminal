@@ -2,6 +2,7 @@
 import { Cron } from 'croner'
 import dayjs from 'dayjs'
 import db from '~/prisma/db'
+import azure from '~/server/utils/azure'
 
 const logger = pino.child({ caller: 'scheduler' })
 const podLogger = pino.child({ caller: 'pod_delete_job' })
@@ -27,11 +28,23 @@ async function deleteExpiredNamespaces (namespaces: string[]): Promise<number> {
 }
 
 async function podDeleteJob () {
-  const namespaces = (await kubernetes.getNamespaces())
-    .filter(namespace => dayjs().isAfter(namespace.metadata?.annotations?.expireTime))
+  const isCloud = process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD'
+
+  if (isCloud && azure.getClusterStatus() !== 'Running') {
+    return
+  }
+
+  const namespaces = await kubernetes.getNamespaces()
+
+  if (isCloud && namespaces.length === 0) {
+    await azure.stopCluster()
+    return
+  }
+
+  const expiredNamespaces = namespaces.filter(namespace => dayjs().isAfter(namespace.metadata?.annotations?.expireTime))
     .map(namespace => namespace.metadata!.name!)
 
-  const count = await deleteExpiredNamespaces(namespaces)
+  const count = await deleteExpiredNamespaces(expiredNamespaces)
 
   if (count > 0) {
     podLogger.info(`Deleted ${count} expired ${count === 1 ? 'pod' : 'pods'}`)
@@ -53,6 +66,10 @@ async function userDeleteJob () {
 }
 
 export default defineNitroPlugin(async () => {
+  if (process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD') {
+    await azure.setClusterStatus()
+  }
+
   await podDeleteJob()
   await userDeleteJob()
 

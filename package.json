@@ -28,7 +28,9 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "@azure/arm-containerservice": "^19.6.0",
     "@azure/communication-email": "^1.0.0",
+    "@azure/identity": "^3.4.1",
     "@iconify-json/ion": "^1.1.15",
     "@iconify-json/twemoji": "^1.1.15",
     "@kubernetes/client-node": "^0.20.0",

@@ -1,5 +1,9 @@
 <script setup lang="ts">
 const user = useUser()
+const cluster = useCluster()
+
+const config = useRuntimeConfig()
+const isCloud = config.public.runtime === 'CLOUD'
 </script>
 
 <template>
@@ -12,6 +16,7 @@ const user = useUser()
         @click="navigateTo('/')"
       />
       <div class="flex items-center">
+        <NavigationClusterStatus v-if="isCloud && cluster !== 'Running'" />
         <NavigationThemeButton />
         <NavigationLocaleButton />
         <NavigationUser v-if="user" />

@@ -5,6 +5,9 @@ import jwt, { type VerifyErrors } from 'jsonwebtoken'
 import { type Server, Socket } from 'socket.io'
 import type { ExtendedError } from 'socket.io/dist/namespace'
 import db from '~/prisma/db'
+import kubernetes from '~/server/utils/kubernetes'
+import azure from '~/server/utils/azure'
+import emitter from '~/server/utils/emitter'
 
 const logger = pino.child({ caller: 'socket' })
 const SECRET = process.env.JWT_SECRET || 'secret_example'
@@ -225,12 +228,48 @@ async function evaluate (socket: Socket, data: string, tasks: { id: number, rege
 }
 
 export default function handleSocket (server: Server) {
+  const isCloud = process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD'
+
+  if (isCloud) {
+    server.on('connection', async () => {
+      server.emit('clusterStatus', { status: azure.getClusterStatus() })
+
+      switch (azure.getClusterStatus()) {
+        case 'Running':
+        case 'Starting':
+          break
+        case 'Stopping':
+          await azure.waitForClusterStatus('Stopped')
+          setTimeout(async () => {
+            if (azure.getClusterStatus() === 'Stopped') {
+              await azure.startCluster()
+            }
+          }, 3000)
+          break
+        case 'Stopped':
+          await azure.startCluster()
+          break
+      }
+    })
+
+    emitter.on('clusterStatus', (data) => {
+      server.emit('clusterStatus', data)
+    })
+  }
+
+  const proxy = server.of('/terminal')
+
   // For socket authentication
   // https://socket.io/docs/v4/middlewares/
-  server.use(verifyToken)
+  proxy.use(verifyToken)
 
-  server.on('connection', async (socket) => {
+  proxy.on('connection', async (socket) => {
     try {
+      if (isCloud && azure.getClusterStatus() !== 'Running') {
+        socket.send({ data: '\r\n*** Waiting for cluster to start *** \r\n' })
+        await azure.waitForClusterStatus('Running')
+      }
+
       socket.send({ data: '\r\n*** Starting Ubuntu pod ***\r\n' })
       const connection = await kubernetes.createOrUpdatePod(socket.data.clientId)
 

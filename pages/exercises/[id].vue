@@ -54,7 +54,7 @@ const connected = ref(false)
 
 const user = useUser()
 
-const socket = io({
+const socket = io('/terminal', {
   auth: {
     exerciseId,
     token: user.value?.token
