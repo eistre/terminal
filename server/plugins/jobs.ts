@@ -36,7 +36,7 @@ async function podDeleteJob () {
 
   const namespaces = await kubernetes.getNamespaces()
 
-  if (isCloud && namespaces.length === 0) {
+  if (isCloud && namespaces.length === 0 && !azure.getStopLock()) {
     await azure.stopCluster()
     return
   }

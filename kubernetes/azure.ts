@@ -1,5 +1,7 @@
 import { DefaultAzureCredential } from '@azure/identity'
 import { ContainerServiceClient } from '@azure/arm-containerservice'
+import { Cron } from 'croner'
+import dayjs from 'dayjs'
 import emitter from '~/server/utils/emitter'
 
 export type ClusterStatus = 'Running' | 'Starting' | 'Stopping' | 'Stopped'
@@ -13,12 +15,14 @@ const clusterLogger = pino.child({ caller: 'cluster' })
 export class Azure {
   private client: ContainerServiceClient
   private clusterStatus: ClusterStatus
+  private stopLock: boolean
 
   constructor () {
     const credential = new DefaultAzureCredential()
 
     this.client = new ContainerServiceClient(credential, AZURE_SUBSCRIPTION || '')
     this.clusterStatus = 'Stopped'
+    this.stopLock = false
   }
 
   getClusterStatus (): ClusterStatus {
@@ -30,12 +34,21 @@ export class Azure {
     this.clusterStatus = cluster.powerState?.code as ClusterStatus
   }
 
+  getStopLock (): boolean {
+    return this.stopLock
+  }
+
   async startCluster () {
     this.clusterStatus = 'Starting'
     emitter.emit('clusterStatus', { status: this.clusterStatus })
     clusterLogger.debug('Starting cluster')
 
     await this.client.managedClusters.beginStartAndWait(AZURE_RESOURCEGROUP, AZURE_CLUSTER)
+
+    this.stopLock = true
+    Cron(dayjs().add(30, 'minutes').toDate(), () => {
+      this.stopLock = false
+    })
 
     this.clusterStatus = 'Running'
     emitter.emit('clusterStatus', { status: this.clusterStatus })
