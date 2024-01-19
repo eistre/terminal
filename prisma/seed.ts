@@ -40,7 +40,7 @@ export const createExercises = async () => {
         title: 'Ülesanne 4 - Faili sisu leidmine',
         content: 'Leia `/var` kaustast või selle alamkaustadest fail, mis sisaldab teksti `Sudo password`. Jäta parool meelde, kuna seda läheb hiljem vaja!',
         hint: 'Uuri käsku `grep`, permission denied ridade mitte kuvamiseks lisa käsu lõppu `2>/dev/null`',
-        regex: /Sudo\s+password\s+is\s+password123/.source,
+        regex: /Sudo[\s\S]+password[\s\S]+is[\s\S]+password123/.source,
         exercise_id: ee
       }, {
         title: 'Ülesanne 5 - Tarkvara paigaldamine',
@@ -107,7 +107,7 @@ export const createExercises = async () => {
         title: 'Task 4 - Finding file content',
         content: 'Find a file containing the text `Sudo password` inside `/var` directory or one of its subdirectories. Remember the password, you will need it later!',
         hint: 'Learn about `grep`, to avoid the permission denied messages, add `2>/dev/null` to the end of the command',
-        regex: /Sudo\s+password\s+is\s+password123/.source,
+        regex: /Sudo[\s\S]+password[\s\S]+is[\s\S]+password123/.source,
         exercise_id: en
       }, {
         title: 'Task 5 - Installing software',
