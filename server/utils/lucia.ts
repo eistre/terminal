@@ -33,6 +33,8 @@ export type Auth = typeof auth
 
 // https://lucia-auth.com/guidebook/sign-in-with-username-and-password/nuxt/
 export const createAndSetSession = async (event: H3Event<EventHandlerRequest>, userId: string) => {
+  await auth.deleteDeadUserSessions(userId)
+
   const session = await auth.createSession({
     userId,
     attributes: {}

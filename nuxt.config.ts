@@ -10,7 +10,8 @@ export default defineNuxtConfig({
         }
       ],
       link: [
-        { rel: 'icon', type: 'image/png', href: '/terminal.png' }
+        { rel: 'icon', type: 'image/png', href: '/terminal.png' },
+        { rel: 'apple-touch-icon', href: '/terminal.png' }
       ]
     }
   },

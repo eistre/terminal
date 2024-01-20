@@ -14,4 +14,5 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
 
   await auth.invalidateSession(session.sessionId)
   authRequest.setSession(null)
+  await auth.deleteDeadUserSessions(session.user.userId)
 })
