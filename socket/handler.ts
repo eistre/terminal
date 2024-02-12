@@ -9,8 +9,13 @@ import kubernetes from '~/server/utils/kubernetes'
 import azure from '~/server/utils/azure'
 import emitter from '~/server/utils/emitter'
 
-const logger = pino.child({ caller: 'socket' })
+const podLogger = pino.child({ caller: 'pod' })
+const socketLogger = pino.child({ caller: 'socket' })
+const sshLogger = pino.child({ caller: 'ssh' })
+const inotifyLogger = pino.child({ caller: 'inotify' })
+
 const SECRET = process.env.JWT_SECRET || 'secret_example'
+const isCloud = process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD'
 
 async function verifyToken (socket: Socket, next: (err?: ExtendedError | undefined) => void) {
   const { token, exerciseId } = socket.handshake.auth
@@ -60,7 +65,7 @@ async function connectToPod (socket: Socket, connection: { ip: string, port: num
   const privateKey = await useStorage('ssh').getItem<string>(`ubuntu-${socket.data.clientId}`)
 
   if (!privateKey) {
-    logger.error('Private key not found')
+    podLogger.error('Private key not found')
     socket.disconnect()
     return
   }
@@ -93,7 +98,7 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
   socket.on('reset_exercise', async () => {
     try {
-      logger.debug(`Resetting exercise ${exerciseId} for client ${clientId}`)
+      socketLogger.debug(`Resetting exercise ${exerciseId} for client ${clientId}`)
 
       const ids = await db.task.findMany({ where: { exercise_id: Number(exerciseId) }, select: { id: true } })
       await db.completedTask.deleteMany({ where: { user_id: clientId, task_id: { in: ids.map(id => id.id) } } })
@@ -115,23 +120,23 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
       socket.emit('reset_exercise', { status: true })
     } catch (error) {
-      logger.error(error)
+      socketLogger.error(`Resetting exercise failed: ${error}`)
       socket.emit('reset_exercise', { status: false })
     }
   })
 
   pod.on('ready', () => {
-    logger.info(`Created ssh connection for client: ${clientId}`)
+    sshLogger.info(`Created ssh connection for client: ${clientId}`)
     socket.send({ data: '\r\n*** SSH Connected established ***\r\n\n' })
     socket.emit('ready')
 
     pod.exec('inotifywait /home /home/user -m', (error, channel) => {
       if (error) {
-        logger.error(error)
+        inotifyLogger.error(`inotify error: ${error}`)
       }
 
       channel.on('close', () => {
-        logger.debug('inotify instance closed')
+        inotifyLogger.debug('inotify instance closed')
       })
 
       channel.on('data', (data: Buffer) => {
@@ -139,13 +144,13 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
       })
 
       channel.stderr.on('data', (data: Buffer) => {
-        logger.debug(data.toString('binary'))
+        inotifyLogger.debug(data.toString('binary'))
       })
     })
 
     pod.shell((error, stream) => {
       if (error) {
-        logger.error(error)
+        sshLogger.error(`Ssh shell error: ${error}`)
         socket.send({ data: `\r\n*** SSH Shell error: ${error.message} ***\r\n` })
         return
       }
@@ -164,7 +169,7 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
       socket.on('reset_pod', async () => {
         stream.write('exit\n')
-        logger.info(`Resetting pod for client ${clientId}`)
+        socketLogger.info(`Resetting pod for client ${clientId}`)
         await kubernetes.deleteNamespace(`ubuntu-${clientId}`)
       })
 
@@ -187,7 +192,7 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
   })
 
   pod.on('close', () => {
-    logger.info(`Connection closed for client: ${clientId}`)
+    sshLogger.info(`Connection closed for client: ${clientId}`)
     socket.send({ data: '\r\n*** SSH Connection terminated ***\r\n' })
     socket.disconnect()
   })
@@ -197,10 +202,10 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
     // If connection refused - try again
     if (error.message.includes('ECONNREFUSED')) {
-      logger.warn(`Connection refused for client: ${clientId} - retrying`)
+      sshLogger.warn(`Connection refused for client: ${clientId} - retrying`)
       await connectToPod(socket, connection)
     } else {
-      logger.error(error)
+      sshLogger.error(`Ssh error: ${error}`)
     }
   })
 }
@@ -228,29 +233,31 @@ async function evaluate (socket: Socket, data: string, tasks: { id: number, rege
   }
 }
 
-export default function handleSocket (server: Server) {
-  const isCloud = process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD'
+async function startCluster (server: Server) {
+  server.emit('clusterStatus', { status: azure.getClusterStatus() })
 
+  switch (azure.getClusterStatus()) {
+    case 'Running':
+    case 'Starting':
+      break
+    case 'Stopping':
+      await azure.waitForClusterStatus('Stopped')
+      setTimeout(async () => {
+        if (azure.getClusterStatus() === 'Stopped') {
+          await azure.startCluster()
+        }
+      }, 3000)
+      break
+    case 'Stopped':
+      await azure.startCluster()
+      break
+  }
+}
+
+export default function handleSocket (server: Server) {
   if (isCloud) {
     server.on('connection', async () => {
-      server.emit('clusterStatus', { status: azure.getClusterStatus() })
-
-      switch (azure.getClusterStatus()) {
-        case 'Running':
-        case 'Starting':
-          break
-        case 'Stopping':
-          await azure.waitForClusterStatus('Stopped')
-          setTimeout(async () => {
-            if (azure.getClusterStatus() === 'Stopped') {
-              await azure.startCluster()
-            }
-          }, 3000)
-          break
-        case 'Stopped':
-          await azure.startCluster()
-          break
-      }
+      await startCluster(server)
     })
 
     emitter.on('clusterStatus', (data) => {
@@ -279,7 +286,7 @@ export default function handleSocket (server: Server) {
         await connectToPod(socket, connection)
       }
     } catch (error) {
-      logger.error(error)
+      podLogger.error(`Pod error: ${error}`)
       socket.disconnect()
     }
   })
