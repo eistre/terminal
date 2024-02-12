@@ -32,7 +32,12 @@ function localeMessages (locale: string): string[] {
   }
 }
 
-export async function sendMail (userId: string, token: string, recipient: string, locale: string) {
+export async function sendMail (userId: string, token: string, recipient: string, locale: string, attempt: number = 1) {
+  if (attempt > 5) {
+    logger.warn(`Failed to send mail to recipient: ${recipient}`)
+    return
+  }
+
   const client = new EmailClient(AZURE_CONNECTION_STRING)
 
   const messages = localeMessages(locale)
@@ -69,6 +74,6 @@ export async function sendMail (userId: string, token: string, recipient: string
     logger.debug(`Operation ID: ${response.id}`)
   } catch (error) {
     codeSent.delete(userId)
-    logger.error(error)
+    await sendMail(userId, token, recipient, locale, attempt + 1)
   }
 }
