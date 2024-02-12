@@ -222,7 +222,8 @@ async function evaluate (socket: Socket, data: string, tasks: { id: number, rege
     socket.emit('complete', { data: taskIds })
 
     await db.completedTask.createMany({
-      data: completed
+      data: completed,
+      skipDuplicates: true
     })
   }
 }
