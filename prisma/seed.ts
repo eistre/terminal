@@ -45,7 +45,7 @@ export const createExercises = async () => {
       }, {
         title: 'Ülesanne 5 - Tarkvara paigaldamine',
         content: 'Paigalda tarkvara nimega `nano` ja leia, kus asuvad selle binaarid.',
-        hint: 'Kasuta käske `sudo apt` ja `whereis`',
+        hint: 'Kasuta käske `sudo apt` / `sudo apt-get` ja `whereis`',
         regex: /\/usr\/bin\/nano/.source,
         exercise_id: ee
       }, {
@@ -112,7 +112,7 @@ export const createExercises = async () => {
       }, {
         title: 'Task 5 - Installing software',
         content: 'Install the package called `nano` and find out where its binaries are located.',
-        hint: 'Use the `sudo apt` and `whereis` commands',
+        hint: 'Use the `sudo apt` / `sudo apt-get` and `whereis` commands',
         regex: /\/usr\/bin\/nano/.source,
         exercise_id: en
       }, {
