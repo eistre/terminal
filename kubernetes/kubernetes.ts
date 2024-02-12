@@ -190,8 +190,12 @@ export class Kubernetes {
     const node = (await this.api.listNode()).body.items
       .find(item => item.metadata?.name === pod?.spec?.nodeName)
 
-    if (!pod || !service || !node) {
-      throw new Error('Pod, service or node not found')
+    if (!pod) {
+      throw new Error(`Pod not found for client: ${clientId}`)
+    } else if (!service) {
+      throw new Error(`Service not found for client: ${clientId}`)
+    } else if (!node) {
+      throw new Error(`Node not found for client: ${clientId}`)
     }
 
     const ip = this.getIp(node)
