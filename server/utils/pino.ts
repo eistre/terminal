@@ -1,13 +1,13 @@
 import Pino from 'pino'
+import pretty from 'pino-pretty'
 
-const pino = Pino({
-  level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: process.env.LOG_PRETTY === 'TRUE'
-    }
-  }
+const stream = pretty({
+  colorize: process.env.LOG_PRETTY === 'TRUE'
 })
+
+const pino = Pino(
+  { level: process.env.NODE_ENV === 'development' ? 'debug' : 'info' },
+  stream
+)
 
 export default pino
