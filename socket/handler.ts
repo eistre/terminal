@@ -67,6 +67,7 @@ async function connectToPod (socket: Socket, connection: { ip: string, port: num
   if (!privateKey) {
     podLogger.error('Private key not found')
     socket.disconnect()
+    await kubernetes.deleteNamespace(`ubuntu-${socket.data.clientId}`)
     return
   }
 
@@ -120,7 +121,7 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
       socket.emit('reset_exercise', { status: true })
     } catch (error) {
-      socketLogger.error(`Resetting exercise failed: ${error}`)
+      socketLogger.error(`Resetting exercise failed for client ${clientId}: ${error}`)
       socket.emit('reset_exercise', { status: false })
     }
   })
@@ -132,11 +133,11 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
     pod.exec('inotifywait /home /home/user -m', (error, channel) => {
       if (error) {
-        inotifyLogger.error(`inotify error: ${error}`)
+        inotifyLogger.error(`inotify error for client ${clientId}: ${error}`)
       }
 
       channel.on('close', () => {
-        inotifyLogger.debug('inotify instance closed')
+        inotifyLogger.debug(`inotify instance closed for client ${clientId}`)
       })
 
       channel.on('data', (data: Buffer) => {
@@ -150,7 +151,7 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
     pod.shell((error, stream) => {
       if (error) {
-        sshLogger.error(`Ssh shell error: ${error}`)
+        sshLogger.error(`Ssh shell error for client ${clientId}: ${error}`)
         socket.send({ data: `\r\n*** SSH Shell error: ${error.message} ***\r\n` })
         return
       }
@@ -200,12 +201,21 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
   pod.on('error', async (error) => {
     socket.send({ data: `\r\n*** SSH Connection error: ${error.message} ***\r\n` })
 
+    const getReason = () => {
+      if (error.message.includes('ECONNREFUSED')) {
+        return 'refused'
+      }
+
+      return error.message.includes('ECONNRESET') ? 'reset' : 'timed out'
+    }
+
     // If connection refused - try again
-    if (error.message.includes('ECONNREFUSED')) {
-      sshLogger.warn(`Connection refused for client: ${clientId} - retrying`)
+    if (['ECONNREFUSED', 'ECONNRESET', 'ETIMEDOUT'].some(reason => error.message.includes(reason))) {
+      sshLogger.warn(`Connection ${getReason()} for client: ${clientId} - retrying`)
       await connectToPod(socket, connection)
     } else {
-      sshLogger.error(`Ssh error: ${error}`)
+      sshLogger.error(`Ssh error for client ${clientId}: ${error}`)
+      socket.disconnect()
     }
   })
 }
@@ -286,7 +296,7 @@ export default function handleSocket (server: Server) {
         await connectToPod(socket, connection)
       }
     } catch (error) {
-      podLogger.error(`Pod error: ${error}`)
+      podLogger.error(`Pod error for client ${socket.data.clientId}: ${error}`)
       socket.disconnect()
     }
   })
