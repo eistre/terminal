@@ -50,7 +50,7 @@ export default defineNuxtConfig({
     }
   },
   ui: {
-    icons: ['ion', 'twemoji']
+    icons: ['twemoji']
   },
   i18n: {
     vueI18n: './i18n.config.ts'
