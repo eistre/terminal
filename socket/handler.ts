@@ -65,7 +65,7 @@ async function connectToPod (socket: Socket, connection: { ip: string, port: num
   const privateKey = await useStorage('ssh').getItem<string>(`ubuntu-${socket.data.clientId}`)
 
   if (!privateKey) {
-    podLogger.error('Private key not found')
+    podLogger.error(`Private key not found for client ${socket.data.clientId}`)
     socket.disconnect()
     await kubernetes.deleteNamespace(`ubuntu-${socket.data.clientId}`)
     return
@@ -121,7 +121,8 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
       socket.emit('reset_exercise', { status: true })
     } catch (error) {
-      socketLogger.error(`Resetting exercise failed for client ${clientId}: ${error}`)
+      socketLogger.error(`Resetting exercise failed for client ${clientId}`)
+      socketLogger.error(error)
       socket.emit('reset_exercise', { status: false })
     }
   })
@@ -133,7 +134,8 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
     pod.exec('inotifywait /home /home/user -m', (error, channel) => {
       if (error) {
-        inotifyLogger.error(`inotify error for client ${clientId}: ${error}`)
+        inotifyLogger.error(`inotify error for client ${clientId}`)
+        inotifyLogger.error(error)
       }
 
       channel.on('close', () => {
@@ -151,7 +153,8 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
 
     pod.shell((error, stream) => {
       if (error) {
-        sshLogger.error(`Ssh shell error for client ${clientId}: ${error}`)
+        sshLogger.error(`Ssh shell error for client ${clientId}`)
+        sshLogger.error(error)
         socket.send({ data: `\r\n*** SSH Shell error: ${error.message} ***\r\n` })
         return
       }
@@ -214,7 +217,8 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
       sshLogger.warn(`Connection ${getReason()} for client: ${clientId} - retrying`)
       await connectToPod(socket, connection)
     } else {
-      sshLogger.error(`Ssh error for client ${clientId}: ${error}`)
+      sshLogger.error(`Ssh error for client ${clientId}`)
+      sshLogger.error(error)
       socket.disconnect()
     }
   })
@@ -296,7 +300,8 @@ export default function handleSocket (server: Server) {
         await connectToPod(socket, connection)
       }
     } catch (error) {
-      podLogger.error(`Pod error for client ${socket.data.clientId}: ${error}`)
+      podLogger.error(`Pod error for client ${socket.data.clientId}`)
+      podLogger.error(error)
       socket.disconnect()
     }
   })
