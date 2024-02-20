@@ -175,7 +175,7 @@ function resetPod () {
             <UButton
               :label="$t('exercises.exercise_reset')"
               variant="outline"
-              :disabled="!someCompleted"
+              :disabled="!someCompleted || !connected"
               @click="resetExercise"
             />
             <UButton
