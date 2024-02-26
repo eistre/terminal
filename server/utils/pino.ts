@@ -2,7 +2,7 @@ import Pino from 'pino'
 import pretty from 'pino-pretty'
 
 const stream = pretty({
-  colorize: process.env.LOG_PRETTY === 'TRUE'
+  colorize: process.env.LOG_COLORIZE === 'TRUE'
 })
 
 const pino = Pino(

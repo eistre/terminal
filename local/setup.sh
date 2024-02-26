@@ -65,7 +65,7 @@ npm run build
 cat > .env <<- END
 DATABASE_URL='mysql://root:$dbpass@localhost:30000/terminal'
 ADMIN_PASSWORD='$adminpass'
-LOG_PRETTY=TRUE
+LOG_COLORIZE=TRUE
 KUBE_CONFIG='$kube_config'
 JWT_SECRET='$(openssl rand -base64 24)'
 POD_DATE_VALUE=2
