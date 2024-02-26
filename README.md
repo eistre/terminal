@@ -1,75 +1,62 @@
-# Nuxt 3 Minimal Starter
+# Linux Terminal Exercise environment
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+### Bachelor's thesis
 
-## Setup
+This project is a continuation of Joonas Halapuu's [Bachelor's thesis project](https://gitlab.com/JoonasHalapuu/ubuntuterminal).
 
-Make sure to install the dependencies:
+This project creates isolated Ubuntu Kubernetes pods that allow users to practice command line tasks. Admin users have the ability to modify, create, and delete tasks.
 
+## To start the project on a fresh Ubuntu install
+1. Run the following command:
 ```bash
-# npm
+bash <(curl -fsSL https://raw.githubusercontent.com/eistre/terminal/master/local/setup.sh)
+```
+
+## Alternatively
+1. Make sure that you have kubernetes installed (The script will install MicroK8s).
+
+2. Make sure that you have Node installed (preferably Node 21).
+
+3. Make sure you have a MySQL database instance running.
+A Docker Compose example has been added to the root of this repository.
+This example will use the `DATABASE_URL` of `mysql://root:root@localhost:3306/terminal`
+To run this, use:
+```bash
+# Add -d to the end to detach instance from terminal
+docker compose up
+```
+
+4. Run the following commands:
+```bash
+# Install packages
 npm install
 
-# pnpm
-pnpm install
+# Generate prisma client
+npx prisma generate
 
-# yarn
-yarn install
+# Create .env if not present
+touch .env
 
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
+# Build the application
 npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+5. Fill out `.env` according to `.env.example`.
 
+6. Push the schema to the database:
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+# Pushes the database schema to MySQL database
+npx prisma db push
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+6. To run the application, use:
+```bash
+# Runs the application with .env values
+npm run preview
+```
+
+7. Alternatively, run in development mode:
+```bash
+# Runs the application in dev mode
+npm run dev
+```
