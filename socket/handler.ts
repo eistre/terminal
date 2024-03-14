@@ -58,9 +58,9 @@ async function verifyToken (socket: Socket, next: (err?: ExtendedError | undefin
 }
 
 async function connectToPod (socket: Socket, connection: { ip: string, port: number }) {
-  const pod = new Client()
+  const ssh = new Client()
 
-  await setProxy(socket, pod, connection)
+  await setProxy(socket, ssh, connection)
 
   const privateKey = await useStorage('ssh').getItem<string>(`ubuntu-${socket.data.clientId}`)
 
@@ -71,7 +71,7 @@ async function connectToPod (socket: Socket, connection: { ip: string, port: num
     return
   }
 
-  pod.connect({
+  ssh.connect({
     host: connection.ip,
     port: connection.port,
     username: 'user',
@@ -79,7 +79,7 @@ async function connectToPod (socket: Socket, connection: { ip: string, port: num
   })
 }
 
-async function setProxy (socket: Socket, pod: Client, connection: { ip: string, port: number }) {
+async function setProxy (socket: Socket, ssh: Client, connection: { ip: string, port: number }) {
   const { clientId, exerciseId } = socket.data
   let buffer = Buffer.alloc(0)
   let tasks = await db.task.findMany({
@@ -127,12 +127,12 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
     }
   })
 
-  pod.on('ready', () => {
+  ssh.on('ready', () => {
     sshLogger.info(`Created ssh connection for client: ${clientId}`)
     socket.send({ data: '\r\n*** SSH Connected established ***\r\n\n' })
     socket.emit('ready')
 
-    pod.exec('inotifywait /home /home/user -m', (error, channel) => {
+    ssh.exec('inotifywait /home /home/user -m', (error, channel) => {
       if (error) {
         inotifyLogger.error(`inotify error for client ${clientId}`)
         inotifyLogger.error(error)
@@ -151,7 +151,7 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
       })
     })
 
-    pod.shell((error, stream) => {
+    ssh.shell((error, stream) => {
       if (error) {
         sshLogger.error(`Ssh shell error for client ${clientId}`)
         sshLogger.error(error)
@@ -190,18 +190,18 @@ async function setProxy (socket: Socket, pod: Client, connection: { ip: string, 
       })
 
       stream.on('close', () => {
-        pod.end()
+        ssh.end()
       })
     })
   })
 
-  pod.on('close', () => {
+  ssh.on('close', () => {
     sshLogger.info(`Connection closed for client: ${clientId}`)
     socket.send({ data: '\r\n*** SSH Connection terminated ***\r\n' })
     socket.disconnect()
   })
 
-  pod.on('error', async (error) => {
+  ssh.on('error', async (error) => {
     socket.send({ data: `\r\n*** SSH Connection error: ${error.message} ***\r\n` })
 
     const getReason = () => {
