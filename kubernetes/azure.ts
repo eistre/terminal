@@ -40,7 +40,7 @@ export class Azure {
 
   async startCluster () {
     this.clusterStatus = 'Starting'
-    emitter.emit('clusterStatus', { status: this.clusterStatus })
+    emitter.emit('clusterStatus')
     clusterLogger.debug('Starting cluster')
 
     await this.client.managedClusters.beginStartAndWait(AZURE_RESOURCEGROUP, AZURE_CLUSTER)
@@ -51,19 +51,19 @@ export class Azure {
     })
 
     this.clusterStatus = 'Running'
-    emitter.emit('clusterStatus', { status: this.clusterStatus })
+    emitter.emit('clusterStatus')
     clusterLogger.info('Cluster started')
   }
 
   async stopCluster () {
     this.clusterStatus = 'Stopping'
-    emitter.emit('clusterStatus', { status: this.clusterStatus })
+    emitter.emit('clusterStatus')
     clusterLogger.debug('Stopping cluster')
 
     await this.client.managedClusters.beginStopAndWait(AZURE_RESOURCEGROUP, AZURE_CLUSTER)
 
     this.clusterStatus = 'Stopped'
-    emitter.emit('clusterStatus', { status: this.clusterStatus })
+    emitter.emit('clusterStatus')
     clusterLogger.info('Cluster stopped')
   }
 

@@ -272,8 +272,8 @@ export default function handleSocket (server: Server) {
       await startCluster(server)
     })
 
-    emitter.on('clusterStatus', (data) => {
-      server.emit('clusterStatus', data)
+    emitter.on('clusterStatus', () => {
+      server.emit('clusterStatus', { status: azure.getClusterStatus() })
     })
   }
 
