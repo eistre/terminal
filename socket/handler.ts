@@ -231,14 +231,12 @@ async function evaluate (socket: Socket, data: string, tasks: { id: number, rege
     .map(task => ({ user_id: socket.data.clientId, task_id: task.id }))
 
   if (completed.length > 0) {
-    const taskIds = completed.map(task => task.task_id)
-
-    taskIds.forEach((id) => {
-      const index = tasks.findIndex(task => task.id === id)
+    completed.forEach((complete) => {
+      const index = tasks.findIndex(task => task.id === complete.task_id)
       tasks.splice(index, 1)
     })
 
-    socket.emit('complete', { data: taskIds })
+    socket.emit('complete', { data: completed.map(task => task.task_id) })
 
     await db.completedTask.createMany({
       data: completed,
