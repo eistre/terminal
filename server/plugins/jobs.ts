@@ -10,6 +10,7 @@ const userLogger = pino.child({ caller: 'user_delete_job' })
 
 const POD_CRON_TIMER = process.env.POD_CRON_TIMER || '0 0 * * * *'
 const USER_CRON_TIMER = process.env.USER_CRON_TIMER || '0 0 0 * * *'
+const isCloud = process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD'
 
 async function deleteExpiredNamespaces (namespaces: string[]): Promise<number> {
   let count = 0
@@ -28,8 +29,6 @@ async function deleteExpiredNamespaces (namespaces: string[]): Promise<number> {
 }
 
 async function podDeleteJob () {
-  const isCloud = process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD'
-
   if (isCloud && azure.getClusterStatus() !== 'Running') {
     return
   }
@@ -66,7 +65,7 @@ async function userDeleteJob () {
 }
 
 export default defineNitroPlugin(async () => {
-  if (process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD') {
+  if (isCloud) {
     await azure.setClusterStatus()
   }
 
