@@ -6,7 +6,7 @@ import db from '~/prisma/db'
 
 const RUNTIME = process.env.NUXT_PUBLIC_RUNTIME
 const USER_DATE_VALUE: number = Number(process.env.USER_DATE_VALUE) || 1
-const USER_DATE_UNIT:dayjs.ManipulateType = process.env.USER_DATE_UNIT as dayjs.ManipulateType || 'month'
+const USER_DATE_UNIT: dayjs.ManipulateType = process.env.USER_DATE_UNIT as dayjs.ManipulateType || 'month'
 
 const logger = pino.child({ caller: 'auth' })
 

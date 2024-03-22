@@ -10,6 +10,8 @@ import db from '../../prisma/db'
 
 const SECRET = process.env.JWT_SECRET || 'secret_example'
 const CODE_EXPIRE = Number(process.env.CODE_EXPIRE) || 10
+const USER_DATE_VALUE: number = Number(process.env.USER_DATE_VALUE) || 1
+const USER_DATE_UNIT: dayjs.ManipulateType = process.env.USER_DATE_UNIT as dayjs.ManipulateType || 'month'
 
 const verificationTimeout = new Map<string, { timeoutUntil: number, timeoutSeconds: number }>()
 
@@ -48,6 +50,7 @@ export const createAndSetSession = async (event: H3Event<EventHandlerRequest>, u
 export const login = async (event: H3Event<EventHandlerRequest>, providerId: string, provider: string, password: string) => {
   try {
     const { userId } = await auth.useKey(providerId, provider.toLowerCase(), password)
+    await auth.updateUserAttributes(userId, { expireTime: getExpireDateTime(USER_DATE_VALUE, USER_DATE_UNIT) })
 
     await createAndSetSession(event, userId)
   } catch (error) {
