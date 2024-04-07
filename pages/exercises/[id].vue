@@ -208,7 +208,7 @@ function resetPod () {
 </template>
 
 <style>
-@import "xterm/css/xterm.css";
+@import "@xterm/xterm/css/xterm.css";
 
 .xterm-viewport {
   overflow: hidden !important;

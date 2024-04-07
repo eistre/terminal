@@ -57,9 +57,9 @@ export default defineNuxtConfig({
   },
   imports: {
     presets: [
-      { from: 'xterm', imports: ['Terminal'] },
-      { from: 'xterm-addon-webgl', imports: ['WebglAddon'] },
-      { from: 'xterm-addon-fit', imports: ['FitAddon'] }
+      { from: '@xterm/xterm', imports: ['Terminal'] },
+      { from: '@xterm/addon-webgl', imports: ['WebglAddon'] },
+      { from: '@xterm/addon-fit', imports: ['FitAddon'] }
     ]
   }
 })
