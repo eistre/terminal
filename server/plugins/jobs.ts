@@ -54,7 +54,8 @@ async function userDeleteJob () {
   const { count } = await db.user.deleteMany({
     where: {
       expireTime: {
-        lt: dayjs().format()
+        lt: dayjs().format(),
+        not: null
       }
     }
   })
