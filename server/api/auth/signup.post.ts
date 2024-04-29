@@ -53,7 +53,7 @@ export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) =>
     // In case user already exists
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.message.includes('Unique constraint')) {
       throw createError({
-        statusCode: 400,
+        statusCode: 401,
         statusMessage: 'Unauthorized',
         message: 'User already exists'
       })
