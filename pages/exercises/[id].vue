@@ -160,7 +160,9 @@ function resetPod () {
     socket.emit('reset_pod')
     term.write('\n\r\n*** Resetting pod ***\r\n')
 
-    socket.disconnect().connect()
+    socket.once('disconnect', () => {
+      socket.connect()
+    })
   }
 }
 </script>

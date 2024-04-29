@@ -3,7 +3,6 @@
 import { Client } from 'ssh2'
 import jwt, { type VerifyErrors } from 'jsonwebtoken'
 import { type Server, Socket } from 'socket.io'
-import type { ExtendedError } from 'socket.io/dist/namespace'
 import db from '~/prisma/db'
 import kubernetes from '~/server/utils/kubernetes'
 import azure from '~/server/utils/azure'
@@ -17,7 +16,7 @@ const inotifyLogger = pino.child({ caller: 'inotify' })
 const SECRET = process.env.JWT_SECRET || 'secret_example'
 const isCloud = process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD'
 
-async function verifyToken (socket: Socket, next: (err?: ExtendedError | undefined) => void) {
+async function verifyToken (socket: Socket, next: (err?: Error | undefined) => void) {
   const { token, exerciseId } = socket.handshake.auth
 
   if (!token) {
@@ -172,7 +171,6 @@ async function setProxy (socket: Socket, ssh: Client, connection: { ip: string, 
       })
 
       socket.on('reset_pod', async () => {
-        stream.write('exit\n')
         socketLogger.info(`Resetting pod for client ${clientId}`)
         await kubernetes.deleteNamespace(`ubuntu-${clientId}`)
       })
