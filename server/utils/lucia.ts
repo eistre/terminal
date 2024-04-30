@@ -50,7 +50,11 @@ export const createAndSetSession = async (event: H3Event<EventHandlerRequest>, u
 export const login = async (event: H3Event<EventHandlerRequest>, providerId: string, provider: string, password: string) => {
   try {
     const { userId } = await auth.useKey(providerId, provider.toLowerCase(), password)
-    await auth.updateUserAttributes(userId, { expireTime: getExpireDateTime(USER_DATE_VALUE, USER_DATE_UNIT) })
+    const { role } = await auth.getUser(userId)
+
+    if (role !== 'ADMIN') {
+      await auth.updateUserAttributes(userId, { expireTime: getExpireDateTime(USER_DATE_VALUE, USER_DATE_UNIT) })
+    }
 
     await createAndSetSession(event, userId)
   } catch (error) {
