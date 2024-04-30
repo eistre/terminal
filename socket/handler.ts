@@ -179,7 +179,7 @@ async function setProxy (socket: Socket, ssh: Client, connection: { ip: string, 
         const dataString = data.toString('binary')
         buffer = Buffer.concat([buffer, data])
 
-        if (buffer.length > 2048 || dataString.includes('user@ubuntu:~$')) {
+        if (buffer.length > 2048 || dataString.includes('user@ubuntu:')) {
           evaluate(socket, buffer.toString('binary'), tasks)
           buffer = Buffer.alloc(0)
         }

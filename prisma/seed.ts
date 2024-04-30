@@ -1,6 +1,156 @@
 import db from '~/prisma/db'
 
-export const createExercises = async () => {
+export const createSimpleExercises = async () => {
+  const { id: ee } = await db.exercise.create({
+    data: {
+      title: 'Sissejuhatus Linuxisse',
+      description: 'Sissejuhatavad ülesanded Linuxi käsureasse'
+    }
+  })
+
+  const { id: en } = await db.exercise.create({
+    data: {
+      title: 'Introduction to Linux',
+      description: 'Introductory tasks for the Linux command line'
+    }
+  })
+
+  // Create ee tasks
+  await db.task.createMany({
+    data: [
+      {
+        title: 'Ülesanne 1 - Failisüsteem',
+        content: 'Kuva oma praeguse kausta sisu.',
+        hint: 'Kausta sisu kuvamiseks saab kasutada käsku `ls`',
+        regex: /ls[\s\S]+?simple_file\s/.source,
+        exercise_id: ee
+      }, {
+        title: 'Ülesanne 2 - Varjatud failid',
+        content: 'Kuva oma praeguse kausta sisu, sealhulgas ka varjatud elemente.',
+        hint: 'Varjatud elementide kuvamiseks saab kasutada sama käsku nagu eelmises ülesandes, kuid lisa parameetrid `-la`',
+        regex: /drwxr-xr-x.*user.*user.*\.temporary/.source,
+        exercise_id: ee
+      }, {
+        title: 'Ülesanne 3 - Faili sisu',
+        content: 'Kuva faili `simple_file` sisu.',
+        hint: 'Faili sisu kuvamiseks saab kasutada käsku `cat <faili_nimi>`',
+        regex: /This is a Simple file\s/.source,
+        exercise_id: ee
+      }, {
+        title: 'Ülesanne 4 - Failitee',
+        content: 'Kuva oma praeguse kausta asukoht.',
+        hint: 'Failiteed saab kuvada käsu `pwd` abil',
+        regex: /\/home\/user\s/.source,
+        exercise_id: ee
+      }, {
+        title: 'Ülesanne 5 - Kausta loomine',
+        content: 'Loo uus kaust nimega `my_folder`.',
+        hint: 'Kausta loomiseks saab kasutada käsku `mkdir <kausta_nimi>`',
+        regex: /CREATE,ISDIR my_folder/.source,
+        exercise_id: ee
+      }, {
+        title: 'Ülesanne 6 - Kaustade vahel liikumine',
+        content: 'Liigu oma loodud kausta `my_folder`.',
+        hint: 'Kaustade vahel liikumiseks saab kasutada käsku `cd <kausta_nimi>`',
+        regex: /user@ubuntu:.+?\/my_folder\$/.source,
+        exercise_id: ee
+      }, {
+        title: 'Ülesanne 7 - Faili kustutamine',
+        content: 'Liigu tagasi oma kodukausta ja proovi kustutada fail `simple_file`.',
+        hint: 'Kodukausta liikumiseks saab kasutada käsku `cd` ilma parameetriteta ja faili kustutamiseks saab kasutada käsku `rm <faili_nimi>`',
+        regex: /DELETE simple_file/.source,
+        exercise_id: ee
+      }, {
+        title: 'Ülesanne 8 - Kausta kustutamine',
+        content: 'Proovi kustutada oma loodud kaust `my_folder`.',
+        hint: 'Proovi kasutada eelmise ülesande käsku `rm` koos parameetriga `-r`',
+        regex: /DELETE,ISDIR my_folder/.source,
+        exercise_id: ee
+      }, {
+        title: 'Ülesanne 9 - Käskude ajalugu',
+        content: 'Kuva oma viimased käsurea käsud.',
+        hint: 'Käskude ajaloo kuvamiseks saab kasutada käsku `history`',
+        regex: /\d+?\s+?history\s/.source,
+        exercise_id: ee
+      }, {
+        title: 'Ülesanne 10 - Protsessid',
+        content: 'Kuva kõik käimasolevad protsessid.',
+        hint: 'Kõikide käimasolevate protsesside kuvamiseks saab kasutada käsku `ps`',
+        regex: /PID\s+?TTY\s+?TIME\s+?CMD/.source,
+        exercise_id: ee
+      }
+    ]
+  })
+
+  // Create en tasks
+  await db.task.createMany({
+    data: [
+      {
+        title: 'Task 1 - File system',
+        content: 'Display the contents of your current directory.',
+        hint: 'To display the contents of a directory, you can use the `ls` command',
+        regex: /ls[\s\S]+?simple_file\s/.source,
+        exercise_id: en
+      }, {
+        title: 'Task 2 - Hidden files',
+        content: 'Display the contents of your current directory, including hidden elements.',
+        hint: 'You can use the same command as in the previous task, but add the `-la` parameters',
+        regex: /drwxr-xr-x.*user.*user.*\.temporary/.source,
+        exercise_id: en
+      }, {
+        title: 'Task 3 - File content',
+        content: 'Display the contents of the file `simple_file`.',
+        hint: 'To display the contents of a file, you can use the `cat <file_name>` command',
+        regex: /This is a Simple file\s/.source,
+        exercise_id: en
+      }, {
+        title: 'Task 4 - File path',
+        content: 'Display the location of your current directory.',
+        hint: 'You can display the file path using the `pwd` command',
+        regex: /\/home\/user\s/.source,
+        exercise_id: en
+      }, {
+        title: 'Task 5 - Creating directories',
+        content: 'Create a directory named `my_folder`.',
+        hint: 'To create a directory, you can use the `mkdir <directory_name>` command',
+        regex: /CREATE,ISDIR my_folder/.source,
+        exercise_id: en
+      }, {
+        title: 'Task 6 - Moving between directories',
+        content: 'Move to the directory you created, `my_folder`.',
+        hint: 'To move between directories, you can use the `cd <directory_name>` command',
+        regex: /user@ubuntu:.+?\/my_folder\$/.source,
+        exercise_id: en
+      }, {
+        title: 'Task 7 - Deleting files',
+        content: 'Move back to your home directory and try to delete the `simple_file` file.',
+        hint: 'To move to your home directory, you can use the `cd` command without parameters and to delete a file, you can use the `rm <file_name>` command',
+        regex: /DELETE simple_file/.source,
+        exercise_id: en
+      }, {
+        title: 'Task 8 - Deleting directories',
+        content: 'Try to delete the directory you created, `my_folder`.',
+        hint: 'Try to use the `rm` command from the previous task with the `-r` parameter',
+        regex: /DELETE,ISDIR my_folder/.source,
+        exercise_id: en
+      }, {
+        title: 'Task 9 - Command history',
+        content: 'Display your recent command line commands.',
+        hint: 'To display the command history, you can use the `history` command',
+        regex: /\d+?\s+?history\s/.source,
+        exercise_id: en
+      }, {
+        title: 'Task 10 - Processes',
+        content: 'Display all running processes.',
+        hint: 'To display all running processes, you can use the `ps` command',
+        regex: /PID\s+?TTY\s+?TIME\s+?CMD/.source,
+        exercise_id: en
+      }
+    ]
+  })
+}
+
+export const createNormalExercises = async () => {
   const { id: ee } = await db.exercise.create({
     data: {
       title: 'Operatsioonisüsteemid ja Andmeturve',

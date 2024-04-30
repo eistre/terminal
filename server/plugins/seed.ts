@@ -1,4 +1,4 @@
-import { createDomains, createExercises } from '~/prisma/seed'
+import { createDomains, createNormalExercises, createSimpleExercises } from '~/prisma/seed'
 import db from '~/prisma/db'
 
 const logger = pino.child({ caller: 'seed' })
@@ -8,7 +8,8 @@ export default defineNitroPlugin(async () => {
 
   if (count === 0) {
     logger.info('Seeding database')
-    await createExercises()
+    await createSimpleExercises()
+    await createNormalExercises()
   }
 
   const domains = await db.domain.count()
