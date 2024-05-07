@@ -1,4 +1,3 @@
-// https://github.com/hexagon/croner
 import { Cron } from 'croner'
 import dayjs from 'dayjs'
 import db from '~/prisma/db'

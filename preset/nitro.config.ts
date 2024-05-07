@@ -1,4 +1,4 @@
-// https://github.com/sush1lemon/nuxt-socket.io/blob/main/preset/nitro.config.ts
+// template from https://github.com/sush1lemon/nuxt-socket.io/blob/main/preset/nitro.config.ts
 import { fileURLToPath } from 'node:url'
 import type { NitroPreset } from 'nitropack'
 

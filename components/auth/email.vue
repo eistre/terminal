@@ -1,4 +1,4 @@
-// https://ui.nuxt.com/forms/form
+// templates and snippets from https://ui.nuxt.com/forms/form
 <script setup lang="ts">
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'

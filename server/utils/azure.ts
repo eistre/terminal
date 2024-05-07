@@ -1,5 +1,4 @@
-// Used as a template:
-// https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
+// template from https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
 import { Azure } from '~/kubernetes/azure'
 
 const azureClientSingleton = () => {

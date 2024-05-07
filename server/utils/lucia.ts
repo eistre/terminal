@@ -1,4 +1,4 @@
-// https://lucia-auth.com/getting-started/nuxt/
+// template and snippets from https://v2.lucia-auth.com/getting-started/nuxt/
 import { randomBytes } from 'node:crypto'
 import { lucia, LuciaError } from 'lucia'
 import { h3 } from 'lucia/middleware'
@@ -33,7 +33,7 @@ export const auth = lucia({
 
 export type Auth = typeof auth
 
-// https://lucia-auth.com/guidebook/sign-in-with-username-and-password/nuxt/
+// template from https://v2.lucia-auth.com/guidebook/sign-in-with-username-and-password/nuxt/
 export const createAndSetSession = async (event: H3Event<EventHandlerRequest>, userId: string) => {
   await auth.deleteDeadUserSessions(userId)
 
@@ -46,7 +46,7 @@ export const createAndSetSession = async (event: H3Event<EventHandlerRequest>, u
   authRequest.setSession(session)
 }
 
-// https://lucia-auth.com/guidebook/sign-in-with-username-and-password/nuxt/
+// template from https://v2.lucia-auth.com/guidebook/sign-in-with-username-and-password/nuxt/
 export const login = async (event: H3Event<EventHandlerRequest>, providerId: string, provider: string, password: string) => {
   try {
     const { userId } = await auth.useKey(providerId, provider.toLowerCase(), password)
@@ -82,7 +82,7 @@ export const login = async (event: H3Event<EventHandlerRequest>, providerId: str
   }
 }
 
-// https://lucia-auth.com/guidebook/email-verification-codes/
+// template from https://v2.lucia-auth.com/guidebook/email-verification-codes/
 export const generateEmailVerificationCode = async (userId: string): Promise<string> => {
   await db.verification.deleteMany({ where: { user_id: userId } })
 
@@ -99,7 +99,7 @@ export const generateEmailVerificationCode = async (userId: string): Promise<str
   return code
 }
 
-// https://lucia-auth.com/guidebook/email-verification-codes/
+// template from https://v2.lucia-auth.com/guidebook/email-verification-codes/
 export const validateEmailVerificationCode = async (userId: string, code: string): Promise<string> => {
   const storedTimeout = verificationTimeout.get(userId) ?? null
 

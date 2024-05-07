@@ -1,9 +1,8 @@
-// https://github.com/kubernetes-client/javascript
+// snippets from https://github.com/kubernetes-client/javascript
 import * as k8s from '@kubernetes/client-node'
 import dayjs from 'dayjs'
 import forge from 'node-forge'
 import { parse } from 'yaml'
-import { V1Node } from '@kubernetes/client-node'
 
 const POD_DATE_VALUE: number = Number(process.env.POD_DATE_VALUE) || 1
 const POD_DATE_UNIT: dayjs.ManipulateType = process.env.POD_DATE_UNIT as dayjs.ManipulateType || 'day'
@@ -214,7 +213,7 @@ export class Kubernetes {
     }
   }
 
-  private getIp (node: V1Node) {
+  private getIp (node: k8s.V1Node) {
     const type = process.env.NUXT_PUBLIC_RUNTIME === 'CLOUD' ? 'ExternalIP' : 'InternalIP'
 
     if (node.status?.nodeInfo?.containerRuntimeVersion.startsWith('docker:')) {

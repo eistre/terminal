@@ -1,4 +1,4 @@
-// https://github.com/sush1lemon/nuxt-socket.io/blob/main/preset/entry.ts
+// template from https://github.com/sush1lemon/nuxt-socket.io/blob/main/preset/entry.ts
 import '#internal/nitro/virtual/polyfill'
 import { Server as HttpServer } from 'node:http'
 import type { AddressInfo } from 'node:net'

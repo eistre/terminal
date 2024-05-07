@@ -1,4 +1,4 @@
-// https://ui.nuxt.com/getting-started/examples
+// template from https://ui.nuxt.com/getting-started/examples
 <script setup lang="ts">
 const colorMode = useColorMode()
 

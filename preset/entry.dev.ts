@@ -1,4 +1,4 @@
-// https://github.com/sush1lemon/nuxt-socket.io/blob/main/preset/entry.dev.ts
+// template from https://github.com/sush1lemon/nuxt-socket.io/blob/main/preset/entry.dev.ts
 import '#internal/nitro/virtual/polyfill'
 import { Server } from 'node:http'
 import { tmpdir } from 'node:os'

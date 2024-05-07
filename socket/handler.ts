@@ -1,4 +1,3 @@
-// https://github.com/nuxt/nuxt/pull/19230
 // Modified from: https://gitlab.com/JoonasHalapuu/ubuntuterminal/-/blob/main/sshConnection.js?ref_type=heads
 import { Client } from 'ssh2'
 import jwt, { type VerifyErrors } from 'jsonwebtoken'

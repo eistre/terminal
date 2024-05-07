@@ -1,3 +1,4 @@
+// snippets from https://github.com/Azure/azure-sdk-for-js/tree/main/sdk/containerservice/arm-containerservice
 import { DefaultAzureCredential } from '@azure/identity'
 import { ContainerServiceClient } from '@azure/arm-containerservice'
 import { Cron } from 'croner'

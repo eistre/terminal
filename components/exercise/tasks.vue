@@ -1,3 +1,4 @@
+// snippets from https://ui.nuxt.com/components/accordion
 <script setup lang="ts">
 type Task = {
   id: number,

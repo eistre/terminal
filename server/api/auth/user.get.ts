@@ -1,4 +1,4 @@
-// https://lucia-auth.com/guidebook/sign-in-with-username-and-password/nuxt/
+// template from https://v2.lucia-auth.com/guidebook/sign-in-with-username-and-password/nuxt/
 import { EventHandlerRequest, H3Event } from 'h3'
 
 export default defineEventHandler(async (event: H3Event<EventHandlerRequest>) => {
