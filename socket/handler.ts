@@ -285,15 +285,21 @@ export default function handleSocket (server: Server) {
       if (isCloud && azure.getClusterStatus() !== 'Running') {
         socket.send({ data: '\r\n*** Waiting for cluster to start *** \r\n' })
         await azure.waitForClusterStatus('Running')
+
+        if (socket.disconnected) {
+          return
+        }
       }
 
       socket.send({ data: '\r\n*** Starting Ubuntu pod ***\r\n' })
       const connection = await kubernetes.createOrUpdatePod(socket.data.clientId)
 
-      // Create ssh connection
-      if (!socket.disconnected) {
-        await connectToPod(socket, connection)
+      if (socket.disconnected) {
+        return
       }
+
+      // Create ssh connection
+      await connectToPod(socket, connection)
     } catch (error) {
       podLogger.error(`Pod error for client ${socket.data.clientId}`)
       podLogger.error(error)
