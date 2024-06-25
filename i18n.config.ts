@@ -6,6 +6,7 @@ export default defineI18nConfig(() => ({
   messages: {
     ee: {
       bar: {
+        domain: 'Lubatud domeenid',
         university: 'Tartu Ülikool arvutiteaduse instituut',
         img: '/arvutiteaduse_instituut_est_white_2021.svg',
         light: 'Lülitu heledale režiimile',
@@ -106,10 +107,23 @@ export default defineI18nConfig(() => ({
           create_fail: 'Harjutuse loomine ebaõnnestus',
           update_fail: 'Harjutuse muutmine ebaõnnestus'
         }
+      },
+      domain: {
+        name: 'Domeen',
+        verification: 'Vajab kinnitamist',
+        hidden: 'Varjatud',
+        add: 'Lisa',
+        enter_name: 'Sisesta domeen',
+        delete_success: 'Domeen edukalt kustutatud',
+        delete_error: 'Domeeni kustutamine ebaõnnestus',
+        success: 'Domeen edukalt lisatud',
+        domain_error: 'Domeeni lisamine ebaõnnestus',
+        domain_already_exists: 'Domeen juba eksisteerib'
       }
     },
     en: {
       bar: {
+        domain: 'Allowed domains',
         university: 'University of Tartu Institute of Computer Science',
         img: '/arvutiteaduse_instituut_eng_white_2021.svg',
         light: 'Switch to light theme',
@@ -210,6 +224,18 @@ export default defineI18nConfig(() => ({
           create_fail: 'Exercise creation failed',
           update_fail: 'Exercise update failed'
         }
+      },
+      domain: {
+        name: 'Domain',
+        verification: 'Needs verification',
+        hidden: 'Hidden',
+        add: 'Add',
+        enter_name: 'Enter domain',
+        delete_success: 'Domain deleted successfully',
+        delete_error: 'Domain deletion failed',
+        success: 'Domain added successfully',
+        domain_error: 'Domain addition failed',
+        domain_already_exists: 'Domain already exists'
       }
     }
   }
