@@ -16,7 +16,7 @@ const isCloud = config.public.runtime === 'CLOUD'
         @click="navigateTo('/')"
       />
       <div class="flex items-center">
-        <NavigationClusterStatus v-if="isCloud && cluster !== 'Running'" />
+        <NavigationClusterStatus v-if="isCloud && user && cluster !== 'Running'" />
         <NavigationDomainButton v-if="isCloud && user?.role === 'ADMIN'" />
         <NavigationThemeButton />
         <NavigationLocaleButton />

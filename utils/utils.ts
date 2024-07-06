@@ -1,3 +1,6 @@
+import { io } from 'socket.io-client'
+import type { ClusterStatus } from '~/kubernetes/azure'
+
 export const fetchUser = async () => {
   const user = useUser()
 
@@ -8,4 +11,15 @@ export const fetchUser = async () => {
   }
 
   user.value = data.value?.user ?? null
+}
+
+export const createSocket = () => {
+  const socket = useSocket()
+  const cluster = useCluster()
+
+  socket.value = io()
+
+  socket.value.on('clusterStatus', ({ status }: { status: ClusterStatus }) => {
+    cluster.value = status
+  })
 }
