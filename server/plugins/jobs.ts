@@ -28,6 +28,8 @@ async function deleteExpiredNamespaces (namespaces: string[]): Promise<number> {
 }
 
 async function podDeleteJob () {
+  await azure.setClusterStatus()
+
   if (isCloud && azure.getClusterStatus() !== 'Running') {
     return
   }
