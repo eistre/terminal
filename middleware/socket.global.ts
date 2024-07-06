@@ -3,11 +3,12 @@ export default defineNuxtRouteMiddleware(() => {
     return
   }
 
+  const user = useUser()
   const socket = useSocket()
   const config = useRuntimeConfig()
   const isCloud = config.public.runtime === 'CLOUD'
 
-  if (isCloud && !socket.value) {
+  if (isCloud && user.value && !socket.value) {
     createSocket()
   }
 })
