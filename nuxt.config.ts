@@ -15,11 +15,13 @@ export default defineNuxtConfig({
       ]
     }
   },
+
   runtimeConfig: {
     public: {
       runtime: ''
     }
   },
+
   nitro: {
     entry: process.env.NODE_ENV === 'production' ? undefined : '../preset/entry.dev',
     preset: './preset',
@@ -34,11 +36,14 @@ export default defineNuxtConfig({
       }
     }
   },
+
   routeRules: {
     '/exercises/**': { ssr: false, prerender: false }
   },
+
   devtools: { enabled: true },
   modules: ['@nuxt/ui', '@nuxt/image', 'nuxt-security', '@nuxtjs/i18n'],
+
   // https://nuxt-security.vercel.app/documentation/getting-started/setup
   security: {
     xssValidator: false,
@@ -49,17 +54,22 @@ export default defineNuxtConfig({
       crossOriginEmbedderPolicy: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp'
     }
   },
+
   ui: {
     icons: ['twemoji']
   },
+
   i18n: {
     vueI18n: './i18n.config.ts'
   },
+
   imports: {
     presets: [
       { from: '@xterm/xterm', imports: ['Terminal'] },
       { from: '@xterm/addon-webgl', imports: ['WebglAddon'] },
       { from: '@xterm/addon-fit', imports: ['FitAddon'] }
     ]
-  }
+  },
+
+  compatibilityDate: '2024-07-06'
 })

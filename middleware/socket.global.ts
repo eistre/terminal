@@ -1,4 +1,8 @@
 export default defineNuxtRouteMiddleware(() => {
+  if (import.meta.server) {
+    return
+  }
+
   const socket = useSocket()
   const config = useRuntimeConfig()
   const isCloud = config.public.runtime === 'CLOUD'
