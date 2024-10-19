@@ -1,5 +1,8 @@
 FROM ubuntu:24.04
 
+# Install unminimize
+RUN apt update && apt upgrade -y && apt install -y unminimize
+
 # Unminimize container
 RUN yes | unminimize
 

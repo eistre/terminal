@@ -18,4 +18,5 @@ jobs:
       - name: Build the Ubuntu image
         run: docker build . --file Dockerfile.ubuntu --tag ghcr.io/eistre/terminal-ubuntu:latest
       - name: Push Ubuntu image
+        if: github.ref == 'refs/heads/master'
         run: docker push ghcr.io/eistre/terminal-ubuntu:latest
