@@ -107,12 +107,12 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     return
   }
 
-  const { error } = await useFetch(`/api/exercises/edit/${exerciseId}`, {
-    method: 'POST',
-    body: body.data
-  })
-
-  if (error.value) {
+  try {
+    await $fetch(`/api/exercises/edit/${exerciseId}`, {
+      method: 'POST',
+      body: body.data
+    })
+  } catch (error) {
     toast.add({
       id: `edit_exercise_failed_${exerciseId}`,
       icon: 'i-heroicons-x-mark',

@@ -5,22 +5,19 @@ const emit = defineEmits(['delete'])
 const { id } = defineProps<{ id: number }>()
 
 const deleteExercise = async () => {
-  const { error } = await useFetch(`/api/exercises/${id}`, {
-    method: 'DELETE',
-    onResponse: ({ response }) => {
-      if (response.status === 204) {
-        toast.add({
-          id: `exercise_delete_success_${id}`,
-          icon: 'i-heroicons-check',
-          title: i18n.t('exercises.delete_success'),
-          timeout: 5000,
-          color: 'green'
-        })
-      }
-    }
-  })
+  try {
+    await $fetch(`/api/exercises/${id}`, {
+      method: 'DELETE'
+    })
 
-  if (error.value) {
+    toast.add({
+      id: `exercise_delete_success_${id}`,
+      icon: 'i-heroicons-check',
+      title: i18n.t('exercises.delete_success'),
+      timeout: 5000,
+      color: 'green'
+    })
+  } catch (error) {
     toast.add({
       id: `exercise_delete_failed_${id}`,
       icon: 'i-heroicons-x-mark',

@@ -54,16 +54,16 @@ async function onLoginSubmit (event: FormSubmitEvent<Schema>) {
     return
   }
 
-  const { error } = await useFetch('/api/auth/login', {
-    method: 'POST',
-    body: {
-      name: data.data.username,
-      password: data.data.password
-    }
-  })
-
-  if (error.value) {
-    const { message } = error.value.data
+  try {
+    await $fetch('/api/auth/login', {
+      method: 'POST',
+      body: {
+        name: data.data.username,
+        password: data.data.password
+      }
+    })
+  } catch (error: any) {
+    const { message } = error.data
     let title = i18n.t('auth.auth_error')
 
     if (message === 'Incorrect password') {
@@ -100,16 +100,16 @@ async function onCreateSubmit (event: FormSubmitEvent<Schema>) {
     return
   }
 
-  const { error } = await useFetch('/api/auth/signup', {
-    method: 'POST',
-    body: {
-      name: data.data.username,
-      password: data.data.password
-    }
-  })
-
-  if (error.value) {
-    const { message } = error.value.data
+  try {
+    await $fetch('/api/auth/signup', {
+      method: 'POST',
+      body: {
+        name: data.data.username,
+        password: data.data.password
+      }
+    })
+  } catch (error: any) {
+    const { message } = error.data
     let title = i18n.t('auth.auth_error')
 
     if (message === 'User already exists') {

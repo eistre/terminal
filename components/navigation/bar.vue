@@ -25,6 +25,6 @@ const isCloud = config.public.runtime === 'CLOUD'
     </UContainer>
 
     <!-- https://ui.nuxt.com/layout/divider -->
-    <UDivider :ui="{ border: { size: { horizontal: 'border-t-2' } } }" />
+    <UDivider size="xs" />
   </div>
 </template>

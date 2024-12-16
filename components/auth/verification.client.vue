@@ -36,10 +36,10 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     return
   }
 
-  const { error } = await useFetch(`/api/auth/email/${data.data.code}`)
-
-  if (error.value) {
-    const { message } = error.value.data
+  try {
+    await $fetch(`/api/auth/email/${data.data.code}`)
+  } catch (error: any) {
+    const { message } = error.data
     let title = i18n.t('auth.verify_error')
 
     if (message === 'Invalid code') {
@@ -62,10 +62,10 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
 }
 
 async function resend () {
-  const { error } = await useFetch('/api/auth/email/resend')
-
-  if (error.value) {
-    const { message } = error.value.data
+  try {
+    await $fetch('/api/auth/email/resend')
+  } catch (error: any) {
+    const { message } = error.data
     let title = i18n.t('auth.resend_failed')
 
     if (message === 'Too many code requests') {
