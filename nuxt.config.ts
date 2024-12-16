@@ -1,5 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  compatibilityDate: '2024-11-01',
+  devtools: { enabled: true },
   app: {
     head: {
       title: 'Linux terminal',
@@ -23,8 +25,9 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    entry: process.env.NODE_ENV === 'production' ? undefined : '../preset/entry.dev',
-    preset: './preset',
+    experimental: {
+      websocket: true
+    },
     storage: {
       k8s: {
         driver: 'fs',
@@ -41,8 +44,7 @@ export default defineNuxtConfig({
     '/exercises/**': { ssr: false, prerender: false }
   },
 
-  devtools: { enabled: true },
-  modules: ['@nuxt/ui', '@nuxt/image', 'nuxt-security', '@nuxtjs/i18n'],
+  modules: ['@nuxt/ui', '@nuxt/image', 'nuxt-security', '@nuxtjs/i18n', '@nuxt/icon'],
 
   // https://nuxt-security.vercel.app/documentation/getting-started/setup
   security: {
@@ -55,10 +57,6 @@ export default defineNuxtConfig({
     }
   },
 
-  ui: {
-    icons: ['twemoji']
-  },
-
   i18n: {
     vueI18n: './i18n.config.ts'
   },
@@ -69,7 +67,5 @@ export default defineNuxtConfig({
       { from: '@xterm/addon-webgl', imports: ['WebglAddon'] },
       { from: '@xterm/addon-fit', imports: ['FitAddon'] }
     ]
-  },
-
-  compatibilityDate: '2024-07-06'
+  }
 })

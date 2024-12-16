@@ -1,5 +1,9 @@
 import { type Socket } from 'socket.io-client'
 
-export const useSocket = () => {
+export const useStatusSocket = () => {
   return useState<Socket | null>('socket', () => null)
+}
+
+export const useTerminalSocket = () => {
+  return useState<Socket | null>('terminalSocket', () => null)
 }

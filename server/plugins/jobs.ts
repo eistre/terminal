@@ -1,4 +1,4 @@
-import { Cron } from 'croner'
+import { Cron, scheduledJobs } from 'croner'
 import dayjs from 'dayjs'
 import db from '~/prisma/db'
 import azure from '~/server/utils/azure'
@@ -75,9 +75,9 @@ export default defineNitroPlugin(async () => {
   await userDeleteJob()
 
   // Schedule the jobs
-  Cron(POD_CRON_TIMER, { name: 'podDeleteJob' }, podDeleteJob)
-  Cron(USER_CRON_TIMER, { name: 'userDeleteJob' }, userDeleteJob)
+  new Cron(POD_CRON_TIMER, { name: 'podDeleteJob' }, podDeleteJob)
+  new Cron(USER_CRON_TIMER, { name: 'userDeleteJob' }, userDeleteJob)
 
-  const jobs = Cron.scheduledJobs.map(job => job.name)
+  const jobs = scheduledJobs.map(job => job.name)
   logger.info(`Scheduled following jobs: ${jobs}`)
 })
