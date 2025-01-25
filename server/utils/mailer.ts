@@ -67,7 +67,7 @@ export async function sendMail (userId: string, token: string, recipient: string
     const poller = await client.beginSend(message)
     const response = await poller.pollUntilDone()
 
-    Cron(dayjs().add(RESEND_COOLDOWN, 'minutes').toDate(), () => {
+    new Cron(dayjs().add(RESEND_COOLDOWN, 'minutes').toDate(), () => {
       codeSent.delete(userId)
     })
 

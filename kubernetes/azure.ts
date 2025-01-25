@@ -6,6 +6,8 @@ import dayjs from 'dayjs'
 import emitter from '~/server/utils/emitter'
 
 export type ClusterStatus = 'Running' | 'Starting' | 'Stopping' | 'Stopped'
+type ProvisioningState = 'Starting' | 'Stopping' | 'Succeeded'
+type PowerState = 'Running' | 'Stopped'
 
 const AZURE_SUBSCRIPTION = process.env.AZURE_SUBSCRIPTION || ''
 const AZURE_RESOURCEGROUP = process.env.AZURE_RESOURCEGROUP || ''
@@ -23,7 +25,11 @@ export class Azure {
 
     this.client = new ContainerServiceClient(credential, AZURE_SUBSCRIPTION || '')
     this.clusterStatus = 'Stopped'
-    this.stopLock = false
+    this.stopLock = true
+
+    new Cron(dayjs().add(5, 'minutes').toDate(), () => {
+      this.stopLock = false
+    })
   }
 
   getClusterStatus (): ClusterStatus {
@@ -32,7 +38,10 @@ export class Azure {
 
   async setClusterStatus () {
     const cluster = await this.client.managedClusters.get(AZURE_RESOURCEGROUP, AZURE_CLUSTER)
-    this.clusterStatus = cluster.powerState?.code as ClusterStatus
+    const provisioningState: ProvisioningState = cluster.provisioningState as ProvisioningState
+    const powerState: PowerState = cluster.powerState?.code as PowerState
+
+    this.clusterStatus = provisioningState === 'Succeeded' ? powerState : provisioningState
   }
 
   getStopLock (): boolean {
@@ -47,7 +56,7 @@ export class Azure {
     await this.client.managedClusters.beginStartAndWait(AZURE_RESOURCEGROUP, AZURE_CLUSTER)
 
     this.stopLock = true
-    Cron(dayjs().add(30, 'minutes').toDate(), () => {
+    new Cron(dayjs().add(30, 'minutes').toDate(), () => {
       this.stopLock = false
     })
 

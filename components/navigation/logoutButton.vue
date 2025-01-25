@@ -3,11 +3,11 @@ const toast = useToast()
 const i18n = useI18n()
 
 const logout = async () => {
-  const { error } = await useFetch('/api/auth/logout', {
-    method: 'POST'
-  })
-
-  if (error.value) {
+  try {
+    await $fetch('/api/auth/logout', {
+      method: 'POST'
+    })
+  } catch (error) {
     toast.add({
       id: 'auth_logout_failed',
       icon: 'i-heroicons-x-mark',

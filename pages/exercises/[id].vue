@@ -53,48 +53,11 @@ const updated = ref(true)
 const connected = ref(false)
 
 const user = useUser()
+const socket = useTerminalSocket()
 
-const socket = io('/terminal', {
-  auth: {
-    exerciseId,
-    token: user.value?.token
-  }
-})
-
-socket.on('connect', () => {
-  term.write('\r\n*** Connected to backend ***\r\n')
-})
-
-socket.on('disconnect', () => {
-  term.write('\r\n*** Disconnected from backend ***\r\n')
-})
-
-socket.on('ready', () => {
-  connected.value = true
-})
-
-term.onData((data: string) => {
-  socket.send({ data })
-})
-
-socket.on('message', ({ data }: { data: string }) => {
-  term.write(data)
-})
-
-socket.on('complete', ({ data }: { data: number[] }) => {
-  updated.value = false
-  exercise.tasks.forEach((task) => {
-    if (data.includes(task.id)) {
-      task.completed = true
-    }
-  })
-
-  // Workaround for closing task if completed
-  // as nuxt ui doesn't support programmatic closing
-  nextTick(() => {
-    updated.value = true
-  })
-})
+if (!socket.value) {
+  setUpSocket()
+}
 
 useResizeObserver(terminal, (entries) => {
   height.value = entries[0].contentRect.height
@@ -103,26 +66,86 @@ useResizeObserver(terminal, (entries) => {
 })
 
 term.onResize((event: { cols: number, rows: number }) => {
+  if (!socket.value) {
+    return
+  }
+
   const { rows, cols } = event
-  socket.emit('resize', {
+  socket.value.emit('resize', {
     rows,
     cols,
-    width,
-    height
+    height: height.value,
+    width: width.value
   })
 })
 
+term.onData((data: string) => {
+  if (!socket.value) {
+    return
+  }
+
+  socket.value.send({ data })
+})
+
 onMounted(() => {
-  term.open(terminal.value)
+  term.open(terminal.value!)
   fitAddon.fit()
 })
 
-onUnmounted(() => {
-  socket.disconnect()
+onBeforeUnmount(() => {
+  if (socket.value) {
+    socket.value.disconnect()
+    socket.value.removeAllListeners()
+    socket.value = null
+  }
 })
 
+function setUpSocket () {
+  socket.value = io('/terminal', {
+    auth: {
+      exerciseId,
+      token: user.value?.token
+    }
+  })
+
+  socket.value.on('connect', () => {
+    term.write('\r\n*** Connected to backend ***\r\n')
+  })
+
+  socket.value.on('disconnect', () => {
+    term.write('\r\n*** Disconnected from backend ***\r\n')
+  })
+
+  socket.value.on('ready', () => {
+    connected.value = true
+  })
+
+  socket.value.on('message', ({ data }: { data: string }) => {
+    term.write(data)
+  })
+
+  socket.value.on('complete', ({ data }: { data: number[] }) => {
+    updated.value = false
+    exercise.tasks.forEach((task) => {
+      if (data.includes(task.id)) {
+        task.completed = true
+      }
+    })
+
+    // Workaround for closing task if completed
+    // as nuxt ui doesn't support programmatic closing
+    nextTick(() => {
+      updated.value = true
+    })
+  })
+}
+
 function resetExercise () {
-  socket.emit('reset_exercise')
+  if (!socket.value) {
+    return
+  }
+
+  socket.value.emit('reset_exercise')
 
   updated.value = false
   exercise.tasks.forEach((task) => {
@@ -132,7 +155,7 @@ function resetExercise () {
     updated.value = true
   })
 
-  socket.once('reset_exercise', ({ status }) => {
+  socket.value.once('reset_exercise', ({ status }) => {
     if (status) {
       toast.add({
         id: 'reset_success',
@@ -154,16 +177,18 @@ function resetExercise () {
 }
 
 function resetPod () {
-  if (connected.value) {
-    connected.value = false
-
-    socket.emit('reset_pod')
-    term.write('\n\r\n*** Resetting pod ***\r\n')
-
-    socket.once('disconnect', () => {
-      socket.connect()
-    })
+  if (!socket.value || !connected.value) {
+    return
   }
+
+  connected.value = false
+
+  socket.value.emit('reset_pod')
+  term.write('\n\r\n*** Resetting pod ***\r\n')
+
+  socket.value.once('disconnect', () => {
+    socket.value!.connect()
+  })
 }
 </script>
 

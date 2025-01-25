@@ -1,5 +1,5 @@
 # Build step
-FROM node:21-alpine AS build
+FROM node:22-alpine AS build
 
 USER node
 
@@ -17,7 +17,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # Prod image
-FROM node:21-alpine AS final
+FROM node:22-alpine AS final
 
 RUN apk add --update --no-cache openssh-client
 

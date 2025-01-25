@@ -1,6 +1,14 @@
 <script setup lang="ts">
+const user = useUser()
+const socket = useStatusSocket()
+const config = useRuntimeConfig()
 const cluster = useCluster()
 const i18n = useI18n()
+const isCloud = config.public.runtime === 'CLOUD'
+
+if (isCloud && user.value && !socket.value) {
+  createSocket()
+}
 
 const text = computed(() => {
   switch (cluster.value) {

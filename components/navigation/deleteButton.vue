@@ -3,22 +3,19 @@ const toast = useToast()
 const i18n = useI18n()
 
 const deleteUser = async () => {
-  const { error } = await useFetch('/api/auth/delete', {
-    method: 'POST',
-    onResponse: ({ response }) => {
-      if (response.status === 204) {
-        toast.add({
-          id: 'auth_delete_success',
-          icon: 'i-heroicons-check',
-          title: i18n.t('auth.delete_success'),
-          timeout: 5000,
-          color: 'green'
-        })
-      }
-    }
-  })
+  try {
+    await $fetch('/api/auth/delete', {
+      method: 'POST'
+    })
 
-  if (error.value) {
+    toast.add({
+      id: 'auth_delete_success',
+      icon: 'i-heroicons-check',
+      title: i18n.t('auth.delete_success'),
+      timeout: 5000,
+      color: 'green'
+    })
+  } catch (error) {
     toast.add({
       id: 'auth_delete_failed',
       icon: 'i-heroicons-x-mark',

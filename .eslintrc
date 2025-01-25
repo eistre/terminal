@@ -7,5 +7,8 @@
         "plugin:security-node/recommended",
         "plugin:anti-trojan-source/recommended"
     ],
-    "rules": { "vue/multi-word-component-names": "off" }
+    "rules": {
+        "vue/multi-word-component-names": "off",
+        "no-new": "off"
+    }
 }

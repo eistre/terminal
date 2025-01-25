@@ -4,17 +4,16 @@ import type { ClusterStatus } from '~/kubernetes/azure'
 export const fetchUser = async () => {
   const user = useUser()
 
-  const { data, error } = await useFetch('/api/auth/user')
-
-  if (error.value) {
+  try {
+    const data = await $fetch('/api/auth/user')
+    user.value = data?.user ?? null
+  } catch (error) {
     throw createError('Failed to fetch user data')
   }
-
-  user.value = data.value?.user ?? null
 }
 
 export const createSocket = () => {
-  const socket = useSocket()
+  const socket = useStatusSocket()
   const cluster = useCluster()
 
   socket.value = io()

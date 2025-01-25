@@ -48,9 +48,10 @@ const columns = [{
 }]
 
 const fetchDomains = async () => {
-  const { data, error } = await useFetch('/api/auth/email/domains')
-
-  if (error.value) {
+  try {
+    const data = await $fetch('/api/auth/email/domains')
+    domains.value = data?.domains ?? []
+  } catch (error) {
     toast.add({
       id: 'domains_failed',
       icon: 'i-heroicons-x-mark',
@@ -59,28 +60,23 @@ const fetchDomains = async () => {
       color: 'red'
     })
   }
-
-  domains.value = data.value?.domains ?? []
 }
 
 const deleteDomain = async (name: string) => {
-  const { error } = await useFetch('/api/auth/email/domains', {
-    method: 'DELETE',
-    body: { name },
-    onResponse: ({ response }) => {
-      if (response.status === 204) {
-        toast.add({
-          id: `domain_delete_success_${name}`,
-          icon: 'i-heroicons-check',
-          title: i18n.t('domain.delete_success'),
-          timeout: 5000,
-          color: 'green'
-        })
-      }
-    }
-  })
+  try {
+    await $fetch('/api/auth/email/domains', {
+      method: 'DELETE',
+      body: { name }
+    })
 
-  if (error.value) {
+    toast.add({
+      id: `domain_delete_success_${name}`,
+      icon: 'i-heroicons-check',
+      title: i18n.t('domain.delete_success'),
+      timeout: 5000,
+      color: 'green'
+    })
+  } catch (error) {
     toast.add({
       id: `domain_delete_failed_${name}`,
       icon: 'i-heroicons-x-mark',
@@ -108,28 +104,25 @@ async function onDomainSubmit (event: FormSubmitEvent<Schema>) {
     return
   }
 
-  const { error } = await useFetch('/api/auth/email/domains', {
-    method: 'POST',
-    body: {
-      name: data.data.name,
-      verified: !data.data.verified,
-      hidden: data.data.hidden
-    },
-    onResponse: ({ response }) => {
-      if (response.status === 200) {
-        toast.add({
-          id: 'domain_success',
-          icon: 'i-heroicons-check',
-          title: i18n.t('domain.success'),
-          timeout: 5000,
-          color: 'green'
-        })
+  try {
+    await $fetch('/api/auth/email/domains', {
+      method: 'POST',
+      body: {
+        name: data.data.name,
+        verified: !data.data.verified,
+        hidden: data.data.hidden
       }
-    }
-  })
+    })
 
-  if (error.value) {
-    const { message } = error.value.data
+    toast.add({
+      id: 'domain_success',
+      icon: 'i-heroicons-check',
+      title: i18n.t('domain.success'),
+      timeout: 5000,
+      color: 'green'
+    })
+  } catch (error: any) {
+    const { message } = error.data
     let title = i18n.t('domain.domain_error')
 
     if (message === 'User already exists') {
