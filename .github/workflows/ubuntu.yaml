@@ -1,11 +1,6 @@
 name: Ubuntu image for Linux Terminal Application
 
 on:
-  push:
-    paths:
-      - './Dockerfile.ubuntu'
-  schedule:
-    - cron: '0 0 * * 0'
   workflow_dispatch:
 
 jobs:
