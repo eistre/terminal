@@ -1,0 +1,12 @@
+{
+  "extends": "@terminal/typescript/base.json",
+  "include": [
+    "*.ts",
+    "*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "apps",
+    "packages"
+  ]
+}

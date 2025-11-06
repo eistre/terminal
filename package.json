@@ -1,0 +1,26 @@
+{
+  "name": "terminal",
+  "private": true,
+  "packageManager": "pnpm@10.20.0",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.11.0"
+  },
+  "scripts": {
+    "build": "turbo build",
+    "clean": "turbo clean clean:root",
+    "clean:root": "git clean -xdf .cache .turbo node_modules",
+    "dev": "turbo dev",
+    "lint": "turbo lint lint:root",
+    "lint:fix": "turbo lint:fix lint:root:fix",
+    "lint:root": "eslint .",
+    "lint:root:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@terminal/eslint": "workspace:*",
+    "@terminal/typescript": "workspace:*",
+    "eslint": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:"
+  }
+}
