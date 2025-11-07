@@ -18,18 +18,18 @@
       "persistent": true
     },
     "lint": {
-      "cache": false,
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "outputs": [".cache/.eslintcache"]
     },
     "//#lint:root": {
-      "cache": false
+      "outputs": [".cache/.eslintcache"]
     },
     "lint:fix": {
-      "cache": false,
-      "dependsOn": ["^lint:fix"]
+      "dependsOn": ["^lint:fix"],
+      "outputs": [".cache/.eslintcache"]
     },
     "//#lint:root:fix": {
-      "cache": false
+      "outputs": [".cache/.eslintcache"]
     }
   }
 }

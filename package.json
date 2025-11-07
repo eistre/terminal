@@ -13,13 +13,15 @@
     "dev": "turbo dev",
     "lint": "turbo lint lint:root",
     "lint:fix": "turbo lint:fix lint:root:fix",
-    "lint:root": "eslint .",
-    "lint:root:fix": "eslint . --fix"
+    "lint:root": "eslint . --cache --cache-location .cache/.eslintcache",
+    "lint:root:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@terminal/eslint": "workspace:*",
     "@terminal/typescript": "workspace:*",
     "eslint": "catalog:",
+    "husky": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:"
   }

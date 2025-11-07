@@ -11,8 +11,8 @@
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo node_modules",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint": "eslint . --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
