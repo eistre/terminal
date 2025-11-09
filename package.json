@@ -1,7 +1,7 @@
 {
   "name": "terminal",
   "private": true,
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@10.21.0",
   "license": "MIT",
   "engines": {
     "node": "^24.11.0"

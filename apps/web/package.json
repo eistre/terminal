@@ -1,0 +1,32 @@
+{
+  "name": "web",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "clean": "git clean -xdf .cache .turbo node_modules .nuxt",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "lint": "eslint . --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/image": "catalog:",
+    "@nuxt/ui": "catalog:",
+    "nuxt": "catalog:",
+    "tailwindcss": "catalog:",
+
+    "vue": "catalog:",
+    "vue-router": "catalog:"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "catalog:",
+    "@nuxt/test-utils": "catalog:",
+    "@terminal/eslint": "workspace:*",
+    "@terminal/typescript": "workspace:*",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

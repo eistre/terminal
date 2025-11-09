@@ -1,9 +1,8 @@
-import sharedConfig from '@terminal/eslint';
+import config from '@terminal/eslint';
 
-export default sharedConfig
-  .prepend({
-    ignores: [
-      'apps/**',
-      'packages/**',
-    ],
-  });
+export default config.prepend({
+  ignores: [
+    'apps/**',
+    'packages/**',
+  ],
+});

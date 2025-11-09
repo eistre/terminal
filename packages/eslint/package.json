@@ -18,7 +18,6 @@
     "@antfu/eslint-config": "catalog:",
     "@terminal/typescript": "workspace:*",
     "eslint": "catalog:",
-    "eslint-plugin-turbo": "catalog:",
-    "jiti": "catalog:"
+    "eslint-plugin-turbo": "catalog:"
   }
 }
