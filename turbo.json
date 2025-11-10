@@ -30,6 +30,13 @@
     },
     "//#lint:root:fix": {
       "outputs": [".cache/.eslintcache"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "outputs": [".cache/tsbuildinfo.json", ".nuxt/**.tsbuildinfo"]
+    },
+    "//#typecheck:root": {
+      "outputs": [".cache/tsbuildinfo.json"]
     }
   }
 }

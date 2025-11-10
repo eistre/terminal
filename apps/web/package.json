@@ -10,14 +10,14 @@
     "lint": "eslint . --cache --cache-location .cache/.eslintcache",
     "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "typecheck": "nuxt typecheck"
   },
   "dependencies": {
     "@nuxt/image": "catalog:",
     "@nuxt/ui": "catalog:",
     "nuxt": "catalog:",
     "tailwindcss": "catalog:",
-
     "vue": "catalog:",
     "vue-router": "catalog:"
   },
@@ -27,6 +27,7 @@
     "@terminal/eslint": "workspace:*",
     "@terminal/typescript": "workspace:*",
     "eslint": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vue-tsc": "catalog:"
   }
 }
