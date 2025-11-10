@@ -1,24 +1,34 @@
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
-.cache
-dist
-
-# Node dependencies
+# node
 node_modules
 
-# Logs
+# build output
+dist
+build
+out
+*.tgz
+
+# logs
 logs
 *.log
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Local env files
+# dotenv environment variable files
 .env
-.env.*
-!.env.example
+
+# caches
+.cache
+*.tsbuildinfo
+
+# IDEs and editors
+.vscode/
+.idea/*
+!.idea/inspectionProfiles/
+!.idea/inspectionProfiles/**
+!.idea/jsLinters/
+!.idea/jsLinters/**
+
+# macOS
+.DS_Store
+
+# Turbo
+.turbo

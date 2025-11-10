@@ -1,4 +1,12 @@
 {
-  // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "@terminal/typescript/base.json",
+  "include": [
+    "*.ts",
+    "*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "apps",
+    "packages"
+  ]
 }

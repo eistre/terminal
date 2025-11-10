@@ -1,0 +1,42 @@
+{
+  "$schema": "node_modules/turbo/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".nuxt/**", ".output/**", "dist/**", "build/**"]
+    },
+    "clean": {
+      "cache": false,
+      "dependsOn": ["^clean"]
+    },
+    "//#clean:root": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "dependsOn": ["^dev"],
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "outputs": [".cache/.eslintcache"]
+    },
+    "//#lint:root": {
+      "outputs": [".cache/.eslintcache"]
+    },
+    "lint:fix": {
+      "dependsOn": ["^lint:fix"],
+      "outputs": [".cache/.eslintcache"]
+    },
+    "//#lint:root:fix": {
+      "outputs": [".cache/.eslintcache"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "outputs": [".cache/tsbuildinfo.json", ".nuxt/**.tsbuildinfo"]
+    },
+    "//#typecheck:root": {
+      "outputs": [".cache/tsbuildinfo.json"]
+    }
+  }
+}
