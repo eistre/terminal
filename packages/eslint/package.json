@@ -4,10 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    ".": {
-      "types": "./eslint.config.ts",
-      "default": "./eslint.config.ts"
-    }
+    ".": "./eslint.config.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo node_modules",
