@@ -17,6 +17,7 @@
     "@nuxt/image": "catalog:",
     "@nuxt/ui": "catalog:",
     "@terminal/env": "workspace:*",
+    "@terminal/logger": "workspace:*",
     "nuxt": "catalog:",
     "tailwindcss": "catalog:",
     "vue": "catalog:",
