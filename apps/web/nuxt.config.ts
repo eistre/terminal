@@ -16,10 +16,29 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/test-utils',
     '@nuxt/ui',
+    '@nuxtjs/i18n',
   ],
 
   eslint: { config: { standalone: false } },
+
+  image: {
+    dir: 'assets/images',
+  },
+
   css: ['~/assets/css/main.css'],
+
+  i18n: {
+    strategy: 'no_prefix',
+    defaultLocale: 'en',
+    locales: [
+      { code: 'en', name: 'English', file: 'en.json' },
+      { code: 'et', name: 'Eesti', file: 'et.json' },
+    ],
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'locale',
+    },
+  },
 
   nitro: {
     hooks: {

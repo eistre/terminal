@@ -1,0 +1,11 @@
+{
+  "app": {
+    "title": "Linux käsurida",
+    "description": "Linux käsurea harjutuskeskkond - Ubuntu terminal veebibrauseris",
+    "institute": "Arvutiteaduse instituut, Tartu Ülikool",
+    "logo": "arvutiteaduse_instituut_est_white_2021.svg"
+  },
+  "header": {
+    "changeLanguage": "Vali keel"
+  }
+}

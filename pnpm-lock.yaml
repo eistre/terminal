@@ -21,6 +21,9 @@ catalogs:
     '@nuxt/ui':
       specifier: ^4.1.0
       version: 4.1.0
+    '@nuxtjs/i18n':
+      specifier: ^10.2.1
+      version: 10.2.1
     '@types/node':
       specifier: ^24.10.1
       version: 24.10.1
@@ -95,6 +98,12 @@ importers:
       '@nuxt/ui':
         specifier: 'catalog:'
         version: 4.1.0(@babel/parser@7.28.5)(change-case@5.4.4)(db0@0.3.4(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(kysely@0.28.8)(mysql2@3.15.3))(mysql2@3.15.3))(embla-carousel@8.6.0)(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(vite@7.2.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.1))(vue-router@4.6.3(vue@3.5.24(typescript@5.9.3)))(vue@3.5.24(typescript@5.9.3))(zod@4.1.12)
+      '@nuxtjs/i18n':
+        specifier: 'catalog:'
+        version: 10.2.1(@vue/compiler-dom@3.5.24)(db0@0.3.4(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(kysely@0.28.8)(mysql2@3.15.3))(mysql2@3.15.3))(eslint@9.39.1(jiti@2.6.1))(ioredis@5.8.2)(magicast@0.5.1)(rollup@4.53.2)(vue@3.5.24(typescript@5.9.3))
+      '@terminal/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@terminal/env':
         specifier: workspace:*
         version: link:../../packages/env
@@ -139,12 +148,15 @@ importers:
   packages/database:
     dependencies:
       drizzle-orm:
-        specifier: ^0.44.7
+        specifier: 'catalog:'
         version: 0.44.7(@opentelemetry/api@1.9.0)(kysely@0.28.8)(mysql2@3.15.3)
       mysql2:
-        specifier: ^3.15.3
+        specifier: 'catalog:'
         version: 3.15.3
     devDependencies:
+      '@terminal/env':
+        specifier: workspace:*
+        version: link:../env
       '@terminal/eslint':
         specifier: workspace:*
         version: link:../eslint
