@@ -1,0 +1,12 @@
+# Docker compose example for running a MySQL database
+services:
+  database:
+    image: mysql:9
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: terminal
+      MYSQL_USER: terminal
+      MYSQL_PASSWORD: password

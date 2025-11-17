@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "clean": "git clean -xdf .cache .turbo node_modules .nuxt",
+    "clean": "git clean -xdf .cache .turbo node_modules .nuxt .output",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "lint": "eslint . --cache --cache-location .cache/.eslintcache",
@@ -16,6 +16,7 @@
   "dependencies": {
     "@nuxt/image": "catalog:",
     "@nuxt/ui": "catalog:",
+    "@terminal/database": "workspace:*",
     "@terminal/env": "workspace:*",
     "@terminal/logger": "workspace:*",
     "nuxt": "catalog:",

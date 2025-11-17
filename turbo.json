@@ -13,6 +13,12 @@
     "//#clean:root": {
       "cache": false
     },
+    "db:generate": {
+      "cache": false
+    },
+    "db:studio": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "dependsOn": ["^dev"],

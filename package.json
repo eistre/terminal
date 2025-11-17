@@ -1,7 +1,7 @@
 {
   "name": "terminal",
   "private": true,
-  "packageManager": "pnpm@10.21.0",
+  "packageManager": "pnpm@10.22.0",
   "license": "MIT",
   "engines": {
     "node": "^24.11.0"
@@ -10,6 +10,8 @@
     "build": "turbo build",
     "clean": "turbo clean clean:root",
     "clean:root": "git clean -xdf .cache .turbo node_modules",
+    "db:generate": "turbo run db:generate --filter=@terminal/database",
+    "db:studio": "turbo run db:studio --filter=@terminal/database",
     "dev": "turbo dev",
     "lint": "turbo lint lint:root",
     "lint:fix": "turbo lint:fix lint:root:fix",
