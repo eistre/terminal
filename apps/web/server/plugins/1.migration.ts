@@ -1,4 +1,6 @@
+import { resolve } from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { runMigration } from '@terminal/database/migration';
 import { useDatabase } from '~~/server/lib/database';
 import { useEnv } from '~~/server/lib/env';
@@ -18,7 +20,7 @@ export default defineNitroPlugin(async () => {
 
     const migrationsPath = env.NODE_ENV === 'production'
       ? './server/migrations'
-      : './node_modules/@terminal/database/migrations';
+      : resolve(fileURLToPath(import.meta.url), '../migrations');
 
     await runMigration(db, migrationsPath);
     logger.info('Database migration completed successfully');
