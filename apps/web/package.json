@@ -20,10 +20,12 @@
     "@terminal/database": "workspace:*",
     "@terminal/env": "workspace:*",
     "@terminal/logger": "workspace:*",
+    "better-auth": "catalog:",
     "nuxt": "catalog:",
     "tailwindcss": "catalog:",
     "vue": "catalog:",
-    "vue-router": "catalog:"
+    "vue-router": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@nuxt/eslint": "catalog:",

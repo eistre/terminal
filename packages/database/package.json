@@ -23,6 +23,7 @@
     "@terminal/env": "workspace:*",
     "@terminal/eslint": "workspace:*",
     "@terminal/typescript": "workspace:*",
+    "@types/node": "catalog:",
     "drizzle-kit": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:"

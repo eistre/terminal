@@ -1,0 +1,29 @@
+<script setup lang="ts">
+const session = useSession();
+</script>
+
+<template>
+  <UPage>
+    <UPageHero
+      orientation="horizontal"
+      :headline="$t('home.secondary')"
+      :title="$t('home.title')"
+      description="Aute cupidatat deserunt voluptate esse et sunt velit esse quis excepteur fugiat amet id.  Non Lorem nisi voluptate commodo ea. Labore exercitation ipsum ea exercitation excepteur eu."
+      :ui="{
+        title: 'text-3xl sm:text-4xl',
+        container: 'lg:grid-cols-5',
+        wrapper: 'lg:col-span-2',
+      }"
+    >
+      <template #body>
+        <UPageCard v-if="!session.data?.user">
+          <AuthForm />
+        </UPageCard>
+      </template>
+
+      <div class="lg:col-span-3 min-h-[600px] w-full bg-neutral-600 dark:bg-black rounded-lg flex items-center justify-center text-neutral-400">
+        PLACEHOLDER FOR XTERM TERMINAL
+      </div>
+    </UPageHero>
+  </UPage>
+</template>

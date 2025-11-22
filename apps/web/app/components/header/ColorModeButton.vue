@@ -31,12 +31,12 @@ const tooltip = computed(() => {
         :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
         variant="ghost"
         class="text-white"
-        size="xl"
+        size="lg"
         @click="isDark = !isDark"
       />
     </UTooltip>
     <template #fallback>
-      <USkeleton class="w-10 h-10 rounded-full" />
+      <USkeleton class="w-10 h-10 rounded-full bg-primary/75" />
     </template>
   </ClientOnly>
 </template>

@@ -15,8 +15,7 @@ function handleLocaleUpdate(value: string | undefined) {
     <ULocaleSelect
       v-model="locale"
       :locales="[en, et]"
-      class="w-36 text-md font-semibold text-white"
-      size="lg"
+      class="w-32 text-md font-semibold text-white"
       variant="ghost"
       @update:model-value="handleLocaleUpdate"
     />

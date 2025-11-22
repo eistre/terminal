@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import ColorModeButton from './ColorModeButton.vue';
 import LocaleSelect from './LocaleSelect.vue';
+import UserSelect from './UserSelect.vue';
+
+const session = useSession();
 </script>
 
 <template>
-  <UHeader class="light:bg-primary-700/90">
+  <UHeader class="light:bg-primary" :toggle="false">
     <template #left>
       <NuxtImg
         :alt="$t('app.institute')"
@@ -15,8 +18,9 @@ import LocaleSelect from './LocaleSelect.vue';
     </template>
 
     <template #right>
-      <ColorModeButton class="light:hover:bg-primary/75" />
-      <LocaleSelect class="light:hover:bg-primary/75" />
+      <ColorModeButton class="light:hover:bg-neutral-100/10" />
+      <LocaleSelect class="light:hover:bg-neutral-100/10" />
+      <UserSelect v-if="session.data?.user" class="light:hover:bg-neutral-100/10" />
     </template>
   </UHeader>
 </template>
