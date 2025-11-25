@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "clean": "git clean -xdf .cache .turbo node_modules .nuxt",
+    "clean": "git clean -xdf .cache .turbo node_modules .nuxt .output",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "lint": "eslint . --cache --cache-location .cache/.eslintcache",
@@ -16,10 +16,16 @@
   "dependencies": {
     "@nuxt/image": "catalog:",
     "@nuxt/ui": "catalog:",
+    "@nuxtjs/i18n": "catalog:",
+    "@terminal/database": "workspace:*",
+    "@terminal/env": "workspace:*",
+    "@terminal/logger": "workspace:*",
+    "better-auth": "catalog:",
     "nuxt": "catalog:",
     "tailwindcss": "catalog:",
     "vue": "catalog:",
-    "vue-router": "catalog:"
+    "vue-router": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@nuxt/eslint": "catalog:",

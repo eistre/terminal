@@ -1,0 +1,39 @@
+{
+  "app": {
+    "title": "Linux terminal",
+    "description": "Linux command line practice environment - Ubuntu terminal in web browser",
+    "institute": "Institute of Computer Science, University of Tartu",
+    "logo": "arvutiteaduse_instituut_eng_white_2021.svg"
+  },
+  "header": {
+    "changeLanguage": "Choose language",
+    "logout": "Logout",
+    "logoutError": "Failed to logout",
+    "deleteAccount": "Delete account",
+    "deleteAccountError": "Failed to delete account"
+  },
+  "home": {
+    "title": "Linux Command Line Practice Environment",
+    "secondary": "Terminal in the Web Browser",
+    "description": "",
+    "getStarted": "Get started"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "enterEmail": "Enter your email",
+    "name": "Name",
+    "enterName": "Enter your name",
+    "password": "Password",
+    "enterPassword": "Enter your password",
+    "rememberMe": "Remember me",
+    "invalidEmail": "Invalid email address",
+    "nameRequired": "Name is required",
+    "nameMin": "Name must be at least character",
+    "passwordRequired": "Password is required",
+    "passwordMin": "Password must be at least {count} characters",
+    "loginError": "Invalid email or password",
+    "signupError": "Registration failed. Please try again."
+  }
+}

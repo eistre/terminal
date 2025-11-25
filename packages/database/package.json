@@ -1,21 +1,31 @@
 {
-  "name": "@terminal/eslint",
+  "name": "@terminal/database",
   "type": "module",
   "version": "0.0.0",
   "private": true,
   "exports": {
-    ".": "./eslint.config.ts"
+    ".": "./index.ts",
+    "./migration": "./migration.ts"
   },
   "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio",
     "clean": "git clean -xdf .cache .turbo node_modules",
     "lint": "eslint . --cache --cache-location .cache/.eslintcache",
     "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "drizzle-orm": "catalog:",
+    "mysql2": "catalog:"
+  },
   "devDependencies": {
-    "@antfu/eslint-config": "catalog:",
+    "@terminal/env": "workspace:*",
+    "@terminal/eslint": "workspace:*",
     "@terminal/typescript": "workspace:*",
+    "@types/node": "catalog:",
+    "drizzle-kit": "catalog:",
     "eslint": "catalog:",
-    "eslint-plugin-turbo": "catalog:"
+    "typescript": "catalog:"
   }
 }

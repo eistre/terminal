@@ -1,5 +1,6 @@
 {
   "$schema": "node_modules/turbo/schema.json",
+  "globalEnv": ["NODE_ENV", "LOG_LEVEL"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -10,6 +11,12 @@
       "dependsOn": ["^clean"]
     },
     "//#clean:root": {
+      "cache": false
+    },
+    "db:generate": {
+      "cache": false
+    },
+    "db:studio": {
       "cache": false
     },
     "dev": {
