@@ -17,6 +17,7 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@nuxt/ui',
     '@nuxtjs/i18n',
+    '@vueuse/nuxt',
   ],
 
   eslint: { config: { standalone: false } },

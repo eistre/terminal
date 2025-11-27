@@ -1,8 +1,38 @@
+<script setup lang="ts">
+import XtermTerminal from './XtermTerminal.vue';
+
+const terminal = ref<InstanceType<typeof XtermTerminal>>();
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function test() {
+  if (!terminal.value)
+    return;
+
+  const term = terminal.value;
+
+  await delay(500);
+
+  term.writeln('\x1B[1;36m╔══════════════════════════════════════════╗\x1B[0m');
+  term.writeln('\x1B[1;36m║        Terminal Component Ready          ║\x1B[0m');
+  term.writeln('\x1B[1;36m╚══════════════════════════════════════════╝\x1B[0m');
+  term.writeln('');
+  term.writeln('Terminal is working! WebSocket integration coming soon...');
+  term.writeln('');
+  term.write('\x1B[32m$\x1B[0m ');
+}
+
+onMounted(() => {
+  test();
+});
+</script>
+
 <template>
-  <UPageCard title="Terminal">
+  <UPageCard :title="$t('topic.terminal')">
     <USeparator />
-    <div class="bg-gray-950 dark:bg-black rounded-lg p-4 font-mono text-sm h-[500px] lg:h-[calc(100vh-36rem)] lg:min-h-[500px]">
-      PLACEHOLDER FOR XTERM TERMINAL
+
+    <div class="bg-black rounded-lg h-[500px] lg:h-[calc(100vh-36rem)] lg:min-h-[500px] p-4">
+      <XtermTerminal ref="terminal" />
     </div>
   </UPageCard>
 </template>
