@@ -35,5 +35,15 @@
     "passwordMin": "Parool peab olema vähemalt {count} tähemärki",
     "loginError": "Vigane e-post või parool",
     "signupError": "Registreerimine nurjus. Palun proovige uuesti."
+  },
+  "topics": {
+    "title": "Teemad",
+    "description": "Harjuta Linuxi käsurea oskusi interaktiivsete ülesannete kaudu."
+  },
+  "topic": {
+    "tasks": "Ülesanded",
+    "showHint": "Näita vihjet",
+    "hideHint": "Peida vihje",
+    "terminal": "Terminal"
   }
 }

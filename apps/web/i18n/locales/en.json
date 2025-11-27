@@ -35,5 +35,15 @@
     "passwordMin": "Password must be at least {count} characters",
     "loginError": "Invalid email or password",
     "signupError": "Registration failed. Please try again."
+  },
+  "topics": {
+    "title": "Topics",
+    "description": "Practice Linux command line skills through interactive tasks."
+  },
+  "topic": {
+    "tasks": "Tasks",
+    "showHint": "Show hint",
+    "hideHint": "Hide hint",
+    "terminal": "Terminal"
   }
 }
