@@ -1,6 +1,17 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
+@theme {
+  --container-8xl: 86rem;
+  --container-9xl: 92rem;
+}
+
 :root {
   --ui-header-height: --spacing(20);
+  --ui-container: var(--container-9xl);
+  --ui-content-offset: 48vh;
+}
+
+.terminal-height {
+  @apply h-[500px] lg:h-[calc(100vh-var(--ui-content-offset))] lg:min-h-[500px]
 }

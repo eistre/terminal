@@ -21,7 +21,7 @@ const session = useSession();
         </UPageCard>
       </template>
 
-      <div class="lg:col-span-3 min-h-[600px] w-full bg-neutral-600 dark:bg-black rounded-lg flex items-center justify-center text-neutral-400">
+      <div class="lg:col-span-3 h-[500px] lg:h-[calc(100vh-36rem)] lg:min-h-[500px] w-full bg-neutral-600 dark:bg-black rounded-lg flex items-center justify-center text-neutral-400">
         PLACEHOLDER FOR XTERM TERMINAL
       </div>
     </UPageHero>
