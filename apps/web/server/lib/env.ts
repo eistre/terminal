@@ -1,9 +1,10 @@
 import { loadEnv } from '@terminal/env';
-import { authSchema, databaseSchema, loggerSchema } from '@terminal/env/schemas';
+import { authSchema, databaseSchema, loggerSchema, provisionerSchema } from '@terminal/env/schemas';
 
 const envSchema = authSchema
   .and(databaseSchema)
-  .and(loggerSchema);
+  .and(loggerSchema)
+  .and(provisionerSchema);
 
 type EnvSchema = ReturnType<typeof loadEnv<typeof envSchema>>;
 

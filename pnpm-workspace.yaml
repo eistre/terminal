@@ -4,6 +4,8 @@ packages:
 
 catalog:
   '@antfu/eslint-config': ^6.2.0
+  '@iconify-json/lucide': ^1.2.77
+  '@kubernetes/client-node': ^1.4.0
   '@nuxt/eslint': ^1.10.0
   '@nuxt/image': ^2.0.0
   '@nuxt/test-utils': ^3.20.1
@@ -21,6 +23,8 @@ catalog:
   husky: ^9.1.7
   mysql2: ^3.15.3
   nuxt: ^4.2.1
+  p-limit: ^7.2.0
+  p-retry: ^7.1.0
   pino: ^10.1.0
   pino-pretty: ^13.1.2
   tailwindcss: ^4.1.17

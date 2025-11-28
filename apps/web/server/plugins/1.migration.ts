@@ -10,6 +10,7 @@ import { useLogger } from '~~/server/lib/logger';
  * This plugin runs the database migrations when the server starts.
  * It ensures that the database schema is up to date before handling requests.
  */
+// TODO think about logging
 export default defineNitroPlugin(async () => {
   const env = useEnv();
   const db = useDatabase();

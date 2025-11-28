@@ -7,6 +7,7 @@ import { useEnv } from '~~/server/lib/env';
  * Validates environment variables at server startup.
  * Will prevent server from starting if validation fails.
  */
+// TODO think about logging
 export default defineNitroPlugin(() => {
   // Create a logger with fallback values since environment validation hasn't occurred yet
   const logger = createLogger({

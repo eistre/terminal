@@ -20,6 +20,7 @@
     "@terminal/database": "workspace:*",
     "@terminal/env": "workspace:*",
     "@terminal/logger": "workspace:*",
+    "@terminal/provisioner": "workspace:*",
     "@vueuse/nuxt": "catalog:",
     "@xterm/addon-fit": "catalog:",
     "@xterm/xterm": "catalog:",
@@ -31,6 +32,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/test-utils": "catalog:",
     "@terminal/eslint": "workspace:*",

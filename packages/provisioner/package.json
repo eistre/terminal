@@ -1,11 +1,10 @@
 {
-  "name": "@terminal/env",
+  "name": "@terminal/provisioner",
   "type": "module",
   "version": "0.0.0",
   "private": true,
   "exports": {
-    ".": "./src/index.ts",
-    "./schemas": "./src/schemas/index.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo node_modules",
@@ -14,14 +13,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "sshpk": "catalog:",
-    "zod": "catalog:"
+    "@kubernetes/client-node": "catalog:",
+    "p-limit": "catalog:",
+    "p-retry": "catalog:"
   },
   "devDependencies": {
+    "@terminal/env": "workspace:*",
     "@terminal/eslint": "workspace:*",
+    "@terminal/logger": "workspace:*",
     "@terminal/typescript": "workspace:*",
-    "@types/node": "catalog:",
-    "@types/sshpk": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:"
   }

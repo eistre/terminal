@@ -1,0 +1,418 @@
+import type { KubernetesProvisionerSchema } from '@terminal/env/schemas';
+import type { Logger } from '@terminal/logger';
+import type { ConnectionInfo, ContainerInfo } from '../provisioner';
+import * as k8s from '@kubernetes/client-node';
+import { AbstractProvisioner } from './abstract';
+
+enum PodStatus {
+  EXISTING = 'EXISTING',
+  TERMINATING = 'TERMINATING',
+  MISSING = 'MISSING',
+}
+
+export class KubernetesProvisioner extends AbstractProvisioner {
+  private static readonly APP_NAME = 'terminal';
+  private static readonly POD_PREFIX = 'terminal-session';
+  private static readonly ROLE_LABEL_KEY = 'terminal/role';
+  private static readonly ROLE_LABEL_VALUE = 'session';
+  private static readonly CLIENT_ID_LABEL_KEY = 'terminal/client-id';
+  private static readonly EXPIRE_TIME_ANNOTATION_KEY = 'terminal/expire-time';
+  private static readonly CONTAINER_NAME = 'terminal';
+  private static readonly CONTAINER_SSH_PORT = 22;
+  private static readonly CONTAINER_SSH_USERNAME = 'user';
+
+  private static readonly MAX_POD_READY_WAIT_MS = 5 * 60 * 1000; // 5 minutes
+  private static readonly MAX_POD_DELETION_WAIT_MS = 2 * 60 * 1000; // 2 minutes
+  private static readonly POLL_INTERVAL_MS = 1000; // 1 second
+
+  private readonly api: k8s.CoreV1Api;
+  private readonly namespace: KubernetesProvisionerSchema['KUBERNETES_NAMESPACE'];
+  private readonly serviceType: KubernetesProvisionerSchema['KUBERNETES_SERVICE_TYPE'];
+
+  constructor(logger: Logger, config: KubernetesProvisionerSchema) {
+    super(logger.child({ caller: 'kubernetes-provisioner', namespace: config.KUBERNETES_NAMESPACE }), config);
+
+    // Initialize Kubernetes API client
+    const kc = new k8s.KubeConfig();
+    if (config.KUBERNETES_SERVICE_HOST) {
+      kc.loadFromCluster();
+      this.logger.debug('Loaded Kubernetes config from cluster');
+    }
+    else if (config.KUBECONFIG) {
+      kc.loadFromFile(config.KUBECONFIG);
+      this.logger.debug('Loaded Kubernetes config from file');
+    }
+    else {
+      kc.loadFromDefault();
+      this.logger.debug('Loaded default Kubernetes config');
+    }
+
+    this.api = kc.makeApiClient(k8s.CoreV1Api);
+    this.namespace = config.KUBERNETES_NAMESPACE;
+    this.serviceType = config.KUBERNETES_SERVICE_TYPE;
+  }
+
+  protected override async listContainersImpl(): Promise<ContainerInfo[]> {
+    const labelSelector = `app=${KubernetesProvisioner.APP_NAME},${KubernetesProvisioner.ROLE_LABEL_KEY}=${KubernetesProvisioner.ROLE_LABEL_VALUE}`;
+    const logger = this.logger.child({ labelSelector });
+
+    logger.debug('Listing Kubernetes session pods');
+
+    const response = await this.api.listNamespacedPod({ namespace: this.namespace, labelSelector });
+    const containers: ContainerInfo[] = [];
+
+    logger.trace({ podCount: response.items.length }, 'Fetched pods for listing containers');
+
+    for (const pod of response.items) {
+      const podName = pod.metadata?.name;
+      const labels = pod.metadata?.labels ?? {};
+      const annotations = pod.metadata?.annotations ?? {};
+
+      const clientId = labels[KubernetesProvisioner.CLIENT_ID_LABEL_KEY];
+      const expireTime = annotations[KubernetesProvisioner.EXPIRE_TIME_ANNOTATION_KEY];
+
+      if (!clientId || !expireTime) {
+        logger.warn({
+          podName,
+          labels,
+          annotations,
+        }, 'Found pod with missing clientId label or expireTime annotation');
+        continue;
+      }
+
+      containers.push({
+        clientId,
+        expireTime: new Date(expireTime),
+      });
+    }
+
+    logger.info({ count: containers.length }, 'Listed Kubernetes session containers');
+    return containers;
+  }
+
+  protected override async ensureContainerExistsImpl(clientId: string): Promise<ConnectionInfo> {
+    const podName = KubernetesProvisioner.getPodName(clientId);
+    const logger = this.logger.child({ clientId, podName });
+
+    logger.info('Ensuring pod exists');
+    const status = await this.getPodStatus(podName);
+    logger.debug({ status }, 'Current pod status before ensuring container');
+
+    switch (status) {
+      case PodStatus.TERMINATING: {
+        logger.debug('Pod is terminating, waiting for deletion');
+        await this.waitUntilPodTerminated(podName);
+
+        logger.debug('Pod deletion complete, creating new pod');
+        await this.createPod(clientId);
+
+        logger.debug('Pod created, waiting for ready status');
+        await this.waitUntilPodReady(podName);
+        break;
+      }
+      case PodStatus.MISSING: {
+        logger.debug('Pod does not exist, creating');
+        await this.createPod(clientId);
+
+        logger.debug('Pod created, waiting for ready status');
+        await this.waitUntilPodReady(podName);
+        break;
+      }
+      case PodStatus.EXISTING: {
+        logger.debug('Pod exists, validating readiness and updating expiration');
+        await Promise.all([
+          this.updateContainerExpirationImpl(clientId),
+          this.waitUntilPodReady(podName),
+        ]);
+        break;
+      }
+    }
+
+    let host: string;
+    let port: number;
+    const serviceName = KubernetesProvisioner.getServiceName(clientId);
+
+    switch (this.serviceType) {
+      case 'headless': {
+        host = `${serviceName}.${this.namespace}.svc`;
+        port = KubernetesProvisioner.CONTAINER_SSH_PORT;
+        logger.debug({ host }, 'Using headless service SSH connection info');
+        break;
+      }
+      case 'nodePort': {
+        const service = await this.api.readNamespacedService({ name: serviceName, namespace: this.namespace });
+        const nodePort = service.spec
+          ?.ports
+          ?.find(port => port.port === KubernetesProvisioner.CONTAINER_SSH_PORT)
+          ?.nodePort;
+
+        if (!nodePort) {
+          KubernetesProvisioner.abortRetry(`Service ${serviceName} is missing nodePort for SSH`);
+        }
+
+        host = 'localhost'; // TODO localhost is just for dev - should be derived from actual node ip
+        port = nodePort;
+        logger.debug({ nodePort }, 'Using NodePort SSH connection info');
+        break;
+      }
+    }
+
+    logger.info('Pod ready for client');
+    return {
+      clientId,
+      host,
+      port,
+      username: KubernetesProvisioner.CONTAINER_SSH_USERNAME,
+    };
+  }
+
+  protected override async updateContainerExpirationImpl(clientId: string): Promise<void> {
+    const podName = KubernetesProvisioner.getPodName(clientId);
+    const logger = this.logger.child({ clientId, podName });
+
+    const expireTime = KubernetesProvisioner.getExpireTime(this.containerTtlMinutes);
+    logger.debug(`Updating pod expiration to ${expireTime.toISOString()}`);
+
+    const annotation = KubernetesProvisioner.EXPIRE_TIME_ANNOTATION_KEY.replace('/', '~1');
+    const path = `/metadata/annotations/${annotation}`;
+
+    await this.api.patchNamespacedPod({
+      name: podName,
+      namespace: this.namespace,
+      body: [{
+        op: 'replace',
+        path,
+        value: expireTime.toISOString(),
+      }],
+    });
+
+    logger.info(`Pod expiration updated`);
+  }
+
+  protected override async deleteContainerImpl(clientId: string): Promise<void> {
+    const podName = KubernetesProvisioner.getPodName(clientId);
+    const logger = this.logger.child({ clientId, podName });
+
+    try {
+      logger.debug(`Deleting pod`);
+
+      // Deletes the pod and its associated service due to ownerReferences
+      await this.api.deleteNamespacedPod({ name: podName, namespace: this.namespace });
+      logger.info('Pod deleted');
+    }
+    catch (error: unknown) {
+      if (KubernetesProvisioner.isNotFound(error)) {
+        logger.debug('Pod not found, treating it as already deleted');
+        return;
+      }
+
+      throw error;
+    }
+  }
+
+  private async getPodStatus(podName: string): Promise<PodStatus> {
+    const logger = this.logger.child({ podName });
+
+    try {
+      const pod = await this.api.readNamespacedPod({ name: podName, namespace: this.namespace });
+      logger.trace({ phase: pod.status?.phase, deletionTimestamp: pod.metadata?.deletionTimestamp }, 'Read pod status');
+
+      if (pod.metadata?.deletionTimestamp) {
+        return PodStatus.TERMINATING;
+      }
+
+      return PodStatus.EXISTING;
+    }
+    catch (error: unknown) {
+      if (KubernetesProvisioner.isNotFound(error)) {
+        logger.trace('Pod not found when reading status');
+        return PodStatus.MISSING;
+      }
+
+      throw error;
+    }
+  }
+
+  private async createPod(clientId: string): Promise<void> {
+    const logger = this.logger.child({ clientId });
+
+    const pod = await this.api.createNamespacedPod({ namespace: this.namespace, body: this.buildPodManifest(clientId) });
+    const podUid = pod.metadata?.uid;
+    logger.debug({ podUid }, 'Created pod for client');
+
+    if (!podUid) {
+      KubernetesProvisioner.abortRetry('Pod UID is missing for newly created pod');
+    }
+
+    await this.api.createNamespacedService({ namespace: this.namespace, body: this.buildServiceManifest(clientId, podUid) });
+    logger.debug({ mode: this.serviceType }, 'Created service for client');
+  }
+
+  private async waitUntilPodReady(podName: string): Promise<k8s.V1Pod> {
+    const startTime = Date.now();
+    const logger = this.logger.child({ podName });
+
+    while (Date.now() - startTime < KubernetesProvisioner.MAX_POD_READY_WAIT_MS) {
+      const pod = await this.api.readNamespacedPod({ name: podName, namespace: this.namespace });
+      const phase = pod.status?.phase;
+      const containerStatus = pod.status
+        ?.containerStatuses
+        ?.find(status => status.name === KubernetesProvisioner.CONTAINER_NAME);
+
+      logger.trace({
+        phase,
+        ready: containerStatus?.ready,
+        restartCount: containerStatus?.restartCount,
+      }, 'Polled pod readiness');
+
+      if (phase === 'Failed') {
+        AbstractProvisioner.abortRetry(`Pod failed: ${pod.status?.reason || 'Unknown'}`);
+      }
+
+      if (phase === 'Running' && containerStatus?.ready) {
+        logger.debug('Pod is Running and container is Ready');
+        return pod;
+      }
+
+      await KubernetesProvisioner.sleep(KubernetesProvisioner.POLL_INTERVAL_MS);
+    }
+
+    AbstractProvisioner.abortRetry(`Timeout waiting for pod ${podName} to be ready after ${KubernetesProvisioner.MAX_POD_READY_WAIT_MS}ms`);
+  }
+
+  private async waitUntilPodTerminated(podName: string): Promise<void> {
+    const startTime = Date.now();
+    const logger = this.logger.child({ podName });
+
+    while (Date.now() - startTime < KubernetesProvisioner.MAX_POD_DELETION_WAIT_MS) {
+      const status = await this.getPodStatus(podName);
+      logger.trace({ status }, 'Polled pod termination status');
+
+      if (status === PodStatus.MISSING) {
+        return;
+      }
+
+      await KubernetesProvisioner.sleep(KubernetesProvisioner.POLL_INTERVAL_MS);
+    }
+
+    AbstractProvisioner.abortRetry(`Timed out waiting for pod ${podName} to be deleted after ${KubernetesProvisioner.MAX_POD_DELETION_WAIT_MS}ms`);
+  }
+
+  private buildPodManifest(clientId: string): k8s.V1Pod {
+    return {
+      apiVersion: 'v1',
+      kind: 'Pod',
+      metadata: {
+        name: KubernetesProvisioner.getPodName(clientId),
+        namespace: this.namespace,
+        labels: {
+          app: KubernetesProvisioner.APP_NAME,
+          [KubernetesProvisioner.ROLE_LABEL_KEY]: KubernetesProvisioner.ROLE_LABEL_VALUE,
+          [KubernetesProvisioner.CLIENT_ID_LABEL_KEY]: clientId,
+        },
+        annotations: {
+          [KubernetesProvisioner.EXPIRE_TIME_ANNOTATION_KEY]: KubernetesProvisioner
+            .getExpireTime(this.containerTtlMinutes)
+            .toISOString(),
+        },
+      },
+      spec: {
+        hostname: KubernetesProvisioner.CONTAINER_NAME,
+        containers: [{
+          name: KubernetesProvisioner.CONTAINER_NAME,
+          image: this.containerImage,
+          imagePullPolicy: 'IfNotPresent',
+          env: [{
+            name: 'SSH_PUBLIC_KEY',
+            value: this.containerSshPublicKey,
+          }],
+          ports: [{
+            name: 'ssh',
+            containerPort: KubernetesProvisioner.CONTAINER_SSH_PORT,
+          }],
+          resources: {
+            requests: {
+              memory: this.containerMemoryRequest,
+              cpu: this.containerCpuRequest,
+            },
+            limits: {
+              memory: this.containerMemoryLimit,
+              cpu: this.containerCpuLimit,
+            },
+          },
+          readinessProbe: {
+            tcpSocket: {
+              port: KubernetesProvisioner.CONTAINER_SSH_PORT,
+            },
+            initialDelaySeconds: 3,
+            periodSeconds: 3,
+            failureThreshold: 3,
+          },
+        }],
+        restartPolicy: 'OnFailure',
+      },
+    };
+  }
+
+  private buildServiceManifest(clientId: string, podUid: string): k8s.V1Service {
+    const isNodePort = this.serviceType === 'nodePort';
+
+    return {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: {
+        name: KubernetesProvisioner.getServiceName(clientId),
+        namespace: this.namespace,
+        labels: {
+          app: KubernetesProvisioner.APP_NAME,
+          [KubernetesProvisioner.ROLE_LABEL_KEY]: KubernetesProvisioner.ROLE_LABEL_VALUE,
+          [KubernetesProvisioner.CLIENT_ID_LABEL_KEY]: clientId,
+        },
+        ownerReferences: [{
+          apiVersion: 'v1',
+          kind: 'Pod',
+          name: KubernetesProvisioner.getPodName(clientId),
+          uid: podUid,
+          controller: true,
+          blockOwnerDeletion: false,
+        }],
+      },
+      spec: {
+        type: isNodePort ? 'NodePort' : undefined,
+        clusterIP: isNodePort ? undefined : 'None',
+        selector: {
+          [KubernetesProvisioner.CLIENT_ID_LABEL_KEY]: clientId,
+        },
+        ports: [{
+          name: 'ssh',
+          port: KubernetesProvisioner.CONTAINER_SSH_PORT,
+          targetPort: KubernetesProvisioner.CONTAINER_SSH_PORT,
+          protocol: 'TCP',
+        }],
+      },
+    };
+  }
+
+  private static getExpireTime(ttlMinutes: number): Date {
+    const now = new Date();
+    return new Date(now.getTime() + ttlMinutes * 60 * 1000);
+  }
+
+  private static getPodName(clientId: string): string {
+    const sanitizedClientId = clientId.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    return `${KubernetesProvisioner.POD_PREFIX}-${sanitizedClientId}`;
+  }
+
+  private static getServiceName(clientId: string): string {
+    const sanitizedClientId = clientId.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    return `${KubernetesProvisioner.POD_PREFIX}-${sanitizedClientId}-svc`;
+  }
+
+  private static isNotFound(error: unknown): boolean {
+    return (error as { code?: number }).code === 404;
+  }
+
+  private static sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
