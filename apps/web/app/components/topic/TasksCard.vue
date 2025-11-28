@@ -38,8 +38,7 @@ function toggleHint(item: number) {
       <UAccordion
         type="multiple"
         :items="items"
-        :ui="{ header: 'my-0.5', trigger: 'p-2.5 font-semibold' }"
-        class="overflow-y-auto lg:max-h-[calc(100vh-36rem)]"
+        :ui="{ root: 'overflow-y-auto lg:max-h-[calc(100vh-var(--ui-content-offset))]', header: 'my-0.5', trigger: 'p-2.5 font-semibold' }"
       >
         <template #body="{ item }">
           <div class="p-2.5 space-y-2">

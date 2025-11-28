@@ -31,7 +31,7 @@ onMounted(() => {
   <UPageCard :title="$t('topic.terminal')">
     <USeparator />
 
-    <div class="bg-black rounded-lg h-[500px] lg:h-[calc(100vh-36rem)] lg:min-h-[500px] p-4">
+    <div class="bg-black rounded-lg terminal-height p-4">
       <XtermTerminal ref="terminal" />
     </div>
   </UPageCard>
