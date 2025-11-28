@@ -1,4 +1,5 @@
-import { authSchema, databaseSchema, loadEnv, loggerSchema } from '@terminal/env';
+import { loadEnv } from '@terminal/env';
+import { authSchema, databaseSchema, loggerSchema } from '@terminal/env/schemas';
 
 const envSchema = authSchema
   .and(databaseSchema)

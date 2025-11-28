@@ -1,4 +1,4 @@
-import type { LoggerSchema } from '@terminal/env';
+import type { LoggerSchema } from '@terminal/env/schemas';
 import process from 'node:process';
 import { createLogger } from '@terminal/logger';
 import { useEnv } from '~~/server/lib/env';
@@ -7,7 +7,7 @@ import { useEnv } from '~~/server/lib/env';
  * Validates environment variables at server startup.
  * Will prevent server from starting if validation fails.
  */
-export default defineNitroPlugin(async () => {
+export default defineNitroPlugin(() => {
   // Create a logger with fallback values since environment validation hasn't occurred yet
   const logger = createLogger({
     name: 'nuxt',
@@ -17,7 +17,7 @@ export default defineNitroPlugin(async () => {
 
   try {
     // Attempts to load and validate environment variables
-    logger.info('Validating environment variables');
+    logger.debug('Validating environment variables');
     useEnv();
     logger.info('Environment validation succeeded');
   }

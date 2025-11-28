@@ -1,4 +1,4 @@
-import type { LoggerSchema } from '@terminal/env';
+import type { LoggerSchema } from '@terminal/env/schemas';
 import { pino } from 'pino';
 
 export function createLogger(options: { name: string } & LoggerSchema) {

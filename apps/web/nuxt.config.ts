@@ -48,7 +48,7 @@ export default defineNuxtConfig({
 
         const sourceMigrationsDir = resolve(
           fileURLToPath(databaseModulePath),
-          `../${MIGRATIONS_DIR}`,
+          `../../${MIGRATIONS_DIR}`,
         );
 
         const destinationMigrationsDir = resolve(

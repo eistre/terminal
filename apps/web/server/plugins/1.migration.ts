@@ -16,7 +16,7 @@ export default defineNitroPlugin(async () => {
   const logger = useLogger();
 
   try {
-    logger.info('Running database migrations');
+    logger.debug('Running database migrations');
 
     const migrationsPath = env.NODE_ENV === 'production'
       ? './server/migrations'

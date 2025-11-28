@@ -1,4 +1,4 @@
-import type { LoggerSchema } from '@terminal/env';
+import type { LoggerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
 import { createLogger } from '@terminal/logger';
 import { useEnv } from '~~/server/lib/env';
