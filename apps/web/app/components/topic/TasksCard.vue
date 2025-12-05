@@ -33,8 +33,15 @@ function toggleHint(item: number) {
 
 <template>
   <div>
-    <UPageCard :title="$t('topic.tasks')">
+    <UPageCard>
+      <template #title>
+        <div class="flex justify-between items-center py-1.5">
+          {{ $t('topic.tasks') }}
+        </div>
+      </template>
+
       <USeparator />
+
       <UAccordion
         type="multiple"
         :items="items"

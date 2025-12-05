@@ -13,7 +13,6 @@ catalog:
   '@iconify-json/lucide': ^1.2.78
   '@kubernetes/client-node': ^1.4.0
   '@nuxt/eslint': ^1.11.0
-  '@nuxt/image': ^2.0.0
   '@nuxt/test-utils': ^3.21.0
   '@nuxt/ui': ^4.2.1
   '@nuxtjs/i18n': ^10.2.1
@@ -21,6 +20,7 @@ catalog:
   '@types/ssh2': ^1.15.5
   '@vueuse/nuxt': ^14.1.0
   '@xterm/addon-fit': ^0.10.0
+  '@xterm/addon-webgl': ^0.18.0
   '@xterm/xterm': ^5.5.0
   better-auth: ^1.4.5
   drizzle-kit: ^0.31.8

@@ -1,54 +1,68 @@
 <script setup lang="ts">
 import type { FitAddon } from '@xterm/addon-fit';
-import type { Terminal } from '@xterm/xterm';
+import type { WebglAddon } from '@xterm/addon-webgl';
+import type { ITerminalOptions, Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
+
+const emit = defineEmits<{ (e: 'ready'): void }>();
 
 const terminalElement = ref<HTMLElement | null>(null);
 
-let terminal: Terminal | null = null;
-let fitAddon: FitAddon | null = null;
+const terminal = ref<Terminal | null>(null);
+const fitAddon = ref<FitAddon | null>(null);
+const webglAddon = ref<WebglAddon | null>(null);
+
+const terminalOptions: ITerminalOptions = {
+  fontFamily: '"JetBrains Mono", "Fira Code", "Cascadia Mono", Menlo, Monaco, "Courier New", monospace',
+  fontSize: 14,
+  lineHeight: 1.2,
+  letterSpacing: 0,
+  cursorStyle: 'block',
+  cursorBlink: true,
+  scrollback: 5000,
+};
 
 const { height, width } = useElementSize(terminalElement);
 
-onMounted(async () => {
-  const { FitAddon } = await import('@xterm/addon-fit');
-  const { Terminal } = await import('@xterm/xterm');
+watch([height, width], () => {
+  if (fitAddon.value && terminal.value) {
+    fitAddon.value.fit();
+  }
+});
 
-  terminal = new Terminal({ fontFamily: '"Cascadia Mono", Menlo, Monaco, "Courier New", monospace' });
-  fitAddon = new FitAddon();
+onMounted(async () => {
+  const { Terminal } = await import('@xterm/xterm');
+  const { FitAddon } = await import('@xterm/addon-fit');
+  const { WebglAddon } = await import('@xterm/addon-webgl');
 
   if (!terminalElement.value) {
     return;
   }
 
-  terminal.loadAddon(fitAddon);
-  terminal.open(terminalElement.value);
-  fitAddon.fit();
+  terminal.value = new Terminal(terminalOptions);
+  fitAddon.value = new FitAddon();
+  webglAddon.value = new WebglAddon();
+
+  terminal.value.loadAddon(fitAddon.value);
+  terminal.value.loadAddon(webglAddon.value);
+  terminal.value.open(terminalElement.value);
+  fitAddon.value.fit();
+
+  emit('ready');
 });
 
-watch([height, width], () => {
-  if (fitAddon && terminal) {
-    fitAddon.fit();
-  }
-});
-
-onUnmounted(() => {
-  if (terminal) {
-    terminal.dispose();
-    terminal = null;
-  }
-  fitAddon = null;
+onBeforeUnmount(() => {
+  terminal.value = null;
+  fitAddon.value = null;
+  webglAddon.value = null;
 });
 
 defineExpose({
-  write: (data: string) => terminal?.write(data),
-  writeln: (data: string) => terminal?.writeln(data),
-  clear: () => terminal?.clear(),
-  reset: () => terminal?.reset(),
-  focus: () => terminal?.focus(),
-  onData: (callback: (data: string) => void) => terminal?.onData(callback),
-  onResize: (callback: (data: { cols: number; rows: number }) => void) => terminal?.onResize(callback),
-  getTerminal: () => terminal,
+  write: (data: string) => terminal.value?.write(data),
+  writeln: (data: string) => terminal.value?.writeln(data),
+  onData: (callback: (data: string) => void) => terminal.value?.onData(callback),
+  onResize: (callback: (data: { cols: number; rows: number }) => void) => terminal.value?.onResize(callback),
+  getSize: () => fitAddon.value?.proposeDimensions(),
 });
 </script>
 

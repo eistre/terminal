@@ -3,7 +3,7 @@
     "title": "Linux käsurida",
     "description": "Linux käsurea harjutuskeskkond - Ubuntu terminal veebibrauseris",
     "institute": "Arvutiteaduse instituut, Tartu Ülikool",
-    "logo": "arvutiteaduse_instituut_est_white_2021.svg"
+    "logo": "/arvutiteaduse_instituut_est_white_2021.svg"
   },
   "header": {
     "changeLanguage": "Vali keel",
@@ -44,6 +44,9 @@
     "tasks": "Ülesanded",
     "showHint": "Näita vihjet",
     "hideHint": "Peida vihje",
-    "terminal": "Käsurida"
+    "terminal": "Käsurida",
+    "reconnect": "Taasühenda",
+    "resetTerminal": "Lähtesta",
+    "resetTerminalError": "Käsurea lähtestamine nurjus"
   }
 }
