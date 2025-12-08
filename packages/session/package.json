@@ -1,0 +1,27 @@
+{
+  "name": "@terminal/session",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo node_modules",
+    "lint": "eslint . --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ssh2": "catalog:"
+  },
+  "devDependencies": {
+    "@terminal/eslint": "workspace:*",
+    "@terminal/provisioner": "workspace:*",
+    "@terminal/typescript": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/ssh2": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}
