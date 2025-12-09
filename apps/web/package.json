@@ -20,6 +20,7 @@
     "@terminal/env": "workspace:*",
     "@terminal/logger": "workspace:*",
     "@terminal/provisioner": "workspace:*",
+    "@terminal/session": "workspace:*",
     "@vueuse/nuxt": "catalog:",
     "@xterm/addon-fit": "catalog:",
     "@xterm/addon-webgl": "catalog:",

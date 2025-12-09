@@ -15,6 +15,8 @@ export type Message = {
 } | {
   type: 'terminal/status';
   status: Status;
+  code?: ErrorCode;
+  message?: string;
 } | {
   type: 'task/done';
   taskId: string;
