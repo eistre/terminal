@@ -11,7 +11,7 @@ export const baseProvisionerSchema = z.object({
   PROVISIONER_CONTAINER_CPU_REQUEST: z.string().default('100m'),
   PROVISIONER_CONTAINER_CPU_LIMIT: z.string().default('250m'),
   PROVISIONER_CONTAINER_SSH_PUBLIC_KEY: z.string().transform((val, ctx) => {
-    const normalized = val.replace(/\\n/, '\n');
+    const normalized = val.replaceAll(/\\n/g, '\n');
 
     try {
       return sshpk.parseKey(normalized, 'auto').toString('ssh');
@@ -20,14 +20,14 @@ export const baseProvisionerSchema = z.object({
       ctx.issues.push({
         code: 'custom',
         message: 'Invalid SSH public key format',
-        input: val,
+        input: undefined,
       });
 
       return z.NEVER;
     }
   }),
   PROVISIONER_CONTAINER_SSH_PRIVATE_KEY: z.string().transform((val, ctx) => {
-    const normalized = val.replace(/\\n/, '\n');
+    const normalized = val.replaceAll(/\\n/g, '\n');
 
     try {
       return sshpk.parsePrivateKey(normalized, 'auto').toString('openssh');
@@ -36,7 +36,7 @@ export const baseProvisionerSchema = z.object({
       ctx.issues.push({
         code: 'custom',
         message: 'Invalid SSH private key format',
-        input: val,
+        input: undefined,
       });
 
       return z.NEVER;

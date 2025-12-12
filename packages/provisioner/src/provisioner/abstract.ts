@@ -99,7 +99,9 @@ export abstract class AbstractProvisioner implements Provisioner {
       .then(fn)
       .finally(() => {
         release();
-        this.locks.delete(clientId);
+        if (this.locks.get(clientId) === current) {
+          this.locks.delete(clientId);
+        }
       });
   }
 

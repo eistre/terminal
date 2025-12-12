@@ -78,23 +78,22 @@ export default defineWebSocketHandler({
       peer.send(encode({ type: 'terminal/status', status: 'CONNECTING' }));
       logger.debug('Creating SSH session for client');
 
-      const session = await createSession({
+      ctx.session = await createSession({
         ...connectionInfo,
         privateKey: env.PROVISIONER_CONTAINER_SSH_PRIVATE_KEY,
         rows,
         cols,
       });
 
-      ctx.session = session;
       ctx.status = 'READY';
 
       // SSH -> WebSocket data forwarding
-      session.onData((data) => {
+      ctx.session.onData((data) => {
         peer.send(encode({ type: 'terminal/output', data }));
       });
 
       // SSH -> WebSocket closure forwarding
-      session.onClose(() => {
+      ctx.session.onClose(() => {
         if (ctx.status === 'CLOSED' || ctx.status === 'CLOSING') {
           return;
         }
