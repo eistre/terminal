@@ -9,7 +9,7 @@ let _provisioner: Provisioner | undefined;
 export function useProvisioner(): Provisioner {
   if (!_provisioner) {
     const env = useEnv();
-    const logger = useLogger();
+    const logger = useLogger().child({ caller: 'provisioner' });
 
     _provisioner = createProvisioner(logger, env as ProvisionerSchema);
   }

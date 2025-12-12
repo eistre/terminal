@@ -30,7 +30,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   private readonly serviceType: KubernetesProvisionerSchema['KUBERNETES_SERVICE_TYPE'];
 
   constructor(logger: Logger, config: KubernetesProvisionerSchema) {
-    super(logger.child({ caller: 'kubernetes-provisioner', namespace: config.KUBERNETES_NAMESPACE }), config);
+    super(logger.child({ module: 'kubernetes', namespace: config.KUBERNETES_NAMESPACE }), config);
 
     // Initialize Kubernetes API client
     const kc = new k8s.KubeConfig();
@@ -186,7 +186,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       }],
     });
 
-    logger.info(`Pod expiration updated`);
+    logger.info('Pod expiration updated');
   }
 
   protected override async deleteContainerImpl(clientId: string): Promise<void> {
@@ -194,7 +194,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     const logger = this.logger.child({ clientId, podName });
 
     try {
-      logger.debug(`Deleting pod`);
+      logger.debug('Deleting pod');
 
       // Deletes the pod and its associated service due to ownerReferences
       await this.api.deleteNamespacedPod({ name: podName, namespace: this.namespace });
