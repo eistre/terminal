@@ -1,4 +1,4 @@
-import { accounts, sessions, users, verifications } from '@terminal/database';
+import * as schema from '@terminal/database/schema';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { useDatabase } from '~~/server/lib/database';
@@ -19,10 +19,7 @@ export function useAuth() {
         provider: 'mysql',
         usePlural: true,
         schema: {
-          users,
-          sessions,
-          accounts,
-          verifications,
+          ...schema,
         },
       }),
       emailAndPassword: {

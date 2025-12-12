@@ -1,5 +1,5 @@
 import type { Database } from '@terminal/database';
-import type { DatabaseSchema } from '@terminal/env';
+import type { DatabaseSchema } from '@terminal/env/schemas';
 import { createDatabase } from '@terminal/database';
 import { useEnv } from '~~/server/lib/env';
 

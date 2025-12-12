@@ -13,7 +13,6 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/eslint',
-    '@nuxt/image',
     '@nuxt/test-utils',
     '@nuxt/ui',
     '@nuxtjs/i18n',
@@ -21,10 +20,6 @@ export default defineNuxtConfig({
   ],
 
   eslint: { config: { standalone: false } },
-
-  image: {
-    dir: 'assets/images',
-  },
 
   css: ['~/assets/css/main.css'],
 
@@ -42,13 +37,16 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    experimental: {
+      websocket: true,
+    },
     hooks: {
       'build:before': (nitro: Nitro) => {
         const databaseModulePath = import.meta.resolve(DATABASE_PACKAGE);
 
         const sourceMigrationsDir = resolve(
           fileURLToPath(databaseModulePath),
-          `../${MIGRATIONS_DIR}`,
+          `../../${MIGRATIONS_DIR}`,
         );
 
         const destinationMigrationsDir = resolve(

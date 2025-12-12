@@ -14,14 +14,16 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@nuxt/image": "catalog:",
     "@nuxt/ui": "catalog:",
     "@nuxtjs/i18n": "catalog:",
     "@terminal/database": "workspace:*",
     "@terminal/env": "workspace:*",
     "@terminal/logger": "workspace:*",
+    "@terminal/provisioner": "workspace:*",
+    "@terminal/session": "workspace:*",
     "@vueuse/nuxt": "catalog:",
     "@xterm/addon-fit": "catalog:",
+    "@xterm/addon-webgl": "catalog:",
     "@xterm/xterm": "catalog:",
     "better-auth": "catalog:",
     "nuxt": "catalog:",
@@ -31,6 +33,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/test-utils": "catalog:",
     "@terminal/eslint": "workspace:*",

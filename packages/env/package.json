@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    ".": "./index.ts"
+    ".": "./src/index.ts",
+    "./schemas": "./src/schemas/index.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo node_modules",
@@ -13,12 +14,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "sshpk": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@terminal/eslint": "workspace:*",
     "@terminal/typescript": "workspace:*",
     "@types/node": "catalog:",
+    "@types/sshpk": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:"
   }

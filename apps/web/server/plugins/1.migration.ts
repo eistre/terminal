@@ -13,7 +13,7 @@ import { useLogger } from '~~/server/lib/logger';
 export default defineNitroPlugin(async () => {
   const env = useEnv();
   const db = useDatabase();
-  const logger = useLogger();
+  const logger = useLogger().child({ caller: 'database' });
 
   try {
     logger.info('Running database migrations');
@@ -22,8 +22,10 @@ export default defineNitroPlugin(async () => {
       ? './server/migrations'
       : resolve(fileURLToPath(import.meta.url), '../migrations');
 
+    logger.debug({ nodeEnv: env.NODE_ENV, migrationsPath }, 'Resolved migrations path');
+
     await runMigration(db, migrationsPath);
-    logger.info('Database migration completed successfully');
+    logger.info('Database migrations completed successfully');
   }
   catch (error) {
     logger.error(error, 'Database migration failed');

@@ -9,12 +9,12 @@ const session = useSession();
 <template>
   <UHeader class="light:bg-primary" :toggle="false">
     <template #left>
-      <NuxtImg
+      <img
         :alt="$t('app.institute')"
-        :src="`/${$t('app.logo')}`"
+        :src="$t('app.logo')"
         class="h-16 w-auto hover:cursor-pointer"
         @click="navigateTo('/')"
-      />
+      >
     </template>
 
     <template #right>
