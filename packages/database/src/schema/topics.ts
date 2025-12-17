@@ -1,4 +1,4 @@
-import { index, int, mysqlEnum, mysqlTable, text, timestamp, unique, varchar } from 'drizzle-orm/mysql-core';
+import { index, int, mysqlEnum, mysqlTable, primaryKey, text, timestamp, unique, varchar } from 'drizzle-orm/mysql-core';
 import { users } from './auth';
 
 const localeEnum = mysqlEnum('locale', ['en', 'et']);
@@ -60,15 +60,12 @@ export const taskTranslations = mysqlTable('task_translations', {
   unique('task_translations_task_locale_unique').on(table.taskId, table.locale),
 ]);
 
-export const completedTasks = mysqlTable('completed_tasks', {
-  id: int('id').autoincrement().primaryKey(),
+export const taskCompletions = mysqlTable('task_completions', {
   userId: varchar('user_id', { length: 36 }).notNull().references(() => users.id, { onDelete: 'cascade' }),
   taskId: int('task_id').notNull().references(() => tasks.id, { onDelete: 'cascade' }),
+  topicId: int('topic_id').notNull().references(() => topics.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at', { fsp: 3 }).defaultNow().notNull(),
-  updatedAt: timestamp('updated_at', { fsp: 3 })
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
 }, table => [
-  unique('completed_tasks_user_task_unique').on(table.userId, table.taskId),
+  primaryKey({ columns: [table.userId, table.taskId], name: 'task_completions_user_task_pk' }),
+  index('task_completions_user_topic_idx').on(table.userId, table.topicId),
 ]);

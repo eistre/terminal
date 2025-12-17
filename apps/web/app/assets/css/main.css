@@ -13,5 +13,5 @@
 }
 
 .terminal-height {
-  @apply h-[500px] lg:h-[calc(100vh-var(--ui-content-offset))] lg:min-h-[500px]
+  @apply h-125 lg:h-[calc(100vh-var(--ui-content-offset))] lg:min-h-125
 }

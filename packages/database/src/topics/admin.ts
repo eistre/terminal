@@ -1,13 +1,14 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
 import type {
+  EditableTopic,
   Locale,
-  SaveTopic,
-  SaveTopicResult,
-  TopicEditor,
   TopicTaskTranslation,
+  UpsertTopicInput,
+  UpsertTopicResult,
 } from '../types';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { tasks, taskTranslations, topics, topicTranslations } from '../schema';
+import { TopicNotFoundError } from './errors';
 
 function validateUniqueLocales(items: { locale: Locale }[], errorMessage: string) {
   const locales = items.map(item => item.locale);
@@ -23,16 +24,16 @@ function validateHasAtLeastOneTranslation(items: { locale: Locale }[], errorMess
   }
 }
 
-export function createTopicsManageRepo(db: MySql2Database) {
+export function createTopicsAdminRepo(db: MySql2Database) {
   return {
-    async getTopic(topicId: number): Promise<TopicEditor> {
+    async getTopic(topicId: number): Promise<EditableTopic> {
       const [topicRow] = await db
         .select({ id: topics.id, slug: topics.slug })
         .from(topics)
         .where(eq(topics.id, topicId));
 
       if (!topicRow) {
-        throw new Error('Topic not found');
+        throw new TopicNotFoundError();
       }
 
       const translations = await db
@@ -97,7 +98,7 @@ export function createTopicsManageRepo(db: MySql2Database) {
       };
     },
 
-    async saveTopic(input: SaveTopic): Promise<SaveTopicResult> {
+    async upsertTopic(input: UpsertTopicInput): Promise<UpsertTopicResult> {
       validateHasAtLeastOneTranslation(input.translations, 'Topic must have at least one translation');
       validateUniqueLocales(input.translations, 'Topic translations must have unique locales');
 
@@ -118,16 +119,16 @@ export function createTopicsManageRepo(db: MySql2Database) {
             return input.topic.id;
           }
 
-          const inserted = await tx
+          const [inserted] = await tx
             .insert(topics)
             .values({ slug: input.topic.slug })
             .$returningId();
 
-          if (inserted.length === 0) {
+          if (!inserted) {
             throw new Error('Topic not created');
           }
 
-          return inserted[0]!.id;
+          return inserted.id;
         })();
 
         // 2) Remove and insert topic translations
@@ -156,11 +157,26 @@ export function createTopicsManageRepo(db: MySql2Database) {
           await tx.delete(tasks).where(inArray(tasks.id, tasksToDelete));
         }
 
-        // 4) Insert or update tasks
+        // 4.1) Temporarily offset existing tasks' order
+        const payloadExistingTaskIds = input.tasks
+          .map(task => task.id)
+          .filter(id => id !== undefined);
+
+        if (payloadExistingTaskIds.length > 0) {
+          const temporaryOrderOffset = 10_000;
+          await tx
+            .update(tasks)
+            .set({ taskOrder: sql`${tasks.taskOrder} + ${temporaryOrderOffset}` })
+            .where(and(
+              eq(tasks.topicId, topicId),
+              inArray(tasks.id, payloadExistingTaskIds),
+            ));
+        }
+
         for (const [index, task] of input.tasks.entries()) {
           const taskOrder = index + 1;
 
-          // 4.1) Get or insert task
+          // 4.2) Get or insert task
           const taskId = await (async () => {
             if (task.id) {
               await tx
@@ -171,7 +187,7 @@ export function createTopicsManageRepo(db: MySql2Database) {
               return task.id;
             }
 
-            const inserted = await tx
+            const [inserted] = await tx
               .insert(tasks)
               .values({
                 topicId,
@@ -181,14 +197,14 @@ export function createTopicsManageRepo(db: MySql2Database) {
               })
               .$returningId();
 
-            if (inserted.length === 0) {
+            if (!inserted) {
               throw new Error('Task not created');
             }
 
-            return inserted[0]!.id;
+            return inserted.id;
           })();
 
-          // 4.2) Remove and insert task translations
+          // 4.3) Remove and insert task translations
           await tx.delete(taskTranslations).where(eq(taskTranslations.taskId, taskId));
           await tx.insert(taskTranslations).values(
             task.translations.map(translation => ({

@@ -16,5 +16,6 @@ export function createDatabase(options: DatabaseSchema) {
 }
 
 export * from './seeds';
+export { TopicNotFoundError } from './topics';
 export * from './types';
 export type Database = ReturnType<typeof createDatabase>;

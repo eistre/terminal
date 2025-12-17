@@ -1,4 +1,4 @@
-export interface Topic {
+export interface TopicSummary {
   id: number;
   slug: string;
   title: string;
@@ -14,7 +14,7 @@ export interface TopicTask {
   completed: boolean;
 }
 
-export interface TopicDetail {
+export interface TopicDetails {
   title: string;
   description: string;
   tasks: TopicTask[];

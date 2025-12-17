@@ -1,6 +1,26 @@
 <script setup lang="ts">
-import { topics } from '#shared/seed';
 import TopicCard from '~/components/topic/TopicCard.vue';
+
+const toast = useToast();
+const { t, locale } = useI18n();
+
+const { data: topics, status, error } = await useFetch('/api/topics', {
+  method: 'GET',
+  query: {
+    locale,
+  },
+});
+
+watch(status, (newStatus) => {
+  if (newStatus === 'error' && error.value) {
+    toast.add({
+      id: 'topics-error',
+      color: 'error',
+      icon: 'i-lucide-alert-circle',
+      title: t('topics.topicsError'),
+    });
+  }
+});
 </script>
 
 <template>

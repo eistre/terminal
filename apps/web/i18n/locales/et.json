@@ -38,7 +38,8 @@
   },
   "topics": {
     "title": "Teemad",
-    "description": "Harjuta Linuxi käsurea oskusi interaktiivsete ülesannete kaudu."
+    "description": "Harjuta Linuxi käsurea oskusi interaktiivsete ülesannete kaudu.",
+    "topicsError": "Teemade laadimine nurjus"
   },
   "topic": {
     "tasks": "Ülesanded",
@@ -47,6 +48,10 @@
     "terminal": "Käsurida",
     "reconnect": "Taasühenda",
     "resetTerminal": "Lähtesta",
-    "resetTerminalError": "Käsurea lähtestamine nurjus"
+    "resetTerminalError": "Käsurea lähtestamine nurjus",
+    "resetTasks": "Lähtesta",
+    "resetTasksError": "Ülesannete lähtestamine nurjus",
+    "resetTasksSuccess": "Ülesanded edukalt lähtestatud",
+    "topicError": "Teema laadimine nurjus"
   }
 }

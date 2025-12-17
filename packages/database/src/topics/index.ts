@@ -1,10 +1,14 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
-import { createTopicsManageRepo } from './manage';
-import { createTopicsReadRepo } from './read';
+import { createTopicsAdminRepo } from './admin';
+import { createTopicsCatalogRepo } from './catalog';
+import { createTopicsCompletionRepo } from './completion';
+
+export * from './errors';
 
 export function createTopicsRepo(db: MySql2Database) {
   return {
-    read: createTopicsReadRepo(db),
-    manage: createTopicsManageRepo(db),
+    admin: createTopicsAdminRepo(db),
+    catalog: createTopicsCatalogRepo(db),
+    completion: createTopicsCompletionRepo(db),
   };
 }

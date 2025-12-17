@@ -1,15 +1,16 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
-import type { Locale, Topic, TopicDetail } from '../types';
+import type { Locale, TopicDetails, TopicSummary } from '../types';
 import { aliasedTable, and, countDistinct, eq, sql } from 'drizzle-orm';
-import { completedTasks, tasks, taskTranslations, topics, topicTranslations } from '../schema';
+import { taskCompletions, tasks, taskTranslations, topics, topicTranslations } from '../schema';
+import { TopicNotFoundError } from './errors';
 
 function getFallbackLocale(locale: Locale): Locale {
   return locale === 'en' ? 'et' : 'en';
 }
 
-export function createTopicsReadRepo(db: MySql2Database) {
+export function createTopicsCatalogRepo(db: MySql2Database) {
   return {
-    async getTopic(userId: string, slug: string, locale: Locale): Promise<TopicDetail> {
+    async getTopic(userId: string, slug: string, locale: Locale): Promise<TopicDetails> {
       const fallbackLocale = getFallbackLocale(locale);
 
       const requestedTopicTranslations = aliasedTable(topicTranslations, 'topic_translations_requested');
@@ -28,7 +29,7 @@ export function createTopicsReadRepo(db: MySql2Database) {
           taskContent: sql<string>`coalesce(${requestedTaskTranslations.content}, ${fallbackTaskTranslations.content})`,
           taskHint: sql<string | null>`coalesce(${requestedTaskTranslations.hint}, ${fallbackTaskTranslations.hint})`,
 
-          completedTaskId: completedTasks.id,
+          completedTaskId: taskCompletions.taskId,
         })
         .from(topics)
         .leftJoin(requestedTopicTranslations, and(
@@ -48,15 +49,15 @@ export function createTopicsReadRepo(db: MySql2Database) {
           eq(fallbackTaskTranslations.taskId, tasks.id),
           eq(fallbackTaskTranslations.locale, fallbackLocale),
         ))
-        .leftJoin(completedTasks, and(
-          eq(completedTasks.taskId, tasks.id),
-          eq(completedTasks.userId, userId),
+        .leftJoin(taskCompletions, and(
+          eq(taskCompletions.taskId, tasks.id),
+          eq(taskCompletions.userId, userId),
         ))
         .where(eq(topics.slug, slug))
         .orderBy(tasks.taskOrder);
 
       if (rows.length === 0) {
-        throw new Error('Topic not found');
+        throw new TopicNotFoundError();
       }
 
       const [firstRow] = rows;
@@ -75,7 +76,7 @@ export function createTopicsReadRepo(db: MySql2Database) {
       };
     },
 
-    async getTopics(userId: string, locale: Locale): Promise<Topic[]> {
+    async getTopics(userId: string, locale: Locale): Promise<TopicSummary[]> {
       const fallbackLocale = getFallbackLocale(locale);
 
       const requestedTopicTranslations = aliasedTable(topicTranslations, 'topic_translations_requested');
@@ -88,7 +89,7 @@ export function createTopicsReadRepo(db: MySql2Database) {
           title: sql<string>`coalesce(${requestedTopicTranslations.title}, ${fallbackTopicTranslations.title})`,
           description: sql<string>`coalesce(${requestedTopicTranslations.description}, ${fallbackTopicTranslations.description})`,
           totalTasks: countDistinct(tasks.id),
-          completedTasks: countDistinct(completedTasks.id),
+          completedTasks: countDistinct(taskCompletions.taskId),
         })
         .from(topics)
         .leftJoin(requestedTopicTranslations, and(
@@ -100,9 +101,9 @@ export function createTopicsReadRepo(db: MySql2Database) {
           eq(fallbackTopicTranslations.locale, fallbackLocale),
         ))
         .leftJoin(tasks, eq(tasks.topicId, topics.id))
-        .leftJoin(completedTasks, and(
-          eq(completedTasks.taskId, tasks.id),
-          eq(completedTasks.userId, userId),
+        .leftJoin(taskCompletions, and(
+          eq(taskCompletions.taskId, tasks.id),
+          eq(taskCompletions.userId, userId),
         ))
         .groupBy(
           topics.id,

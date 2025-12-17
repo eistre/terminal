@@ -1,9 +1,15 @@
+import { z } from 'zod';
 import { useAuth } from '~~/server/lib/auth';
+import { useDatabase } from '~~/server/lib/database';
 import { useLogger } from '~~/server/lib/logger';
-import { useProvisioner } from '~~/server/lib/provisioner';
+
+const routeSchema = z.object({
+  slug: z.string(),
+});
 
 export default defineEventHandler(async (event) => {
   const auth = useAuth();
+  const database = useDatabase();
   const logger = useLogger();
 
   const userSession = await auth.api.getSession({ headers: event.headers });
@@ -11,13 +17,14 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
   }
 
-  const provisioner = useProvisioner();
+  const userId = userSession.user.id;
+  const { slug } = await getValidatedRouterParams(event, data => routeSchema.parse(data));
 
   try {
-    await provisioner.deleteContainer(userSession.user.id);
+    await database.topics.completion.resetTopic(userId, slug);
   }
   catch (error) {
-    logger.error(error, `Failed to delete terminal container for user: ${userSession.user.id}`);
+    logger.error(error, `Failed to reset topic with slug: ${slug} for user: ${userId}`);
     throw createError({ statusCode: 500, statusMessage: 'Internal Server Error' });
   }
 });

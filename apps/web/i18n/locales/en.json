@@ -38,7 +38,8 @@
   },
   "topics": {
     "title": "Topics",
-    "description": "Practice Linux command line skills through interactive tasks."
+    "description": "Practice Linux command line skills through interactive tasks.",
+    "topicsError": "Failed to load topics"
   },
   "topic": {
     "tasks": "Tasks",
@@ -47,6 +48,10 @@
     "terminal": "Terminal",
     "reconnect": "Reconnect",
     "resetTerminal": "Reset",
-    "resetTerminalError": "Failed to reset terminal"
+    "resetTerminalError": "Failed to reset terminal",
+    "resetTasks": "Reset",
+    "resetTasksError": "Failed to reset tasks",
+    "resetTasksSuccess": "Tasks reset successfully",
+    "topicError": "Failed to load topic"
   }
 }

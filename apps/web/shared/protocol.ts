@@ -1,4 +1,4 @@
-export type Status = 'IDLE' | 'PROVISIONING' | 'CONNECTING' | 'READY' | 'ERROR' | 'RESETTING' | 'CLOSING' | 'CLOSED';
+export type Status = 'IDLE' | 'PROVISIONING' | 'CONNECTING' | 'READY' | 'ERROR' | 'RESETTING' | 'CLOSED';
 
 export type ErrorCode = 'UNAUTHORIZED' | 'PROVISION_ERROR' | 'CONNECT_ERROR' | 'SESSION_ENDED' | 'INTERNAL_ERROR';
 
@@ -19,7 +19,9 @@ export type Message = {
   message?: string;
 } | {
   type: 'task/done';
-  taskId: string;
+  taskId: number;
+} | {
+  type: 'tasks/reset';
 };
 
 export function encode(message: Message): string {

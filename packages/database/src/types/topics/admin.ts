@@ -13,27 +13,27 @@ export interface TopicTaskTranslation {
   hint: string | null;
 }
 
-export interface SaveTopicTask {
+export interface UpsertTopicTask {
   id?: number;
   regex: string;
   watchPath: string | null;
   translations: TopicTaskTranslation[];
 }
 
-export interface SaveTopic {
+export interface UpsertTopicInput {
   topic: {
     id?: number;
     slug: string;
   };
   translations: TopicTranslation[];
-  tasks: SaveTopicTask[];
+  tasks: UpsertTopicTask[];
 }
 
-export interface SaveTopicResult {
+export interface UpsertTopicResult {
   topicId: number;
 }
 
-export interface TopicEditorTask {
+export interface EditableTopicTask {
   id: number;
   taskOrder: number;
   regex: string;
@@ -41,9 +41,9 @@ export interface TopicEditorTask {
   translations: TopicTaskTranslation[];
 }
 
-export interface TopicEditor {
+export interface EditableTopic {
   id: number;
   slug: string;
   translations: TopicTranslation[];
-  tasks: TopicEditorTask[];
+  tasks: EditableTopicTask[];
 }

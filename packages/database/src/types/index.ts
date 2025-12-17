@@ -1,4 +1,5 @@
 export * from './common';
-export * from './topics/manage';
-export * from './topics/read';
+export * from './topics/admin';
+export * from './topics/catalog';
+export * from './topics/completion';
 export * from './topics/seed';

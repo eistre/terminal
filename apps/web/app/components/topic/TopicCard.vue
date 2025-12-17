@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { topics } from '#shared/seed';
+import type { TopicSummary } from '@terminal/database';
 
-const { topic } = defineProps<{ topic: typeof topics[number] }>();
+const { topic } = defineProps<{ topic: TopicSummary }>();
 </script>
 
 <template>
