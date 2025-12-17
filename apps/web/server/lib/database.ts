@@ -3,13 +3,13 @@ import type { DatabaseSchema } from '@terminal/env/schemas';
 import { createDatabase } from '@terminal/database';
 import { useEnv } from '~~/server/lib/env';
 
-let _db: Database | undefined;
+let _database: Database | undefined;
 
 export function useDatabase(): Database {
-  if (!_db) {
+  if (!_database) {
     const env = useEnv();
-    _db = createDatabase(env as DatabaseSchema);
+    _database = createDatabase(env as DatabaseSchema);
   }
 
-  return _db;
+  return _database;
 }
