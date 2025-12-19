@@ -85,6 +85,7 @@ watch(lastTaskDoneId, (newTaskId) => {
 
 watch(status, (newStatus) => {
   if (newStatus === 'error' && error.value) {
+    // TODO: redirect to /topics on 404.
     toast.add({
       id: 'topic-error',
       color: 'error',

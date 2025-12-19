@@ -39,6 +39,7 @@
   "topics": {
     "title": "Teemad",
     "description": "Harjuta Linuxi käsurea oskusi interaktiivsete ülesannete kaudu.",
+    "new": "Uus teema",
     "topicsError": "Teemade laadimine nurjus"
   },
   "topic": {
@@ -52,6 +53,50 @@
     "resetTasks": "Lähtesta",
     "resetTasksError": "Ülesannete lähtestamine nurjus",
     "resetTasksSuccess": "Ülesanded edukalt lähtestatud",
-    "topicError": "Teema laadimine nurjus"
+    "topicError": "Teema laadimine nurjus",
+    "deleteSuccess": "Teema edukalt kustutatud",
+    "deleteError": "Teema kustutamine nurjus",
+    "deleteButton": "Kustuta",
+    "editButton": "Muuda",
+    "deleteConfirm": "Kas olete kindel, et soovite selle teema kustutada?",
+    "cancel": "Tühista",
+    "confirm": "Kinnita",
+    "editor": {
+      "loadError": "Teema laadimine nurjus",
+      "saveSuccess": "Teema edukalt salvestatud",
+      "saveError": "Teema salvestamine nurjus",
+      "readyToSave": "Salvestamiseks valmis",
+      "missingItems": "Puuduvad väljad",
+      "saveChanges": "Salvesta muudatused",
+      "confirmLocaleDeletionTitle": "Kustuta tõlge ({locale})?",
+      "confirmLocaleDeletionMessage": "Salvestamisel eemaldatakse teemast tõlge ({locale}). Kas soovite jätkata?",
+      "cancel": "Tühista",
+      "confirm": "Kinnita",
+      "validationError": "Valideerimisviga",
+      "sidebar": {
+        "outline": "Ülevaade",
+        "addTask": "Lisa ülesanne",
+        "topicSettings": "Teema seaded",
+        "removeTask": "Eemalda ülesanne",
+        "removeTaskConfirmTitle": "Eemalda ülesanne?",
+        "removeTaskConfirmMessage": "Ülesanne kustutatakse, kui salvestad muudatused.",
+        "cannotRemoveLastTask": "Vähemalt üks ülesanne on vajalik"
+      },
+      "panel": {
+        "titleTopic": "Teema",
+        "titleTask": "Ülesanne",
+        "fieldTitle": "Pealkiri",
+        "fieldDescription": "Kirjeldus",
+        "fieldContent": "Sisu",
+        "fieldHint": "Vihje",
+        "fieldRegex": "Regex"
+      },
+      "slug": {
+        "title": "Slug",
+        "resetToTitle": "Lähtesta pealkirja järgi",
+        "canonicalLabel": "Slug",
+        "publicUrlLabel": "Avalik URL"
+      }
+    }
   }
 }

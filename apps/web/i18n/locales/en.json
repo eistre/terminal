@@ -39,6 +39,7 @@
   "topics": {
     "title": "Topics",
     "description": "Practice Linux command line skills through interactive tasks.",
+    "new": "New topic",
     "topicsError": "Failed to load topics"
   },
   "topic": {
@@ -52,6 +53,50 @@
     "resetTasks": "Reset",
     "resetTasksError": "Failed to reset tasks",
     "resetTasksSuccess": "Tasks reset successfully",
-    "topicError": "Failed to load topic"
+    "topicError": "Failed to load topic",
+    "deleteSuccess": "Topic deleted successfully",
+    "deleteError": "Failed to delete topic",
+    "deleteButton": "Delete",
+    "editButton": "Edit",
+    "deleteConfirm": "Are you sure you want to delete this topic?",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "editor": {
+      "loadError": "Failed to load topic",
+      "saveSuccess": "Topic saved successfully",
+      "saveError": "Failed to save topic",
+      "readyToSave": "Ready to save",
+      "missingItems": "Missing items",
+      "saveChanges": "Save changes",
+      "confirmLocaleDeletionTitle": "Delete {locale} translation?",
+      "confirmLocaleDeletionMessage": "Saving will remove {locale} translation from this topic. Do you want to continue?",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "validationError": "Validation error",
+      "sidebar": {
+        "outline": "Outline",
+        "addTask": "Add task",
+        "topicSettings": "Topic settings",
+        "removeTask": "Remove task",
+        "removeTaskConfirmTitle": "Remove task?",
+        "removeTaskConfirmMessage": "Task will be deleted when you save changes.",
+        "cannotRemoveLastTask": "At least one task is required"
+      },
+      "panel": {
+        "titleTopic": "Topic",
+        "titleTask": "Task",
+        "fieldTitle": "Title",
+        "fieldDescription": "Description",
+        "fieldContent": "Content",
+        "fieldHint": "Hint",
+        "fieldRegex": "Regex"
+      },
+      "slug": {
+        "title": "Slug",
+        "resetToTitle": "Reset to title",
+        "canonicalLabel": "Canonical slug",
+        "publicUrlLabel": "Public URL"
+      }
+    }
   }
 }

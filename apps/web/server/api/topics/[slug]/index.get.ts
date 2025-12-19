@@ -1,3 +1,4 @@
+import { localeSchema } from '#shared/locale';
 import { z } from 'zod';
 import { useAuth } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
@@ -8,7 +9,7 @@ const routeSchema = z.object({
 });
 
 const querySchema = z.object({
-  locale: z.enum(['en', 'et']).default('en'),
+  locale: localeSchema.default('en'),
 });
 
 export default defineEventHandler(async (event) => {

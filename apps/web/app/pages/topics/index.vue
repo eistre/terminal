@@ -6,6 +6,7 @@ const { t, locale } = useI18n();
 
 const { data: topics, status, error } = await useFetch('/api/topics', {
   method: 'GET',
+  deep: true,
   query: {
     locale,
   },
@@ -21,6 +22,17 @@ watch(status, (newStatus) => {
     });
   }
 });
+
+function handleDeleted(id: number) {
+  if (!topics.value) {
+    return;
+  }
+
+  const index = topics.value.findIndex(topic => topic.id === id);
+  if (index >= 0) {
+    topics.value.splice(index, 1);
+  }
+}
 </script>
 
 <template>
@@ -29,6 +41,12 @@ watch(status, (newStatus) => {
       <UPageHeader
         :title="$t('topics.title')"
         :description="$t('topics.description')"
+        :links="[{
+          label: $t('topics.new'),
+          icon: 'i-lucide-edit',
+          size: 'lg',
+          to: '/topics/new',
+        }]"
       />
 
       <UPageBody>
@@ -37,6 +55,7 @@ watch(status, (newStatus) => {
             v-for="topic in topics"
             :key="topic.id"
             :topic="topic"
+            @deleted="handleDeleted"
           />
         </UPageGrid>
       </UPageBody>
