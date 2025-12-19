@@ -18,6 +18,7 @@
     "@nuxtjs/i18n": "catalog:",
     "@terminal/database": "workspace:*",
     "@terminal/env": "workspace:*",
+    "@terminal/evaluator": "workspace:*",
     "@terminal/logger": "workspace:*",
     "@terminal/provisioner": "workspace:*",
     "@terminal/session": "workspace:*",
