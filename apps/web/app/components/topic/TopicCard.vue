@@ -50,7 +50,6 @@ async function deleteTopic() {
 
         <div class="flex justify-end gap-2 relative z-10">
           <UButton
-            size="lg"
             variant="ghost"
             color="neutral"
             icon="i-lucide-pencil"
@@ -61,7 +60,6 @@ async function deleteTopic() {
 
           <UPopover arrow>
             <UButton
-              size="lg"
               variant="ghost"
               color="error"
               icon="i-lucide-trash"
@@ -78,7 +76,6 @@ async function deleteTopic() {
                 <div class="flex justify-center gap-2">
                   <UButton
                     variant="ghost"
-                    size="lg"
                     color="neutral"
                     @click="close"
                   >
@@ -86,7 +83,6 @@ async function deleteTopic() {
                   </UButton>
                   <UButton
                     variant="solid"
-                    size="lg"
                     color="error"
                     @click="() => { close(); deleteTopic(); }"
                   >

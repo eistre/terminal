@@ -109,7 +109,6 @@ onBeforeUnmount(() => {
           <UButton
             color="primary"
             variant="subtle"
-            size="lg"
             icon="i-lucide-plus"
             @click="emit('addTask')"
           >
@@ -187,7 +186,6 @@ onBeforeUnmount(() => {
                       <div class="flex justify-end gap-2">
                         <UButton
                           variant="ghost"
-                          size="lg"
                           color="neutral"
                           @click="close"
                         >
@@ -195,7 +193,6 @@ onBeforeUnmount(() => {
                         </UButton>
                         <UButton
                           variant="solid"
-                          size="lg"
                           color="error"
                           @click="() => { close(); deleteTask(item.clientId); }"
                         >

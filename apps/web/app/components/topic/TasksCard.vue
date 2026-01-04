@@ -44,7 +44,6 @@ function toggleHint(item: number) {
           <UButton
             variant="ghost"
             color="neutral"
-            size="lg"
             @click="emit('reset')"
           >
             {{ t('topic.resetTasks') }}

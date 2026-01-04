@@ -184,7 +184,6 @@ async function save(skipLocaleDeletionConfirm: boolean) {
         <template #links>
           <div class="flex items-center gap-2">
             <UBadge
-              size="lg"
               variant="subtle"
               :color="isSaveReady ? 'success' : 'warning'"
             >
@@ -197,7 +196,6 @@ async function save(skipLocaleDeletionConfirm: boolean) {
                 color="primary"
                 icon="i-lucide-save"
                 variant="subtle"
-                size="lg"
                 :loading="saving"
                 :disabled="saving || !isSaveReady"
                 @click="save(false)"
@@ -218,7 +216,6 @@ async function save(skipLocaleDeletionConfirm: boolean) {
                   <div class="flex justify-end gap-2">
                     <UButton
                       variant="ghost"
-                      size="lg"
                       color="neutral"
                       @click="close"
                     >
@@ -226,7 +223,6 @@ async function save(skipLocaleDeletionConfirm: boolean) {
                     </UButton>
                     <UButton
                       variant="solid"
-                      size="lg"
                       color="error"
                       @click="save(true)"
                     >

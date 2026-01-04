@@ -178,7 +178,6 @@ async function handleTasksReset() {
                     v-if="canReconnect"
                     variant="ghost"
                     color="neutral"
-                    size="lg"
                     @click="connect"
                   >
                     {{ $t('topic.reconnect') }}
@@ -186,7 +185,6 @@ async function handleTasksReset() {
                   <UButton
                     variant="ghost"
                     color="neutral"
-                    size="lg"
                     :loading="hasEverConnected && !canReset"
                     :disabled="!canReset"
                     @click="handleContainerReset"
