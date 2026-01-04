@@ -162,13 +162,12 @@ async function save(skipLocaleDeletionConfirm: boolean) {
 
     navigateTo('/topics');
   }
-  // TODO should probably think about slug conflict
-  catch {
+  catch (error: any) {
     toast.add({
       id: 'topic-save-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
-      title: t('topic.editor.saveError'),
+      title: error.statusCode === 409 ? t('topic.editor.slugConflict') : t('topic.editor.saveError'),
     });
   }
   finally {

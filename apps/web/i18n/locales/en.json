@@ -69,6 +69,7 @@
       "missingItems": "Missing items",
       "saveChanges": "Save changes",
       "create": "Create topic",
+      "slugConflict": "URL Slug is already in use",
       "confirmLocaleDeletionTitle": "Delete {locale} translation?",
       "confirmLocaleDeletionMessage": "Saving will remove {locale} translation from this topic. Do you want to continue?",
       "cancel": "Cancel",

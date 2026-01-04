@@ -85,15 +85,16 @@ watch(lastTaskDoneId, (newTaskId) => {
 
 watch(status, (newStatus) => {
   if (newStatus === 'error' && error.value) {
-    // TODO: redirect to /topics on 404.
     toast.add({
       id: 'topic-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('topic.topicError'),
     });
+
+    navigateTo('/topics');
   }
-});
+}, { immediate: true });
 
 watch(sessionStatus, (newStatus) => {
   if (newStatus === 'READY') {

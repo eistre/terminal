@@ -69,6 +69,7 @@
       "missingItems": "Puuduvad väljad",
       "saveChanges": "Salvesta muudatused",
       "create": "Loo teema",
+      "slugConflict": "URL Slug on juba kasutusel",
       "confirmLocaleDeletionTitle": "Kustuta tõlge ({locale})?",
       "confirmLocaleDeletionMessage": "Salvestamisel eemaldatakse teemast tõlge ({locale}). Kas soovite jätkata?",
       "cancel": "Tühista",

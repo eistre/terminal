@@ -24,6 +24,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     await database.topics.admin.deleteTopic(parsed.data.id);
+    logger.info({ userId: userSession.user.id, topicId: parsed.data.id }, 'Topic deleted');
   }
   catch (error) {
     logger.error(error, `Failed to delete topic with id: ${parsed.data.id}`);

@@ -1,4 +1,5 @@
 import { localeSchema } from '#shared/locale';
+import { TopicNotFoundError } from '@terminal/database';
 import { z } from 'zod';
 import { useAuth } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
@@ -30,6 +31,10 @@ export default defineEventHandler(async (event) => {
     return await database.topics.catalog.getTopic(userId, slug, locale);
   }
   catch (error) {
+    if (error instanceof TopicNotFoundError) {
+      throw createError({ statusCode: 404, statusMessage: 'Topic Not Found' });
+    }
+
     logger.error(error, `Failed to get topic with slug: ${slug} for user: ${userId}`);
     throw createError({ statusCode: 500, statusMessage: 'Internal Server Error' });
   }

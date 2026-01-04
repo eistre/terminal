@@ -1,4 +1,5 @@
 import { upsertTopicPayloadSchema } from '#shared/topics-validation';
+import { TopicSlugConflictError } from '@terminal/database';
 import { z } from 'zod';
 import { useAuth } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
@@ -36,9 +37,14 @@ export default defineEventHandler(async (event) => {
       tasks: parsedPayload.data.tasks,
     });
 
+    logger.info({ userId: userSession.user.id, topicId: result.topicId }, 'Topic updated');
     return { topicId: result.topicId };
   }
   catch (error) {
+    if (error instanceof TopicSlugConflictError) {
+      throw createError({ statusCode: 409, statusMessage: 'Slug already exists' });
+    }
+
     logger.error(error, `Failed to upsert topic with id: ${parsed.data.id}`);
     throw createError({ statusCode: 500, statusMessage: 'Internal Server Error' });
   }

@@ -103,12 +103,12 @@ async function save() {
 
     navigateTo('/topics');
   }
-  catch {
+  catch (error: any) {
     toast.add({
       id: 'topic-create-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
-      title: t('topic.editor.saveError'),
+      title: error.statusCode === 409 ? t('topic.editor.slugConflict') : t('topic.editor.saveError'),
     });
   }
   finally {

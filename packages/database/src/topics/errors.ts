@@ -4,3 +4,10 @@ export class TopicNotFoundError extends Error {
     this.name = 'TopicNotFoundError';
   }
 }
+
+export class TopicSlugConflictError extends Error {
+  constructor(message = 'Topic slug already exists') {
+    super(message);
+    this.name = 'TopicSlugConflictError';
+  }
+}

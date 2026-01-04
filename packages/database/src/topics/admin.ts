@@ -8,7 +8,7 @@ import type {
 } from '../types';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { tasks, taskTranslations, topics, topicTranslations } from '../schema';
-import { TopicNotFoundError } from './errors';
+import { TopicNotFoundError, TopicSlugConflictError } from './errors';
 
 function validateUniqueLocales(items: { locale: Locale }[], errorMessage: string) {
   const locales = items.map(item => item.locale);
@@ -107,118 +107,127 @@ export function createTopicsAdminRepo(db: MySql2Database) {
         validateUniqueLocales(task.translations, 'Task translations must have unique locales');
       }
 
-      return await db.transaction(async (tx) => {
-        // 1) Get or insert the topic
-        const topicId = await (async () => {
-          if (input.topic.id) {
-            await tx
-              .update(topics)
-              .set({ slug: input.topic.slug })
-              .where(eq(topics.id, input.topic.id));
-
-            return input.topic.id;
-          }
-
-          const [inserted] = await tx
-            .insert(topics)
-            .values({ slug: input.topic.slug })
-            .$returningId();
-
-          if (!inserted) {
-            throw new Error('Topic not created');
-          }
-
-          return inserted.id;
-        })();
-
-        // 2) Remove and insert topic translations
-        await tx.delete(topicTranslations).where(eq(topicTranslations.topicId, topicId));
-        await tx.insert(topicTranslations).values(
-          input.translations.map(translation => ({
-            topicId,
-            locale: translation.locale,
-            title: translation.title,
-            description: translation.description,
-          })),
-        );
-
-        // 3) Remove old tasks
-        const existingTaskRows = await tx
-          .select({ id: tasks.id })
-          .from(tasks)
-          .where(eq(tasks.topicId, topicId));
-
-        const existingTaskIds = new Set(existingTaskRows.map(r => r.id));
-        const payloadTaskIds = new Set(input.tasks.map(t => t.id)
-          .filter(id => id !== undefined));
-
-        const tasksToDelete = [...existingTaskIds].filter(id => !payloadTaskIds.has(id));
-        if (tasksToDelete.length > 0) {
-          await tx.delete(tasks).where(inArray(tasks.id, tasksToDelete));
-        }
-
-        // 4.1) Temporarily offset existing tasks' order
-        const payloadExistingTaskIds = input.tasks
-          .map(task => task.id)
-          .filter(id => id !== undefined);
-
-        if (payloadExistingTaskIds.length > 0) {
-          const temporaryOrderOffset = 10_000;
-          await tx
-            .update(tasks)
-            .set({ taskOrder: sql`${tasks.taskOrder} + ${temporaryOrderOffset}` })
-            .where(and(
-              eq(tasks.topicId, topicId),
-              inArray(tasks.id, payloadExistingTaskIds),
-            ));
-        }
-
-        for (const [index, task] of input.tasks.entries()) {
-          const taskOrder = index + 1;
-
-          // 4.2) Get or insert task
-          const taskId = await (async () => {
-            if (task.id) {
+      try {
+        return await db.transaction(async (tx) => {
+          // 1) Get or insert the topic
+          const topicId = await (async () => {
+            if (input.topic.id) {
               await tx
-                .update(tasks)
-                .set({ regex: task.regex, watchPath: task.watchPath, taskOrder })
-                .where(and(eq(tasks.id, task.id), eq(tasks.topicId, topicId)));
+                .update(topics)
+                .set({ slug: input.topic.slug })
+                .where(eq(topics.id, input.topic.id));
 
-              return task.id;
+              return input.topic.id;
             }
 
             const [inserted] = await tx
-              .insert(tasks)
-              .values({
-                topicId,
-                taskOrder,
-                regex: task.regex,
-                watchPath: task.watchPath,
-              })
+              .insert(topics)
+              .values({ slug: input.topic.slug })
               .$returningId();
 
             if (!inserted) {
-              throw new Error('Task not created');
+              throw new Error('Topic not created');
             }
 
             return inserted.id;
           })();
 
-          // 4.3) Remove and insert task translations
-          await tx.delete(taskTranslations).where(eq(taskTranslations.taskId, taskId));
-          await tx.insert(taskTranslations).values(
-            task.translations.map(translation => ({
-              taskId,
+          // 2) Remove and insert topic translations
+          await tx.delete(topicTranslations).where(eq(topicTranslations.topicId, topicId));
+          await tx.insert(topicTranslations).values(
+            input.translations.map(translation => ({
+              topicId,
               locale: translation.locale,
               title: translation.title,
-              content: translation.content,
-              hint: translation.hint ?? null,
+              description: translation.description,
             })),
           );
+
+          // 3) Remove old tasks
+          const existingTaskRows = await tx
+            .select({ id: tasks.id })
+            .from(tasks)
+            .where(eq(tasks.topicId, topicId));
+
+          const existingTaskIds = new Set(existingTaskRows.map(r => r.id));
+          const payloadTaskIds = new Set(input.tasks.map(t => t.id)
+            .filter(id => id !== undefined));
+
+          const tasksToDelete = [...existingTaskIds].filter(id => !payloadTaskIds.has(id));
+          if (tasksToDelete.length > 0) {
+            await tx.delete(tasks).where(inArray(tasks.id, tasksToDelete));
+          }
+
+          // 4.1) Temporarily offset existing tasks' order
+          const payloadExistingTaskIds = input.tasks
+            .map(task => task.id)
+            .filter(id => id !== undefined);
+
+          if (payloadExistingTaskIds.length > 0) {
+            const temporaryOrderOffset = 10_000;
+            await tx
+              .update(tasks)
+              .set({ taskOrder: sql`${tasks.taskOrder} + ${temporaryOrderOffset}` })
+              .where(and(
+                eq(tasks.topicId, topicId),
+                inArray(tasks.id, payloadExistingTaskIds),
+              ));
+          }
+
+          for (const [index, task] of input.tasks.entries()) {
+            const taskOrder = index + 1;
+
+            // 4.2) Get or insert task
+            const taskId = await (async () => {
+              if (task.id) {
+                await tx
+                  .update(tasks)
+                  .set({ regex: task.regex, watchPath: task.watchPath, taskOrder })
+                  .where(and(eq(tasks.id, task.id), eq(tasks.topicId, topicId)));
+
+                return task.id;
+              }
+
+              const [inserted] = await tx
+                .insert(tasks)
+                .values({
+                  topicId,
+                  taskOrder,
+                  regex: task.regex,
+                  watchPath: task.watchPath,
+                })
+                .$returningId();
+
+              if (!inserted) {
+                throw new Error('Task not created');
+              }
+
+              return inserted.id;
+            })();
+
+            // 4.3) Remove and insert task translations
+            await tx.delete(taskTranslations).where(eq(taskTranslations.taskId, taskId));
+            await tx.insert(taskTranslations).values(
+              task.translations.map(translation => ({
+                taskId,
+                locale: translation.locale,
+                title: translation.title,
+                content: translation.content,
+                hint: translation.hint ?? null,
+              })),
+            );
+          }
+
+          return { topicId };
+        });
+      }
+      catch (error: any) {
+        if (error.cause.code === 'ER_DUP_ENTRY' && error.cause.message.includes('topics.topics_slug_unique')) {
+          throw new TopicSlugConflictError();
         }
 
-        return { topicId };
-      });
+        throw error;
+      }
     },
 
     async deleteTopic(topicId: number): Promise<void> {
