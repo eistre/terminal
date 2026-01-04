@@ -68,6 +68,7 @@
       "readyToSave": "Salvestamiseks valmis",
       "missingItems": "Puuduvad väljad",
       "saveChanges": "Salvesta muudatused",
+      "create": "Loo teema",
       "confirmLocaleDeletionTitle": "Kustuta tõlge ({locale})?",
       "confirmLocaleDeletionMessage": "Salvestamisel eemaldatakse teemast tõlge ({locale}). Kas soovite jätkata?",
       "cancel": "Tühista",

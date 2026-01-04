@@ -32,8 +32,12 @@ export function getSaveLocales(draft: DraftTopic): Locale[] {
 export function toUpsertPayload(draft: DraftTopic): UpsertTopicInput {
   const locales = getSaveLocales(draft);
 
+  const topic = draft.id === undefined
+    ? { slug: draft.slug }
+    : { id: draft.id, slug: draft.slug };
+
   return {
-    topic: { id: draft.id, slug: draft.slug },
+    topic,
     translations: locales.map(locale => ({
       locale,
       title: draft.translations[locale].title.trim(),

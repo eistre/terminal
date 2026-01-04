@@ -1,12 +1,7 @@
 import { upsertTopicPayloadSchema } from '#shared/topics-validation';
-import { z } from 'zod';
 import { useAuth } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useLogger } from '~~/server/lib/logger';
-
-const routeSchema = z.object({
-  id: z.coerce.number().int().positive(),
-});
 
 export default defineEventHandler(async (event) => {
   const auth = useAuth();
@@ -18,20 +13,14 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
   }
 
-  const parsed = await getValidatedRouterParams(event, data => routeSchema.safeParse(data));
   const parsedPayload = upsertTopicPayloadSchema.safeParse(await readBody(event));
-
-  if (!parsed.success || !parsedPayload.success) {
+  if (!parsedPayload.success) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid payload' });
-  }
-
-  if (parsedPayload.data.topic.id !== undefined && parsedPayload.data.topic.id !== parsed.data.id) {
-    throw createError({ statusCode: 400, statusMessage: 'Topic id mismatch' });
   }
 
   try {
     const result = await database.topics.admin.upsertTopic({
-      topic: { id: parsed.data.id, slug: parsedPayload.data.topic.slug },
+      topic: { slug: parsedPayload.data.topic.slug },
       translations: parsedPayload.data.translations,
       tasks: parsedPayload.data.tasks,
     });
@@ -39,7 +28,7 @@ export default defineEventHandler(async (event) => {
     return { topicId: result.topicId };
   }
   catch (error) {
-    logger.error(error, `Failed to upsert topic with id: ${parsed.data.id}`);
+    logger.error(error, 'Failed to create topic');
     throw createError({ statusCode: 500, statusMessage: 'Internal Server Error' });
   }
 });

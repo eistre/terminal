@@ -24,7 +24,7 @@ export interface DraftTask {
 }
 
 export interface DraftTopic {
-  id: number;
+  id?: number;
   slug: string;
   slugEdited: boolean;
   translations: Record<Locale, DraftTopicLocaleText>;
@@ -113,7 +113,7 @@ export function createEmptyTask(clientId: number): DraftTask {
   };
 }
 
-export function createEmptyTopic(id: number): DraftTopic {
+export function createEmptyTopic(id?: number): DraftTopic {
   return {
     id,
     slug: '',

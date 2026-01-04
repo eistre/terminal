@@ -68,6 +68,7 @@
       "readyToSave": "Ready to save",
       "missingItems": "Missing items",
       "saveChanges": "Save changes",
+      "create": "Create topic",
       "confirmLocaleDeletionTitle": "Delete {locale} translation?",
       "confirmLocaleDeletionMessage": "Saving will remove {locale} translation from this topic. Do you want to continue?",
       "cancel": "Cancel",
