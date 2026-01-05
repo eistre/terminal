@@ -19,7 +19,7 @@ export interface DraftTask {
   clientId: number;
   id?: number;
   regex: string;
-  watchPath: string | null;
+  watchPath: string;
   translations: Record<Locale, DraftTaskLocaleText>;
 }
 
@@ -64,7 +64,7 @@ export function editableTopicToDraft(topic: EditableTopic): DraftTopic {
       clientId: task.id,
       id: task.id,
       regex: task.regex,
-      watchPath: task.watchPath,
+      watchPath: task.watchPath ?? '',
       translations: {
         en: {
           title: enTask?.title ?? '',
@@ -105,7 +105,7 @@ export function createEmptyTask(clientId: number): DraftTask {
   return {
     clientId,
     regex: '',
-    watchPath: null,
+    watchPath: '',
     translations: {
       en: emptyTaskLocale(),
       et: emptyTaskLocale(),

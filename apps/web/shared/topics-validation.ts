@@ -48,7 +48,14 @@ export const upsertTopicPayloadSchema = z
       z.object({
         id: z.number().int().positive().optional(),
         regex: z.string().trim().min(1).max(255),
-        watchPath: z.string().trim().min(1).max(255).nullable(),
+        watchPath: z
+          .string()
+          .trim()
+          .min(1)
+          .max(255)
+          .refine(value => value.startsWith('/'), { message: 'watchPath must start with /' })
+          .refine(value => !/[\0\r\n]/.test(value), { message: 'watchPath contains invalid characters' })
+          .nullable(),
         translations: z.array(
           z.object({
             locale: localeSchema,

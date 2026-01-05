@@ -57,91 +57,115 @@ const taskLocalesForDisplay = computed<Locale[]>(() => {
 
       <USeparator />
 
-      <div class="flex flex-col gap-4">
-        <div v-if="selection.kind === 'topic'" class="flex flex-col gap-6">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <UCard v-for="locale in LOCALES" :key="locale">
-              <template #header>
-                <div class="font-semibold">
-                  {{ locale.toUpperCase() }}
-                </div>
-              </template>
-
-              <div class="flex flex-col gap-4">
-                <UFormField :label="t('topic.editor.panel.fieldTitle')" :name="`translations.${locale}.title`">
-                  <UInput v-model="draft.translations[locale].title" :ui="{ root: 'w-full' }" />
-                </UFormField>
-
-                <UFormField :label="t('topic.editor.panel.fieldDescription')" :name="`translations.${locale}.description`">
-                  <UTextarea v-model="draft.translations[locale].description" :ui="{ root: 'w-full' }" />
-                </UFormField>
-              </div>
-            </UCard>
-          </div>
-
-          <TopicEditorSlugField
-            v-model="draft.slug"
-            v-model:edited="draft.slugEdited"
-            :en-title="draft.translations.en.title"
-            :et-title="draft.translations.et.title"
-          />
-        </div>
-
-        <div v-else-if="selectedTask" class="flex flex-col gap-6">
-          <div v-if="isDualTaskLocale" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <UCard v-for="locale in taskLocalesForDisplay" :key="locale">
-              <template #header>
-                <div class="font-semibold">
-                  {{ locale.toUpperCase() }}
-                </div>
-              </template>
-
-              <div class="flex flex-col gap-4">
-                <UFormField :label="t('topic.editor.panel.fieldTitle')" :name="`tasks.${selectedTaskIndex}.translations.${locale}.title`">
-                  <UInput v-model="selectedTask.translations[locale].title" :ui="{ root: 'w-full' }" />
-                </UFormField>
-
-                <UFormField :label="t('topic.editor.panel.fieldContent')" :name="`tasks.${selectedTaskIndex}.translations.${locale}.content`">
-                  <UTextarea v-model="selectedTask.translations[locale].content" :ui="{ root: 'w-full' }" />
-                </UFormField>
-
-                <UFormField :label="t('topic.editor.panel.fieldHint')" :name="`tasks.${selectedTaskIndex}.translations.${locale}.hint`">
-                  <UTextarea v-model="selectedTask.translations[locale].hint" :ui="{ root: 'w-full' }" />
-                </UFormField>
-              </div>
-            </UCard>
-          </div>
-
-          <div v-else>
-            <UCard>
-              <div class="flex flex-col gap-4 w-1/2">
-                <UFormField :label="t('topic.editor.panel.fieldTitle')" :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.title`">
-                  <UInput v-model="selectedTask.translations[activeTaskLocale].title" :ui="{ root: 'w-full' }" />
-                </UFormField>
-
-                <UFormField :label="t('topic.editor.panel.fieldContent')" :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.content`">
-                  <UTextarea v-model="selectedTask.translations[activeTaskLocale].content" :ui="{ root: 'w-full' }" />
-                </UFormField>
-
-                <UFormField :label="t('topic.editor.panel.fieldHint')" :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.hint`">
-                  <UTextarea v-model="selectedTask.translations[activeTaskLocale].hint" :ui="{ root: 'w-full' }" />
-                </UFormField>
-              </div>
-            </UCard>
-          </div>
-
-          <UCard>
+      <div v-if="selection.kind === 'topic'" class="flex flex-col gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <UCard v-for="locale in LOCALES" :key="locale">
             <template #header>
               <div class="font-semibold">
-                {{ t('topic.editor.panel.fieldRegex') }}
+                {{ locale.toUpperCase() }}
               </div>
             </template>
 
-            <UFormField :label="t('topic.editor.panel.fieldRegex')" :name="`tasks.${selectedTaskIndex}.regex`" :ui="{ root: 'w-1/2' }">
-              <UInput v-model="selectedTask.regex" placeholder=".*" :ui="{ root: 'w-full' }" />
-            </UFormField>
+            <div class="flex flex-col gap-4">
+              <UFormField :label="t('topic.editor.panel.fieldTitle')" :name="`translations.${locale}.title`">
+                <UInput v-model="draft.translations[locale].title" :ui="{ root: 'w-full' }" />
+              </UFormField>
+
+              <UFormField :label="t('topic.editor.panel.fieldDescription')" :name="`translations.${locale}.description`">
+                <UTextarea v-model="draft.translations[locale].description" :ui="{ root: 'w-full' }" />
+              </UFormField>
+            </div>
           </UCard>
         </div>
+
+        <TopicEditorSlugField
+          v-model="draft.slug"
+          v-model:edited="draft.slugEdited"
+          :en-title="draft.translations.en.title"
+          :et-title="draft.translations.et.title"
+        />
+      </div>
+
+      <div v-else-if="selectedTask" class="flex flex-col gap-6">
+        <div v-if="isDualTaskLocale" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <UCard v-for="locale in taskLocalesForDisplay" :key="locale">
+            <template #header>
+              <div class="font-semibold">
+                {{ locale.toUpperCase() }}
+              </div>
+            </template>
+
+            <div class="flex flex-col gap-4">
+              <UFormField :label="t('topic.editor.panel.fieldTitle')" :name="`tasks.${selectedTaskIndex}.translations.${locale}.title`">
+                <UInput v-model="selectedTask.translations[locale].title" :ui="{ root: 'w-full' }" />
+              </UFormField>
+
+              <UFormField :label="t('topic.editor.panel.fieldContent')" :name="`tasks.${selectedTaskIndex}.translations.${locale}.content`">
+                <UTextarea v-model="selectedTask.translations[locale].content" :ui="{ root: 'w-full' }" />
+              </UFormField>
+
+              <UFormField
+                :label="t('topic.editor.panel.fieldHint')"
+                :hint="t('topic.editor.panel.optional')"
+                :name="`tasks.${selectedTaskIndex}.translations.${locale}.hint`"
+              >
+                <UTextarea v-model="selectedTask.translations[locale].hint" :ui="{ root: 'w-full' }" />
+              </UFormField>
+            </div>
+          </UCard>
+        </div>
+
+        <div v-else>
+          <UCard>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-1/2">
+              <UFormField :label="t('topic.editor.panel.fieldTitle')" :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.title`">
+                <UInput v-model="selectedTask.translations[activeTaskLocale].title" :ui="{ root: 'w-full' }" />
+              </UFormField>
+
+              <UFormField :label="t('topic.editor.panel.fieldContent')" :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.content`">
+                <UTextarea v-model="selectedTask.translations[activeTaskLocale].content" :ui="{ root: 'w-full' }" />
+              </UFormField>
+
+              <UFormField
+                :label="t('topic.editor.panel.fieldHint')"
+                :hint="t('topic.editor.panel.optional')"
+                :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.hint`"
+              >
+                <UTextarea v-model="selectedTask.translations[activeTaskLocale].hint" :ui="{ root: 'w-full' }" />
+              </UFormField>
+            </div>
+          </UCard>
+        </div>
+
+        <UCard>
+          <template #header>
+            <div class="font-semibold">
+              {{ t('topic.editor.panel.fieldRegex') }}
+            </div>
+          </template>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-18">
+            <UFormField
+              :label="t('topic.editor.panel.fieldRegex')"
+              :name="`tasks.${selectedTaskIndex}.regex`"
+            >
+              <UInput v-model="selectedTask.regex" placeholder=".*" :ui="{ root: 'w-full' }" />
+            </UFormField>
+
+            <UFormField
+              :label="t('topic.editor.panel.fieldWatchPath')"
+              :help="t('topic.editor.panel.watchPathDescription')"
+              :hint="t('topic.editor.panel.optional')"
+              :name="`tasks.${selectedTaskIndex}.watchPath`"
+            >
+              <UInput
+                v-model="selectedTask.watchPath"
+                placeholder="/home/user"
+                :ui="{ root: 'w-full' }"
+              />
+            </UFormField>
+          </div>
+        </UCard>
       </div>
     </UPageCard>
   </div>

@@ -39,6 +39,10 @@ function normalizeIssuePath(issuePath: IssuePath, locales: readonly Locale[]): s
         return `tasks.${taskIndex}.regex`;
       }
 
+      if (issuePath[2] === 'watchPath') {
+        return `tasks.${taskIndex}.watchPath`;
+      }
+
       if (issuePath[2] === 'translations') {
         const translationIndex = issuePath[3];
         const field = issuePath[4];

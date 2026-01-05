@@ -91,6 +91,9 @@
         "fieldDescription": "Description",
         "fieldContent": "Content",
         "fieldHint": "Hint",
+        "fieldWatchPath": "Watch path",
+        "watchPathDescription": "Absolute file path watched for filesystem changes (inotify).",
+        "optional": "Optional",
         "fieldRegex": "Regex"
       },
       "slug": {

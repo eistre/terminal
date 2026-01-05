@@ -27,6 +27,10 @@ const database = useDatabase();
 const provisioner = useProvisioner();
 const baseLogger = useLogger().child({ caller: 'socket' });
 
+function shellQuotePosix(value: string): string {
+  return `'${value.split('\'').join(`'"'"'`)}'`;
+}
+
 function parseQueryParams(requestUrl: string): { rows: number | undefined; cols: number | undefined; slug: string | undefined } {
   const url = new URL(requestUrl, 'http://localhost');
 
@@ -101,12 +105,10 @@ export default defineWebSocketHandler({
       logger.debug('Creating SSH session for client');
 
       const tasks = await database.topics.completion.getEvaluatorTasks(clientId, slug);
-      const watchPaths = new Set(tasks
-        .filter(task => task.watchPath !== null)
-        .map(task => task.watchPath));
+      const watchPaths = new Set(tasks.flatMap(task => task.watchPath ? [task.watchPath] : []));
 
       const execCommand = watchPaths.size
-        ? `inotifywait -m --format '%w|%e|%f' -- ${Array.from(watchPaths).join(' ')}`
+        ? `inotifywait -m --format '%w|%e|%f' -- ${Array.from(watchPaths).map(shellQuotePosix).join(' ')}`
         : undefined;
 
       ctx.evaluator = createEvaluator({ tasks });

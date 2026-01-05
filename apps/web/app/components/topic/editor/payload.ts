@@ -47,7 +47,7 @@ export function toUpsertPayload(draft: DraftTopic): UpsertTopicInput {
       return {
         id: task.id,
         regex: task.regex.trim(),
-        watchPath: task.watchPath,
+        watchPath: toOptionalNull(task.watchPath),
         translations: locales.map(locale => ({
           locale,
           title: task.translations[locale].title.trim(),

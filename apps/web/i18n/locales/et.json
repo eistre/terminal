@@ -91,6 +91,9 @@
         "fieldDescription": "Kirjeldus",
         "fieldContent": "Sisu",
         "fieldHint": "Vihje",
+        "fieldWatchPath": "Jälgitav failitee",
+        "watchPathDescription": "Absoluutne failitee, mida jälgitakse failisüsteemi muutuste jaoks (inotify).",
+        "optional": "Valikuline",
         "fieldRegex": "Regex"
       },
       "slug": {
