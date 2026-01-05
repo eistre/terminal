@@ -25,14 +25,20 @@ function bannerError(message: string): string {
   return `\x1B[31m*** ${message} ***\x1B[0m\r\n`;
 }
 
-export function useTerminalSession() {
+export function useTerminalSession(slug: string) {
   const terminal = ref<TerminalLike | undefined>(undefined);
   const size = ref<{ rows: number; cols: number } | undefined>(undefined);
 
   const url = computed(() => {
-    return `/ws/terminal${
-      size.value ? `?rows=${size.value.rows}&cols=${size.value.cols}` : ''
-    }`;
+    const params = new URLSearchParams();
+    params.set('slug', slug);
+
+    if (size.value) {
+      params.set('rows', String(size.value.rows));
+      params.set('cols', String(size.value.cols));
+    }
+
+    return `/ws/terminal?${params.toString()}`;
   });
 
   const ws = useWebSocket<string>(url, {
@@ -45,6 +51,7 @@ export function useTerminalSession() {
 
   const socketStatus = ws.status;
   const sessionStatus = ref<Status>('IDLE');
+  const lastTaskDoneId = ref<number | null>(null);
 
   const inputEnabled = computed(() => {
     return socketStatus.value === 'OPEN' && sessionStatus.value === 'READY';
@@ -106,6 +113,12 @@ export function useTerminalSession() {
     sessionStatus.value = 'RESETTING';
     if (socketStatus.value !== 'CLOSED') {
       ws.close();
+    }
+  };
+
+  const resetTasks = () => {
+    if (socketStatus.value === 'OPEN') {
+      ws.send(encode({ type: 'tasks/reset' }));
     }
   };
 
@@ -182,7 +195,7 @@ export function useTerminalSession() {
         break;
       }
       case 'task/done': {
-        // TODO integrate with TasksCard
+        lastTaskDoneId.value = msg.taskId;
         break;
       }
     }
@@ -190,10 +203,11 @@ export function useTerminalSession() {
 
   return {
     attach,
-    canReconnect,
     connect,
     reset,
-    socketStatus,
+    resetTasks,
     sessionStatus,
+    canReconnect,
+    lastTaskDoneId,
   };
 }

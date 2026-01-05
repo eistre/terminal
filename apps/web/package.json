@@ -16,8 +16,10 @@
   "dependencies": {
     "@nuxt/ui": "catalog:",
     "@nuxtjs/i18n": "catalog:",
+    "@sindresorhus/slugify": "catalog:",
     "@terminal/database": "workspace:*",
     "@terminal/env": "workspace:*",
+    "@terminal/evaluator": "workspace:*",
     "@terminal/logger": "workspace:*",
     "@terminal/provisioner": "workspace:*",
     "@terminal/session": "workspace:*",
@@ -27,6 +29,7 @@
     "@xterm/xterm": "catalog:",
     "better-auth": "catalog:",
     "nuxt": "catalog:",
+    "sortablejs": "catalog:",
     "tailwindcss": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:",
@@ -38,6 +41,7 @@
     "@nuxt/test-utils": "catalog:",
     "@terminal/eslint": "workspace:*",
     "@terminal/typescript": "workspace:*",
+    "@types/sortablejs": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:",
     "vue-tsc": "catalog:"

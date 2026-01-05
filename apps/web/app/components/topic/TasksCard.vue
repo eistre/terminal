@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import type { Task } from '#shared/seed';
-import type { AccordionItem } from '#ui/components/Accordion.vue';
+import type { TopicTask } from '@terminal/database';
 
-const { tasks } = defineProps<{ tasks: Task[] }>();
+const { tasks } = defineProps<{ tasks: TopicTask[] }>();
+const emit = defineEmits<{ reset: [] }>();
+const active = defineModel<string[]>('active', { default: [] });
 const { t } = useI18n();
 
 const visibleHints = ref<Set<number>>(new Set());
-const items: ComputedRef<(AccordionItem & { hint?: string })[]> = computed(() => {
+
+const items = computed(() => {
   return tasks.map(task => ({
     id: task.id,
+    value: String(task.id),
     label: task.title,
     icon: task.completed ? 'i-lucide-circle-check-big' : 'i-lucide-circle-minus',
     content: task.content,
@@ -33,16 +36,25 @@ function toggleHint(item: number) {
 
 <template>
   <div>
-    <UPageCard>
+    <UPageCard :ui="{ body: 'w-full' }">
       <template #title>
-        <div class="flex justify-between items-center py-1.5">
+        <div class="flex justify-between items-center">
           {{ $t('topic.tasks') }}
+
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="emit('reset')"
+          >
+            {{ t('topic.resetTasks') }}
+          </UButton>
         </div>
       </template>
 
       <USeparator />
 
       <UAccordion
+        v-model="active"
         type="multiple"
         :items="items"
         :ui="{ root: 'overflow-y-auto lg:max-h-[calc(100vh-var(--ui-content-offset))]', header: 'my-0.5', trigger: 'p-2.5 font-semibold' }"

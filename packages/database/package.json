@@ -5,8 +5,8 @@
   "private": true,
   "exports": {
     ".": "./src/index.ts",
-    "./migration": "./src/migration.ts",
-    "./schema": "./src/schema/index.ts"
+    "./schema": "./src/schema/index.ts",
+    "./schema/auth": "./src/schema/auth.ts"
   },
   "scripts": {
     "db:generate": "drizzle-kit generate",

@@ -1,4 +1,4 @@
-import * as schema from '@terminal/database/schema';
+import * as schema from '@terminal/database/schema/auth';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { useDatabase } from '~~/server/lib/database';
@@ -10,14 +10,15 @@ let _auth: Auth | undefined;
 export function useAuth() {
   if (!_auth) {
     const env = useEnv();
-    const db = useDatabase();
+    const database = useDatabase();
     const logger = useLogger().child({ caller: 'auth' });
 
     _auth = betterAuth({
       secret: env.AUTH_SECRET,
-      database: drizzleAdapter(db, {
+      database: drizzleAdapter(database.db, {
         provider: 'mysql',
         usePlural: true,
+        transaction: true,
         schema: {
           ...schema,
         },
