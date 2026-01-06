@@ -7,6 +7,25 @@ const emit = defineEmits<{ requiresVerification: [email: string] }>();
 const { t } = useI18n();
 const toast = useToast();
 const runtimeConfig = useRuntimeConfig();
+const { data: allowedDomainsData } = await useFetch('/api/auth/email-domains', { method: 'GET' });
+
+function isAllowedEmail(email: string): boolean {
+  const normalized = email.trim().toLowerCase();
+  const adminEmail = runtimeConfig.public.defaultAdminEmail.trim().toLowerCase();
+
+  if (normalized === adminEmail) {
+    return true;
+  }
+
+  const at = normalized.lastIndexOf('@');
+  if (at === -1) {
+    return false;
+  }
+
+  const domain = normalized.slice(at + 1);
+  const allowedDomains = allowedDomainsData.value?.domains ?? [];
+  return allowedDomains.some(d => d.domain === domain);
+}
 
 const fields: ComputedRef<AuthFormField[]> = computed(() => [
   {
@@ -33,7 +52,9 @@ const fields: ComputedRef<AuthFormField[]> = computed(() => [
 ]);
 
 const schema = computed(() => z.object({
-  email: z.email(t('auth.invalidEmail')),
+  email: z
+    .email(t('auth.invalidEmail'))
+    .refine(isAllowedEmail, t('auth.emailDomainNotAllowed')),
   name: z.string(t('auth.nameRequired')).min(1, t('auth.nameMin')),
   password: z.string(t('auth.passwordRequired')).min(8, t('auth.passwordMin', { count: 8 })),
 }));
@@ -43,7 +64,7 @@ type Schema = z.output<typeof schema.value>;
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
   const { email, name, password } = payload.data;
 
-  const { error: authError } = await authClient.signUp.email({
+  const { data, error: authError } = await authClient.signUp.email({
     email,
     name,
     password,
@@ -56,6 +77,23 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
       icon: 'i-lucide-alert-circle',
       title: t('auth.signupError'),
     });
+    return;
+  }
+
+  if (data?.user?.emailVerified) {
+    const { error: signInError } = await authClient.signIn.email({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      toast.add({
+        id: 'signup-auto-login-error',
+        color: 'error',
+        icon: 'i-lucide-alert-circle',
+        title: t('auth.loginError'),
+      });
+    }
     return;
   }
 

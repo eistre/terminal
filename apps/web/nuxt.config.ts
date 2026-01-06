@@ -15,6 +15,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       emailVerificationEnabled: process.env.MAILER_TYPE !== 'noop',
+      defaultAdminEmail: process.env.ADMIN_EMAIL ?? 'admin@admin.sec',
     },
   },
 

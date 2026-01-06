@@ -8,8 +8,8 @@ export const authSchema = z.object({
   MICROSOFT_CLIENT_SECRET: z.string().min(1).optional(),
   MICROSOFT_TENANT_ID: z.string().min(1).optional(),
 
-  DEFAULT_ADMIN_EMAIL: z.email().default('admin@admin.sec'),
-  DEFAULT_ADMIN_PASSWORD: z.string().min(8).default('terminal_password'),
+  ADMIN_EMAIL: z.email().default('admin@admin.sec'),
+  ADMIN_PASSWORD: z.string().min(8).default('terminal_password'),
 });
 
 export type AuthSchema = z.infer<typeof authSchema>;

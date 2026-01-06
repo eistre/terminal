@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import { defaultTopicSeeds } from '@terminal/database';
+import { defaultEmailDomainSeeds, defaultTopicSeeds } from '@terminal/database';
 import { useAuth } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useEnv } from '~~/server/lib/env';
@@ -29,14 +29,22 @@ export default defineNitroPlugin(async () => {
     logger.info('Database migrations completed successfully');
 
     logger.debug({ seedCount: defaultTopicSeeds.length }, 'Seeding database (if empty)');
-    if (await database.ops.seedIfEmpty(defaultTopicSeeds)) {
+    const topics = await database.ops.seedTopicsIfEmpty(defaultTopicSeeds);
+    const domains = await database.ops.seedEmailDomainsIfEmpty(defaultEmailDomainSeeds);
+    if (topics && domains) {
       logger.info('Database seeded successfully');
+    }
+    else if (topics) {
+      logger.info('Database seeding skipped for email domains (already initialized)');
+    }
+    else if (domains) {
+      logger.info('Database seeding skipped for topics (already initialized)');
     }
     else {
       logger.info('Database seeding skipped (already initialized)');
     }
 
-    const email = env.DEFAULT_ADMIN_EMAIL;
+    const email = env.ADMIN_EMAIL;
     const adminEnsured = await database.users.admin.ensureUserRole({ email, role: 'admin' });
     if (!adminEnsured) {
       try {
@@ -44,7 +52,7 @@ export default defineNitroPlugin(async () => {
           body: {
             email,
             name: 'admin',
-            password: env.DEFAULT_ADMIN_PASSWORD,
+            password: env.ADMIN_PASSWORD,
             role: 'admin',
             data: { emailVerified: true },
           },

@@ -6,30 +6,40 @@ const session = authClient.useSession();
 const toast = useToast();
 
 const items: ComputedRef<DropdownMenuItem[]> = computed(() => {
-  const items: DropdownMenuItem[] = [
-    {
-      label: t('header.logout'),
-      icon: 'i-lucide-log-out',
-      onSelect: async () => {
-        const { error } = await authClient.signOut({
-          fetchOptions: {
-            onSuccess: () => {
-              navigateTo('/');
-            },
-          },
-        });
+  const items: DropdownMenuItem[] = [];
 
-        if (error) {
-          toast.add({
-            id: 'logout-error',
-            color: 'error',
-            icon: 'i-lucide-alert-circle',
-            title: t('header.logoutError'),
-          });
-        }
+  if (session.value.data?.user.role === 'admin') {
+    items.push({
+      label: t('header.emailDomains'),
+      icon: 'i-lucide-mail',
+      onSelect: () => {
+        navigateTo('/email-domains');
       },
+    });
+  }
+
+  items.push({
+    label: t('header.logout'),
+    icon: 'i-lucide-log-out',
+    onSelect: async () => {
+      const { error } = await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            navigateTo('/');
+          },
+        },
+      });
+
+      if (error) {
+        toast.add({
+          id: 'logout-error',
+          color: 'error',
+          icon: 'i-lucide-alert-circle',
+          title: t('header.logoutError'),
+        });
+      }
     },
-  ];
+  });
 
   if (session.value.data?.user.name !== 'admin') {
     items.push({
