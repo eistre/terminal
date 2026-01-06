@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const session = useSession();
+definePageMeta({ middleware: 'require-no-session' });
+
+const session = authClient.useSession();
 </script>
 
 <template>
@@ -11,7 +13,7 @@ const session = useSession();
       description="Aute cupidatat deserunt voluptate esse et sunt velit esse quis excepteur fugiat amet id.  Non Lorem nisi voluptate commodo ea. Labore exercitation ipsum ea exercitation excepteur eu."
       :ui="{
         title: 'text-3xl sm:text-4xl',
-        container: 'lg:grid-cols-5',
+        container: 'lg:grid-cols-5 py-10 lg:py-10 md:py-10 sm:py-10',
         wrapper: 'lg:col-span-2',
       }"
     >

@@ -2,7 +2,7 @@
 import type { DropdownMenuItem } from '#ui/components/DropdownMenu.vue';
 
 const { t } = useI18n();
-const session = useSession();
+const session = authClient.useSession();
 const toast = useToast();
 
 const items: DropdownMenuItem[] = [
@@ -60,7 +60,7 @@ const items: DropdownMenuItem[] = [
       trailing-icon="i-lucide-chevron-down"
       variant="ghost"
       color="neutral"
-      class="text-md font-semibold text-white"
+      class="font-semibold text-white"
       :label="session.data?.user.name"
     />
   </UDropdownMenu>

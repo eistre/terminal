@@ -1,5 +1,8 @@
 <script setup lang="ts">
 const { t } = useI18n();
+const toast = useToast();
+
+const { data } = await useFetch('/api/auth/providers', { method: 'GET' });
 
 const items = computed(() => [{
   slot: 'login',
@@ -8,9 +11,35 @@ const items = computed(() => [{
   slot: 'signup',
   label: t('auth.signup'),
 }]);
+
+const isMicrosoftEnabled = computed(() => data.value?.microsoft.enabled ?? false);
+
+async function signInWithProvider(provider: string) {
+  const { error } = await authClient.signIn.social({ provider, callbackURL: '/topics' });
+
+  if (error) {
+    toast.add({
+      id: `oauth-${provider}-error`,
+      color: 'error',
+      icon: 'i-lucide-alert-circle',
+      title: t('auth.loginError'),
+    });
+  }
+}
 </script>
 
 <template>
+  <UButton
+    v-if="isMicrosoftEnabled"
+    icon="i-lucide-landmark"
+    block
+    color="neutral"
+    variant="outline"
+    @click="signInWithProvider('microsoft')"
+  >
+    {{ data?.microsoft.label ?? 'Microsoft' }}
+  </UButton>
+
   <UTabs :items="items" :ui="{ root: 'min-h-[320px]' }">
     <template #login>
       <AuthLogin class="mt-2" />

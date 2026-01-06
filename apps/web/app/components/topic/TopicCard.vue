@@ -4,6 +4,7 @@ import type { TopicSummary } from '@terminal/database';
 const { topic } = defineProps<{ topic: TopicSummary }>();
 const emit = defineEmits<{ deleted: [id: number] }>();
 
+const session = authClient.useSession();
 const toast = useToast();
 const { t } = useI18n();
 
@@ -48,7 +49,7 @@ async function deleteTopic() {
           :model-value="topic.progress"
         />
 
-        <div class="flex justify-end gap-2 relative z-10">
+        <div v-if="session.data?.user.role === 'admin'" class="flex justify-end gap-2 relative z-10">
           <UButton
             variant="ghost"
             color="neutral"

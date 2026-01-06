@@ -3,7 +3,7 @@ import ColorModeButton from './ColorModeButton.vue';
 import LocaleSelect from './LocaleSelect.vue';
 import UserSelect from './UserSelect.vue';
 
-const session = useSession();
+const session = authClient.useSession();
 </script>
 
 <template>

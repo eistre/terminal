@@ -2,6 +2,8 @@
 import XtermTerminal from '~/components/terminal/XtermTerminal.vue';
 import TasksCard from '~/components/topic/TasksCard.vue';
 
+definePageMeta({ middleware: ['require-session'] });
+
 const { t, locale } = useI18n();
 const toast = useToast();
 const route = useRoute();

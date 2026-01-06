@@ -24,6 +24,7 @@ CREATE TABLE `sessions` (
 	`ip_address` text,
 	`user_agent` text,
 	`user_id` varchar(36) NOT NULL,
+	`impersonated_by` text,
 	CONSTRAINT `sessions_id` PRIMARY KEY(`id`),
 	CONSTRAINT `sessions_token_unique` UNIQUE(`token`)
 );
@@ -36,6 +37,10 @@ CREATE TABLE `users` (
 	`image` text,
 	`created_at` timestamp(3) NOT NULL DEFAULT (now()),
 	`updated_at` timestamp(3) NOT NULL DEFAULT (now()),
+	`role` text,
+	`banned` boolean DEFAULT false,
+	`ban_reason` text,
+	`ban_expires` timestamp(3),
 	CONSTRAINT `users_id` PRIMARY KEY(`id`),
 	CONSTRAINT `users_email_unique` UNIQUE(`email`)
 );

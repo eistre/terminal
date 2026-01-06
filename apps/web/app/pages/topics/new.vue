@@ -6,6 +6,8 @@ import { createEmptyTask, createEmptyTopic } from '~/components/topic/editor/mod
 import { toUpsertPayload } from '~/components/topic/editor/payload';
 import { getTaskLocaleModeFromTopicTitle } from '~/components/topic/editor/task-rules';
 
+definePageMeta({ middleware: ['require-admin'] });
+
 const { t, locale } = useI18n();
 const toast = useToast();
 
