@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { defaultTopicSeeds } from '@terminal/database';
+import { useAuth } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useEnv } from '~~/server/lib/env';
 import { useLogger } from '~~/server/lib/logger';
@@ -12,6 +13,7 @@ import { useLogger } from '~~/server/lib/logger';
  */
 export default defineNitroPlugin(async () => {
   const env = useEnv();
+  const auth = useAuth();
   const database = useDatabase();
   const logger = useLogger().child({ caller: 'database' });
 
@@ -32,6 +34,33 @@ export default defineNitroPlugin(async () => {
     }
     else {
       logger.info('Database seeding skipped (already initialized)');
+    }
+
+    const email = env.DEFAULT_ADMIN_EMAIL;
+    const adminEnsured = await database.ops.ensureUserRole({ email, role: 'admin' });
+    if (!adminEnsured) {
+      try {
+        await auth.api.createUser({
+          body: {
+            email,
+            name: 'admin',
+            password: env.DEFAULT_ADMIN_PASSWORD,
+            role: 'admin',
+          },
+        });
+
+        logger.info({ email }, 'Created default admin user');
+      }
+      catch (error) {
+        // Multi-instance startup can race: another instance may create the user first.
+        const ensuredAfterError = await database.ops.ensureUserRole({ email, role: 'admin' });
+        if (!ensuredAfterError) {
+          // noinspection ExceptionCaughtLocallyJS
+          throw error;
+        }
+
+        logger.info({ email }, 'Default admin user created by another instance');
+      }
     }
   }
   catch (error) {

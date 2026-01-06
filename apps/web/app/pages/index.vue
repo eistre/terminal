@@ -1,6 +1,4 @@
 <script setup lang="ts">
-definePageMeta({ middleware: 'require-no-session' });
-
 const session = authClient.useSession();
 </script>
 

@@ -13,7 +13,7 @@ const session = authClient.useSession();
         :alt="$t('app.institute')"
         :src="$t('app.logo')"
         class="h-16 w-auto hover:cursor-pointer"
-        @click="navigateTo('/')"
+        @click="session.data ? navigateTo('/topics') : navigateTo('/')"
       >
     </template>
 

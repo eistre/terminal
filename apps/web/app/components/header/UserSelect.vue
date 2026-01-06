@@ -5,53 +5,60 @@ const { t } = useI18n();
 const session = authClient.useSession();
 const toast = useToast();
 
-const items: DropdownMenuItem[] = [
-  {
-    label: t('header.logout'),
-    icon: 'i-lucide-log-out',
-    onSelect: async () => {
-      const { error: authError } = await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            navigateTo('/');
+const items: ComputedRef<DropdownMenuItem[]> = computed(() => {
+  const items: DropdownMenuItem[] = [
+    {
+      label: t('header.logout'),
+      icon: 'i-lucide-log-out',
+      onSelect: async () => {
+        const { error } = await authClient.signOut({
+          fetchOptions: {
+            onSuccess: () => {
+              navigateTo('/');
+            },
           },
-        },
-      });
-
-      if (authError) {
-        toast.add({
-          id: 'logout-error',
-          color: 'error',
-          icon: 'i-lucide-alert-circle',
-          title: t('header.logoutError'),
         });
-      }
+
+        if (error) {
+          toast.add({
+            id: 'logout-error',
+            color: 'error',
+            icon: 'i-lucide-alert-circle',
+            title: t('header.logoutError'),
+          });
+        }
+      },
     },
-  },
-  {
-    label: t('header.deleteAccount'),
-    icon: 'i-lucide-trash',
-    color: 'error',
-    onSelect: async () => {
-      const { error: authError } = await authClient.deleteUser({
-        fetchOptions: {
-          onSuccess: () => {
-            navigateTo('/');
+  ];
+
+  if (session.value.data?.user.name !== 'admin') {
+    items.push({
+      label: t('header.deleteAccount'),
+      icon: 'i-lucide-trash',
+      color: 'error',
+      onSelect: async () => {
+        const { error } = await authClient.deleteUser({
+          fetchOptions: {
+            onSuccess: () => {
+              navigateTo('/');
+            },
           },
-        },
-      });
-
-      if (authError) {
-        toast.add({
-          id: 'delete-error',
-          color: 'error',
-          icon: 'i-lucide-alert-circle',
-          title: t('header.deleteAccountError'),
         });
-      }
-    },
-  },
-];
+
+        if (error) {
+          toast.add({
+            id: 'delete-error',
+            color: 'error',
+            icon: 'i-lucide-alert-circle',
+            title: t('header.deleteAccountError'),
+          });
+        }
+      },
+    });
+  }
+
+  return items;
+});
 </script>
 
 <template>
