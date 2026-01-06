@@ -1,6 +1,7 @@
 import type { Nitro } from 'nitropack';
 import { cpSync } from 'node:fs';
 import { resolve } from 'node:path';
+import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
 const DATABASE_PACKAGE = '@terminal/database';
@@ -10,6 +11,12 @@ const MIGRATIONS_DIR = 'migrations';
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+
+  runtimeConfig: {
+    public: {
+      emailVerificationEnabled: process.env.MAILER_TYPE !== 'noop',
+    },
+  },
 
   modules: [
     '@nuxt/eslint',

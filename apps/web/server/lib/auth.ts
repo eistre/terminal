@@ -1,12 +1,14 @@
 import type { SocialProviders } from 'better-auth';
 import type { H3Event } from 'h3';
+import type { Locale } from '~~/shared/locale';
 import * as schema from '@terminal/database/schema/auth';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { admin } from 'better-auth/plugins';
+import { admin, emailOTP } from 'better-auth/plugins';
 import { useDatabase } from '~~/server/lib/database';
 import { useEnv } from '~~/server/lib/env';
 import { useLogger } from '~~/server/lib/logger';
+import { buildEmailVerificationOtpEmail, useMailer } from '~~/server/lib/mailer';
 
 let _auth: Auth | undefined;
 
@@ -15,11 +17,15 @@ function createAuth() {
   const database = useDatabase();
   const logger = useLogger().child({ caller: 'auth' });
 
-  const socialProviders: SocialProviders = {};
+  const isMicrosoftEnabled = Boolean(env.MICROSOFT_CLIENT_ID && env.MICROSOFT_CLIENT_SECRET && env.MICROSOFT_TENANT_ID);
+  const isNoopMailer = env.MAILER_TYPE === 'noop';
 
-  if (env.MICROSOFT_CLIENT_ID && env.MICROSOFT_CLIENT_SECRET && env.MICROSOFT_TENANT_ID) {
+  const trustedProviders: string[] = ['email-password'];
+  const socialProviders: SocialProviders = {};
+  if (isMicrosoftEnabled) {
+    trustedProviders.push('microsoft');
     socialProviders.microsoft = {
-      clientId: env.MICROSOFT_CLIENT_ID,
+      clientId: env.MICROSOFT_CLIENT_ID!,
       clientSecret: env.MICROSOFT_CLIENT_SECRET,
       tenantId: env.MICROSOFT_TENANT_ID,
       disableProfilePhoto: true,
@@ -38,15 +44,48 @@ function createAuth() {
         ...schema,
       },
     }),
+    emailVerification: {
+      autoSignInAfterVerification: true,
+    },
     emailAndPassword: {
       enabled: true,
+      requireEmailVerification: !isNoopMailer,
+    },
+    account: {
+      accountLinking: {
+        enabled: true,
+        trustedProviders,
+      },
     },
     user: {
       deleteUser: {
         enabled: true,
       },
     },
-    plugins: [admin()],
+    plugins: [
+      admin(),
+      ...(!isNoopMailer
+        ? [
+            emailOTP({
+              overrideDefaultEmailVerification: true,
+              async sendVerificationOTP({ email, otp, type }, request) {
+                if (type !== 'email-verification') {
+                  return;
+                }
+
+                const locale: Locale = request?.getCookie('locale') === 'en' ? 'en' : 'et';
+                const { subject, text, html } = buildEmailVerificationOtpEmail(locale, otp);
+
+                const mailer = useMailer();
+                mailer.send(email, subject, text, html)
+                  .catch((error) => {
+                    logger.error(error, 'Failed to send email verification OTP');
+                  });
+              },
+            }),
+          ]
+        : []),
+    ],
     logger: {
       log: (level, message, ...args) => {
         logger[level]({ ...args }, message);

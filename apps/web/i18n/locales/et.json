@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "Linux käsurida",
-    "description": "Linux käsurea harjutuskeskkond - Ubuntu terminal veebibrauseris",
+    "description": "Linux käsurea harjutuskeskkond - Ubuntu käsurida veebibrauseris",
     "institute": "Arvutiteaduse instituut, Tartu Ülikool",
     "logo": "/arvutiteaduse_instituut_est_white_2021.svg"
   },
@@ -14,9 +14,10 @@
   },
   "home": {
     "title": "Linux Käsurea Harjutuskeskkond",
-    "secondary": "Terminal Veebibrauseris",
+    "secondary": "Käsurida Veebibrauseris",
     "description": "",
-    "getStarted": "Alusta"
+    "getStarted": "Alusta",
+    "signIn": "Logi sisse"
   },
   "auth": {
     "login": "Logi sisse",
@@ -34,7 +35,24 @@
     "passwordRequired": "Parool on nõutud",
     "passwordMin": "Parool peab olema vähemalt {count} tähemärki",
     "loginError": "Vigane e-post või parool",
-    "signupError": "Registreerimine nurjus. Palun proovige uuesti."
+    "signupError": "Registreerimine nurjus. Palun proovige uuesti.",
+    "emailVerification": {
+      "subject": "Kinnitage oma e-posti aadress",
+      "greeting": "Tere",
+      "intro": "Registreerusite hiljuti Linuxi käsurea harjutuskeskkonda.",
+      "instruction": "Selle e-posti kinnitamiseks kasutage palun järgmist kinnituskoodi:",
+      "signoff": "Parimate soovidega",
+      "signature": "Linux käsurida rakendus",
+      "title": "Kinnitage e-posti aadress",
+      "description": "Sisestage kood, mille saatsime aadressile {email}.",
+      "resend": "Saada kood uuesti",
+      "resendWithCountdown": "Saada uuesti ({seconds}s)",
+      "verify": "Kinnita",
+      "invalidCode": "Vale kood",
+      "verificationFailed": "Kinnitamine nurjus",
+      "resendFailed": "Koodi uuesti saatmine nurjus",
+      "resendSuccess": "Kinnituskood saadetud"
+    }
   },
   "topics": {
     "title": "Teemad",

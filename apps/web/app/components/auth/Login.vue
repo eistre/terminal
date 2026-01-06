@@ -2,6 +2,8 @@
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 
+const emit = defineEmits<{ requiresVerification: [email: string] }>();
+
 const { t } = useI18n();
 const toast = useToast();
 
@@ -39,6 +41,11 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
   });
 
   if (authError) {
+    if (authError.status === 403 && authError.code === 'EMAIL_NOT_VERIFIED') {
+      emit('requiresVerification', email);
+      return;
+    }
+
     toast.add({
       id: 'login-error',
       color: 'error',

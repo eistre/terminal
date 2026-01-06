@@ -16,7 +16,8 @@
     "title": "Linux Command Line Practice Environment",
     "secondary": "Terminal in the Web Browser",
     "description": "",
-    "getStarted": "Get started"
+    "getStarted": "Get started",
+    "signIn": "Sign in"
   },
   "auth": {
     "login": "Login",
@@ -34,7 +35,24 @@
     "passwordRequired": "Password is required",
     "passwordMin": "Password must be at least {count} characters",
     "loginError": "Invalid email or password",
-    "signupError": "Registration failed. Please try again."
+    "signupError": "Registration failed. Please try again.",
+    "emailVerification": {
+      "subject": "Verify your email address",
+      "greeting": "Hello,",
+      "intro": "You recently signed up to the Linux command line practice environment.",
+      "instruction": "To verify this email, please use the following verification code:",
+      "signoff": "Kind regards,",
+      "signature": "Linux terminal app",
+      "title": "Verify your email",
+      "description": "Enter the code we sent to {email}.",
+      "resend": "Resend code",
+      "resendWithCountdown": "Resend ({seconds}s)",
+      "verify": "Verify",
+      "invalidCode": "Invalid code",
+      "verificationFailed": "Verification failed",
+      "resendFailed": "Failed to resend code",
+      "resendSuccess": "Verification code sent"
+    }
   },
   "topics": {
     "title": "Topics",

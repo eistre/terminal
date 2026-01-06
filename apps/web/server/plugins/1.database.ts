@@ -37,7 +37,7 @@ export default defineNitroPlugin(async () => {
     }
 
     const email = env.DEFAULT_ADMIN_EMAIL;
-    const adminEnsured = await database.ops.ensureUserRole({ email, role: 'admin' });
+    const adminEnsured = await database.users.admin.ensureUserRole({ email, role: 'admin' });
     if (!adminEnsured) {
       try {
         await auth.api.createUser({
@@ -46,6 +46,7 @@ export default defineNitroPlugin(async () => {
             name: 'admin',
             password: env.DEFAULT_ADMIN_PASSWORD,
             role: 'admin',
+            data: { emailVerified: true },
           },
         });
 
@@ -53,7 +54,7 @@ export default defineNitroPlugin(async () => {
       }
       catch (error) {
         // Multi-instance startup can race: another instance may create the user first.
-        const ensuredAfterError = await database.ops.ensureUserRole({ email, role: 'admin' });
+        const ensuredAfterError = await database.users.admin.ensureUserRole({ email, role: 'admin' });
         if (!ensuredAfterError) {
           // noinspection ExceptionCaughtLocallyJS
           throw error;

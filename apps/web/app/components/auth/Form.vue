@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const emit = defineEmits<{ requiresVerification: [email: string] }>();
+
 const { t } = useI18n();
 const toast = useToast();
 
@@ -42,11 +44,11 @@ async function signInWithProvider(provider: string) {
 
   <UTabs :items="items" :ui="{ root: 'min-h-[320px]' }">
     <template #login>
-      <AuthLogin class="mt-2" />
+      <AuthLogin class="mt-2" @requires-verification="(email) => emit('requiresVerification', email)" />
     </template>
 
     <template #signup>
-      <AuthSignUp class="mt-2" />
+      <AuthSignUp class="mt-2" @requires-verification="(email) => emit('requiresVerification', email)" />
     </template>
   </UTabs>
 </template>

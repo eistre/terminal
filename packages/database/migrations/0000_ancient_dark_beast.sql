@@ -55,6 +55,16 @@ CREATE TABLE `verifications` (
 	CONSTRAINT `verifications_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
+CREATE TABLE `email_domains` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`domain` varchar(255) NOT NULL,
+	`skip_verification` boolean NOT NULL DEFAULT false,
+	`created_at` timestamp(3) NOT NULL DEFAULT (now()),
+	`updated_at` timestamp(3) NOT NULL DEFAULT (now()),
+	CONSTRAINT `email_domains_id` PRIMARY KEY(`id`),
+	CONSTRAINT `email_domains_domain_unique` UNIQUE(`domain`)
+);
+--> statement-breakpoint
 CREATE TABLE `task_completions` (
 	`user_id` varchar(36) NOT NULL,
 	`task_id` int NOT NULL,
@@ -120,5 +130,6 @@ ALTER TABLE `topic_translations` ADD CONSTRAINT `topic_translations_topic_id_top
 CREATE INDEX `accounts_userId_idx` ON `accounts` (`user_id`);--> statement-breakpoint
 CREATE INDEX `sessions_userId_idx` ON `sessions` (`user_id`);--> statement-breakpoint
 CREATE INDEX `verifications_identifier_idx` ON `verifications` (`identifier`);--> statement-breakpoint
+CREATE INDEX `email_domains_domain_idx` ON `email_domains` (`domain`);--> statement-breakpoint
 CREATE INDEX `task_completions_user_topic_idx` ON `task_completions` (`user_id`,`topic_id`);--> statement-breakpoint
 CREATE INDEX `tasks_topic_idx` ON `tasks` (`topic_id`);

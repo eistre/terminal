@@ -2,8 +2,11 @@
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 
+const emit = defineEmits<{ requiresVerification: [email: string] }>();
+
 const { t } = useI18n();
 const toast = useToast();
+const runtimeConfig = useRuntimeConfig();
 
 const fields: ComputedRef<AuthFormField[]> = computed(() => [
   {
@@ -53,6 +56,11 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
       icon: 'i-lucide-alert-circle',
       title: t('auth.signupError'),
     });
+    return;
+  }
+
+  if (runtimeConfig.public.emailVerificationEnabled) {
+    emit('requiresVerification', email);
   }
 }
 </script>
