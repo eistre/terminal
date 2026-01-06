@@ -9,6 +9,7 @@ packages:
 
 catalog:
   '@antfu/eslint-config': ^6.4.2
+  '@azure/communication-email': ^1.1.0
   '@iconify-json/lucide': ^1.2.78
   '@kubernetes/client-node': ^1.4.0
   '@nuxt/eslint': ^1.11.0
