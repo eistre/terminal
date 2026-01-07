@@ -34,8 +34,8 @@ export function createEmailDomainsAdminRepo(db: MySql2Database) {
       }
       catch (error) {
         if (
-          (error as any)?.cause?.code === 'ER_DUP_ENTRY'
-          && (error as any)?.cause?.message?.includes('email_domains.email_domains_domain_unique')
+          (error as { cause?: { code?: string } })?.cause?.code === 'ER_DUP_ENTRY'
+          && (error as { cause?: { message?: string } })?.cause?.message?.includes('email_domains.email_domains_domain_unique')
         ) {
           throw new EmailDomainConflictError();
         }

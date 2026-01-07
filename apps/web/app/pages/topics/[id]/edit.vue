@@ -166,7 +166,7 @@ async function save(skipLocaleDeletionConfirm: boolean) {
     toast.add({
       color: 'error',
       icon: 'i-lucide-alert-circle',
-      title: (error as any)?.statusCode === 409 ? t('topic.editor.slugConflict') : t('topic.editor.saveError'),
+      title: (error as { statusCode?: number })?.statusCode === 409 ? t('topic.editor.slugConflict') : t('topic.editor.saveError'),
     });
   }
   finally {

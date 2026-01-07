@@ -223,8 +223,8 @@ export function createTopicsAdminRepo(db: MySql2Database) {
       }
       catch (error) {
         if (
-          (error as any)?.cause?.code === 'ER_DUP_ENTRY'
-          && (error as any)?.cause?.message?.includes('topics.topics_slug_unique')
+          (error as { cause?: { code?: string } })?.cause?.code === 'ER_DUP_ENTRY'
+          && (error as { cause?: { message?: string } })?.cause?.message?.includes('topics.topics_slug_unique')
         ) {
           throw new TopicSlugConflictError();
         }
