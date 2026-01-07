@@ -20,6 +20,7 @@ const state = reactive<Schema>({
 
 const canSubmit = computed(() => schema.value.safeParse(state).success);
 
+const verifying = ref(false);
 const resending = ref(false);
 const resendCooldownSeconds = ref(0);
 let resendCountdownInterval: ReturnType<typeof setInterval> | undefined;
@@ -52,53 +53,69 @@ function startResendCooldown(seconds: number) {
 }
 
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
-  const { otp } = payload.data;
+  if (verifying.value) {
+    return;
+  }
 
-  const { error } = await authClient.emailOtp.verifyEmail({
-    email: props.email,
-    otp: otp.join(''),
-  });
+  try {
+    verifying.value = true;
 
-  if (error) {
-    let title = t('auth.emailVerification.verificationFailed');
-    if (error.status === 400 && error.code === 'INVALID_OTP') {
-      title = t('auth.emailVerification.invalidCode');
-    }
-
-    toast.add({
-      color: 'error',
-      icon: 'i-lucide-alert-circle',
-      title,
+    const { error } = await authClient.emailOtp.verifyEmail({
+      email: props.email,
+      otp: payload.data.otp.join(''),
     });
+
+    if (error) {
+      let title = t('auth.emailVerification.verificationFailed');
+      if (error.status === 400 && error.code === 'INVALID_OTP') {
+        title = t('auth.emailVerification.invalidCode');
+      }
+
+      toast.add({
+        color: 'error',
+        icon: 'i-lucide-alert-circle',
+        title,
+      });
+    }
+  }
+  finally {
+    verifying.value = false;
   }
 }
 
 async function resend() {
-  resending.value = true;
-
-  const { error } = await authClient.emailOtp.sendVerificationOtp({
-    email: props.email,
-    type: 'email-verification',
-  });
-
-  if (error) {
-    resending.value = false;
-    toast.add({
-      color: 'error',
-      icon: 'i-lucide-alert-circle',
-      title: t('auth.emailVerification.resendFailed'),
-    });
+  if (resending.value) {
     return;
   }
 
-  startResendCooldown(30);
-  resending.value = false;
+  try {
+    resending.value = true;
 
-  toast.add({
-    color: 'success',
-    icon: 'i-lucide-check',
-    title: t('auth.emailVerification.resendSuccess'),
-  });
+    const { error } = await authClient.emailOtp.sendVerificationOtp({
+      email: props.email,
+      type: 'email-verification',
+    });
+
+    if (error) {
+      toast.add({
+        color: 'error',
+        icon: 'i-lucide-alert-circle',
+        title: t('auth.emailVerification.resendFailed'),
+      });
+      return;
+    }
+
+    startResendCooldown(30);
+
+    toast.add({
+      color: 'success',
+      icon: 'i-lucide-check',
+      title: t('auth.emailVerification.resendSuccess'),
+    });
+  }
+  finally {
+    resending.value = false;
+  }
 }
 </script>
 
@@ -126,6 +143,7 @@ async function resend() {
           type="button"
           variant="ghost"
           color="neutral"
+          :loading="resending"
           :disabled="resendCooldownSeconds > 0 || resending"
           @click="resend"
         >
@@ -136,7 +154,8 @@ async function resend() {
         <UButton
           type="submit"
           variant="solid"
-          :disabled="!canSubmit"
+          :loading="verifying"
+          :disabled="!canSubmit || verifying"
         >
           {{ t('auth.emailVerification.verify') }}
         </UButton>

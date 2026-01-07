@@ -23,6 +23,7 @@ const {
 const hasEverConnected = ref(false);
 const hasInitializedActiveTasks = ref(false);
 const activeTaskIds = ref<string[]>([]);
+const resettingTasks = ref(false);
 const canReset = computed(() => {
   const status = sessionStatus.value;
 
@@ -126,7 +127,13 @@ async function handleContainerReset() {
 }
 
 async function handleTasksReset() {
+  if (resettingTasks.value) {
+    return;
+  }
+
   try {
+    resettingTasks.value = true;
+
     await $fetch(`/api/topics/${slug}/reset`, { method: 'DELETE' });
     resetTasks();
     topic.value?.tasks.forEach(task => task.completed = false);
@@ -149,6 +156,9 @@ async function handleTasksReset() {
       title: t('topic.resetTasksError'),
     });
   }
+  finally {
+    resettingTasks.value = false;
+  }
 }
 </script>
 
@@ -165,6 +175,7 @@ async function handleTasksReset() {
           <TasksCard
             v-model:active="activeTaskIds"
             :tasks="topic?.tasks ?? []"
+            :resetting="resettingTasks"
             class="lg:col-span-1"
             @reset="handleTasksReset"
           />

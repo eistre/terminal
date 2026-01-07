@@ -8,8 +8,16 @@ const session = authClient.useSession();
 const toast = useToast();
 const { t } = useI18n();
 
+const deleting = ref(false);
+
 async function deleteTopic() {
+  if (deleting.value) {
+    return;
+  }
+
   try {
+    deleting.value = true;
+
     await $fetch(`/api/admin/topics/${topic.id}`, {
       method: 'DELETE',
     });
@@ -26,6 +34,9 @@ async function deleteTopic() {
       icon: 'i-lucide-alert-circle',
       title: t('topic.deleteError'),
     });
+  }
+  finally {
+    deleting.value = false;
   }
 }
 </script>
@@ -62,6 +73,8 @@ async function deleteTopic() {
               variant="ghost"
               color="error"
               icon="i-lucide-trash"
+              :loading="deleting"
+              :disabled="deleting"
             >
               {{ t('topic.deleteButton') }}
             </UButton>
