@@ -70,7 +70,6 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
     }
 
     toast.add({
-      id: 'login-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('auth.loginError'),

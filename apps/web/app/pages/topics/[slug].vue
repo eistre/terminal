@@ -88,7 +88,6 @@ watch(lastTaskDoneId, (newTaskId) => {
 watch(status, (newStatus) => {
   if (newStatus === 'error' && error.value) {
     toast.add({
-      id: 'topic-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('topic.topicError'),
@@ -119,7 +118,6 @@ async function handleContainerReset() {
   }
   catch {
     toast.add({
-      id: 'terminal-reset-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('terminal.resetTerminalError'),
@@ -139,7 +137,6 @@ async function handleTasksReset() {
     }
 
     toast.add({
-      id: 'tasks-reset',
       color: 'success',
       icon: 'i-lucide-check-circle',
       title: t('topic.resetTasksSuccess'),
@@ -147,7 +144,6 @@ async function handleTasksReset() {
   }
   catch {
     toast.add({
-      id: 'tasks-reset-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('topic.resetTasksError'),

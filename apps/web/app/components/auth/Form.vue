@@ -21,7 +21,6 @@ async function signInWithProvider(provider: string) {
 
   if (error) {
     toast.add({
-      id: `oauth-${provider}-error`,
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('auth.loginError'),

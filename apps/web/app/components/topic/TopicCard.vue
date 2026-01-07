@@ -15,7 +15,6 @@ async function deleteTopic() {
     });
     emit('deleted', topic.id);
     toast.add({
-      id: `topic-delete-success-${topic.id}`,
       color: 'success',
       icon: 'i-lucide-check-circle',
       title: t('topic.deleteSuccess'),
@@ -23,7 +22,6 @@ async function deleteTopic() {
   }
   catch {
     toast.add({
-      id: `topic-delete-failed-${topic.id}`,
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('topic.deleteError'),

@@ -72,7 +72,6 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 
   if (authError) {
     toast.add({
-      id: 'signup-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('auth.signupError'),
@@ -88,7 +87,6 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 
     if (signInError) {
       toast.add({
-        id: 'signup-auto-login-error',
         color: 'error',
         icon: 'i-lucide-alert-circle',
         title: t('auth.loginError'),

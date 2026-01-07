@@ -97,7 +97,6 @@ async function save() {
     });
 
     toast.add({
-      id: 'topic-create-success',
       color: 'success',
       icon: 'i-lucide-check-circle',
       title: t('topic.editor.saveSuccess'),
@@ -107,7 +106,6 @@ async function save() {
   }
   catch (error) {
     toast.add({
-      id: 'topic-create-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: (error as any)?.statusCode === 409 ? t('topic.editor.slugConflict') : t('topic.editor.saveError'),

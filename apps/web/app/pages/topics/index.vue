@@ -18,7 +18,6 @@ const { data: topics, status, error } = await useFetch('/api/topics', {
 watch(status, (newStatus) => {
   if (newStatus === 'error' && error.value) {
     toast.add({
-      id: 'topics-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('topics.topicsError'),

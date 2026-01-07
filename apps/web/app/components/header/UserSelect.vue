@@ -32,7 +32,6 @@ const items: ComputedRef<DropdownMenuItem[]> = computed(() => {
 
       if (error) {
         toast.add({
-          id: 'logout-error',
           color: 'error',
           icon: 'i-lucide-alert-circle',
           title: t('header.logoutError'),
@@ -57,7 +56,6 @@ const items: ComputedRef<DropdownMenuItem[]> = computed(() => {
 
         if (error) {
           toast.add({
-            id: 'delete-error',
             color: 'error',
             icon: 'i-lucide-alert-circle',
             title: t('header.deleteAccountError'),

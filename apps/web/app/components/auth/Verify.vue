@@ -66,7 +66,6 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
     }
 
     toast.add({
-      id: 'verify-email-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title,
@@ -85,7 +84,6 @@ async function resend() {
   if (error) {
     resending.value = false;
     toast.add({
-      id: 'resend-otp-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('auth.emailVerification.resendFailed'),
@@ -97,7 +95,6 @@ async function resend() {
   resending.value = false;
 
   toast.add({
-    id: 'resend-otp-success',
     color: 'success',
     icon: 'i-lucide-check',
     title: t('auth.emailVerification.resendSuccess'),
