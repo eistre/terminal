@@ -3,7 +3,7 @@
     "title": "Linux terminal",
     "description": "Linux command line practice environment - Ubuntu terminal in web browser",
     "institute": "Institute of Computer Science, University of Tartu",
-    "logo": "/arvutiteaduse_instituut_eng_white_2021.svg"
+    "logo": "arvutiteaduse_instituut_eng_white_2021.svg"
   },
   "header": {
     "changeLanguage": "Choose language",
