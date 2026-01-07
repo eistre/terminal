@@ -23,11 +23,11 @@ const modifyingId = ref<number>(-1);
 
 const { data, refresh, pending } = await useFetch('/api/admin/email-domains', { method: 'GET' });
 
-const tableColumns: TableColumn<EmailDomain>[] = [
+const tableColumns: ComputedRef<TableColumn<EmailDomain>[]> = computed(() => [
   { accessorKey: 'domain', header: t('emailDomains.tableDomain') },
   { accessorKey: 'skipVerification', header: t('emailDomains.tableSkipVerification') },
-  { id: 'actions', header: '' },
-];
+  { id: 'actions' },
+]);
 
 async function createDomain(event: FormSubmitEvent<UpsertEmailDomainPayload>) {
   if (submitting.value) {

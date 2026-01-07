@@ -7,25 +7,8 @@ const emit = defineEmits<{ requiresVerification: [email: string] }>();
 const { t } = useI18n();
 const toast = useToast();
 const runtimeConfig = useRuntimeConfig();
-const { data: allowedDomainsData } = await useFetch('/api/auth/email-domains', { method: 'GET' });
 
-function isAllowedEmail(email: string): boolean {
-  const normalized = email.trim().toLowerCase();
-  const adminEmail = runtimeConfig.public.defaultAdminEmail.trim().toLowerCase();
-
-  if (normalized === adminEmail) {
-    return true;
-  }
-
-  const at = normalized.lastIndexOf('@');
-  if (at === -1) {
-    return false;
-  }
-
-  const domain = normalized.slice(at + 1);
-  const allowedDomains = allowedDomainsData.value?.domains ?? [];
-  return allowedDomains.some(d => d.domain === domain);
-}
+const { isAllowedEmail } = useEmailDomainValidation();
 
 const fields: ComputedRef<AuthFormField[]> = computed(() => [
   {

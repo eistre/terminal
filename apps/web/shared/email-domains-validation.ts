@@ -18,7 +18,7 @@ export const emailDomainSchema = z
   .min(1)
   .transform(normalizeEmailDomain)
   .refine(value => !value.includes('@'), { message: 'Invalid domain' })
-  .refine(value => /^[^\n\r.\u2028\u2029]*\..+$/.test(value), { message: 'Invalid domain' });
+  .refine(value => /^[^\n\r.\u2028\u2029]+\..+$/.test(value), { message: 'Invalid domain' });
 
 export const upsertEmailDomainPayloadSchema = z.object({
   id: z.number().int().positive().optional(),

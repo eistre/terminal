@@ -4,6 +4,13 @@ import { eq } from 'drizzle-orm';
 import { emailDomains } from '../schema';
 import { EmailDomainConflictError } from './errors';
 
+interface Error {
+  cause?: {
+    code?: string;
+    message?: string;
+  };
+}
+
 export function createEmailDomainsAdminRepo(db: MySql2Database) {
   return {
     async upsertDomain(input: UpsertEmailDomainInput): Promise<UpsertEmailDomainResult> {
@@ -34,8 +41,8 @@ export function createEmailDomainsAdminRepo(db: MySql2Database) {
       }
       catch (error) {
         if (
-          (error as { cause?: { code?: string } })?.cause?.code === 'ER_DUP_ENTRY'
-          && (error as { cause?: { message?: string } })?.cause?.message?.includes('email_domains.email_domains_domain_unique')
+          (error as Error)?.cause?.code === 'ER_DUP_ENTRY'
+          && (error as Error)?.cause?.message?.includes('email_domains.email_domains_domain_unique')
         ) {
           throw new EmailDomainConflictError();
         }

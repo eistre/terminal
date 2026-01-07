@@ -31,18 +31,8 @@ export default defineNitroPlugin(async () => {
     logger.debug({ seedCount: defaultTopicSeeds.length }, 'Seeding database (if empty)');
     const topics = await database.ops.seedTopicsIfEmpty(defaultTopicSeeds);
     const domains = await database.ops.seedEmailDomainsIfEmpty(defaultEmailDomainSeeds);
-    if (topics && domains) {
-      logger.info('Database seeded successfully');
-    }
-    else if (topics) {
-      logger.info('Database seeding skipped for email domains (already initialized)');
-    }
-    else if (domains) {
-      logger.info('Database seeding skipped for topics (already initialized)');
-    }
-    else {
-      logger.info('Database seeding skipped (already initialized)');
-    }
+
+    logger.info({ topics, domains }, 'Database seeding process completed');
 
     const email = env.ADMIN_EMAIL;
     const adminEnsured = await database.users.admin.ensureUserRole({ email, role: 'admin' });
@@ -64,8 +54,10 @@ export default defineNitroPlugin(async () => {
         // Multi-instance startup can race: another instance may create the user first.
         const ensuredAfterError = await database.users.admin.ensureUserRole({ email, role: 'admin' });
         if (!ensuredAfterError) {
-          // noinspection ExceptionCaughtLocallyJS
-          throw error;
+          logger.error(error, 'Failed to create default admin user');
+
+          // Exit the process with a non-zero code to indicate failure
+          process.exit(1);
         }
 
         logger.info({ email }, 'Default admin user created by another instance');

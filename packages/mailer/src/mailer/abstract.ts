@@ -9,7 +9,7 @@ export abstract class AbstractMailer implements Mailer {
 
   private readonly concurrencyLimit;
   private readonly maxRetries: number;
-  private readonly cooldownMs: number;
+  private readonly cooldownSeconds: number;
 
   private readonly onHold = new Set<string>();
   private readonly holdTimers = new Map<string, ReturnType<typeof setTimeout>>();
@@ -18,7 +18,7 @@ export abstract class AbstractMailer implements Mailer {
     this.logger = logger;
     this.concurrencyLimit = pLimit(config.MAILER_CONCURRENCY_LIMIT);
     this.maxRetries = config.MAILER_MAX_RETRIES;
-    this.cooldownMs = config.MAILER_RESEND_COOLDOWN_MINUTES;
+    this.cooldownSeconds = config.MAILER_RESEND_COOLDOWN_SECONDS;
   }
 
   async send(to: string, subject: string, text: string, html: string): Promise<void> {
@@ -53,7 +53,7 @@ export abstract class AbstractMailer implements Mailer {
       const timer = setTimeout(() => {
         this.onHold.delete(key);
         this.holdTimers.delete(key);
-      }, this.cooldownMs);
+      }, this.cooldownSeconds * 1000);
 
       this.holdTimers.set(key, timer);
     }
