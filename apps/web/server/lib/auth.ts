@@ -119,6 +119,41 @@ function createAuth() {
         ...schema,
       },
     }),
+    databaseHooks: {
+      user: {
+        create: {
+          before: async (user) => {
+            if ((user as any).role === 'admin') {
+              return { data: user };
+            }
+
+            const expiryMs = env.USER_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+            return {
+              data: {
+                ...user,
+                expiresAt: new Date(Date.now() + expiryMs),
+              },
+            };
+          },
+        },
+      },
+      session: {
+        create: {
+          after: async (session, ctx) => {
+            const user = await ctx?.context.internalAdapter.findUserById(session.userId);
+
+            if (!user || (user as any).role === 'admin') {
+              return;
+            }
+
+            const expiryMs = env.USER_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+            await ctx?.context.internalAdapter.updateUser(session.userId, {
+              expiresAt: new Date(Date.now() + expiryMs),
+            });
+          },
+        },
+      },
+    },
     emailVerification: {
       autoSignInAfterVerification: true,
     },
@@ -133,6 +168,13 @@ function createAuth() {
       },
     },
     user: {
+      additionalFields: {
+        expiresAt: {
+          type: 'date',
+          required: false,
+          input: false,
+        },
+      },
       deleteUser: {
         enabled: true,
       },

@@ -41,6 +41,7 @@ CREATE TABLE `users` (
 	`banned` boolean DEFAULT false,
 	`ban_reason` text,
 	`ban_expires` timestamp(3),
+	`expires_at` timestamp(3),
 	CONSTRAINT `users_id` PRIMARY KEY(`id`),
 	CONSTRAINT `users_email_unique` UNIQUE(`email`)
 );

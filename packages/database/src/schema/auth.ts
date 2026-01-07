@@ -23,6 +23,7 @@ export const users = mysqlTable('users', {
   banned: boolean('banned').default(false),
   banReason: text('ban_reason'),
   banExpires: timestamp('ban_expires', { fsp: 3 }),
+  expiresAt: timestamp('expires_at', { fsp: 3 }),
 });
 
 export const sessions = mysqlTable(
