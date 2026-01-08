@@ -1,6 +1,6 @@
 import { localeSchema } from '#shared/locale';
 import { z } from 'zod';
-import { useAuth } from '~~/server/lib/auth';
+import { requireSession } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useLogger } from '~~/server/lib/logger';
 
@@ -9,16 +9,12 @@ const querySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const auth = useAuth();
   const database = useDatabase();
   const logger = useLogger();
 
-  const userSession = await auth.api.getSession({ headers: event.headers });
-  if (!userSession) {
-    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
-  }
+  const session = await requireSession(event);
 
-  const userId = userSession.user.id;
+  const userId = session.user.id;
   const { locale } = await getValidatedQuery(event, data => querySchema.parse(data));
 
   try {

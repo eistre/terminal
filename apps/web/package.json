@@ -21,6 +21,7 @@
     "@terminal/env": "workspace:*",
     "@terminal/evaluator": "workspace:*",
     "@terminal/logger": "workspace:*",
+    "@terminal/mailer": "workspace:*",
     "@terminal/provisioner": "workspace:*",
     "@terminal/session": "workspace:*",
     "@vueuse/nuxt": "catalog:",

@@ -2,8 +2,13 @@
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 
+const emit = defineEmits<{ requiresVerification: [email: string] }>();
+
 const { t } = useI18n();
 const toast = useToast();
+const runtimeConfig = useRuntimeConfig();
+
+const { isAllowedEmail } = useEmailDomainValidation();
 
 const fields: ComputedRef<AuthFormField[]> = computed(() => [
   {
@@ -30,7 +35,9 @@ const fields: ComputedRef<AuthFormField[]> = computed(() => [
 ]);
 
 const schema = computed(() => z.object({
-  email: z.email(t('auth.invalidEmail')),
+  email: z
+    .email(t('auth.invalidEmail'))
+    .refine(isAllowedEmail, t('auth.emailDomainNotAllowed')),
   name: z.string(t('auth.nameRequired')).min(1, t('auth.nameMin')),
   password: z.string(t('auth.passwordRequired')).min(8, t('auth.passwordMin', { count: 8 })),
 }));
@@ -40,7 +47,7 @@ type Schema = z.output<typeof schema.value>;
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
   const { email, name, password } = payload.data;
 
-  const { error: authError } = await authClient.signUp.email({
+  const { data, error: authError } = await authClient.signUp.email({
     email,
     name,
     password,
@@ -48,11 +55,31 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 
   if (authError) {
     toast.add({
-      id: 'signup-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('auth.signupError'),
     });
+    return;
+  }
+
+  if (data?.user?.emailVerified) {
+    const { error: signInError } = await authClient.signIn.email({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      toast.add({
+        color: 'error',
+        icon: 'i-lucide-alert-circle',
+        title: t('auth.loginError'),
+      });
+    }
+    return;
+  }
+
+  if (runtimeConfig.public.emailVerificationEnabled) {
+    emit('requiresVerification', email);
   }
 }
 </script>

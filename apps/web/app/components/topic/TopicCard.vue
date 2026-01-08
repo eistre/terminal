@@ -4,17 +4,25 @@ import type { TopicSummary } from '@terminal/database';
 const { topic } = defineProps<{ topic: TopicSummary }>();
 const emit = defineEmits<{ deleted: [id: number] }>();
 
+const session = authClient.useSession();
 const toast = useToast();
 const { t } = useI18n();
 
+const deleting = ref(false);
+
 async function deleteTopic() {
+  if (deleting.value) {
+    return;
+  }
+
   try {
+    deleting.value = true;
+
     await $fetch(`/api/admin/topics/${topic.id}`, {
       method: 'DELETE',
     });
     emit('deleted', topic.id);
     toast.add({
-      id: `topic-delete-success-${topic.id}`,
       color: 'success',
       icon: 'i-lucide-check-circle',
       title: t('topic.deleteSuccess'),
@@ -22,11 +30,13 @@ async function deleteTopic() {
   }
   catch {
     toast.add({
-      id: `topic-delete-failed-${topic.id}`,
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('topic.deleteError'),
     });
+  }
+  finally {
+    deleting.value = false;
   }
 }
 </script>
@@ -48,7 +58,7 @@ async function deleteTopic() {
           :model-value="topic.progress"
         />
 
-        <div class="flex justify-end gap-2 relative z-10">
+        <div v-if="session.data?.user.role === 'admin'" class="flex justify-end gap-2 relative z-10">
           <UButton
             variant="ghost"
             color="neutral"
@@ -63,6 +73,8 @@ async function deleteTopic() {
               variant="ghost"
               color="error"
               icon="i-lucide-trash"
+              :loading="deleting"
+              :disabled="deleting"
             >
               {{ t('topic.deleteButton') }}
             </UButton>

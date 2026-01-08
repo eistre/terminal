@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import TopicCard from '~/components/topic/TopicCard.vue';
 
+definePageMeta({ middleware: ['require-session'] });
+
 const toast = useToast();
+const session = authClient.useSession();
 const { t, locale } = useI18n();
 
 const { data: topics, status, error } = await useFetch('/api/topics', {
@@ -15,7 +18,6 @@ const { data: topics, status, error } = await useFetch('/api/topics', {
 watch(status, (newStatus) => {
   if (newStatus === 'error' && error.value) {
     toast.add({
-      id: 'topics-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('topics.topicsError'),
@@ -41,12 +43,12 @@ function handleDeleted(id: number) {
       <UPageHeader
         :title="$t('topics.title')"
         :description="$t('topics.description')"
-        :links="[{
+        :links="session.data?.user.role === 'admin' ? [{
           label: $t('topics.new'),
           icon: 'i-lucide-edit',
           size: 'lg',
           to: '/topics/new',
-        }]"
+        }] : []"
       />
 
       <UPageBody>

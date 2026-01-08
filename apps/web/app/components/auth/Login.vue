@@ -2,8 +2,12 @@
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 
+const emit = defineEmits<{ requiresVerification: [email: string] }>();
+
 const { t } = useI18n();
 const toast = useToast();
+
+const { isAllowedEmail } = useEmailDomainValidation();
 
 const fields: ComputedRef<AuthFormField[]> = computed(() => [
   {
@@ -23,7 +27,9 @@ const fields: ComputedRef<AuthFormField[]> = computed(() => [
 ]);
 
 const schema = computed(() => z.object({
-  email: z.email(t('auth.invalidEmail')),
+  email: z
+    .email(t('auth.invalidEmail'))
+    .refine(isAllowedEmail, t('auth.emailDomainNotAllowed')),
   password: z.string(t('auth.passwordRequired')).min(8, t('auth.passwordMin', { count: 8 })),
 }));
 
@@ -39,8 +45,12 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
   });
 
   if (authError) {
+    if (authError.status === 403 && authError.code === 'EMAIL_NOT_VERIFIED') {
+      emit('requiresVerification', email);
+      return;
+    }
+
     toast.add({
-      id: 'login-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('auth.loginError'),

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TopicTask } from '@terminal/database';
 
-const { tasks } = defineProps<{ tasks: TopicTask[] }>();
+const { tasks, resetting } = defineProps<{ tasks: TopicTask[]; resetting: boolean }>();
 const emit = defineEmits<{ reset: [] }>();
 const active = defineModel<string[]>('active', { default: [] });
 const { t } = useI18n();
@@ -44,6 +44,8 @@ function toggleHint(item: number) {
           <UButton
             variant="ghost"
             color="neutral"
+            :loading="resetting"
+            :disabled="resetting"
             @click="emit('reset')"
           >
             {{ t('topic.resetTasks') }}

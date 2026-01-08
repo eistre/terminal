@@ -1,22 +1,49 @@
 {
   "app": {
     "title": "Linux käsurida",
-    "description": "Linux käsurea harjutuskeskkond - Ubuntu terminal veebibrauseris",
+    "description": "Linux käsurea harjutuskeskkond - Ubuntu käsurida veebibrauseris",
     "institute": "Arvutiteaduse instituut, Tartu Ülikool",
-    "logo": "/arvutiteaduse_instituut_est_white_2021.svg"
+    "logo": "arvutiteaduse_instituut_est_white_2021.svg"
   },
   "header": {
     "changeLanguage": "Vali keel",
+    "emailDomains": "E-posti domeenid",
     "logout": "Logi välja",
     "logoutError": "Väljalogimine nurjus",
     "deleteAccount": "Kustuta konto",
     "deleteAccountError": "Konto kustutamine nurjus"
   },
+  "emailDomains": {
+    "title": "E-posti domeenid",
+    "description": "Halda lubatud e-posti domeene ja kinnituste vahelejätmist.",
+    "addDomain": "Lisa domeen",
+    "fieldDomain": "Domeen",
+    "placeholderDomain": "example.com",
+    "fieldSkipVerification": "Jäta kinnitamine vahele",
+    "tableDomain": "Domeen",
+    "tableSkipVerification": "Jäta kinnitamine vahele",
+    "add": "Lisa",
+    "delete": "Kustuta",
+    "cancel": "Tühista",
+    "confirm": "Kinnita",
+    "yes": "Jah",
+    "no": "Ei",
+    "empty": "Domeene pole seadistatud",
+    "deleteConfirmTitle": "Kustuta {domain}?",
+    "toastAdded": "Domeen lisatud",
+    "toastDeleted": "Domeen kustutatud",
+    "toastSkipEnabled": "Kinnitamise vahelejätmine sisse lülitatud",
+    "toastSkipDisabled": "Kinnitamise vahelejätmine välja lülitatud",
+    "toastAddFailed": "Domeeni lisamine nurjus",
+    "toastUpdateFailed": "Domeeni muutmine nurjus",
+    "toastDeleteFailed": "Domeeni kustutamine nurjus"
+  },
   "home": {
     "title": "Linux Käsurea Harjutuskeskkond",
-    "secondary": "Terminal Veebibrauseris",
+    "secondary": "Käsurida Veebibrauseris",
     "description": "",
-    "getStarted": "Alusta"
+    "getStarted": "Alusta",
+    "signIn": "Logi sisse"
   },
   "auth": {
     "login": "Logi sisse",
@@ -29,12 +56,30 @@
     "enterPassword": "Sisesta oma parool",
     "rememberMe": "Mäleta mind",
     "invalidEmail": "Vigane e-posti aadress",
+    "emailDomainNotAllowed": "E-posti domeen pole lubatud",
     "nameRequired": "Nimi on nõutud",
     "nameMin": "Nimi peab olema vähemalt tähemärk",
     "passwordRequired": "Parool on nõutud",
     "passwordMin": "Parool peab olema vähemalt {count} tähemärki",
     "loginError": "Vigane e-post või parool",
-    "signupError": "Registreerimine nurjus. Palun proovige uuesti."
+    "signupError": "Registreerimine nurjus. Palun proovige uuesti.",
+    "emailVerification": {
+      "subject": "Kinnitage oma e-posti aadress",
+      "greeting": "Tere",
+      "intro": "Registreerusite hiljuti Linuxi käsurea harjutuskeskkonda.",
+      "instruction": "Selle e-posti kinnitamiseks kasutage palun järgmist kinnituskoodi:",
+      "signoff": "Parimate soovidega",
+      "signature": "Linux käsurida rakendus",
+      "title": "Kinnitage e-posti aadress",
+      "description": "Sisestage kood, mille saatsime aadressile {email}.",
+      "resend": "Saada kood uuesti",
+      "resendWithCountdown": "Saada uuesti ({seconds}s)",
+      "verify": "Kinnita",
+      "invalidCode": "Vale kood",
+      "verificationFailed": "Kinnitamine nurjus",
+      "resendFailed": "Koodi uuesti saatmine nurjus",
+      "resendSuccess": "Kinnituskood saadetud"
+    }
   },
   "topics": {
     "title": "Teemad",

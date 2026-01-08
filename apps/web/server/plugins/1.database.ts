@@ -1,7 +1,8 @@
 import { resolve } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
-import { defaultTopicSeeds } from '@terminal/database';
+import { defaultEmailDomainSeeds, defaultTopicSeeds } from '@terminal/database';
+import { useAuth } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useEnv } from '~~/server/lib/env';
 import { useLogger } from '~~/server/lib/logger';
@@ -12,6 +13,7 @@ import { useLogger } from '~~/server/lib/logger';
  */
 export default defineNitroPlugin(async () => {
   const env = useEnv();
+  const auth = useAuth();
   const database = useDatabase();
   const logger = useLogger().child({ caller: 'database' });
 
@@ -27,11 +29,39 @@ export default defineNitroPlugin(async () => {
     logger.info('Database migrations completed successfully');
 
     logger.debug({ seedCount: defaultTopicSeeds.length }, 'Seeding database (if empty)');
-    if (await database.ops.seedIfEmpty(defaultTopicSeeds)) {
-      logger.info('Database seeded successfully');
-    }
-    else {
-      logger.info('Database seeding skipped (already initialized)');
+    const topics = await database.ops.seedTopicsIfEmpty(defaultTopicSeeds);
+    const domains = await database.ops.seedEmailDomainsIfEmpty(defaultEmailDomainSeeds);
+
+    logger.info({ topics, domains }, 'Database seeding process completed');
+
+    const email = env.ADMIN_EMAIL;
+    const adminEnsured = await database.users.admin.ensureUserRole({ email, role: 'admin' });
+    if (!adminEnsured) {
+      try {
+        await auth.api.createUser({
+          body: {
+            email,
+            name: 'admin',
+            password: env.ADMIN_PASSWORD,
+            role: 'admin',
+            data: { emailVerified: true },
+          },
+        });
+
+        logger.info({ email }, 'Created default admin user');
+      }
+      catch (error) {
+        // Multi-instance startup can race: another instance may create the user first.
+        const ensuredAfterError = await database.users.admin.ensureUserRole({ email, role: 'admin' });
+        if (!ensuredAfterError) {
+          logger.error(error, 'Failed to create default admin user');
+
+          // Exit the process with a non-zero code to indicate failure
+          process.exit(1);
+        }
+
+        logger.info({ email }, 'Default admin user created by another instance');
+      }
     }
   }
   catch (error) {

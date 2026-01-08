@@ -3,7 +3,7 @@ import ColorModeButton from './ColorModeButton.vue';
 import LocaleSelect from './LocaleSelect.vue';
 import UserSelect from './UserSelect.vue';
 
-const session = useSession();
+const session = authClient.useSession();
 </script>
 
 <template>
@@ -11,9 +11,9 @@ const session = useSession();
     <template #left>
       <img
         :alt="$t('app.institute')"
-        :src="$t('app.logo')"
+        :src="`/${$t('app.logo')}`"
         class="h-16 w-auto hover:cursor-pointer"
-        @click="navigateTo('/')"
+        @click="session.data ? navigateTo('/topics') : navigateTo('/')"
       >
     </template>
 

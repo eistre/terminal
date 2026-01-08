@@ -6,6 +6,8 @@ import { createEmptyTask, createEmptyTopic, editableTopicToDraft } from '~/compo
 import { toUpsertPayload } from '~/components/topic/editor/payload';
 import { getTaskLocaleModeFromTopicTitle } from '~/components/topic/editor/task-rules';
 
+definePageMeta({ middleware: ['require-admin'] });
+
 const { t, locale } = useI18n();
 const toast = useToast();
 const route = useRoute();
@@ -16,7 +18,6 @@ const { data: topic, status, error } = await useFetch(`/api/admin/topics/${id}`,
 watch(status, (newStatus) => {
   if (newStatus === 'error' && error.value) {
     toast.add({
-      id: 'edit-topic-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('topic.editor.loadError'),
@@ -154,7 +155,6 @@ async function save(skipLocaleDeletionConfirm: boolean) {
     });
 
     toast.add({
-      id: `topic-save-success-${id}`,
       color: 'success',
       icon: 'i-lucide-check-circle',
       title: t('topic.editor.saveSuccess'),
@@ -164,10 +164,9 @@ async function save(skipLocaleDeletionConfirm: boolean) {
   }
   catch (error) {
     toast.add({
-      id: 'topic-save-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
-      title: (error as any)?.statusCode === 409 ? t('topic.editor.slugConflict') : t('topic.editor.saveError'),
+      title: (error as { statusCode?: number })?.statusCode === 409 ? t('topic.editor.slugConflict') : t('topic.editor.saveError'),
     });
   }
   finally {

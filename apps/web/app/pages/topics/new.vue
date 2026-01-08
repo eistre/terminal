@@ -6,6 +6,8 @@ import { createEmptyTask, createEmptyTopic } from '~/components/topic/editor/mod
 import { toUpsertPayload } from '~/components/topic/editor/payload';
 import { getTaskLocaleModeFromTopicTitle } from '~/components/topic/editor/task-rules';
 
+definePageMeta({ middleware: ['require-admin'] });
+
 const { t, locale } = useI18n();
 const toast = useToast();
 
@@ -95,7 +97,6 @@ async function save() {
     });
 
     toast.add({
-      id: 'topic-create-success',
       color: 'success',
       icon: 'i-lucide-check-circle',
       title: t('topic.editor.saveSuccess'),
@@ -105,10 +106,9 @@ async function save() {
   }
   catch (error) {
     toast.add({
-      id: 'topic-create-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
-      title: (error as any)?.statusCode === 409 ? t('topic.editor.slugConflict') : t('topic.editor.saveError'),
+      title: (error as { statusCode?: number })?.statusCode === 409 ? t('topic.editor.slugConflict') : t('topic.editor.saveError'),
     });
   }
   finally {

@@ -2,6 +2,8 @@
 import XtermTerminal from '~/components/terminal/XtermTerminal.vue';
 import TasksCard from '~/components/topic/TasksCard.vue';
 
+definePageMeta({ middleware: ['require-session'] });
+
 const { t, locale } = useI18n();
 const toast = useToast();
 const route = useRoute();
@@ -21,6 +23,7 @@ const {
 const hasEverConnected = ref(false);
 const hasInitializedActiveTasks = ref(false);
 const activeTaskIds = ref<string[]>([]);
+const resettingTasks = ref(false);
 const canReset = computed(() => {
   const status = sessionStatus.value;
 
@@ -86,7 +89,6 @@ watch(lastTaskDoneId, (newTaskId) => {
 watch(status, (newStatus) => {
   if (newStatus === 'error' && error.value) {
     toast.add({
-      id: 'topic-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('topic.topicError'),
@@ -117,7 +119,6 @@ async function handleContainerReset() {
   }
   catch {
     toast.add({
-      id: 'terminal-reset-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('terminal.resetTerminalError'),
@@ -126,7 +127,13 @@ async function handleContainerReset() {
 }
 
 async function handleTasksReset() {
+  if (resettingTasks.value) {
+    return;
+  }
+
   try {
+    resettingTasks.value = true;
+
     await $fetch(`/api/topics/${slug}/reset`, { method: 'DELETE' });
     resetTasks();
     topic.value?.tasks.forEach(task => task.completed = false);
@@ -137,7 +144,6 @@ async function handleTasksReset() {
     }
 
     toast.add({
-      id: 'tasks-reset',
       color: 'success',
       icon: 'i-lucide-check-circle',
       title: t('topic.resetTasksSuccess'),
@@ -145,11 +151,13 @@ async function handleTasksReset() {
   }
   catch {
     toast.add({
-      id: 'tasks-reset-error',
       color: 'error',
       icon: 'i-lucide-alert-circle',
       title: t('topic.resetTasksError'),
     });
+  }
+  finally {
+    resettingTasks.value = false;
   }
 }
 </script>
@@ -167,6 +175,7 @@ async function handleTasksReset() {
           <TasksCard
             v-model:active="activeTaskIds"
             :tasks="topic?.tasks ?? []"
+            :resetting="resettingTasks"
             class="lg:col-span-1"
             @reset="handleTasksReset"
           />

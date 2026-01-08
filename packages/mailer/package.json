@@ -1,0 +1,28 @@
+{
+  "name": "@terminal/mailer",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo node_modules",
+    "lint": "eslint . --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@azure/communication-email": "catalog:",
+    "p-limit": "catalog:",
+    "p-retry": "catalog:"
+  },
+  "devDependencies": {
+    "@terminal/env": "workspace:*",
+    "@terminal/eslint": "workspace:*",
+    "@terminal/logger": "workspace:*",
+    "@terminal/typescript": "workspace:*",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}
