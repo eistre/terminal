@@ -1,6 +1,9 @@
 import sshpk from 'sshpk';
 import { z } from 'zod';
 
+const defaultPrivateKey = sshpk.generatePrivateKey('ed25519');
+const defaultPublicKey = defaultPrivateKey.toPublic();
+
 export const baseProvisionerSchema = z.object({
   PROVISIONER_MAX_RETRIES: z.coerce.number().positive().default(3),
   PROVISIONER_CONCURRENCY_LIMIT: z.coerce.number().positive().default(10),
@@ -25,7 +28,7 @@ export const baseProvisionerSchema = z.object({
 
       return z.NEVER;
     }
-  }),
+  }).default(defaultPublicKey.toString('ssh')),
   PROVISIONER_CONTAINER_SSH_PRIVATE_KEY: z.string().transform((val, ctx) => {
     const normalized = val.replaceAll(/\\n/g, '\n');
 
@@ -41,7 +44,7 @@ export const baseProvisionerSchema = z.object({
 
       return z.NEVER;
     }
-  }),
+  }).default(defaultPrivateKey.toString('openssh')),
 });
 
 export type BaseProvisionerSchema = z.infer<typeof baseProvisionerSchema>;
