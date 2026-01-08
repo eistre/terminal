@@ -92,9 +92,9 @@ export function useTypewriter(steps: ComputedRef<TypewriterStep[]> | Ref<Typewri
       return;
     }
 
+    hasStarted.value = true;
     abortController.value?.abort();
     abortController.value = new AbortController();
-    hasStarted.value = true;
 
     try {
       for (const step of steps.value) {

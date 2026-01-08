@@ -93,7 +93,7 @@ const demoSteps = computed<TypewriterStep[]>(() => {
   });
   steps.push({
     type: 'instant-writeln',
-    content: `-rw-r--r-- 1 user user ${String(totalInfoSize.value + 5).padStart(4)} Jan  8 10:30 info.txt`,
+    content: `-rw-r--r-- 1 user user ${String(totalInfoSize.value + 4).padStart(4)} Jan  8 10:30 info.txt`,
   });
   steps.push({ type: 'delay' });
 
