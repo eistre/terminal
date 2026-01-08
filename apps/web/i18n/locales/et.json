@@ -6,7 +6,8 @@
     "logo": "arvutiteaduse_instituut_est_white_2021.svg"
   },
   "header": {
-    "changeLanguage": "Vali keel",
+    "switchToEstonian": "Muuda eesti keelele",
+    "switchToEnglish": "Muuda inglise keelele",
     "emailDomains": "E-posti domeenid",
     "logout": "Logi välja",
     "logoutError": "Väljalogimine nurjus",

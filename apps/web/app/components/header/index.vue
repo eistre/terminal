@@ -8,7 +8,7 @@ const session = authClient.useSession();
       <img
         :alt="$t('app.institute')"
         :src="`/${$t('app.logo')}`"
-        class="h-16 w-auto hover:cursor-pointer"
+        class="py-3.5 sm:py-2 h-16 hover:cursor-pointer"
         @click="session.data ? navigateTo('/topics') : navigateTo('/')"
       >
     </template>

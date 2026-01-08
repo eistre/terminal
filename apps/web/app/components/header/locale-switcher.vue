@@ -1,23 +1,25 @@
 <script setup lang="ts">
-import { en, et } from '@nuxt/ui/locale';
+const { t, locale, setLocale } = useI18n();
 
-const { locale, setLocale } = useI18n();
+const flagIcon = computed(() => {
+  return locale.value === 'en' ? 'i-flag-gb-4x3' : 'i-flag-ee-4x3';
+});
 
-function handleLocaleUpdate(value: string | undefined) {
-  if (value === 'et' || value === 'en') {
-    setLocale(value);
-  }
+const tooltipText = computed(() => {
+  return locale.value === 'en' ? t('header.switchToEstonian') : t('header.switchToEnglish');
+});
+
+function toggleLocale() {
+  setLocale(locale.value === 'en' ? 'et' : 'en');
 }
 </script>
 
 <template>
-  <UTooltip arrow :text="$t('header.changeLanguage')">
-    <ULocaleSelect
-      v-model="locale"
-      :locales="[en, et]"
-      class="w-32 font-semibold text-white"
+  <UTooltip arrow :text="tooltipText">
+    <UButton
+      :icon="flagIcon"
       variant="ghost"
-      @update:model-value="handleLocaleUpdate"
+      @click="toggleLocale"
     />
   </UTooltip>
 </template>

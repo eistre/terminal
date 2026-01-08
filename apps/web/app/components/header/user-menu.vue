@@ -77,7 +77,9 @@ const items: ComputedRef<DropdownMenuItem[]> = computed(() => {
       variant="ghost"
       color="neutral"
       class="font-semibold text-white"
-      :label="session.data?.user.name"
-    />
+    >
+      <span class="hidden md:inline">{{ session.data?.user.name }}</span>
+      <UIcon name="i-lucide-circle-user" class="md:hidden" />
+    </UButton>
   </UDropdownMenu>
 </template>

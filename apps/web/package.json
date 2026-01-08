@@ -37,6 +37,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@iconify-json/flag": "catalog:",
     "@iconify-json/lucide": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/test-utils": "catalog:",
