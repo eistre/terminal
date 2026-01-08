@@ -41,9 +41,14 @@
   "home": {
     "title": "Linux Command Line Practice Environment",
     "secondary": "Terminal in the Web Browser",
-    "description": "",
+    "description": "Learn Linux command line skills through interactive exercises with a real Ubuntu terminal.",
     "getStarted": "Get started",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "demo": {
+      "info1": "This platform was developed from earlier bachelor's theses and has been modernized and optimized as part of master's thesis work. It helps you learn and practice essential Linux command line commands and their real-world applications.",
+      "info2": "When you sign in for the first time, an account is created to track your progress. Automated validation marks successfully completed tasks in green.",
+      "info3": "When you open an exercise, a personal isolated Ubuntu container is created, providing a safe environment to practice and solve tasks."
+    }
   },
   "auth": {
     "login": "Login",

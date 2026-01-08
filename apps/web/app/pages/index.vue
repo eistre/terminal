@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@nuxt/ui';
+import HomeTerminal from '~/components/terminal/HomeTerminal.vue';
 
 const session = authClient.useSession();
 
@@ -32,7 +33,7 @@ const links: ComputedRef<ButtonProps[]> = computed(() => {
       orientation="horizontal"
       :headline="$t('home.secondary')"
       :title="$t('home.title')"
-      description="Aute cupidatat deserunt voluptate esse et sunt velit esse quis excepteur fugiat amet id.  Non Lorem nisi voluptate commodo ea. Labore exercitation ipsum ea exercitation excepteur eu."
+      :description="$t('home.description')"
       :links="links"
       :ui="{
         title: 'text-3xl sm:text-4xl',
@@ -40,8 +41,8 @@ const links: ComputedRef<ButtonProps[]> = computed(() => {
         wrapper: 'lg:col-span-2',
       }"
     >
-      <div class="lg:col-span-3 h-[500px] lg:h-[calc(100vh-36rem)] lg:min-h-[500px] w-full bg-neutral-600 dark:bg-black rounded-lg flex items-center justify-center text-neutral-400">
-        PLACEHOLDER FOR XTERM TERMINAL
+      <div class="lg:col-span-3 bg-black rounded-lg p-4 terminal-height">
+        <HomeTerminal />
       </div>
     </UPageHero>
   </UPage>

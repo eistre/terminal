@@ -14,7 +14,7 @@ const webglAddon = ref<WebglAddon | null>(null);
 
 const terminalOptions: ITerminalOptions = {
   fontFamily: '"JetBrains Mono", "Fira Code", "Cascadia Mono", Menlo, Monaco, "Courier New", monospace',
-  fontSize: 14,
+  fontSize: 12,
   lineHeight: 1.2,
   letterSpacing: 0,
   cursorStyle: 'block',
@@ -63,6 +63,7 @@ defineExpose({
   onData: (callback: (data: string) => void) => terminal.value?.onData(callback),
   onResize: (callback: (data: { cols: number; rows: number }) => void) => terminal.value?.onResize(callback),
   getSize: () => fitAddon.value?.proposeDimensions(),
+  reset: () => terminal.value?.reset(),
 });
 </script>
 
