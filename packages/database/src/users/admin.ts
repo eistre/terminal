@@ -1,5 +1,5 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, lt } from 'drizzle-orm';
 import { users } from '../schema';
 
 export function createUsersAdminRepo(db: MySql2Database) {
@@ -31,6 +31,11 @@ export function createUsersAdminRepo(db: MySql2Database) {
         ));
 
       return true;
+    },
+
+    async deleteExpiredUsers(): Promise<number> {
+      const result = await db.delete(users).where(lt(users.expiresAt, new Date()));
+      return result[0].affectedRows;
     },
   };
 }

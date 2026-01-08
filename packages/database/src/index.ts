@@ -4,6 +4,7 @@ import { createEmailDomainsRepo } from './email-domains';
 import { createOps } from './ops';
 import { createTopicsRepo } from './topics';
 import { createUsersRepo } from './users';
+import { createVerificationsRepo } from './verifications';
 
 export function createDatabase(options: DatabaseSchema) {
   const db = drizzle(options.DATABASE_URL, {
@@ -15,6 +16,7 @@ export function createDatabase(options: DatabaseSchema) {
     emailDomains: createEmailDomainsRepo(db),
     topics: createTopicsRepo(db),
     users: createUsersRepo(db),
+    verifications: createVerificationsRepo(db),
     ops: createOps(db),
   };
 }
