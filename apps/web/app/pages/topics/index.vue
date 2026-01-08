@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import TopicCard from '~/components/topic/TopicCard.vue';
-
 definePageMeta({ middleware: ['require-session'] });
 
 const toast = useToast();

@@ -6,7 +6,8 @@
     "logo": "arvutiteaduse_instituut_est_white_2021.svg"
   },
   "header": {
-    "changeLanguage": "Vali keel",
+    "switchToEstonian": "Muuda eesti keelele",
+    "switchToEnglish": "Muuda inglise keelele",
     "emailDomains": "E-posti domeenid",
     "logout": "Logi välja",
     "logoutError": "Väljalogimine nurjus",
@@ -41,9 +42,14 @@
   "home": {
     "title": "Linux Käsurea Harjutuskeskkond",
     "secondary": "Käsurida Veebibrauseris",
-    "description": "",
+    "description": "Õpi Linux käsurea oskusi läbi interaktiivsete harjutuste päris Ubuntu käsureaga.",
     "getStarted": "Alusta",
-    "signIn": "Logi sisse"
+    "signIn": "Logi sisse",
+    "demo": {
+      "info1": "Platvorm on välja arendatud varasemate bakalaureusetööde põhjal ning moderniseeritud ja optimeeritud magistritöö raames. See aitab õppida ja harjutada olulisemaid Linuxi käsurea käske ning nende praktilisi kasutusjuhte.",
+      "info2": "Esmakordsel sisselogimisel luuakse konto, mis jälgib teie tulemusi. Automaatne kontrollimine märgib edukalt lahendatud ülesanded rohelisega.",
+      "info3": "Harjutuse avamisel luuakse isiklik isoleeritud Ubuntu konteiner, mis pakub turvalist keskkonda harjutamiseks ja ülesannete lahendamiseks."
+    }
   },
   "auth": {
     "login": "Logi sisse",

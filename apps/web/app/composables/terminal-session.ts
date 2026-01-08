@@ -10,19 +10,19 @@ interface TerminalLike {
 }
 
 function bannerInfo(message: string): string {
-  return `\x1B[36m*** ${message} ***\x1B[0m\r\n`;
+  return `\x1B[01;03;36m*** ${message} ***\x1B[0m\r\n`;
 }
 
 function bannerSuccess(message: string): string {
-  return `\x1B[32m*** ${message} ***\x1B[0m\r\n`;
+  return `\x1B[01;03;32m*** ${message} ***\x1B[0m\r\n`;
 }
 
 function bannerWarning(message: string): string {
-  return `\x1B[33m*** ${message} ***\x1B[0m\r\n`;
+  return `\x1B[01;03;33m*** ${message} ***\x1B[0m\r\n`;
 }
 
 function bannerError(message: string): string {
-  return `\x1B[31m*** ${message} ***\x1B[0m\r\n`;
+  return `\x1B[01;03;31m*** ${message} ***\x1B[0m\r\n`;
 }
 
 export function useTerminalSession(slug: string) {

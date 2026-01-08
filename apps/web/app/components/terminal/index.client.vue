@@ -12,21 +12,42 @@ const terminal = ref<Terminal | null>(null);
 const fitAddon = ref<FitAddon | null>(null);
 const webglAddon = ref<WebglAddon | null>(null);
 
-const terminalOptions: ITerminalOptions = {
+const { width: windowWidth } = useWindowSize();
+
+const fontSize = computed(() => {
+  if (windowWidth.value < 640) {
+    return 10;
+  }
+  else if (windowWidth.value < 768) {
+    return 11;
+  }
+  return 12;
+});
+
+const terminalOptions = computed<ITerminalOptions>(() => ({
   fontFamily: '"JetBrains Mono", "Fira Code", "Cascadia Mono", Menlo, Monaco, "Courier New", monospace',
-  fontSize: 14,
+  fontSize: fontSize.value,
   lineHeight: 1.2,
   letterSpacing: 0,
   cursorStyle: 'block',
   cursorBlink: true,
   scrollback: 5000,
-};
+}));
 
 const { height, width } = useElementSize(terminalElement);
 
 watch([height, width], () => {
   if (fitAddon.value && terminal.value) {
     fitAddon.value.fit();
+  }
+});
+
+watch(fontSize, (newSize) => {
+  if (terminal.value) {
+    terminal.value.options.fontSize = newSize;
+    if (fitAddon.value) {
+      fitAddon.value.fit();
+    }
   }
 });
 
@@ -39,7 +60,7 @@ onMounted(async () => {
     return;
   }
 
-  terminal.value = new Terminal(terminalOptions);
+  terminal.value = new Terminal(terminalOptions.value);
   fitAddon.value = new FitAddon();
   webglAddon.value = new WebglAddon();
 
@@ -63,6 +84,7 @@ defineExpose({
   onData: (callback: (data: string) => void) => terminal.value?.onData(callback),
   onResize: (callback: (data: { cols: number; rows: number }) => void) => terminal.value?.onResize(callback),
   getSize: () => fitAddon.value?.proposeDimensions(),
+  reset: () => terminal.value?.reset(),
 });
 </script>
 

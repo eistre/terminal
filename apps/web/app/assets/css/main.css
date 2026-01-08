@@ -7,7 +7,6 @@
 }
 
 :root {
-  --ui-header-height: --spacing(20);
   --ui-container: var(--container-9xl);
   --ui-content-offset: 48vh;
 }
