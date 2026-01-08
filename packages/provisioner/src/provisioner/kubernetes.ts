@@ -93,6 +93,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   protected override async ensureContainerExistsImpl(clientId: string): Promise<ConnectionInfo> {
     const podName = KubernetesProvisioner.getPodName(clientId);
     const logger = this.logger.child({ clientId, podName });
+    let pod: k8s.V1Pod;
 
     logger.info('Ensuring pod exists');
     const status = await this.getPodStatus(podName);
@@ -107,7 +108,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         await this.createPod(clientId);
 
         logger.debug('Pod created, waiting for ready status');
-        await this.waitUntilPodReady(podName);
+        pod = await this.waitUntilPodReady(podName);
         break;
       }
       case PodStatus.MISSING: {
@@ -115,31 +116,38 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         await this.createPod(clientId);
 
         logger.debug('Pod created, waiting for ready status');
-        await this.waitUntilPodReady(podName);
+        pod = await this.waitUntilPodReady(podName);
         break;
       }
       case PodStatus.EXISTING: {
         logger.debug('Pod exists, validating readiness and updating expiration');
-        await Promise.all([
+        const result = await Promise.all([
           this.updateContainerExpirationImpl(clientId),
           this.waitUntilPodReady(podName),
         ]);
+        pod = result[1];
         break;
       }
     }
 
     let host: string;
     let port: number;
-    const serviceName = KubernetesProvisioner.getServiceName(clientId);
 
     switch (this.serviceType) {
       case 'headless': {
-        host = `${serviceName}.${this.namespace}.svc`;
+        const podIP = pod.status?.podIP;
+
+        if (!podIP) {
+          KubernetesProvisioner.abortRetry('Pod IP is not available');
+        }
+
+        host = podIP;
         port = KubernetesProvisioner.CONTAINER_SSH_PORT;
-        logger.debug({ host }, 'Using headless service SSH connection info');
+        logger.debug({ host, podIP }, 'Using pod IP directly for headless mode SSH connection');
         break;
       }
       case 'nodePort': {
+        const serviceName = KubernetesProvisioner.getServiceName(clientId);
         const service = await this.api.readNamespacedService({ name: serviceName, namespace: this.namespace });
         const nodePort = service.spec
           ?.ports
@@ -150,9 +158,15 @@ export class KubernetesProvisioner extends AbstractProvisioner {
           KubernetesProvisioner.abortRetry(`Service ${serviceName} is missing nodePort for SSH`);
         }
 
-        host = 'localhost'; // TODO localhost is just for dev - should be derived from actual node ip
+        // Use externalIP if available, fallback to internalIP
+        const nodes = await this.api.listNode();
+        const node = nodes.items[0];
+        const externalIP = node?.status?.addresses?.find(addr => addr.type === 'ExternalIP')?.address;
+        const internalIP = node?.status?.addresses?.find(addr => addr.type === 'InternalIP')?.address;
+
+        host = externalIP || internalIP || 'localhost';
         port = nodePort;
-        logger.debug({ nodePort }, 'Using NodePort SSH connection info');
+        logger.debug({ nodePort, externalIP, internalIP, selectedHost: host }, 'Using NodePort SSH connection info');
         break;
       }
     }
@@ -196,7 +210,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     try {
       logger.debug('Deleting pod');
 
-      // Deletes the pod and its associated service due to ownerReferences
+      // Deletes the pod (and its associated service via ownerReferences)
       await this.api.deleteNamespacedPod({ name: podName, namespace: this.namespace });
       logger.info('Pod deleted');
     }
@@ -244,8 +258,14 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       KubernetesProvisioner.abortRetry('Pod UID is missing for newly created pod');
     }
 
-    await this.api.createNamespacedService({ namespace: this.namespace, body: this.buildServiceManifest(clientId, podUid) });
-    logger.debug({ mode: this.serviceType }, 'Created service for client');
+    // Only create service for NodePort mode
+    if (this.serviceType === 'nodePort') {
+      await this.api.createNamespacedService({ namespace: this.namespace, body: this.buildServiceManifest(clientId, podUid) });
+      logger.debug({ mode: this.serviceType }, 'Created service for client');
+    }
+    else {
+      logger.debug({ mode: this.serviceType }, 'Skipping service creation for headless mode (using pod IP directly)');
+    }
   }
 
   private async waitUntilPodReady(podName: string): Promise<k8s.V1Pod> {
