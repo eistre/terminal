@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import XtermTerminal from '~/components/terminal/XtermTerminal.vue';
-import TasksCard from '~/components/topic/TasksCard.vue';
+import type { Terminal } from '#components';
 
 definePageMeta({ middleware: ['require-session'] });
 
@@ -9,7 +8,7 @@ const toast = useToast();
 const route = useRoute();
 const slug = route.params.slug as string;
 
-const terminal = ref<InstanceType<typeof XtermTerminal>>();
+const terminal = ref<InstanceType<typeof Terminal>>();
 const {
   attach,
   connect,
@@ -172,7 +171,7 @@ async function handleTasksReset() {
 
       <UPageBody>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <TasksCard
+          <TopicTasks
             v-model:active="activeTaskIds"
             :tasks="topic?.tasks ?? []"
             :resetting="resettingTasks"
@@ -208,7 +207,7 @@ async function handleTasksReset() {
             <USeparator />
 
             <div class="bg-black rounded-lg p-4 terminal-height">
-              <XtermTerminal ref="terminal" @ready="handleTerminalReady" />
+              <Terminal ref="terminal" @ready="handleTerminalReady" />
             </div>
           </UPageCard>
         </div>
