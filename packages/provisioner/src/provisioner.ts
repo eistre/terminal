@@ -1,6 +1,6 @@
 export interface ContainerInfo {
   clientId: string;
-  expireTime: Date;
+  expiresAt: Date;
 }
 
 export interface ConnectionInfo {

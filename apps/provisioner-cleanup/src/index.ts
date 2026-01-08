@@ -24,7 +24,7 @@ async function main() {
 
     // Filter expired containers
     const now = new Date();
-    const expired = containers.filter(container => container.expireTime <= now);
+    const expired = containers.filter(container => container.expiresAt <= now);
 
     logger.info({ totalContainers: containers.length, expiredContainers: expired.length }, `Found ${expired.length} expired ${expired.length === 1 ? 'container' : 'containers'}`);
 

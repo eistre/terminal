@@ -7,7 +7,7 @@ const defaultPublicKey = defaultPrivateKey.toPublic();
 export const baseProvisionerSchema = z.object({
   PROVISIONER_MAX_RETRIES: z.coerce.number().positive().default(3),
   PROVISIONER_CONCURRENCY_LIMIT: z.coerce.number().positive().default(10),
-  PROVISIONER_CONTAINER_TTL_MINUTES: z.coerce.number().positive().default(30),
+  PROVISIONER_CONTAINER_EXPIRY_MINUTES: z.coerce.number().positive().default(30),
   PROVISIONER_CONTAINER_IMAGE: z.string().default('ubuntu:24.04'),
   PROVISIONER_CONTAINER_MEMORY_REQUEST: z.string().default('64Mi'),
   PROVISIONER_CONTAINER_MEMORY_LIMIT: z.string().default('128Mi'),

@@ -16,7 +16,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   private static readonly ROLE_LABEL_KEY = 'terminal/role';
   private static readonly ROLE_LABEL_VALUE = 'session';
   private static readonly CLIENT_ID_LABEL_KEY = 'terminal/client-id';
-  private static readonly EXPIRE_TIME_ANNOTATION_KEY = 'terminal/expire-time';
+  private static readonly EXPIRES_AT_ANNOTATION_KEY = 'terminal/expires-at';
   private static readonly CONTAINER_NAME = 'terminal';
   private static readonly CONTAINER_SSH_PORT = 22;
   private static readonly CONTAINER_SSH_USERNAME = 'user';
@@ -69,20 +69,20 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       const annotations = pod.metadata?.annotations ?? {};
 
       const clientId = labels[KubernetesProvisioner.CLIENT_ID_LABEL_KEY];
-      const expireTime = annotations[KubernetesProvisioner.EXPIRE_TIME_ANNOTATION_KEY];
+      const expiresAt = annotations[KubernetesProvisioner.EXPIRES_AT_ANNOTATION_KEY];
 
-      if (!clientId || !expireTime) {
+      if (!clientId || !expiresAt) {
         logger.warn({
           podName,
           labels,
           annotations,
-        }, 'Found pod with missing clientId label or expireTime annotation');
+        }, 'Found pod with missing clientId label or expiresAt annotation');
         continue;
       }
 
       containers.push({
         clientId,
-        expireTime: new Date(expireTime),
+        expiresAt: new Date(expiresAt),
       });
     }
 
@@ -170,10 +170,10 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     const podName = KubernetesProvisioner.getPodName(clientId);
     const logger = this.logger.child({ clientId, podName });
 
-    const expireTime = KubernetesProvisioner.getExpireTime(this.containerTtlMinutes);
-    logger.debug(`Updating pod expiration to ${expireTime.toISOString()}`);
+    const expiresAt = KubernetesProvisioner.getExpiresAt(this.containerExpiryMinutes);
+    logger.debug(`Updating pod expiration to ${expiresAt.toISOString()}`);
 
-    const annotation = KubernetesProvisioner.EXPIRE_TIME_ANNOTATION_KEY.replace('/', '~1');
+    const annotation = KubernetesProvisioner.EXPIRES_AT_ANNOTATION_KEY.replace('/', '~1');
     const path = `/metadata/annotations/${annotation}`;
 
     await this.api.patchNamespacedPod({
@@ -182,7 +182,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       body: [{
         op: 'replace',
         path,
-        value: expireTime.toISOString(),
+        value: expiresAt.toISOString(),
       }],
     });
 
@@ -311,8 +311,8 @@ export class KubernetesProvisioner extends AbstractProvisioner {
           [KubernetesProvisioner.CLIENT_ID_LABEL_KEY]: clientId,
         },
         annotations: {
-          [KubernetesProvisioner.EXPIRE_TIME_ANNOTATION_KEY]: KubernetesProvisioner
-            .getExpireTime(this.containerTtlMinutes)
+          [KubernetesProvisioner.EXPIRES_AT_ANNOTATION_KEY]: KubernetesProvisioner
+            .getExpiresAt(this.containerExpiryMinutes)
             .toISOString(),
         },
       },
@@ -393,9 +393,9 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     };
   }
 
-  private static getExpireTime(ttlMinutes: number): Date {
+  private static getExpiresAt(expiryMinutes: number): Date {
     const now = new Date();
-    return new Date(now.getTime() + ttlMinutes * 60 * 1000);
+    return new Date(now.getTime() + expiryMinutes * 60 * 1000);
   }
 
   private static getPodName(clientId: string): string {

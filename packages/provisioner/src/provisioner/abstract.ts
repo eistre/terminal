@@ -6,7 +6,7 @@ import pRetry, { AbortError } from 'p-retry';
 
 export abstract class AbstractProvisioner implements Provisioner {
   protected readonly logger: Logger;
-  protected readonly containerTtlMinutes: BaseProvisionerSchema['PROVISIONER_CONTAINER_TTL_MINUTES'];
+  protected readonly containerExpiryMinutes: BaseProvisionerSchema['PROVISIONER_CONTAINER_EXPIRY_MINUTES'];
   protected readonly containerImage: BaseProvisionerSchema['PROVISIONER_CONTAINER_IMAGE'];
   protected readonly containerMemoryRequest: BaseProvisionerSchema['PROVISIONER_CONTAINER_MEMORY_REQUEST'];
   protected readonly containerCpuRequest: BaseProvisionerSchema['PROVISIONER_CONTAINER_CPU_REQUEST'];
@@ -22,7 +22,7 @@ export abstract class AbstractProvisioner implements Provisioner {
     this.logger = logger;
     this.concurrencyLimit = pLimit(config.PROVISIONER_CONCURRENCY_LIMIT);
     this.maxRetries = config.PROVISIONER_MAX_RETRIES;
-    this.containerTtlMinutes = config.PROVISIONER_CONTAINER_TTL_MINUTES;
+    this.containerExpiryMinutes = config.PROVISIONER_CONTAINER_EXPIRY_MINUTES;
     this.containerImage = config.PROVISIONER_CONTAINER_IMAGE;
     this.containerMemoryRequest = config.PROVISIONER_CONTAINER_MEMORY_REQUEST;
     this.containerCpuRequest = config.PROVISIONER_CONTAINER_CPU_REQUEST;

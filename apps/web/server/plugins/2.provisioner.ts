@@ -16,7 +16,7 @@ export default defineNitroPlugin(async () => {
     const containers = await provisioner.listContainers();
 
     const now = new Date();
-    const expired = containers.filter(container => container.expireTime <= now);
+    const expired = containers.filter(container => container.expiresAt <= now);
 
     if (expired.length > 0) {
       logger.debug('Cleaning up all expired containers');
