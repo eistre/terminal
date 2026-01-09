@@ -1,8 +1,8 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
-import type { EvaluatorTaskRecord } from '../types';
+import type { EvaluatorTaskRecord } from '../types/index.js';
 import { and, eq, inArray } from 'drizzle-orm';
-import { taskCompletions, tasks, topics } from '../schema';
-import { TopicNotFoundError } from './errors';
+import { taskCompletions, tasks, topics } from '../schema/index.js';
+import { TopicNotFoundError } from './errors.js';
 
 export function createTopicsCompletionRepo(db: MySql2Database) {
   return {

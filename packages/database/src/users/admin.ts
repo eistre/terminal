@@ -1,6 +1,6 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
 import { and, eq, lt } from 'drizzle-orm';
-import { users } from '../schema';
+import { users } from '../schema/index.js';
 
 export function createUsersAdminRepo(db: MySql2Database) {
   return {

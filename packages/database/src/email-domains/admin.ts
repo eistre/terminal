@@ -1,8 +1,8 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
-import type { UpsertEmailDomainInput, UpsertEmailDomainResult } from '../types';
+import type { UpsertEmailDomainInput, UpsertEmailDomainResult } from '../types/index.js';
 import { eq } from 'drizzle-orm';
-import { emailDomains } from '../schema';
-import { EmailDomainConflictError } from './errors';
+import { emailDomains } from '../schema/index.js';
+import { EmailDomainConflictError } from './errors.js';
 
 interface Error {
   cause?: {

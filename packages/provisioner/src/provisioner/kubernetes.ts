@@ -1,14 +1,10 @@
 import type { KubernetesProvisionerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
-import type { ConnectionInfo, ContainerInfo } from '../provisioner';
+import type { ConnectionInfo, ContainerInfo } from '../provisioner.js';
 import * as k8s from '@kubernetes/client-node';
-import { AbstractProvisioner } from './abstract';
+import { AbstractProvisioner } from './abstract.js';
 
-enum PodStatus {
-  EXISTING = 'EXISTING',
-  TERMINATING = 'TERMINATING',
-  MISSING = 'MISSING',
-}
+type PodStatus = 'EXISTING' | 'TERMINATING' | 'MISSING';
 
 export class KubernetesProvisioner extends AbstractProvisioner {
   private static readonly APP_NAME = 'terminal';
@@ -100,7 +96,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     logger.debug({ status }, 'Current pod status before ensuring container');
 
     switch (status) {
-      case PodStatus.TERMINATING: {
+      case 'TERMINATING': {
         logger.debug('Pod is terminating, waiting for deletion');
         await this.waitUntilPodTerminated(podName);
 
@@ -111,7 +107,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         pod = await this.waitUntilPodReady(podName);
         break;
       }
-      case PodStatus.MISSING: {
+      case 'MISSING': {
         logger.debug('Pod does not exist, creating');
         await this.createPod(clientId);
 
@@ -119,7 +115,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         pod = await this.waitUntilPodReady(podName);
         break;
       }
-      case PodStatus.EXISTING: {
+      case 'EXISTING': {
         logger.debug('Pod exists, validating readiness and updating expiration');
         const result = await Promise.all([
           this.updateContainerExpirationImpl(clientId),
@@ -232,15 +228,15 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       logger.trace({ phase: pod.status?.phase, deletionTimestamp: pod.metadata?.deletionTimestamp }, 'Read pod status');
 
       if (pod.metadata?.deletionTimestamp) {
-        return PodStatus.TERMINATING;
+        return 'TERMINATING';
       }
 
-      return PodStatus.EXISTING;
+      return 'EXISTING';
     }
     catch (error: unknown) {
       if (KubernetesProvisioner.isNotFound(error)) {
         logger.trace('Pod not found when reading status');
-        return PodStatus.MISSING;
+        return 'MISSING';
       }
 
       throw error;
@@ -308,7 +304,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       const status = await this.getPodStatus(podName);
       logger.trace({ status }, 'Polled pod termination status');
 
-      if (status === PodStatus.MISSING) {
+      if (status === 'MISSING') {
         return;
       }
 

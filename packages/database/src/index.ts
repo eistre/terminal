@@ -1,10 +1,10 @@
 import type { DatabaseSchema } from '@terminal/env/schemas';
 import { drizzle } from 'drizzle-orm/mysql2';
-import { createEmailDomainsRepo } from './email-domains';
-import { createOps } from './ops';
-import { createTopicsRepo } from './topics';
-import { createUsersRepo } from './users';
-import { createVerificationsRepo } from './verifications';
+import { createEmailDomainsRepo } from './email-domains/index.js';
+import { createOps } from './ops/index.js';
+import { createTopicsRepo } from './topics/index.js';
+import { createUsersRepo } from './users/index.js';
+import { createVerificationsRepo } from './verifications/index.js';
 
 export function createDatabase(options: DatabaseSchema) {
   const db = drizzle(options.DATABASE_URL, {
@@ -21,8 +21,8 @@ export function createDatabase(options: DatabaseSchema) {
   };
 }
 
-export { EmailDomainConflictError, EmailDomainNotFoundError } from './email-domains';
-export * from './seeds';
-export { TopicNotFoundError, TopicSlugConflictError } from './topics';
-export * from './types';
+export { EmailDomainConflictError, EmailDomainNotFoundError } from './email-domains/index.js';
+export * from './seeds/index.js';
+export { TopicNotFoundError, TopicSlugConflictError } from './topics/index.js';
+export * from './types/index.js';
 export type Database = ReturnType<typeof createDatabase>;

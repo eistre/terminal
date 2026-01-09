@@ -1,8 +1,8 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
-import type { EmailDomain } from '../types';
+import type { EmailDomain } from '../types/index.js';
 import { eq } from 'drizzle-orm';
-import { emailDomains } from '../schema';
-import { EmailDomainNotFoundError } from './errors';
+import { emailDomains } from '../schema/index.js';
+import { EmailDomainNotFoundError } from './errors.js';
 
 export function createEmailDomainsCatalogRepo(db: MySql2Database) {
   return {

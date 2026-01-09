@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { baseProvisionerSchema } from './base';
+import { baseProvisionerSchema } from './base.ts';
 
 export const kubernetesProvisionerSchema = baseProvisionerSchema.extend({
   PROVISIONER_TYPE: z.literal('kubernetes'),

@@ -1,4 +1,4 @@
-import type { tasks, taskTranslations, topics, topicTranslations } from '../../schema';
+import type { tasks, taskTranslations, topics, topicTranslations } from '../../schema/index.js';
 
 export interface TopicSeed {
   topic: typeof topics.$inferInsert;

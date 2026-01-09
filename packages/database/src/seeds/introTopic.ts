@@ -1,4 +1,4 @@
-import type { TopicSeed } from '../types';
+import type { TopicSeed } from '../types/index.js';
 
 export const introTopic: TopicSeed = {
   topic: { slug: 'introduction-to-linux' },

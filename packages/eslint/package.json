@@ -9,8 +9,7 @@
   "scripts": {
     "clean": "git clean -xdf .cache .turbo node_modules",
     "lint": "eslint . --cache --cache-location .cache/.eslintcache",
-    "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
-    "typecheck": "tsc --noEmit"
+    "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",

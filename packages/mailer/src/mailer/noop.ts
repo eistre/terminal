@@ -1,6 +1,6 @@
 import type { BaseMailerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
-import { AbstractMailer } from './abstract';
+import { AbstractMailer } from './abstract.js';
 
 export class NoopMailer extends AbstractMailer {
   constructor(logger: Logger, config: BaseMailerSchema) {

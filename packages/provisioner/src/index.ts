@@ -1,9 +1,9 @@
 import type { ProvisionerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
-import type { Provisioner } from './provisioner';
-import { KubernetesProvisioner } from './provisioner/kubernetes';
+import type { Provisioner } from './provisioner.js';
+import { KubernetesProvisioner } from './provisioner/kubernetes.js';
 
-export type { ConnectionInfo, ContainerInfo, Provisioner } from './provisioner';
+export type { ConnectionInfo, ContainerInfo, Provisioner } from './provisioner.js';
 
 export function createProvisioner(
   logger: Logger,

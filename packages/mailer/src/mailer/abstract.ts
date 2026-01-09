@@ -1,6 +1,6 @@
 import type { BaseMailerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
-import type { Mailer } from '../mailer';
+import type { Mailer } from '../mailer.js';
 import pLimit from 'p-limit';
 import pRetry from 'p-retry';
 

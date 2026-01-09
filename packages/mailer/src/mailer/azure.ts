@@ -2,7 +2,7 @@ import type { EmailMessage } from '@azure/communication-email';
 import type { AzureMailerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
 import { EmailClient } from '@azure/communication-email';
-import { AbstractMailer } from './abstract';
+import { AbstractMailer } from './abstract.js';
 
 export class AzureMailer extends AbstractMailer {
   private readonly client: EmailClient;

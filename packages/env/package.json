@@ -4,11 +4,19 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    ".": "./src/index.ts",
-    "./schemas": "./src/schemas/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
+      "import": "./dist/schemas/index.js"
+    }
   },
+  "files": ["dist"],
   "scripts": {
-    "clean": "git clean -xdf .cache .turbo node_modules",
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo node_modules dist",
     "lint": "eslint . --cache --cache-location .cache/.eslintcache",
     "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
     "typecheck": "tsc --noEmit"

@@ -1,6 +1,6 @@
 import type { BaseProvisionerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
-import type { ConnectionInfo, ContainerInfo, Provisioner } from '../provisioner';
+import type { ConnectionInfo, ContainerInfo, Provisioner } from '../provisioner.js';
 import pLimit from 'p-limit';
 import pRetry, { AbortError } from 'p-retry';
 

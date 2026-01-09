@@ -1,4 +1,4 @@
-import type { TopicSeed } from '../types';
+import type { TopicSeed } from '../types/index.js';
 
 export const intermediateTopic: TopicSeed = {
   topic: { slug: 'operating-systems-and-computer-security' },

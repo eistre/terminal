@@ -4,14 +4,25 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    ".": "./src/index.ts",
-    "./schema": "./src/schema/index.ts",
-    "./schema/auth": "./src/schema/auth.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schema": {
+      "types": "./dist/schema/index.d.ts",
+      "import": "./dist/schema/index.js"
+    },
+    "./schema/auth": {
+      "types": "./dist/schema/auth.d.ts",
+      "import": "./dist/schema/auth.js"
+    }
   },
+  "files": ["dist"],
   "scripts": {
+    "build": "tsc",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
-    "clean": "git clean -xdf .cache .turbo node_modules",
+    "clean": "git clean -xdf .cache .turbo node_modules dist",
     "lint": "eslint . --cache --cache-location .cache/.eslintcache",
     "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
     "typecheck": "tsc --noEmit"

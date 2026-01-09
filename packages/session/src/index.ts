@@ -1,8 +1,8 @@
 import type { ConnectionInfo } from '@terminal/provisioner';
 import type { ClientChannel, ConnectConfig } from 'ssh2';
-import type { Session } from './session';
+import type { Session } from './session.ts';
 import { Client } from 'ssh2';
-import { SessionImpl } from './session';
+import { SessionImpl } from './session.js';
 
 const READY_TIMEOUT = 20 * 1000; // 20 seconds
 const KEEPALIVE_INTERVAL = 15 * 1000; // 15 seconds

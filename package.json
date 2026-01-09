@@ -18,8 +18,7 @@
     "lint:root": "eslint . --cache --cache-location .cache/.eslintcache",
     "lint:root:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
     "prepare": "husky",
-    "typecheck": "turbo typecheck typecheck:root",
-    "typecheck:root": "tsc --noEmit"
+    "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "@terminal/eslint": "workspace:*",

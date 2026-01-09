@@ -1,8 +1,8 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
-import type { EmailDomainSeed, TopicSeed } from '../types';
-import { runMigration } from './migration';
-import { seedEmailDomainsIfEmpty } from './seed-email-domains';
-import { seedTopicsIfEmpty } from './seed-topics';
+import type { EmailDomainSeed, TopicSeed } from '../types/index.js';
+import { runMigration } from './migration.js';
+import { seedEmailDomainsIfEmpty } from './seed-email-domains.js';
+import { seedTopicsIfEmpty } from './seed-topics.js';
 
 export function createOps(db: MySql2Database) {
   return {

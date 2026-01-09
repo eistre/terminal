@@ -1,5 +1,5 @@
-import type { Evaluator, EvaluatorTask } from './evaluator';
-import { EvaluatorImpl } from './evaluator';
+import type { Evaluator, EvaluatorTask } from './evaluator.js';
+import { EvaluatorImpl } from './evaluator.js';
 
 export type { Evaluator };
 
