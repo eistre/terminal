@@ -60,3 +60,77 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: /language:javascript-typescript
+
+  build:
+    needs: [analyze]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - name: web
+            dockerfile: apps/web/Dockerfile
+            image: ghcr.io/eistre/terminal-web
+          - name: provisioner-cleanup
+            dockerfile: apps/provisioner-cleanup/Dockerfile
+            image: ghcr.io/eistre/terminal-provisioner-cleanup
+          - name: database-cleanup
+            dockerfile: apps/database-cleanup/Dockerfile
+            image: ghcr.io/eistre/terminal-database-cleanup
+          - name: container
+            dockerfile: packages/provisioner/image/Dockerfile
+            image: ghcr.io/eistre/terminal-container
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ matrix.image }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=sha-
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  cleanup:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      packages: write
+    strategy:
+      matrix:
+        package:
+          - terminal-web
+          - terminal-provisioner-cleanup
+          - terminal-database-cleanup
+          - terminal-container
+    steps:
+      - name: Delete old versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ matrix.package }}
+          package-type: container
+          min-versions-to-keep: 3
+          ignore-versions: ^latest$ # Never delete 'latest'
