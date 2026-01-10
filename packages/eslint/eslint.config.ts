@@ -11,6 +11,5 @@ export default antfu({
   },
   rules: {
     ...turboPlugin.configs.recommended.rules,
-    'pnpm/yaml-enforce-settings': 'off',
   },
-});
+}) as ReturnType<typeof antfu>;
