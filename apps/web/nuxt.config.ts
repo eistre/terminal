@@ -21,7 +21,6 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/eslint',
-    '@nuxt/test-utils',
     '@nuxt/ui',
     '@nuxtjs/i18n',
     '@vueuse/nuxt',
