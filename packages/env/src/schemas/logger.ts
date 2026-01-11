@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const loggerSchema = z.object({
-  LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug', 'trace']),
+  LOGGER_LEVEL: z.enum(['error', 'warn', 'info', 'debug', 'trace']),
   NODE_ENV: z.enum(['development', 'test', 'production']),
 });
 

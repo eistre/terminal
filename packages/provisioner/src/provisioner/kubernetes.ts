@@ -23,11 +23,11 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   private static readonly POLL_INTERVAL_MS = 1000; // 1 second
 
   private readonly api: k8s.CoreV1Api;
-  private readonly namespace: KubernetesProvisionerSchema['KUBERNETES_NAMESPACE'];
-  private readonly serviceType: KubernetesProvisionerSchema['KUBERNETES_SERVICE_TYPE'];
+  private readonly namespace: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_NAMESPACE'];
+  private readonly serviceType: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_SERVICE_TYPE'];
 
   constructor(logger: Logger, config: KubernetesProvisionerSchema) {
-    super(logger.child({ module: 'kubernetes', namespace: config.KUBERNETES_NAMESPACE }), config);
+    super(logger.child({ module: 'kubernetes', namespace: config.PROVISIONER_KUBERNETES_NAMESPACE }), config);
 
     // Initialize Kubernetes API client
     const kc = new k8s.KubeConfig();
@@ -45,8 +45,8 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     }
 
     this.api = kc.makeApiClient(k8s.CoreV1Api);
-    this.namespace = config.KUBERNETES_NAMESPACE;
-    this.serviceType = config.KUBERNETES_SERVICE_TYPE;
+    this.namespace = config.PROVISIONER_KUBERNETES_NAMESPACE;
+    this.serviceType = config.PROVISIONER_KUBERNETES_SERVICE_TYPE;
   }
 
   protected override async listContainersImpl(): Promise<ContainerInfo[]> {

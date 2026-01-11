@@ -34,7 +34,7 @@ export default defineNitroPlugin(async () => {
 
     logger.info({ topics, domains }, 'Database seeding process completed');
 
-    const email = env.ADMIN_EMAIL;
+    const email = env.AUTH_ADMIN_EMAIL;
     const adminEnsured = await database.users.admin.ensureUserRole({ email, role: 'admin' });
     if (!adminEnsured) {
       try {
@@ -42,7 +42,7 @@ export default defineNitroPlugin(async () => {
           body: {
             email,
             name: 'admin',
-            password: env.ADMIN_PASSWORD,
+            password: env.AUTH_ADMIN_PASSWORD,
             role: 'admin',
             data: { emailVerified: true },
           },

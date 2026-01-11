@@ -12,7 +12,7 @@ export default defineNitroPlugin((nitroApp) => {
   // Create a logger with fallback values since environment validation hasn't occurred yet
   const logger = createLogger({
     name: 'nuxt',
-    LOG_LEVEL: (process.env.LOG_LEVEL as LoggerSchema['LOG_LEVEL']) || 'info',
+    LOGGER_LEVEL: (process.env.LOGGER_LEVEL as LoggerSchema['LOGGER_LEVEL']) || 'info',
     NODE_ENV: (process.env.NODE_ENV as LoggerSchema['NODE_ENV']) || 'development',
   }).child({ caller: 'env' });
 
@@ -24,14 +24,14 @@ export default defineNitroPlugin((nitroApp) => {
 
     const config: PublicConfig = {
       emailVerificationEnabled: env.MAILER_TYPE !== 'noop',
-      adminEmail: env.ADMIN_EMAIL,
+      adminEmail: env.AUTH_ADMIN_EMAIL,
     };
 
-    if (env.MICROSOFT_CLIENT_ID) {
+    if (env.AUTH_MICROSOFT_CLIENT_ID) {
       config.microsoft = {
         labels: {
-          en: env.MICROSOFT_LABEL_EN ?? 'Microsoft',
-          et: env.MICROSOFT_LABEL_ET ?? 'Microsoft',
+          en: env.AUTH_MICROSOFT_LABEL_EN ?? 'Microsoft',
+          et: env.AUTH_MICROSOFT_LABEL_ET ?? 'Microsoft',
         },
       };
     }

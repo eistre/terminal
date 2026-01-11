@@ -48,12 +48,12 @@ function getEmailDomain(email: string): string | null {
 
 function isAdminEmail(email: string): boolean {
   const env = useEnv();
-  return normalizeEmail(email) === normalizeEmail(env.ADMIN_EMAIL);
+  return normalizeEmail(email) === normalizeEmail(env.AUTH_ADMIN_EMAIL);
 }
 
 function calculateUserExpiry(): Date {
   const env = useEnv();
-  return new Date(Date.now() + (env.USER_EXPIRY_DAYS * MS_PER_DAY));
+  return new Date(Date.now() + (env.AUTH_USER_EXPIRY_DAYS * MS_PER_DAY));
 }
 
 async function validateEmailDomainForAuth(email: string, database: Database): Promise<{ allowed: boolean; skipVerification: boolean }> {
@@ -184,12 +184,12 @@ function createAuth() {
 
   const trustedProviders: string[] = ['email-password'];
   const socialProviders: SocialProviders = {};
-  if (env.MICROSOFT_CLIENT_ID) {
+  if (env.AUTH_MICROSOFT_CLIENT_ID) {
     trustedProviders.push('microsoft');
     socialProviders.microsoft = {
-      clientId: env.MICROSOFT_CLIENT_ID!,
-      clientSecret: env.MICROSOFT_CLIENT_SECRET,
-      tenantId: env.MICROSOFT_TENANT_ID,
+      clientId: env.AUTH_MICROSOFT_CLIENT_ID!,
+      clientSecret: env.AUTH_MICROSOFT_CLIENT_SECRET,
+      tenantId: env.AUTH_MICROSOFT_TENANT_ID,
       disableProfilePhoto: true,
       prompt: 'select_account',
     };
