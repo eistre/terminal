@@ -30,24 +30,21 @@ async function main() {
 
     // Delete expired containers
     const results = await Promise.allSettled(
-      expired.map(container => provisioner.deleteContainer(container.clientId)),
+      expired.map(container => provisioner.deleteContainer(container.userId)),
     );
 
     let successCount = 0;
     let failureCount = 0;
     results.forEach((result, index) => {
-      const container = expired[index];
-      if (!container) {
-        return;
-      }
+      const { userId } = expired[index];
 
       if (result.status === 'fulfilled') {
         successCount++;
-        logger.debug({ clientId: container.clientId }, `Deleted container: ${container.clientId}`);
+        logger.debug({ userId }, `Deleted container: ${userId}`);
       }
       else {
         failureCount++;
-        logger.warn({ clientId: container.clientId, error: result.reason }, `Failed to delete container: ${container.clientId}`);
+        logger.warn({ userId, error: result.reason }, `Failed to delete container: ${userId}`);
       }
     });
 

@@ -41,65 +41,65 @@ export abstract class AbstractProvisioner implements Provisioner {
 
   /**
    * @inheritDoc
-   * @param clientId Unique identifier for the client
+   * @param userId Unique identifier for the user
    */
-  async ensureContainerExists(clientId: string): Promise<ConnectionInfo> {
+  async ensureContainerExists(userId: string): Promise<ConnectionInfo> {
     return this.withConcurrencyLimit(() =>
-      this.withLock(clientId, () =>
-        this.withRetry(() => this.ensureContainerExistsImpl(clientId))),
+      this.withLock(userId, () =>
+        this.withRetry(() => this.ensureContainerExistsImpl(userId))),
     );
   }
 
   /**
    * @inheritDoc
-   * @param clientId Unique identifier for the client
+   * @param userId Unique identifier for the user
    */
-  async updateContainerExpiration(clientId: string): Promise<void> {
+  async updateContainerExpiration(userId: string): Promise<void> {
     return this.withConcurrencyLimit(() =>
-      this.withLock(clientId, () =>
-        this.withRetry(() => this.updateContainerExpirationImpl(clientId))),
+      this.withLock(userId, () =>
+        this.withRetry(() => this.updateContainerExpirationImpl(userId))),
     );
   }
 
   /**
    * @inheritDoc
-   * @param clientId Unique identifier for the client
+   * @param userId Unique identifier for the user
    */
-  async deleteContainer(clientId: string): Promise<void> {
+  async deleteContainer(userId: string): Promise<void> {
     return this.withConcurrencyLimit(() =>
-      this.withLock(clientId, () =>
-        this.withRetry(() => this.deleteContainerImpl(clientId))),
+      this.withLock(userId, () =>
+        this.withRetry(() => this.deleteContainerImpl(userId))),
     );
   }
 
   protected abstract listContainersImpl(): Promise<ContainerInfo[]>;
 
-  protected abstract ensureContainerExistsImpl(clientId: string): Promise<ConnectionInfo>;
+  protected abstract ensureContainerExistsImpl(userId: string): Promise<ConnectionInfo>;
 
-  protected abstract updateContainerExpirationImpl(clientId: string): Promise<void>;
+  protected abstract updateContainerExpirationImpl(userId: string): Promise<void>;
 
-  protected abstract deleteContainerImpl(clientId: string): Promise<void>;
+  protected abstract deleteContainerImpl(userId: string): Promise<void>;
 
   protected withConcurrencyLimit<T>(fn: () => Promise<T>): Promise<T> {
     return this.concurrencyLimit(fn);
   }
 
-  protected withLock<T>(clientId: string, fn: () => Promise<T>): Promise<T> {
-    const previous = this.locks.get(clientId) ?? Promise.resolve();
+  protected withLock<T>(userId: string, fn: () => Promise<T>): Promise<T> {
+    const previous = this.locks.get(userId) ?? Promise.resolve();
 
     let release!: () => void;
     const current = new Promise<void>((resolve) => {
       release = resolve;
     });
 
-    this.locks.set(clientId, current);
+    this.locks.set(userId, current);
 
     return previous
       .then(fn)
       .finally(() => {
         release();
-        if (this.locks.get(clientId) === current) {
-          this.locks.delete(clientId);
+        if (this.locks.get(userId) === current) {
+          this.locks.delete(userId);
         }
       });
   }

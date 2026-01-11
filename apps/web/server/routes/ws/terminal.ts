@@ -11,7 +11,7 @@ import { useLogger } from '~~/server/lib/logger';
 import { useProvisioner } from '~~/server/lib/provisioner';
 
 interface TerminalContext {
-  clientId: string;
+  userId: string;
   session?: Session;
   evaluator?: Evaluator;
   status: Status;
@@ -63,9 +63,9 @@ export default defineWebSocketHandler({
       return peer.close(1008, 'Unauthorized');
     }
 
-    const clientId = userSession.user.id;
+    const userId = userSession.user.id;
     const ctx: TerminalContext = {
-      clientId,
+      userId,
       session: undefined,
       evaluator: undefined,
       status: 'PROVISIONING',
@@ -87,22 +87,22 @@ export default defineWebSocketHandler({
 
     peer.context.terminal = ctx;
 
-    const logger = baseLogger.child({ clientId });
+    const logger = baseLogger.child({ userId });
     logger.info('Websocket terminal connection authorized');
 
     try {
       // Provisioning phase
       logger.info('Provisioning terminal container');
       peer.send(encode({ type: 'terminal/status', status: 'PROVISIONING' }));
-      const connectionInfo = await provisioner.ensureContainerExists(clientId);
+      const connectionInfo = await provisioner.ensureContainerExists(userId);
       logger.debug({ status: ctx.status }, 'Provisioning complete, connecting via SSH');
 
       // Connection phase
       ctx.status = 'CONNECTING';
       peer.send(encode({ type: 'terminal/status', status: 'CONNECTING' }));
-      logger.debug('Creating SSH session for client');
+      logger.debug('Creating SSH session for user');
 
-      const tasks = await database.topics.completion.getEvaluatorTasks(clientId, slug);
+      const tasks = await database.topics.completion.getEvaluatorTasks(userId, slug);
       const watchPaths = new Set(tasks.flatMap(task => task.watchPath ? [task.watchPath] : []));
 
       const execCommand = watchPaths.size
@@ -133,7 +133,7 @@ export default defineWebSocketHandler({
 
       // Evaluator -> WebSocket data forwarding
       ctx.evaluator.onComplete(async (completed) => {
-        await database.topics.completion.completeTasks(clientId, completed);
+        await database.topics.completion.completeTasks(userId, completed);
         for (const taskId of completed) {
           peer.send(encode({ type: 'task/done', taskId }));
         }
@@ -235,7 +235,7 @@ export default defineWebSocketHandler({
     }
 
     const ctx = peer.context.terminal as TerminalContext | undefined;
-    const logger = ctx ? baseLogger.child({ clientId: ctx.clientId }) : baseLogger;
+    const logger = ctx ? baseLogger.child({ userId: ctx.userId }) : baseLogger;
 
     if (!ctx || ctx.status !== 'READY' || !ctx.session) {
       logger.warn({ state: ctx?.status }, 'Received terminal message before READY');
@@ -265,7 +265,7 @@ export default defineWebSocketHandler({
     const now = Date.now();
     if (now - ctx.lastExpirationUpdateAt > EXPIRATION_UPDATE_INTERVAL_MS) {
       ctx.lastExpirationUpdateAt = now;
-      provisioner.updateContainerExpiration(ctx.clientId)
+      provisioner.updateContainerExpiration(ctx.userId)
         .catch((error) => {
           logger.error(error, 'Failed to update container expiration');
         });
@@ -279,7 +279,7 @@ export default defineWebSocketHandler({
       return;
     }
 
-    const logger = baseLogger.child({ clientId: ctx.clientId });
+    const logger = baseLogger.child({ userId: ctx.userId });
     logger.info({ status: ctx.status }, 'Client websocket closed, shutting down session');
 
     ctx.status = 'CLOSED';
