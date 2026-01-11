@@ -8,6 +8,7 @@ export interface ConnectionInfo {
   host: string;
   port: number;
   username: string;
+  privateKey: string;
 }
 
 export interface Provisioner {

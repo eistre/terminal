@@ -7,7 +7,6 @@ import { createEvaluator } from '@terminal/evaluator';
 import { createSession } from '@terminal/session';
 import { useAuth } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
-import { useEnv } from '~~/server/lib/env';
 import { useLogger } from '~~/server/lib/logger';
 import { useProvisioner } from '~~/server/lib/provisioner';
 
@@ -21,7 +20,6 @@ interface TerminalContext {
 
 const EXPIRATION_UPDATE_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
-const env = useEnv();
 const auth = useAuth();
 const database = useDatabase();
 const provisioner = useProvisioner();
@@ -114,7 +112,6 @@ export default defineWebSocketHandler({
       ctx.evaluator = createEvaluator({ tasks });
       ctx.session = await createSession({
         ...connectionInfo,
-        privateKey: env.PROVISIONER_CONTAINER_SSH_PRIVATE_KEY,
         execCommand,
         rows,
         cols,

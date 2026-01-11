@@ -1,6 +1,7 @@
 import type { KubernetesProvisionerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
 import type { ConnectionInfo, ContainerInfo } from '../provisioner.js';
+import { Buffer } from 'node:buffer';
 import * as k8s from '@kubernetes/client-node';
 import { AbstractProvisioner } from './abstract.js';
 
@@ -90,6 +91,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     const podName = KubernetesProvisioner.getPodName(clientId);
     const logger = this.logger.child({ clientId, podName });
     let pod: k8s.V1Pod;
+    let privateKey: string;
 
     logger.info('Ensuring pod exists');
     const status = await this.getPodStatus(podName);
@@ -101,7 +103,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         await this.waitUntilPodTerminated(podName);
 
         logger.debug('Pod deletion complete, creating new pod');
-        await this.createPod(clientId);
+        privateKey = await this.createPod(clientId);
 
         logger.debug('Pod created, waiting for ready status');
         pod = await this.waitUntilPodReady(podName);
@@ -109,7 +111,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       }
       case 'MISSING': {
         logger.debug('Pod does not exist, creating');
-        await this.createPod(clientId);
+        privateKey = await this.createPod(clientId);
 
         logger.debug('Pod created, waiting for ready status');
         pod = await this.waitUntilPodReady(podName);
@@ -120,8 +122,10 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         const result = await Promise.all([
           this.updateContainerExpirationImpl(clientId),
           this.waitUntilPodReady(podName),
+          this.getPrivateKey(clientId),
         ]);
         pod = result[1];
+        privateKey = result[2];
         break;
       }
     }
@@ -173,6 +177,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       host,
       port,
       username: KubernetesProvisioner.CONTAINER_SSH_USERNAME,
+      privateKey,
     };
   }
 
@@ -204,11 +209,11 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     const logger = this.logger.child({ clientId, podName });
 
     try {
-      logger.debug('Deleting pod');
+      logger.debug('Deleting pod (secret and service will cascade via ownerReferences)');
 
       // Deletes the pod (and its associated service via ownerReferences)
       await this.api.deleteNamespacedPod({ name: podName, namespace: this.namespace });
-      logger.info('Pod deleted');
+      logger.info('Pod deleted (secret and service cleanup in progress)');
     }
     catch (error: unknown) {
       if (KubernetesProvisioner.isNotFound(error)) {
@@ -243,16 +248,59 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     }
   }
 
-  private async createPod(clientId: string): Promise<void> {
+  private async getPrivateKey(clientId: string): Promise<string> {
+    const secretName = KubernetesProvisioner.getSecretName(clientId);
+    const logger = this.logger.child({ clientId, secretName });
+
+    try {
+      const secret = await this.api.readNamespacedSecret({ name: secretName, namespace: this.namespace });
+      const privateKey = secret.data?.privateKey;
+
+      if (!privateKey) {
+        KubernetesProvisioner.abortRetry(`Secret ${secretName} missing privateKey data`);
+      }
+
+      // Kubernetes secrets are base64 encoded
+      const decoded = Buffer.from(privateKey, 'base64').toString('utf-8');
+      logger.trace('Retrieved private key from secret');
+
+      return decoded;
+    }
+    catch (error: unknown) {
+      if (KubernetesProvisioner.isNotFound(error)) {
+        KubernetesProvisioner.abortRetry(`Secret ${secretName} not found`);
+      }
+
+      throw error;
+    }
+  }
+
+  private async createPod(clientId: string): Promise<string> {
     const logger = this.logger.child({ clientId });
 
-    const pod = await this.api.createNamespacedPod({ namespace: this.namespace, body: this.buildPodManifest(clientId) });
+    // Generate ephemeral keypair
+    const { publicKey, privateKey } = KubernetesProvisioner.generateKeypair();
+    logger.debug('Generated ephemeral Ed25519 keypair');
+
+    // Create the pod with the public key
+    const pod = await this.api.createNamespacedPod({
+      namespace: this.namespace,
+      body: this.buildPodManifest(clientId, publicKey),
+    });
+
     const podUid = pod.metadata?.uid;
     logger.debug({ podUid }, 'Created pod for client');
 
     if (!podUid) {
       KubernetesProvisioner.abortRetry('Pod UID is missing for newly created pod');
     }
+
+    // Create the secret with the private key
+    await this.api.createNamespacedSecret({
+      namespace: this.namespace,
+      body: this.buildSecretManifest(clientId, podUid, privateKey),
+    });
+    logger.debug('Created secret for pod');
 
     // Only create service for NodePort mode
     if (this.serviceType === 'nodePort') {
@@ -262,6 +310,8 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     else {
       logger.debug({ mode: this.serviceType }, 'Skipping service creation for headless mode (using pod IP directly)');
     }
+
+    return privateKey;
   }
 
   private async waitUntilPodReady(podName: string): Promise<k8s.V1Pod> {
@@ -314,7 +364,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     AbstractProvisioner.abortRetry(`Timed out waiting for pod ${podName} to be deleted after ${KubernetesProvisioner.MAX_POD_DELETION_WAIT_MS}ms`);
   }
 
-  private buildPodManifest(clientId: string): k8s.V1Pod {
+  private buildPodManifest(clientId: string, publicKey: string): k8s.V1Pod {
     return {
       apiVersion: 'v1',
       kind: 'Pod',
@@ -340,7 +390,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
           imagePullPolicy: 'IfNotPresent',
           env: [{
             name: 'SSH_PUBLIC_KEY',
-            value: this.containerSshPublicKey,
+            value: publicKey,
           }],
           ports: [{
             name: 'ssh',
@@ -409,6 +459,34 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     };
   }
 
+  private buildSecretManifest(clientId: string, podUid: string, privateKey: string): k8s.V1Secret {
+    return {
+      apiVersion: 'v1',
+      kind: 'Secret',
+      metadata: {
+        name: KubernetesProvisioner.getSecretName(clientId),
+        namespace: this.namespace,
+        labels: {
+          app: KubernetesProvisioner.APP_NAME,
+          [KubernetesProvisioner.ROLE_LABEL_KEY]: KubernetesProvisioner.ROLE_LABEL_VALUE,
+          [KubernetesProvisioner.CLIENT_ID_LABEL_KEY]: clientId,
+        },
+        ownerReferences: [{
+          apiVersion: 'v1',
+          kind: 'Pod',
+          name: KubernetesProvisioner.getPodName(clientId),
+          uid: podUid,
+          controller: false,
+          blockOwnerDeletion: true,
+        }],
+      },
+      type: 'Opaque',
+      stringData: {
+        privateKey,
+      },
+    };
+  }
+
   private static getExpiresAt(expiryMinutes: number): Date {
     const now = new Date();
     return new Date(now.getTime() + expiryMinutes * 60 * 1000);
@@ -422,6 +500,11 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   private static getServiceName(clientId: string): string {
     const sanitizedClientId = clientId.toLowerCase().replace(/[^a-z0-9-]/g, '-');
     return `${KubernetesProvisioner.POD_PREFIX}-${sanitizedClientId}-svc`;
+  }
+
+  private static getSecretName(clientId: string): string {
+    const sanitizedClientId = clientId.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    return `${KubernetesProvisioner.POD_PREFIX}-${sanitizedClientId}-ssh`;
   }
 
   private static isNotFound(error: unknown): boolean {

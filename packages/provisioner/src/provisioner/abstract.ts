@@ -3,6 +3,7 @@ import type { Logger } from '@terminal/logger';
 import type { ConnectionInfo, ContainerInfo, Provisioner } from '../provisioner.js';
 import pLimit from 'p-limit';
 import pRetry, { AbortError } from 'p-retry';
+import sshpk from 'sshpk';
 
 export abstract class AbstractProvisioner implements Provisioner {
   protected readonly logger: Logger;
@@ -12,7 +13,6 @@ export abstract class AbstractProvisioner implements Provisioner {
   protected readonly containerCpuRequest: BaseProvisionerSchema['PROVISIONER_CONTAINER_CPU_REQUEST'];
   protected readonly containerMemoryLimit: BaseProvisionerSchema['PROVISIONER_CONTAINER_MEMORY_LIMIT'];
   protected readonly containerCpuLimit: BaseProvisionerSchema['PROVISIONER_CONTAINER_CPU_LIMIT'];
-  protected readonly containerSshPublicKey: BaseProvisionerSchema['PROVISIONER_CONTAINER_SSH_PUBLIC_KEY'];
 
   private readonly concurrencyLimit;
   private readonly maxRetries;
@@ -28,7 +28,6 @@ export abstract class AbstractProvisioner implements Provisioner {
     this.containerCpuRequest = config.PROVISIONER_CONTAINER_CPU_REQUEST;
     this.containerMemoryLimit = config.PROVISIONER_CONTAINER_MEMORY_LIMIT;
     this.containerCpuLimit = config.PROVISIONER_CONTAINER_CPU_LIMIT;
-    this.containerSshPublicKey = config.PROVISIONER_CONTAINER_SSH_PUBLIC_KEY;
   }
 
   /**
@@ -110,6 +109,19 @@ export abstract class AbstractProvisioner implements Provisioner {
       retries: this.maxRetries,
       randomize: true,
     });
+  }
+
+  /**
+   * Generate an ephemeral Ed25519 SSH keypair.
+   * @returns Object containing public and private keys in SSH format
+   */
+  protected static generateKeypair(): { publicKey: string; privateKey: string } {
+    const privateKeyObj = sshpk.generatePrivateKey('ed25519');
+
+    return {
+      publicKey: privateKeyObj.toPublic().toString('ssh'),
+      privateKey: privateKeyObj.toString('openssh'),
+    };
   }
 
   protected static abortRetry(error: string | Error): never {

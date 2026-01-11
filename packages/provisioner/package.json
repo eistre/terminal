@@ -20,13 +20,15 @@
   "dependencies": {
     "@kubernetes/client-node": "catalog:",
     "p-limit": "catalog:",
-    "p-retry": "catalog:"
+    "p-retry": "catalog:",
+    "sshpk": "catalog:"
   },
   "devDependencies": {
     "@terminal/env": "workspace:*",
     "@terminal/eslint": "workspace:*",
     "@terminal/logger": "workspace:*",
     "@terminal/typescript": "workspace:*",
+    "@types/sshpk": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:"
   }

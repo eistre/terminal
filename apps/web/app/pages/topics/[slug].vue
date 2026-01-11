@@ -182,25 +182,27 @@ async function handleTasksReset() {
             <template #title>
               <div class="flex justify-between items-center">
                 {{ $t('topic.terminal') }}
-                <div class="flex gap-1.5">
-                  <UButton
-                    v-if="canReconnect"
-                    variant="ghost"
-                    color="neutral"
-                    @click="connect"
-                  >
-                    {{ $t('topic.reconnect') }}
-                  </UButton>
-                  <UButton
-                    variant="ghost"
-                    color="neutral"
-                    :loading="hasEverConnected && !canReset"
-                    :disabled="!canReset"
-                    @click="handleContainerReset"
-                  >
-                    {{ $t('topic.resetTerminal') }}
-                  </UButton>
-                </div>
+                <ClientOnly>
+                  <div class="flex gap-1.5">
+                    <UButton
+                      v-if="canReconnect"
+                      variant="ghost"
+                      color="neutral"
+                      @click="connect"
+                    >
+                      {{ $t('topic.reconnect') }}
+                    </UButton>
+                    <UButton
+                      variant="ghost"
+                      color="neutral"
+                      :loading="hasEverConnected && !canReset"
+                      :disabled="!canReset"
+                      @click="handleContainerReset"
+                    >
+                      {{ $t('topic.resetTerminal') }}
+                    </UButton>
+                  </div>
+                </ClientOnly>
               </div>
             </template>
 

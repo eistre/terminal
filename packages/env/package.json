@@ -22,14 +22,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "sshpk": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@terminal/eslint": "workspace:*",
     "@terminal/typescript": "workspace:*",
     "@types/node": "catalog:",
-    "@types/sshpk": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:"
   }
