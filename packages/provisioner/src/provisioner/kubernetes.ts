@@ -331,8 +331,17 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         restartCount: containerStatus?.restartCount,
       }, 'Polled pod readiness');
 
+      // Abort on any terminal failure state
       if (phase === 'Failed') {
         AbstractProvisioner.abortRetry(`Pod failed: ${pod.status?.reason || 'Unknown'}`);
+      }
+
+      if (phase === 'Succeeded') {
+        AbstractProvisioner.abortRetry('Pod completed successfully but should be long-running');
+      }
+
+      if (phase === 'Unknown') {
+        AbstractProvisioner.abortRetry('Pod status unknown - possible API server issue');
       }
 
       if (phase === 'Running' && containerStatus?.ready) {
