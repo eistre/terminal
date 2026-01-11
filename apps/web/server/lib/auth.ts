@@ -180,12 +180,11 @@ function createAuth() {
   const database = useDatabase();
   const logger = useLogger().child({ caller: 'auth' });
 
-  const isMicrosoftEnabled = Boolean(env.MICROSOFT_CLIENT_ID && env.MICROSOFT_CLIENT_SECRET && env.MICROSOFT_TENANT_ID);
   const isNoopMailer = env.MAILER_TYPE === 'noop';
 
   const trustedProviders: string[] = ['email-password'];
   const socialProviders: SocialProviders = {};
-  if (isMicrosoftEnabled) {
+  if (env.MICROSOFT_CLIENT_ID) {
     trustedProviders.push('microsoft');
     socialProviders.microsoft = {
       clientId: env.MICROSOFT_CLIENT_ID!,

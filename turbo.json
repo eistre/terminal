@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/turbo/schema.json",
-  "globalEnv": ["NODE_ENV", "LOG_LEVEL", "MAILER_TYPE", "ADMIN_EMAIL"],
+  "globalEnv": ["NODE_ENV", "LOG_LEVEL"],
   "globalDependencies": [".env*"],
   "tasks": {
     "build": {
