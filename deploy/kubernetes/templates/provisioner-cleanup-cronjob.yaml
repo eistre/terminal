@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "terminal.provisionerCleanup.fullname" . }}
+  labels:
+    {{- include "terminal.provisionerCleanup.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.cronjobs.provisionerCleanup.schedule | quote }}
+  concurrencyPolicy: {{ .Values.cronjobs.concurrencyPolicy }}
+  successfulJobsHistoryLimit: {{ .Values.cronjobs.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.cronjobs.failedJobsHistoryLimit }}
+  suspend: {{ .Values.cronjobs.suspend }}
+  jobTemplate:
+    metadata:
+      labels:
+        {{- include "terminal.provisionerCleanup.labels" . | nindent 8 }}
+    spec:
+      backoffLimit: {{ .Values.cronjobs.backoffLimit }}
+      template:
+        metadata:
+          labels:
+            {{- include "terminal.provisionerCleanup.labels" . | nindent 12 }}
+        spec:
+          serviceAccountName: {{ include "terminal.provisionerCleanup.serviceAccountName" . }}
+          restartPolicy: {{ .Values.cronjobs.restartPolicy }}
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.cronjobs.podSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: provisioner-cleanup
+              image: "{{ .Values.cronjobs.provisionerCleanup.image.registry }}/{{ .Values.cronjobs.provisionerCleanup.image.repository }}:{{ .Values.cronjobs.provisionerCleanup.image.tag }}"
+              imagePullPolicy: {{ .Values.cronjobs.provisionerCleanup.image.pullPolicy | default (ternary "Always" "IfNotPresent" (eq .Values.cronjobs.provisionerCleanup.image.tag "latest")) }}
+              {{- with .Values.cronjobs.containerSecurityContext }}
+              securityContext:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              env:
+                {{- include "terminal.env.common" . | nindent 16 }}
+                {{- include "terminal.env.provisioner" . | nindent 16 }}
+              {{- with .Values.cronjobs.provisionerCleanup.resources }}
+              resources:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}

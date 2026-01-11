@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "terminal.mariadb.fullname" . }}
+  labels:
+    {{- include "terminal.mariadb.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+      targetPort: mariadb
+      protocol: TCP
+      name: mariadb
+  selector:
+    {{- include "terminal.mariadb.selectorLabels" . | nindent 4 }}

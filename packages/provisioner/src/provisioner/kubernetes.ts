@@ -8,12 +8,18 @@ import { AbstractProvisioner } from './abstract.js';
 type PodStatus = 'EXISTING' | 'TERMINATING' | 'MISSING';
 
 export class KubernetesProvisioner extends AbstractProvisioner {
-  private static readonly APP_NAME = 'terminal';
   private static readonly POD_PREFIX = 'terminal-session';
-  private static readonly ROLE_LABEL_KEY = 'terminal/role';
-  private static readonly ROLE_LABEL_VALUE = 'session';
-  private static readonly USER_ID_LABEL_KEY = 'terminal/user-id';
-  private static readonly EXPIRES_AT_ANNOTATION_KEY = 'terminal/expires-at';
+  private static readonly COMPONENT_VALUE = 'session';
+  private static readonly MANAGED_BY_VALUE = 'terminal-provisioner';
+
+  private static readonly APP_NAME_LABEL_KEY = 'app.kubernetes.io/name';
+  private static readonly INSTANCE_LABEL_KEY = 'app.kubernetes.io/instance';
+  private static readonly COMPONENT_LABEL_KEY = 'app.kubernetes.io/component';
+  private static readonly VERSION_LABEL_KEY = 'app.kubernetes.io/version';
+  private static readonly MANAGED_BY_LABEL_KEY = 'app.kubernetes.io/managed-by';
+  private static readonly USER_LABEL_KEY = 'app.terminal.io/user-id';
+  private static readonly EXPIRES_AT_ANNOTATION_KEY = 'app.terminal.io/expires-at';
+
   private static readonly CONTAINER_NAME = 'terminal';
   private static readonly CONTAINER_SSH_PORT = 22;
   private static readonly CONTAINER_SSH_USERNAME = 'user';
@@ -24,6 +30,8 @@ export class KubernetesProvisioner extends AbstractProvisioner {
 
   private readonly api: k8s.CoreV1Api;
   private readonly namespace: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_NAMESPACE'];
+  private readonly appName: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_APP_NAME'];
+  private readonly releaseName: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_RELEASE_NAME'];
   private readonly serviceType: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_SERVICE_TYPE'];
 
   constructor(logger: Logger, config: KubernetesProvisionerSchema) {
@@ -46,30 +54,34 @@ export class KubernetesProvisioner extends AbstractProvisioner {
 
     this.api = kc.makeApiClient(k8s.CoreV1Api);
     this.namespace = config.PROVISIONER_KUBERNETES_NAMESPACE;
+    this.appName = config.PROVISIONER_KUBERNETES_APP_NAME;
+    this.releaseName = config.PROVISIONER_KUBERNETES_RELEASE_NAME;
     this.serviceType = config.PROVISIONER_KUBERNETES_SERVICE_TYPE;
   }
 
   protected override async listContainersImpl(): Promise<ContainerInfo[]> {
-    const labelSelector = `app=${KubernetesProvisioner.APP_NAME},${KubernetesProvisioner.ROLE_LABEL_KEY}=${KubernetesProvisioner.ROLE_LABEL_VALUE}`;
-    const logger = this.logger.child({ labelSelector });
+    const labelSelector = `${KubernetesProvisioner.APP_NAME_LABEL_KEY}=${this.appName},`
+      + `${KubernetesProvisioner.INSTANCE_LABEL_KEY}=${this.releaseName},`
+      + `${KubernetesProvisioner.COMPONENT_LABEL_KEY}=${KubernetesProvisioner.COMPONENT_VALUE},`
+      + `${KubernetesProvisioner.MANAGED_BY_LABEL_KEY}=${KubernetesProvisioner.MANAGED_BY_VALUE}`;
 
-    logger.debug('Listing Kubernetes session pods');
+    this.logger.debug('Listing Kubernetes session pods');
 
     const response = await this.api.listNamespacedPod({ namespace: this.namespace, labelSelector });
     const containers: ContainerInfo[] = [];
 
-    logger.trace({ podCount: response.items.length }, 'Fetched pods for listing containers');
+    this.logger.trace({ podCount: response.items.length }, 'Fetched pods for listing containers');
 
     for (const pod of response.items) {
       const podName = pod.metadata?.name;
       const labels = pod.metadata?.labels ?? {};
       const annotations = pod.metadata?.annotations ?? {};
 
-      const userId = labels[KubernetesProvisioner.USER_ID_LABEL_KEY];
+      const userId = labels[KubernetesProvisioner.USER_LABEL_KEY];
       const expiresAt = annotations[KubernetesProvisioner.EXPIRES_AT_ANNOTATION_KEY];
 
       if (!userId || !expiresAt) {
-        logger.warn({
+        this.logger.warn({
           podName,
           labels,
           annotations,
@@ -83,7 +95,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       });
     }
 
-    logger.info({ count: containers.length }, 'Listed Kubernetes session containers');
+    this.logger.info({ count: containers.length }, 'Listed Kubernetes session containers');
     return containers;
   }
 
@@ -188,7 +200,11 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     const expiresAt = KubernetesProvisioner.getExpiresAt(this.containerExpiryMinutes);
     logger.debug(`Updating pod expiration to ${expiresAt.toISOString()}`);
 
-    const annotation = KubernetesProvisioner.EXPIRES_AT_ANNOTATION_KEY.replace('/', '~1');
+    // "app.terminal.io/expires-at" becomes "app~0terminal~0io~1expires-at"
+    const annotation = KubernetesProvisioner.EXPIRES_AT_ANNOTATION_KEY
+      .replace(/\./g, '~0')
+      .replace(/\//g, '~1');
+
     const path = `/metadata/annotations/${annotation}`;
 
     await this.api.patchNamespacedPod({
@@ -381,9 +397,12 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         name: KubernetesProvisioner.getPodName(userId),
         namespace: this.namespace,
         labels: {
-          app: KubernetesProvisioner.APP_NAME,
-          [KubernetesProvisioner.ROLE_LABEL_KEY]: KubernetesProvisioner.ROLE_LABEL_VALUE,
-          [KubernetesProvisioner.USER_ID_LABEL_KEY]: userId,
+          [KubernetesProvisioner.APP_NAME_LABEL_KEY]: this.appName,
+          [KubernetesProvisioner.INSTANCE_LABEL_KEY]: this.releaseName,
+          [KubernetesProvisioner.COMPONENT_LABEL_KEY]: KubernetesProvisioner.COMPONENT_VALUE,
+          [KubernetesProvisioner.VERSION_LABEL_KEY]: this.getVersionLabel(),
+          [KubernetesProvisioner.MANAGED_BY_LABEL_KEY]: KubernetesProvisioner.MANAGED_BY_VALUE,
+          [KubernetesProvisioner.USER_LABEL_KEY]: userId,
         },
         annotations: {
           [KubernetesProvisioner.EXPIRES_AT_ANNOTATION_KEY]: KubernetesProvisioner
@@ -439,9 +458,12 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         name: KubernetesProvisioner.getServiceName(userId),
         namespace: this.namespace,
         labels: {
-          app: KubernetesProvisioner.APP_NAME,
-          [KubernetesProvisioner.ROLE_LABEL_KEY]: KubernetesProvisioner.ROLE_LABEL_VALUE,
-          [KubernetesProvisioner.USER_ID_LABEL_KEY]: userId,
+          [KubernetesProvisioner.APP_NAME_LABEL_KEY]: this.appName,
+          [KubernetesProvisioner.INSTANCE_LABEL_KEY]: this.releaseName,
+          [KubernetesProvisioner.COMPONENT_LABEL_KEY]: KubernetesProvisioner.COMPONENT_VALUE,
+          [KubernetesProvisioner.VERSION_LABEL_KEY]: this.getVersionLabel(),
+          [KubernetesProvisioner.MANAGED_BY_LABEL_KEY]: KubernetesProvisioner.MANAGED_BY_VALUE,
+          [KubernetesProvisioner.USER_LABEL_KEY]: userId,
         },
         ownerReferences: [{
           apiVersion: 'v1',
@@ -456,7 +478,10 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         type: isNodePort ? 'NodePort' : undefined,
         clusterIP: isNodePort ? undefined : 'None',
         selector: {
-          [KubernetesProvisioner.USER_ID_LABEL_KEY]: userId,
+          [KubernetesProvisioner.APP_NAME_LABEL_KEY]: this.appName,
+          [KubernetesProvisioner.INSTANCE_LABEL_KEY]: this.releaseName,
+          [KubernetesProvisioner.COMPONENT_LABEL_KEY]: KubernetesProvisioner.COMPONENT_VALUE,
+          [KubernetesProvisioner.USER_LABEL_KEY]: userId,
         },
         ports: [{
           name: 'ssh',
@@ -476,9 +501,12 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         name: KubernetesProvisioner.getSecretName(userId),
         namespace: this.namespace,
         labels: {
-          app: KubernetesProvisioner.APP_NAME,
-          [KubernetesProvisioner.ROLE_LABEL_KEY]: KubernetesProvisioner.ROLE_LABEL_VALUE,
-          [KubernetesProvisioner.USER_ID_LABEL_KEY]: userId,
+          [KubernetesProvisioner.APP_NAME_LABEL_KEY]: this.appName,
+          [KubernetesProvisioner.INSTANCE_LABEL_KEY]: this.releaseName,
+          [KubernetesProvisioner.COMPONENT_LABEL_KEY]: KubernetesProvisioner.COMPONENT_VALUE,
+          [KubernetesProvisioner.VERSION_LABEL_KEY]: this.getVersionLabel(),
+          [KubernetesProvisioner.MANAGED_BY_LABEL_KEY]: KubernetesProvisioner.MANAGED_BY_VALUE,
+          [KubernetesProvisioner.USER_LABEL_KEY]: userId,
         },
         ownerReferences: [{
           apiVersion: 'v1',
@@ -513,7 +541,14 @@ export class KubernetesProvisioner extends AbstractProvisioner {
 
   private static getSecretName(userId: string): string {
     const sanitizedUserId = userId.toLowerCase().replace(/[^a-z0-9-]/g, '-');
-    return `${KubernetesProvisioner.POD_PREFIX}-${sanitizedUserId}-ssh`;
+    return `${KubernetesProvisioner.POD_PREFIX}-${sanitizedUserId}-secret`;
+  }
+
+  private getVersionLabel(): string {
+    // Extract version from the container image tag
+    // e.g., "ghcr.io/eistre/terminal-container:1.2.3" → "1.2.3"
+    const parts = this.containerImage.split(':');
+    return parts.length > 1 ? parts[1] : 'latest';
   }
 
   private static isNotFound(error: unknown): boolean {

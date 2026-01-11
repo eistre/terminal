@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "terminal.configmap.fullname" . }}
+  labels:
+    {{- include "terminal.labels" . | nindent 4 }}
+data:
+  {{- include "terminal.env.common.data" . | nindent 2 }}
+  {{- include "terminal.env.auth.data" . | nindent 2 }}
+  {{- include "terminal.env.mailer.data" . | nindent 2 }}
+  {{- include "terminal.env.provisioner.data" . | nindent 2 }}

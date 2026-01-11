@@ -1,0 +1,240 @@
+# Linux Terminal Exercise Environment
+
+# Standard Helm values
+nameOverride: ''
+fullnameOverride: ''
+imagePullSecrets: []
+
+# Networking
+networkPolicy:
+  enabled: true # Requires NetworkPolicy-capable CNI (Calico, Cilium, etc.)
+
+# General
+general:
+  nodeEnv: production # Options: development, test, production
+  logLevel: info # Options: error, warn, info, debug, trace
+
+# Authentication
+auth:
+  secret: '' # Required: 32+ characters
+  userExpiryDays: 90
+
+  admin:
+    email: '' # Required
+    password: '' # Required
+
+  # Microsoft OAuth (Optional - all fields required together or none)
+  microsoft:
+    clientId: ''
+    clientSecret: ''
+    tenantId: '' # Options: {tenant-id}, common, organizations, consumers
+    labelEn: '' # Button label for English locale
+    labelEt: '' # Button label for Estonian locale
+
+# Mailer
+mailer:
+  type: noop # Options: noop, azure
+  maxRetries: 3
+  concurrencyLimit: 10
+  resendCooldownSeconds: 30
+
+  # Azure Communication Services (required when type: azure)
+  azure:
+    connectionString: ''
+    sender: ''
+
+# Provisioner
+provisioner:
+  type: kubernetes # Options: kubernetes
+  maxRetries: 3
+  concurrencyLimit: 10
+  containerExpiryMinutes: 30
+  containerImage: ghcr.io/eistre/terminal-container:latest
+
+  container:
+    cpuRequest: 100m
+    cpuLimit: 250m
+    memoryRequest: 64Mi
+    memoryLimit: 128Mi
+
+  kubernetes:
+    serviceType: headless # Options: headless, nodePort
+    # headless: connects directly to pod IP
+    # nodePort: creates NodePort service, connects via node IP
+
+# Web application
+web:
+  image:
+    registry: ghcr.io
+    repository: eistre/terminal-web
+    tag: latest
+    pullPolicy: '' # Default: IfNotPresent (Always for 'latest' tag)
+
+  replicaCount: 1
+
+  service:
+    type: ClusterIP # Options: ClusterIP, NodePort, LoadBalancer
+    port: 3000
+    # nodePort: 30000
+    annotations: {}
+    sessionAffinity:
+      enabled: true
+      timeoutSeconds: 10800 # 3 hours, for WebSocket connections
+
+  ingress:
+    enabled: false
+    className: ''
+    annotations: {}
+    hosts:
+      - host: terminal.example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+    # - secretName: terminal-tls
+    #   hosts:
+    #     - terminal.example.local
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+    runAsNonRoot: true
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    capabilities:
+      drop:
+        - ALL
+
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+
+# CronJobs
+cronjobs:
+  concurrencyPolicy: Forbid # Options: Forbid, Allow, Replace
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  suspend: false
+  backoffLimit: 2
+  restartPolicy: OnFailure # Options: OnFailure, Never
+
+  podSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+    runAsNonRoot: true
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    capabilities:
+      drop:
+        - ALL
+
+  # Database cleanup - removes expired sessions and inactive users
+  databaseCleanup:
+    image:
+      registry: ghcr.io
+      repository: eistre/terminal-database-cleanup
+      tag: latest
+      pullPolicy: '' # Default: IfNotPresent (Always for 'latest' tag)
+    schedule: '0 0 * * *' # Every day at midnight
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+
+  # Provisioner cleanup - removes expired terminal containers
+  provisionerCleanup:
+    image:
+      registry: ghcr.io
+      repository: eistre/terminal-provisioner-cleanup
+      tag: latest
+      pullPolicy: '' # Default: IfNotPresent (Always for 'latest' tag)
+    schedule: '*/15 * * * *' # Every 15 minutes
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+    serviceAccount:
+      create: true
+      name: ''
+      annotations: {}
+
+# Database
+database:
+  image:
+    registry: docker.io
+    repository: mariadb
+    tag: '12'
+    pullPolicy: IfNotPresent
+
+  name: terminal
+
+  credentials:
+    user: terminal
+    password: '' # Required
+    rootPassword: '' # Required
+
+  persistence:
+    enabled: true
+    storageClass: '' # Empty: default provisioner, '-': disable dynamic provisioning
+    accessMode: ReadWriteOnce
+    size: 1Gi
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 2Gi
+
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext:
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+    fsGroupChangePolicy: OnRootMismatch
+    runAsNonRoot: true
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    capabilities:
+      drop:
+        - ALL

@@ -1,0 +1,103 @@
+{{- if .Values.web.serviceAccount.create }}
+# Web Application RBAC - manages terminal session lifecycle
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "terminal.web.serviceAccountName" . }}
+  labels:
+    {{- include "terminal.web.labels" . | nindent 4 }}
+  {{- with .Values.web.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "terminal.fullname" . }}-provisioner
+  labels:
+    {{- include "terminal.labels" . | nindent 4 }}
+rules:
+  # Permissions for managing terminal session pods
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["create", "get", "list", "patch", "delete"]
+
+  # Permissions for managing secrets (SSH keys)
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create", "get"]
+
+  {{- if eq .Values.provisioner.kubernetes.serviceType "nodePort" }}
+  # Permissions for managing services (needed for nodePort mode)
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["create", "get"]
+
+  # Permissions for listing nodes (needed to get node IP for nodePort mode)
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["list"]
+  {{- end }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "terminal.web.fullname" . }}-binding
+  labels:
+    {{- include "terminal.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "terminal.fullname" . }}-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "terminal.web.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+
+{{- if .Values.cronjobs.provisionerCleanup.serviceAccount.create }}
+---
+# Provisioner Cleanup RBAC - deletes expired terminal containers
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "terminal.provisionerCleanup.serviceAccountName" . }}
+  labels:
+    {{- include "terminal.provisionerCleanup.labels" . | nindent 4 }}
+  {{- with .Values.cronjobs.provisionerCleanup.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "terminal.fullname" . }}-cleanup
+  labels:
+    {{- include "terminal.labels" . | nindent 4 }}
+rules:
+  # Permissions for listing and deleting terminal session pods
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "terminal.provisionerCleanup.fullname" . }}-binding
+  labels:
+    {{- include "terminal.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "terminal.fullname" . }}-cleanup
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "terminal.provisionerCleanup.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
