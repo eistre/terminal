@@ -58,6 +58,9 @@ web:
     annotations:
       # Required for UTHPC - issues TLS certificates via Vault
       cert-manager.io/cluster-issuer: vault-hpc-issuer
+      # WebSocket support - extends default 60s timeout for long-lived connections
+      nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
+      nginx.ingress.kubernetes.io/proxy-send-timeout: '3600'
     hosts:
       - host: terminal.example.com # TODO: Change to your domain
         paths:

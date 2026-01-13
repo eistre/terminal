@@ -1,4 +1,4 @@
-{{- if and .Values.networkPolicy.enabled (eq .Values.database.type "internal") }}
+{{- if and .Values.networkPolicy.enabled (ne .Values.database.type "external") }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -8,7 +8,12 @@ metadata:
 spec:
   podSelector:
     matchLabels:
+      {{- if eq .Values.database.type "internal" }}
       {{- include "terminal.mariadb.selectorLabels" . | nindent 6 }}
+      {{- else if eq .Values.database.type "operator" }}
+      app.kubernetes.io/name: mariadb
+      app.kubernetes.io/instance: {{ include "terminal.mariadb.fullname" . }}
+      {{- end }}
   policyTypes:
     - Ingress
   ingress:
