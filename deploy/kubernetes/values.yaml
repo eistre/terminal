@@ -191,50 +191,100 @@ cronjobs:
 
 # Database
 database:
-  image:
-    registry: docker.io
-    repository: mariadb
-    tag: '12'
-    pullPolicy: IfNotPresent
+  # Type of database deployment:
+  # - internal: Deploy MariaDB as StatefulSet within the chart
+  # - operator: Use MariaDB Operator (requires mariadb-operator installed in cluster)
+  # - external: Connect to an external database (no deployment)
+  type: internal
 
+  # Database name (used by all types)
   name: terminal
 
+  # Connection settings
+  # When type: internal or operator, host is auto-generated from release name
+  host: '' # Required when type: external
+  port: 3306
+
+  # Credentials (used by all types)
   credentials:
     user: terminal
     password: '' # Required
-    rootPassword: '' # Required
+    rootPassword: '' # Required when type: internal or operator
 
-  persistence:
-    enabled: true
-    storageClass: '' # Empty: default provisioner, '-': disable dynamic provisioning
-    accessMode: ReadWriteOnce
-    size: 1Gi
+  # Internal StatefulSet configuration (only used when type: internal)
+  internal:
+    image:
+      registry: docker.io
+      repository: mariadb
+      tag: '12'
+      pullPolicy: IfNotPresent
 
-  resources:
-    requests:
-      cpu: 250m
-      memory: 128Mi
-    limits:
-      cpu: 500m
-      memory: 2Gi
+    persistence:
+      enabled: true
+      storageClass: '' # Empty: default provisioner, '-': disable dynamic provisioning
+      accessMode: ReadWriteOnce
+      size: 1Gi
 
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  podAnnotations: {}
-  podLabels: {}
+    resources:
+      requests:
+        cpu: 300m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 2Gi # TODO is 2Gi a bit much?
 
-  podSecurityContext:
-    runAsUser: 999
-    runAsGroup: 999
-    fsGroup: 999
-    fsGroupChangePolicy: OnRootMismatch
-    runAsNonRoot: true
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    podAnnotations: {}
+    podLabels: {}
 
-  containerSecurityContext:
-    allowPrivilegeEscalation: false
-    readOnlyRootFilesystem: true
-    runAsNonRoot: true
-    capabilities:
-      drop:
-        - ALL
+    podSecurityContext:
+      runAsUser: 999
+      runAsGroup: 999
+      fsGroup: 999
+      fsGroupChangePolicy: OnRootMismatch
+      runAsNonRoot: true
+
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      capabilities:
+        drop:
+          - ALL
+
+  # MariaDB Operator configuration (only used when type: operator)
+  # Requires mariadb-operator to be installed in the cluster
+  # See: https://github.com/mariadb-operator/mariadb-operator
+  operator:
+    # TODO why is this needed
+    image: '' # Empty: uses operator default, or specify like 'docker.io/mariadb:11.4'
+
+    storage:
+      size: 1Gi
+      storageClassName: '' # Empty: uses cluster default
+
+    resources:
+      requests:
+        cpu: 300m
+        memory: 128Mi
+      limits:
+        memory: 2Gi # TODO is 2Gi a bit much?
+
+    # MariaDB configuration (my.cnf style)
+    myCnf: |
+      [mariadb]
+      bind-address=*
+      default_storage_engine=InnoDB
+      binlog_format=row
+      innodb_autoinc_lock_mode=2
+      max_allowed_packet=256M
+
+    # Metrics exporter
+    metrics:
+      enabled: false
+
+    # TLS configuration
+    tls:
+      enabled: false

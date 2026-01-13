@@ -1,3 +1,4 @@
+{{- include "terminal.validateEnum" (dict "value" .Values.web.service.type "allowed" (list "ClusterIP" "NodePort" "LoadBalancer") "name" "web.service.type") }}
 apiVersion: v1
 kind: Service
 metadata:

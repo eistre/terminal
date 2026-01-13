@@ -1,0 +1,50 @@
+{{- if eq .Values.database.type "operator" }}
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: MariaDB
+metadata:
+  name: {{ include "terminal.mariadb.fullname" . }}
+  labels:
+    {{- include "terminal.mariadb.labels" . | nindent 4 }}
+spec:
+  database: {{ .Values.database.name | quote }}
+  port: {{ .Values.database.port }}
+  service:
+    type: ClusterIP
+
+  rootPasswordSecretKeyRef:
+    name: {{ include "terminal.mariadb.secretFullname" . }}
+    key: MARIADB_ROOT_PASSWORD
+
+  username: {{ .Values.database.credentials.user | quote }}
+  passwordSecretKeyRef:
+    name: {{ include "terminal.mariadb.secretFullname" . }}
+    key: MARIADB_PASSWORD
+
+  {{- if .Values.database.operator.image }}
+  image: {{ .Values.database.operator.image | quote }} # TODO Why is this needed?
+  {{- end }}
+
+  storage:
+    size: {{ .Values.database.operator.storage.size }}
+    {{- if .Values.database.operator.storage.storageClassName }}
+    storageClassName: {{ .Values.database.operator.storage.storageClassName | quote }}
+    {{- end }}
+
+  {{- if .Values.database.operator.myCnf }}
+  myCnf: |
+{{- .Values.database.operator.myCnf | nindent 4 }}
+  {{- end }}
+
+  {{- with .Values.database.operator.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  # TODO is this better? Or do we need an if else block
+  metrics:
+    enabled: {{ .Values.database.operator.metrics.enabled }}
+
+  # TODO is this better? Or do we need an if else block
+  tls:
+    enabled: {{ .Values.database.operator.tls.enabled }}
+{{- end }}

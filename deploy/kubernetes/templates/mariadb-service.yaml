@@ -1,3 +1,4 @@
+{{- if eq .Values.database.type "internal" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,4 @@ spec:
       name: mariadb
   selector:
     {{- include "terminal.mariadb.selectorLabels" . | nindent 4 }}
+{{- end }}

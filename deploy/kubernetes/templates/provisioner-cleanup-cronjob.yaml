@@ -1,3 +1,5 @@
+{{- include "terminal.validateEnum" (dict "value" .Values.cronjobs.concurrencyPolicy "allowed" (list "Forbid" "Allow" "Replace") "name" "cronjobs.concurrencyPolicy") }}
+{{- include "terminal.validateEnum" (dict "value" .Values.cronjobs.restartPolicy "allowed" (list "OnFailure" "Never") "name" "cronjobs.restartPolicy") }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -34,7 +36,7 @@ spec:
           containers:
             - name: provisioner-cleanup
               image: "{{ .Values.cronjobs.provisionerCleanup.image.registry }}/{{ .Values.cronjobs.provisionerCleanup.image.repository }}:{{ .Values.cronjobs.provisionerCleanup.image.tag }}"
-              imagePullPolicy: {{ .Values.cronjobs.provisionerCleanup.image.pullPolicy | default (ternary "Always" "IfNotPresent" (eq .Values.cronjobs.provisionerCleanup.image.tag "latest")) }}
+              imagePullPolicy: {{ .Values.cronjobs.provisionerCleanup.image.pullPolicy | default (ternary "Always" "IfNotPresent" (eq .Values.cronjobs.provisionerCleanup.image.tag "latest")) }} # TODO perhaps move this to top of file?
               {{- with .Values.cronjobs.containerSecurityContext }}
               securityContext:
                 {{- toYaml . | nindent 16 }}

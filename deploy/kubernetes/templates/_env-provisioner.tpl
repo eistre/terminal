@@ -2,7 +2,9 @@
 
 {{- /* ConfigMap data */ -}}
 {{- define "terminal.env.provisioner.data" -}}
-PROVISIONER_TYPE: {{ required "provisioner.type is required" .Values.provisioner.type | quote }}
+{{- include "terminal.validateEnum" (dict "value" .Values.provisioner.type "allowed" (list "kubernetes") "name" "provisioner.type") -}}
+{{- include "terminal.validateEnum" (dict "value" .Values.provisioner.kubernetes.serviceType "allowed" (list "headless" "nodePort") "name" "provisioner.kubernetes.serviceType") -}}
+PROVISIONER_TYPE: {{ .Values.provisioner.type | quote }}
 PROVISIONER_MAX_RETRIES: {{ .Values.provisioner.maxRetries | quote }}
 PROVISIONER_CONCURRENCY_LIMIT: {{ .Values.provisioner.concurrencyLimit | quote }}
 PROVISIONER_CONTAINER_EXPIRY_MINUTES: {{ .Values.provisioner.containerExpiryMinutes | quote }}

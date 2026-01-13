@@ -147,3 +147,26 @@ app.kubernetes.io/component: {{ .component }}
 {{- default "default" .Values.cronjobs.provisionerCleanup.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/* Database connection helpers */}}
+
+{{- define "terminal.database.host" -}}
+{{- if eq .Values.database.type "external" -}}
+{{- required "database.host is required when database.type is external" .Values.database.host -}}
+{{- else -}}
+{{- /* For internal and operator types, use the service name */ -}}
+{{- include "terminal.mariadb.fullname" . -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "terminal.database.port" -}}
+{{- .Values.database.port | default 3306 -}}
+{{- end -}}
+
+{{/* Enum validation helper - validates that a value is one of the allowed options */}}
+{{/* Usage: include "terminal.validateEnum" (dict "value" .Values.foo "allowed" (list "a" "b" "c") "name" "foo") */}}
+{{- define "terminal.validateEnum" -}}
+{{- if not (has .value .allowed) -}}
+{{- fail (printf "%s must be one of: %s (got: %s)" .name (join ", " .allowed) .value) -}}
+{{- end -}}
+{{- end -}}
