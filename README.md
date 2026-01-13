@@ -101,6 +101,10 @@ helm install terminal ./deploy/kubernetes -f ./deploy/kubernetes/values-local.ya
 
 See `deploy/kubernetes/values.yaml` for configuration options.
 
+**Option 3: University of Tartu HPC Kubernetes**
+
+For deploying to UTHPC, see `deploy/kubernetes/values-hpc.example.yaml` for configuration example and instructions.
+
 > **Note:** For production deployments, `apps/database-cleanup/` and `apps/provisioner-cleanup/` have their own `.env.example` files.
 
 ## Scripts
