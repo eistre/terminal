@@ -170,3 +170,9 @@ app.kubernetes.io/component: {{ .component }}
 {{- fail (printf "%s must be one of: %s (got: %s)" .name (join ", " .allowed) .value) -}}
 {{- end -}}
 {{- end -}}
+
+{{/* ImagePullPolicy helper - returns pullPolicy or smart default based on tag */}}
+{{/* Usage: include "terminal.imagePullPolicy" (dict "pullPolicy" .Values.x.image.pullPolicy "tag" .Values.x.image.tag) */}}
+{{- define "terminal.imagePullPolicy" -}}
+{{- .pullPolicy | default (ternary "Always" "IfNotPresent" (eq .tag "latest")) -}}
+{{- end -}}

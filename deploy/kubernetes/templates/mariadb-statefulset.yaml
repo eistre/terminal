@@ -1,4 +1,5 @@
 {{- if eq .Values.database.type "internal" }}
+{{- include "terminal.validateEnum" (dict "value" .Values.database.internal.image.pullPolicy "allowed" (list "Always" "IfNotPresent" "Never") "name" "database.internal.image.pullPolicy") }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -46,7 +47,7 @@ spec:
       containers:
         - name: mariadb
           image: "{{ .Values.database.internal.image.registry }}/{{ .Values.database.internal.image.repository }}:{{ .Values.database.internal.image.tag }}"
-          imagePullPolicy: {{ .Values.database.internal.image.pullPolicy }} # TODO should we validate this as well
+          imagePullPolicy: {{ .Values.database.internal.image.pullPolicy }}
           {{- with .Values.database.internal.containerSecurityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}

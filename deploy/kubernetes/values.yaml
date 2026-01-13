@@ -231,7 +231,7 @@ database:
         memory: 128Mi
       limits:
         cpu: 500m
-        memory: 2Gi # TODO is 2Gi a bit much?
+        memory: 1Gi
 
     nodeSelector: {}
     tolerations: []
@@ -258,9 +258,6 @@ database:
   # Requires mariadb-operator to be installed in the cluster
   # See: https://github.com/mariadb-operator/mariadb-operator
   operator:
-    # TODO why is this needed
-    image: '' # Empty: uses operator default, or specify like 'docker.io/mariadb:11.4'
-
     storage:
       size: 1Gi
       storageClassName: '' # Empty: uses cluster default
@@ -270,7 +267,7 @@ database:
         cpu: 300m
         memory: 128Mi
       limits:
-        memory: 2Gi # TODO is 2Gi a bit much?
+        memory: 1Gi
 
     # MariaDB configuration (my.cnf style)
     myCnf: |

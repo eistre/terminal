@@ -1,3 +1,6 @@
+{{- if .Values.web.image.pullPolicy }}
+{{- include "terminal.validateEnum" (dict "value" .Values.web.image.pullPolicy "allowed" (list "Always" "IfNotPresent" "Never") "name" "web.image.pullPolicy") }}
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,7 +48,7 @@ spec:
       containers:
         - name: web
           image: "{{ .Values.web.image.registry }}/{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
-          imagePullPolicy: {{ .Values.web.image.pullPolicy | default (ternary "Always" "IfNotPresent" (eq .Values.web.image.tag "latest")) }}
+          imagePullPolicy: {{ include "terminal.imagePullPolicy" (dict "pullPolicy" .Values.web.image.pullPolicy "tag" .Values.web.image.tag) }}
           {{- with .Values.web.containerSecurityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}

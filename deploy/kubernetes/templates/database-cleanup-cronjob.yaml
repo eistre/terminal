@@ -1,5 +1,8 @@
 {{- include "terminal.validateEnum" (dict "value" .Values.cronjobs.concurrencyPolicy "allowed" (list "Forbid" "Allow" "Replace") "name" "cronjobs.concurrencyPolicy") }}
 {{- include "terminal.validateEnum" (dict "value" .Values.cronjobs.restartPolicy "allowed" (list "OnFailure" "Never") "name" "cronjobs.restartPolicy") }}
+{{- if .Values.cronjobs.databaseCleanup.image.pullPolicy }}
+{{- include "terminal.validateEnum" (dict "value" .Values.cronjobs.databaseCleanup.image.pullPolicy "allowed" (list "Always" "IfNotPresent" "Never") "name" "cronjobs.databaseCleanup.image.pullPolicy") }}
+{{- end }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -35,7 +38,7 @@ spec:
           containers:
             - name: database-cleanup
               image: "{{ .Values.cronjobs.databaseCleanup.image.registry }}/{{ .Values.cronjobs.databaseCleanup.image.repository }}:{{ .Values.cronjobs.databaseCleanup.image.tag }}"
-              imagePullPolicy: {{ .Values.cronjobs.databaseCleanup.image.pullPolicy | default (ternary "Always" "IfNotPresent" (eq .Values.cronjobs.databaseCleanup.image.tag "latest")) }} # TODO perhaps move this to top of file?
+              imagePullPolicy: {{ include "terminal.imagePullPolicy" (dict "pullPolicy" .Values.cronjobs.databaseCleanup.image.pullPolicy "tag" .Values.cronjobs.databaseCleanup.image.tag) }}
               {{- with .Values.cronjobs.containerSecurityContext }}
               securityContext:
                 {{- toYaml . | nindent 16 }}

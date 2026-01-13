@@ -20,10 +20,6 @@ spec:
     name: {{ include "terminal.mariadb.secretFullname" . }}
     key: MARIADB_PASSWORD
 
-  {{- if .Values.database.operator.image }}
-  image: {{ .Values.database.operator.image | quote }} # TODO Why is this needed?
-  {{- end }}
-
   storage:
     size: {{ .Values.database.operator.storage.size }}
     {{- if .Values.database.operator.storage.storageClassName }}
@@ -40,11 +36,9 @@ spec:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 
-  # TODO is this better? Or do we need an if else block
   metrics:
     enabled: {{ .Values.database.operator.metrics.enabled }}
 
-  # TODO is this better? Or do we need an if else block
   tls:
     enabled: {{ .Values.database.operator.tls.enabled }}
 {{- end }}
