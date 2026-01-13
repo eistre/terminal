@@ -9,7 +9,7 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["src"],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo node_modules dist",

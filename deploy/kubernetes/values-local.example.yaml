@@ -1,5 +1,5 @@
 # Local Development Values
-# Usage: helm install terminal ./deploy/kubernetes -f ./deploy/kubernetes/values-local.yaml
+# Usage: helm install terminal ./deploy/kubernetes -f ./deploy/kubernetes/values-local.example.yaml
 
 general:
   logLevel: debug

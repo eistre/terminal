@@ -21,7 +21,7 @@ RUN mkdir /home/user/.temporary && echo "Temporary file" > /home/user/.temporary
 
 USER root
 RUN mkdir /var/.secrets && echo "Hidden secret" > /var/.secrets/.super_hidden_secret
-RUN mkdir /var/.hidden && echo "Password file content \n...\n\nSudo password is password123" > /var/.hidden/.hidden_password
+RUN mkdir /var/.hidden && echo "Password file content\n...\n\nSudo password is password123\n" > /var/.hidden/.hidden_password
 
 # Only allow sudo apt install
 RUN echo 'user ALL=(ALL) /usr/bin/apt install nano' > /etc/sudoers.d/apt-install && chmod 440 /etc/sudoers.d/apt-install
