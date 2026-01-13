@@ -118,7 +118,6 @@ jobs:
   cleanup:
     needs: [build]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     permissions:
       packages: write
     strategy:
