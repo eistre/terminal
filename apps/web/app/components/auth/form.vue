@@ -1,10 +1,9 @@
 <script setup lang="ts">
 const emit = defineEmits<{ requiresVerification: [email: string] }>();
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const toast = useToast();
-
-const { data } = await useFetch('/api/auth/providers', { method: 'GET' });
+const config = useConfig();
 
 const items = computed(() => [{
   slot: 'login',
@@ -14,7 +13,15 @@ const items = computed(() => [{
   label: t('auth.signup'),
 }]);
 
-const isMicrosoftEnabled = computed(() => data.value?.microsoft.enabled ?? false);
+const microsoftLabel = computed(() => {
+  if (!config.value.microsoft) {
+    return '';
+  }
+
+  return locale.value === 'en'
+    ? config.value.microsoft.labels.en
+    : config.value.microsoft.labels.et;
+});
 
 async function signInWithProvider(provider: string) {
   const { error } = await authClient.signIn.social({ provider, callbackURL: '/topics' });
@@ -31,14 +38,14 @@ async function signInWithProvider(provider: string) {
 
 <template>
   <UButton
-    v-if="isMicrosoftEnabled"
+    v-if="config.microsoft"
     icon="i-lucide-landmark"
     block
     color="neutral"
     variant="outline"
     @click="signInWithProvider('microsoft')"
   >
-    {{ data?.microsoft.label ?? 'Microsoft' }}
+    {{ microsoftLabel }}
   </UButton>
 
   <UTabs :items="items" :ui="{ root: 'min-h-[320px]' }">

@@ -1,0 +1,28 @@
+# Local Development Values
+# Usage: helm install terminal ./deploy/kubernetes -f ./deploy/kubernetes/values-local.example.yaml
+
+general:
+  logLevel: debug
+
+auth:
+  secret: local-dev-secret-must-be-at-least-32-chars!
+  userExpiryDays: 1
+  admin:
+    email: admin@admin.sec
+    password: terminal_password
+
+provisioner:
+  containerExpiryMinutes: 10
+
+database:
+  credentials:
+    password: local-dev-password
+    rootPassword: local-dev-root-password
+  persistence:
+    enabled: false
+
+cronjobs:
+  databaseCleanup:
+    schedule: '*/15 * * * *'
+  provisionerCleanup:
+    schedule: '*/5 * * * *'

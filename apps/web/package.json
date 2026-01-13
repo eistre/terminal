@@ -40,7 +40,6 @@
     "@iconify-json/flag": "catalog:",
     "@iconify-json/lucide": "catalog:",
     "@nuxt/eslint": "catalog:",
-    "@nuxt/test-utils": "catalog:",
     "@terminal/eslint": "workspace:*",
     "@terminal/typescript": "workspace:*",
     "@types/sortablejs": "catalog:",

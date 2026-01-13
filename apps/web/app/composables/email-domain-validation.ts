@@ -1,7 +1,7 @@
 import { normalizeEmailDomain } from '#shared/email-domains-validation';
 
 export function useEmailDomainValidation() {
-  const runtimeConfig = useRuntimeConfig();
+  const config = useConfig();
   const { data: allowedDomainsData } = useFetch('/api/auth/email-domains', {
     method: 'GET',
     key: 'allowed-email-domains',
@@ -9,7 +9,7 @@ export function useEmailDomainValidation() {
 
   function isAllowedEmail(email: string): boolean {
     const normalized = email.trim().toLowerCase();
-    const adminEmail = runtimeConfig.public.defaultAdminEmail.trim().toLowerCase();
+    const adminEmail = config.value.adminEmail.trim().toLowerCase();
 
     if (normalized === adminEmail) {
       return true;

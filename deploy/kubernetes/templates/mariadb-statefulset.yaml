@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "terminal.mariadb.fullname" . }}
+  labels:
+    {{- include "terminal.mariadb.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  serviceName: {{ include "terminal.mariadb.fullname" . }}
+  selector:
+    matchLabels:
+      {{- include "terminal.mariadb.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "terminal.mariadb.labels" . | nindent 8 }}
+        {{- with .Values.database.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.database.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.database.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.database.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.database.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.database.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: mariadb
+          image: "{{ .Values.database.image.registry }}/{{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}"
+          imagePullPolicy: {{ .Values.database.image.pullPolicy }}
+          {{- with .Values.database.containerSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: mariadb
+              containerPort: 3306
+              protocol: TCP
+          env:
+            {{- include "terminal.env.mariadb" . | nindent 12 }}
+          volumeMounts:
+            - name: mariadb-data
+              mountPath: /var/lib/mysql
+            - name: mariadb-run
+              mountPath: /run/mysqld
+            - name: mariadb-tmp
+              mountPath: /tmp
+          {{- with .Values.database.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          livenessProbe:
+            exec:
+              command:
+                - healthcheck.sh
+                - --connect
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - healthcheck.sh
+                - --connect
+                - --innodb_initialized
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      volumes:
+        {{- if not .Values.database.persistence.enabled }}
+        - name: mariadb-data
+          emptyDir: {}
+        {{- end }}
+        - name: mariadb-run
+          emptyDir: {}
+        - name: mariadb-tmp
+          emptyDir: {}
+  {{- if .Values.database.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: mariadb-data
+        labels:
+          {{- include "terminal.mariadb.labels" . | nindent 10 }}
+      spec:
+        accessModes:
+          - {{ .Values.database.persistence.accessMode }}
+        {{- if eq .Values.database.persistence.storageClass "-" }}
+        storageClassName: ""
+        {{- else if .Values.database.persistence.storageClass }}
+        storageClassName: {{ .Values.database.persistence.storageClass | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.database.persistence.size | quote }}
+  {{- end }}

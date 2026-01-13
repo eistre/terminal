@@ -136,11 +136,11 @@ watch(demoSteps, () => {
 });
 
 function bannerInfo(message: string): string {
-  return `\x1B[01;03;36m*** ${message} ***\x1B[0m\r\n`;
+  return `\x1B[03;36m*** ${message} ***\x1B[0m\r\n`;
 }
 
 function bannerSuccess(message: string): string {
-  return `\x1B[01;03;32m*** ${message} ***\x1B[0m\r\n`;
+  return `\x1B[03;32m*** ${message} ***\x1B[0m\r\n`;
 }
 
 function handleTerminalReady() {

@@ -1,5 +1,5 @@
 import { index, int, mysqlEnum, mysqlTable, primaryKey, text, timestamp, unique, varchar } from 'drizzle-orm/mysql-core';
-import { users } from './auth';
+import { users } from './auth.js';
 
 const localeEnum = mysqlEnum('locale', ['en', 'et']);
 

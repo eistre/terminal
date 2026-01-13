@@ -1,4 +1,4 @@
-import type { emailDomains } from '../../schema';
+import type { emailDomains } from '../../schema/index.js';
 
 export interface EmailDomainSeed {
   domain: typeof emailDomains.$inferInsert.domain;

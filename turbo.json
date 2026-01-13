@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/turbo/schema.json",
-  "globalEnv": ["NODE_ENV", "LOG_LEVEL", "MAILER_TYPE", "ADMIN_EMAIL"],
+  "globalEnv": ["NODE_ENV", "LOGGER_LEVEL"],
   "globalDependencies": [".env*"],
   "tasks": {
     "build": {
@@ -40,11 +40,7 @@
       "outputs": [".cache/.eslintcache"]
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"],
-      "outputs": [".cache/tsbuildinfo.json", ".nuxt/**.tsbuildinfo"]
-    },
-    "//#typecheck:root": {
-      "outputs": [".cache/tsbuildinfo.json"]
+      "dependsOn": ["^typecheck"]
     }
   }
 }

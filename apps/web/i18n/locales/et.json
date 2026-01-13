@@ -64,7 +64,7 @@
     "invalidEmail": "Vigane e-posti aadress",
     "emailDomainNotAllowed": "E-posti domeen pole lubatud",
     "nameRequired": "Nimi on nõutud",
-    "nameMin": "Nimi peab olema vähemalt tähemärk",
+    "nameMin": "Nimi peab olema vähemalt 1 tähemärk",
     "passwordRequired": "Parool on nõutud",
     "passwordMin": "Parool peab olema vähemalt {count} tähemärki",
     "loginError": "Vigane e-post või parool",

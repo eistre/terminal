@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "terminal.databaseCleanup.fullname" . }}
+  labels:
+    {{- include "terminal.databaseCleanup.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.cronjobs.databaseCleanup.schedule | quote }}
+  concurrencyPolicy: {{ .Values.cronjobs.concurrencyPolicy }}
+  successfulJobsHistoryLimit: {{ .Values.cronjobs.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.cronjobs.failedJobsHistoryLimit }}
+  suspend: {{ .Values.cronjobs.suspend }}
+  jobTemplate:
+    metadata:
+      labels:
+        {{- include "terminal.databaseCleanup.labels" . | nindent 8 }}
+    spec:
+      backoffLimit: {{ .Values.cronjobs.backoffLimit }}
+      template:
+        metadata:
+          labels:
+            {{- include "terminal.databaseCleanup.labels" . | nindent 12 }}
+        spec:
+          restartPolicy: {{ .Values.cronjobs.restartPolicy }}
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.cronjobs.podSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: database-cleanup
+              image: "{{ .Values.cronjobs.databaseCleanup.image.registry }}/{{ .Values.cronjobs.databaseCleanup.image.repository }}:{{ .Values.cronjobs.databaseCleanup.image.tag }}"
+              imagePullPolicy: {{ .Values.cronjobs.databaseCleanup.image.pullPolicy | default (ternary "Always" "IfNotPresent" (eq .Values.cronjobs.databaseCleanup.image.tag "latest")) }}
+              {{- with .Values.cronjobs.containerSecurityContext }}
+              securityContext:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              env:
+                {{- include "terminal.env.common" . | nindent 16 }}
+                {{- include "terminal.env.database" . | nindent 16 }}
+              {{- with .Values.cronjobs.databaseCleanup.resources }}
+              resources:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}

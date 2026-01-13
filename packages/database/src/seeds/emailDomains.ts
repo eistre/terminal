@@ -1,4 +1,4 @@
-import type { EmailDomainSeed } from '../types';
+import type { EmailDomainSeed } from '../types/index.js';
 
 export const defaultEmailDomains: EmailDomainSeed[] = [
   { domain: 'ut.ee', skipVerification: false },

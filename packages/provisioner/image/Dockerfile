@@ -21,14 +21,14 @@ RUN mkdir /home/user/.temporary && echo "Temporary file" > /home/user/.temporary
 
 USER root
 RUN mkdir /var/.secrets && echo "Hidden secret" > /var/.secrets/.super_hidden_secret
-RUN mkdir /var/.hidden && echo "Password file content \n...\n\nSudo password is password123" > /var/.hidden/.hidden_password
+RUN mkdir /var/.hidden && echo "Password file content\n...\n\nSudo password is password123\n" > /var/.hidden/.hidden_password
 
 # Only allow sudo apt install
 RUN echo 'user ALL=(ALL) /usr/bin/apt install nano' > /etc/sudoers.d/apt-install && chmod 440 /etc/sudoers.d/apt-install
 RUN echo 'user ALL=(ALL) /usr/bin/apt-get install nano' > /etc/sudoers.d/apt-get-install && chmod 440 /etc/sudoers.d/apt-get-install
 
 # Copy entrypoint script to set up authorized_keys from SSH_PUBLIC_KEY
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY packages/provisioner/image/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 22

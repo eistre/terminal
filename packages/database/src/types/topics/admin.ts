@@ -1,4 +1,4 @@
-import type { Locale } from '../common';
+import type { Locale } from '../common.js';
 
 export interface TopicTranslation {
   locale: Locale;

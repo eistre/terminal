@@ -1,3 +1,3 @@
-export * from './auth';
-export * from './email-domains';
-export * from './topics';
+export * from './auth.js';
+export * from './email-domains.js';
+export * from './topics.js';

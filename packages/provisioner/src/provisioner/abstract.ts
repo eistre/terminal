@@ -1,18 +1,18 @@
 import type { BaseProvisionerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
-import type { ConnectionInfo, ContainerInfo, Provisioner } from '../provisioner';
+import type { ConnectionInfo, ContainerInfo, Provisioner } from '../provisioner.js';
 import pLimit from 'p-limit';
 import pRetry, { AbortError } from 'p-retry';
+import sshpk from 'sshpk';
 
 export abstract class AbstractProvisioner implements Provisioner {
   protected readonly logger: Logger;
-  protected readonly containerTtlMinutes: BaseProvisionerSchema['PROVISIONER_CONTAINER_TTL_MINUTES'];
+  protected readonly containerExpiryMinutes: BaseProvisionerSchema['PROVISIONER_CONTAINER_EXPIRY_MINUTES'];
   protected readonly containerImage: BaseProvisionerSchema['PROVISIONER_CONTAINER_IMAGE'];
   protected readonly containerMemoryRequest: BaseProvisionerSchema['PROVISIONER_CONTAINER_MEMORY_REQUEST'];
   protected readonly containerCpuRequest: BaseProvisionerSchema['PROVISIONER_CONTAINER_CPU_REQUEST'];
   protected readonly containerMemoryLimit: BaseProvisionerSchema['PROVISIONER_CONTAINER_MEMORY_LIMIT'];
   protected readonly containerCpuLimit: BaseProvisionerSchema['PROVISIONER_CONTAINER_CPU_LIMIT'];
-  protected readonly containerSshPublicKey: BaseProvisionerSchema['PROVISIONER_CONTAINER_SSH_PUBLIC_KEY'];
 
   private readonly concurrencyLimit;
   private readonly maxRetries;
@@ -22,13 +22,12 @@ export abstract class AbstractProvisioner implements Provisioner {
     this.logger = logger;
     this.concurrencyLimit = pLimit(config.PROVISIONER_CONCURRENCY_LIMIT);
     this.maxRetries = config.PROVISIONER_MAX_RETRIES;
-    this.containerTtlMinutes = config.PROVISIONER_CONTAINER_TTL_MINUTES;
+    this.containerExpiryMinutes = config.PROVISIONER_CONTAINER_EXPIRY_MINUTES;
     this.containerImage = config.PROVISIONER_CONTAINER_IMAGE;
     this.containerMemoryRequest = config.PROVISIONER_CONTAINER_MEMORY_REQUEST;
     this.containerCpuRequest = config.PROVISIONER_CONTAINER_CPU_REQUEST;
     this.containerMemoryLimit = config.PROVISIONER_CONTAINER_MEMORY_LIMIT;
     this.containerCpuLimit = config.PROVISIONER_CONTAINER_CPU_LIMIT;
-    this.containerSshPublicKey = config.PROVISIONER_CONTAINER_SSH_PUBLIC_KEY;
   }
 
   /**
@@ -42,65 +41,65 @@ export abstract class AbstractProvisioner implements Provisioner {
 
   /**
    * @inheritDoc
-   * @param clientId Unique identifier for the client
+   * @param userId Unique identifier for the user
    */
-  async ensureContainerExists(clientId: string): Promise<ConnectionInfo> {
+  async ensureContainerExists(userId: string): Promise<ConnectionInfo> {
     return this.withConcurrencyLimit(() =>
-      this.withLock(clientId, () =>
-        this.withRetry(() => this.ensureContainerExistsImpl(clientId))),
+      this.withLock(userId, () =>
+        this.withRetry(() => this.ensureContainerExistsImpl(userId))),
     );
   }
 
   /**
    * @inheritDoc
-   * @param clientId Unique identifier for the client
+   * @param userId Unique identifier for the user
    */
-  async updateContainerExpiration(clientId: string): Promise<void> {
+  async updateContainerExpiration(userId: string): Promise<void> {
     return this.withConcurrencyLimit(() =>
-      this.withLock(clientId, () =>
-        this.withRetry(() => this.updateContainerExpirationImpl(clientId))),
+      this.withLock(userId, () =>
+        this.withRetry(() => this.updateContainerExpirationImpl(userId))),
     );
   }
 
   /**
    * @inheritDoc
-   * @param clientId Unique identifier for the client
+   * @param userId Unique identifier for the user
    */
-  async deleteContainer(clientId: string): Promise<void> {
+  async deleteContainer(userId: string): Promise<void> {
     return this.withConcurrencyLimit(() =>
-      this.withLock(clientId, () =>
-        this.withRetry(() => this.deleteContainerImpl(clientId))),
+      this.withLock(userId, () =>
+        this.withRetry(() => this.deleteContainerImpl(userId))),
     );
   }
 
   protected abstract listContainersImpl(): Promise<ContainerInfo[]>;
 
-  protected abstract ensureContainerExistsImpl(clientId: string): Promise<ConnectionInfo>;
+  protected abstract ensureContainerExistsImpl(userId: string): Promise<ConnectionInfo>;
 
-  protected abstract updateContainerExpirationImpl(clientId: string): Promise<void>;
+  protected abstract updateContainerExpirationImpl(userId: string): Promise<void>;
 
-  protected abstract deleteContainerImpl(clientId: string): Promise<void>;
+  protected abstract deleteContainerImpl(userId: string): Promise<void>;
 
   protected withConcurrencyLimit<T>(fn: () => Promise<T>): Promise<T> {
     return this.concurrencyLimit(fn);
   }
 
-  protected withLock<T>(clientId: string, fn: () => Promise<T>): Promise<T> {
-    const previous = this.locks.get(clientId) ?? Promise.resolve();
+  protected withLock<T>(userId: string, fn: () => Promise<T>): Promise<T> {
+    const previous = this.locks.get(userId) ?? Promise.resolve();
 
     let release!: () => void;
     const current = new Promise<void>((resolve) => {
       release = resolve;
     });
 
-    this.locks.set(clientId, current);
+    this.locks.set(userId, current);
 
     return previous
       .then(fn)
       .finally(() => {
         release();
-        if (this.locks.get(clientId) === current) {
-          this.locks.delete(clientId);
+        if (this.locks.get(userId) === current) {
+          this.locks.delete(userId);
         }
       });
   }
@@ -110,6 +109,19 @@ export abstract class AbstractProvisioner implements Provisioner {
       retries: this.maxRetries,
       randomize: true,
     });
+  }
+
+  /**
+   * Generate an ephemeral Ed25519 SSH keypair.
+   * @returns Object containing public and private keys in SSH format
+   */
+  protected static generateKeypair(): { publicKey: string; privateKey: string } {
+    const privateKeyObj = sshpk.generatePrivateKey('ed25519');
+
+    return {
+      publicKey: privateKeyObj.toPublic().toString('ssh'),
+      privateKey: privateKeyObj.toString('openssh'),
+    };
   }
 
   protected static abortRetry(error: string | Error): never {

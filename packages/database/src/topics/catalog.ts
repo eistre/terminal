@@ -1,8 +1,8 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
-import type { Locale, TopicDetails, TopicSummary } from '../types';
+import type { Locale, TopicDetails, TopicSummary } from '../types/index.js';
 import { aliasedTable, and, countDistinct, eq, sql } from 'drizzle-orm';
-import { taskCompletions, tasks, taskTranslations, topics, topicTranslations } from '../schema';
-import { TopicNotFoundError } from './errors';
+import { taskCompletions, tasks, taskTranslations, topics, topicTranslations } from '../schema/index.js';
+import { TopicNotFoundError } from './errors.js';
 
 function getFallbackLocale(locale: Locale): Locale {
   return locale === 'en' ? 'et' : 'en';

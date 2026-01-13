@@ -1,6 +1,6 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
-import type { TopicSeed } from '../types';
-import { tasks, taskTranslations, topics, topicTranslations } from '../schema';
+import type { TopicSeed } from '../types/index.js';
+import { tasks, taskTranslations, topics, topicTranslations } from '../schema/index.js';
 
 export async function seedTopicsIfEmpty(db: MySql2Database, seeds: TopicSeed[]): Promise<boolean> {
   const topicCount = await db.$count(topics);

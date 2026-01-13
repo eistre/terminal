@@ -1,9 +1,9 @@
-import type { AzureMailerSchema } from './mailer/azure';
-import type { BaseMailerSchema } from './mailer/base';
-import type { NoopMailerSchema } from './mailer/noop';
+import type { AzureMailerSchema } from './mailer/azure.ts';
+import type { BaseMailerSchema } from './mailer/base.ts';
+import type { NoopMailerSchema } from './mailer/noop.ts';
 import { z } from 'zod';
-import { azureMailerSchema } from './mailer/azure';
-import { noopMailerSchema } from './mailer/noop';
+import { azureMailerSchema } from './mailer/azure.ts';
+import { noopMailerSchema } from './mailer/noop.ts';
 
 export const mailerSchema = z.discriminatedUnion('MAILER_TYPE', [
   azureMailerSchema,

@@ -16,11 +16,11 @@ export default defineNitroPlugin(async () => {
     const containers = await provisioner.listContainers();
 
     const now = new Date();
-    const expired = containers.filter(container => container.expireTime <= now);
+    const expired = containers.filter(container => container.expiresAt <= now);
 
     if (expired.length > 0) {
       logger.debug('Cleaning up all expired containers');
-      await Promise.all(expired.map(container => provisioner.deleteContainer(container.clientId)));
+      await Promise.all(expired.map(container => provisioner.deleteContainer(container.userId)));
     }
 
     logger.info({ totalContainer: containers.length, expiredContainer: expired.length }, 'Provisioner initialized and cleanup complete');

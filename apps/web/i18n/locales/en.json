@@ -64,7 +64,7 @@
     "invalidEmail": "Invalid email address",
     "emailDomainNotAllowed": "Email domain not allowed",
     "nameRequired": "Name is required",
-    "nameMin": "Name must be at least character",
+    "nameMin": "Name must be at least 1 character",
     "passwordRequired": "Password is required",
     "passwordMin": "Password must be at least {count} characters",
     "loginError": "Invalid email or password",

@@ -6,7 +6,7 @@ const emit = defineEmits<{ requiresVerification: [email: string] }>();
 
 const { t } = useI18n();
 const toast = useToast();
-const runtimeConfig = useRuntimeConfig();
+const config = useConfig();
 
 const { isAllowedEmail } = useEmailDomainValidation();
 
@@ -78,7 +78,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
     return;
   }
 
-  if (runtimeConfig.public.emailVerificationEnabled) {
+  if (config.value.emailVerificationEnabled) {
     emit('requiresVerification', email);
   }
 }

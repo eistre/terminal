@@ -1,0 +1,31 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "terminal.mariadb.fullname" . }}
+  labels:
+    {{- include "terminal.mariadb.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "terminal.mariadb.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow connections from the web application
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "terminal.web.selectorLabels" . | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: 3306
+    # Allow connections from the database cleanup cronjob
+    - from:
+        - podSelector:
+            matchLabels:
+              {{- include "terminal.databaseCleanup.selectorLabels" . | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: 3306
+{{- end }}

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: terminal
+description: Linux Terminal Exercise Environment
+type: application
+version: 0.1.0
+appVersion: 1.0.0
+home: https://github.com/eistre/terminal
+sources:
+  - https://github.com/eistre/terminal

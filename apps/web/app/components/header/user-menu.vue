@@ -4,7 +4,7 @@ import type { DropdownMenuItem } from '#ui/components/DropdownMenu.vue';
 const { t } = useI18n();
 const session = authClient.useSession();
 const toast = useToast();
-const runtimeConfig = useRuntimeConfig();
+const config = useConfig();
 
 const items: ComputedRef<DropdownMenuItem[]> = computed(() => {
   const items: DropdownMenuItem[] = [];
@@ -41,7 +41,7 @@ const items: ComputedRef<DropdownMenuItem[]> = computed(() => {
     },
   });
 
-  if (session.value.data?.user.email !== runtimeConfig.public.defaultAdminEmail) {
+  if (session.value.data?.user.email !== config.value.adminEmail) {
     items.push({
       label: t('header.deleteAccount'),
       icon: 'i-lucide-trash',

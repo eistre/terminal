@@ -5,10 +5,10 @@ import type {
   TopicTaskTranslation,
   UpsertTopicInput,
   UpsertTopicResult,
-} from '../types';
+} from '../types/index.js';
 import { and, eq, inArray, sql } from 'drizzle-orm';
-import { tasks, taskTranslations, topics, topicTranslations } from '../schema';
-import { TopicNotFoundError, TopicSlugConflictError } from './errors';
+import { tasks, taskTranslations, topics, topicTranslations } from '../schema/index.js';
+import { TopicNotFoundError, TopicSlugConflictError } from './errors.js';
 
 function validateUniqueLocales(items: { locale: Locale }[], errorMessage: string) {
   const locales = items.map(item => item.locale);

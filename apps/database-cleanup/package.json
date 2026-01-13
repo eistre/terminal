@@ -1,0 +1,25 @@
+{
+  "name": "database-cleanup",
+  "type": "module",
+  "private": true,
+  "files": ["dist", "node_modules"],
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo node_modules dist",
+    "lint": "eslint . --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@terminal/database": "workspace:*",
+    "@terminal/env": "workspace:*",
+    "@terminal/logger": "workspace:*"
+  },
+  "devDependencies": {
+    "@terminal/eslint": "workspace:*",
+    "@terminal/typescript": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}
