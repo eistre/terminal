@@ -7,6 +7,9 @@ export function createLogger(options: { name: string } & LoggerSchema) {
   return pino({
     name: options.name,
     level: options.LOGGER_LEVEL,
+    formatters: {
+      level: label => ({ level: label }),
+    },
     transport: isDevelopment
       ? {
           target: 'pino-pretty',
