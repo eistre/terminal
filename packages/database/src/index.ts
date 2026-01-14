@@ -37,6 +37,9 @@ export function createDatabase(options: DatabaseSchema) {
     users: createUsersRepo(db),
     verifications: createVerificationsRepo(db),
     ops: createOps(db),
+    close: () => {
+      db.$client.end();
+    },
   };
 }
 

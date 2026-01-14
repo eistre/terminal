@@ -37,6 +37,7 @@ async function main() {
     }
 
     logger.info({ deletedUsers: deletedUsersCount, deletedVerifications: deletedVerificationsCount }, 'Database cleanup completed successfully');
+    database.close();
   }
   catch (error) {
     logger.error(error, 'Database cleanup failed');

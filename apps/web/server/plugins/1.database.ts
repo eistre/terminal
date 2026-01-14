@@ -11,7 +11,7 @@ import { useLogger } from '~~/server/lib/logger';
  * This plugin bootstraps the database when the server starts.
  * It runs migrations and seeds initial data before handling requests.
  */
-export default defineNitroPlugin(async () => {
+export default defineNitroPlugin(async (nitroApp) => {
   const env = useEnv();
   const auth = useAuth();
   const database = useDatabase();
@@ -63,6 +63,9 @@ export default defineNitroPlugin(async () => {
         logger.info({ email }, 'Default admin user created by another instance');
       }
     }
+
+    // Ensure database connection is closed on server shutdown
+    nitroApp.hooks.hook('close', () => database.close());
   }
   catch (error) {
     logger.error(error, 'Database bootstrap failed');
