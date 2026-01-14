@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-    <UPageCard :ui="{ body: 'w-full' }">
+    <UPageCard :ui="{ container: 'overflow-hidden' }">
       <template #title>
         <div class="flex items-center justify-between">
           <div class="font-semibold">
