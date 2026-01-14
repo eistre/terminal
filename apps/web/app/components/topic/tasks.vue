@@ -59,7 +59,7 @@ function toggleHint(item: number) {
         v-model="active"
         type="multiple"
         :items="items"
-        :ui="{ root: 'overflow-y-auto lg:max-h-[calc(100vh-var(--ui-content-offset))]', header: 'my-0.5', trigger: 'p-2.5 font-semibold' }"
+        :ui="{ root: 'overflow-y-auto lg:max-h-[max(500px,calc(100vh-var(--ui-content-offset)))]', header: 'my-0.5', trigger: 'p-2.5 font-semibold' }"
       >
         <template #body="{ item }">
           <div class="p-2.5 space-y-2">
