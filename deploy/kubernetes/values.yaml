@@ -70,7 +70,7 @@ web:
     tag: latest
     pullPolicy: '' # Default: IfNotPresent (Always for 'latest' tag)
 
-  replicaCount: 1
+  replicaCount: 1 # Ignored when autoscaling.enabled is true
 
   autoscaling:
     enabled: false # Requires metrics-server in the cluster
