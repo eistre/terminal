@@ -5,8 +5,18 @@ import pLimit from 'p-limit';
 import pRetry, { AbortError } from 'p-retry';
 import sshpk from 'sshpk';
 
+/**
+ * Unified container status type across all provisioner implementations.
+ */
+export type ContainerStatus = 'RUNNING' | 'PENDING' | 'TERMINATING' | 'MISSING';
+
 export abstract class AbstractProvisioner implements Provisioner {
+  // Shared label/tag values for identifying managed containers
+  protected static readonly COMPONENT_VALUE = 'session';
+  protected static readonly MANAGED_BY_VALUE = 'terminal-provisioner';
+
   protected readonly logger: Logger;
+  protected readonly appName: BaseProvisionerSchema['PROVISIONER_APP_NAME'];
   protected readonly containerExpiryMinutes: BaseProvisionerSchema['PROVISIONER_CONTAINER_EXPIRY_MINUTES'];
   protected readonly containerImage: BaseProvisionerSchema['PROVISIONER_CONTAINER_IMAGE'];
   protected readonly containerMemoryRequest: BaseProvisionerSchema['PROVISIONER_CONTAINER_MEMORY_REQUEST'];
@@ -22,6 +32,7 @@ export abstract class AbstractProvisioner implements Provisioner {
     this.logger = logger;
     this.concurrencyLimit = pLimit(config.PROVISIONER_CONCURRENCY_LIMIT);
     this.maxRetries = config.PROVISIONER_MAX_RETRIES;
+    this.appName = config.PROVISIONER_APP_NAME;
     this.containerExpiryMinutes = config.PROVISIONER_CONTAINER_EXPIRY_MINUTES;
     this.containerImage = config.PROVISIONER_CONTAINER_IMAGE;
     this.containerMemoryRequest = config.PROVISIONER_CONTAINER_MEMORY_REQUEST;
@@ -112,6 +123,15 @@ export abstract class AbstractProvisioner implements Provisioner {
   }
 
   /**
+   * Extract version from the container image tag.
+   * @example "ghcr.io/eistre/terminal-container:1.2.3" → "1.2.3"
+   */
+  protected getVersionLabel(): string {
+    const parts = this.containerImage.split(':');
+    return parts.length > 1 ? parts[1] : 'latest';
+  }
+
+  /**
    * Generate an ephemeral Ed25519 SSH keypair.
    * @returns Object containing public and private keys in SSH format
    */
@@ -126,5 +146,28 @@ export abstract class AbstractProvisioner implements Provisioner {
 
   protected static abortRetry(error: string | Error): never {
     throw new AbortError(error);
+  }
+
+  /**
+   * Sanitize userId for use in resource names.
+   * Converts to lowercase and replaces invalid characters with hyphens.
+   */
+  protected static sanitizeUserId(userId: string): string {
+    return userId.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  }
+
+  /**
+   * Calculate expiration timestamp from current time plus expiry minutes.
+   */
+  protected static getExpiresAt(expiryMinutes: number): Date {
+    const now = new Date();
+    return new Date(now.getTime() + expiryMinutes * 60 * 1000);
+  }
+
+  /**
+   * Sleep for the specified number of milliseconds.
+   */
+  protected static sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

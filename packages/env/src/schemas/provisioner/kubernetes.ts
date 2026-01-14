@@ -6,7 +6,6 @@ export const kubernetesProvisionerSchema = baseProvisionerSchema.extend({
   KUBECONFIG: z.string().optional(),
   KUBERNETES_SERVICE_HOST: z.string().optional(),
   PROVISIONER_KUBERNETES_NAMESPACE: z.string().default('default'),
-  PROVISIONER_KUBERNETES_APP_NAME: z.string().min(1).default('terminal'),
   PROVISIONER_KUBERNETES_RELEASE_NAME: z.string().min(1).default('terminal'),
   PROVISIONER_KUBERNETES_SERVICE_TYPE: z.enum(['headless', 'nodePort']).default('headless'),
 });
