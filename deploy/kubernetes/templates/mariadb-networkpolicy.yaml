@@ -24,7 +24,7 @@ spec:
               {{- include "terminal.web.selectorLabels" . | nindent 14 }}
       ports:
         - protocol: TCP
-          port: 3306
+          port: {{ .Values.database.port }}
     # Allow connections from the database cleanup cronjob
     - from:
         - podSelector:
@@ -32,7 +32,7 @@ spec:
               {{- include "terminal.databaseCleanup.selectorLabels" . | nindent 14 }}
       ports:
         - protocol: TCP
-          port: 3306
+          port: {{ .Values.database.port }}
     {{- if eq .Values.database.type "operator" }}
     # Allow connections from the MariaDB Operator controller (any namespace)
     - from:
@@ -42,6 +42,6 @@ spec:
               {{- toYaml .Values.database.operator.controllerLabels | nindent 14 }}
       ports:
         - protocol: TCP
-          port: 3306
+          port: {{ .Values.database.port }}
     {{- end }}
 {{- end }}

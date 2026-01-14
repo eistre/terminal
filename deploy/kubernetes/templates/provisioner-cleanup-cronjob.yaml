@@ -27,6 +27,7 @@ spec:
             {{- include "terminal.provisionerCleanup.labels" . | nindent 12 }}
         spec:
           serviceAccountName: {{ include "terminal.provisionerCleanup.serviceAccountName" . }}
+          automountServiceAccountToken: true
           restartPolicy: {{ .Values.cronjobs.restartPolicy }}
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:

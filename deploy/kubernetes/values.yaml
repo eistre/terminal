@@ -72,6 +72,12 @@ web:
 
   replicaCount: 1
 
+  autoscaling:
+    enabled: false # Requires metrics-server in the cluster
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+
   service:
     type: ClusterIP # Options: ClusterIP, NodePort, LoadBalancer
     port: 3000
@@ -217,7 +223,7 @@ database:
       registry: docker.io
       repository: mariadb
       tag: '12'
-      pullPolicy: IfNotPresent
+      pullPolicy: '' # Default: IfNotPresent (Always for 'latest' tag)
 
     persistence:
       enabled: true

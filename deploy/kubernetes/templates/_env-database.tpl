@@ -54,7 +54,7 @@ MARIADB_DATABASE: {{ .Values.database.name | quote }}
       name: {{ include "terminal.mariadb.secretFullname" . }}
       key: MARIADB_DATABASE
 - name: DATABASE_URL
-  value: 'mysql://$(MARIADB_USER):$(MARIADB_PASSWORD)@{{ include "terminal.database.host" . }}:{{ include "terminal.database.port" . }}/$(MARIADB_DATABASE)'
+  value: 'mysql://$(MARIADB_USER):$(MARIADB_PASSWORD)@{{ include "terminal.database.host" . }}:{{ .Values.database.port }}/$(MARIADB_DATABASE)'
 {{- if .Values.database.ssl.enabled }}
 - name: DATABASE_SSL_ENABLED
   value: 'true'

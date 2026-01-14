@@ -1,5 +1,7 @@
 {{- if eq .Values.database.type "internal" }}
+{{- if .Values.database.internal.image.pullPolicy }}
 {{- include "terminal.validateEnum" (dict "value" .Values.database.internal.image.pullPolicy "allowed" (list "Always" "IfNotPresent" "Never") "name" "database.internal.image.pullPolicy") }}
+{{- end }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -48,14 +50,14 @@ spec:
       containers:
         - name: mariadb
           image: "{{ .Values.database.internal.image.registry }}/{{ .Values.database.internal.image.repository }}:{{ .Values.database.internal.image.tag }}"
-          imagePullPolicy: {{ .Values.database.internal.image.pullPolicy }}
+          imagePullPolicy: {{ include "terminal.imagePullPolicy" (dict "pullPolicy" .Values.database.internal.image.pullPolicy "tag" .Values.database.internal.image.tag) }}
           {{- with .Values.database.internal.containerSecurityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
             - name: mariadb
-              containerPort: 3306
+              containerPort: {{ .Values.database.port }}
               protocol: TCP
           env:
             {{- include "terminal.env.mariadb" . | nindent 12 }}

@@ -199,10 +199,6 @@ app.kubernetes.io/component: {{ .component }}
 {{- end -}}
 {{- end -}}
 
-{{- define "terminal.database.port" -}}
-{{- .Values.database.port | default 3306 -}}
-{{- end -}}
-
 {{/* Enum validation helper - validates that a value is one of the allowed options */}}
 {{/* Usage: include "terminal.validateEnum" (dict "value" .Values.foo "allowed" (list "a" "b" "c") "name" "foo") */}}
 {{- define "terminal.validateEnum" -}}
