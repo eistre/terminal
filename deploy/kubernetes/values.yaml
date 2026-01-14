@@ -254,6 +254,15 @@ database:
         drop:
           - ALL
 
+  # SSL/TLS configuration
+  # Note: Not supported for 'internal' type - use 'operator' or 'external' for TLS support
+  ssl:
+    enabled: false
+    # Custom CA secret for 'external' type with private CA
+    # Ignored for 'operator' type (uses auto-generated secrets)
+    caSecretName: ''
+    caSecretKey: ca.crt
+
   # MariaDB Operator configuration (only used when type: operator)
   # Requires mariadb-operator to be installed in the cluster
   # See: https://github.com/mariadb-operator/mariadb-operator
@@ -282,6 +291,7 @@ database:
     metrics:
       enabled: false
 
-    # TLS configuration
-    tls:
-      enabled: false
+    # Labels used to identify the MariaDB Operator controller pods
+    # Used for NetworkPolicy to allow operator access to managed databases
+    controllerLabels:
+      app.kubernetes.io/name: mariadb-operator

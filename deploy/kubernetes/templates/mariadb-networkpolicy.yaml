@@ -1,4 +1,4 @@
-{{- if and .Values.networkPolicy.enabled (ne .Values.database.type "external") }}
+{{- if and .Values.networkPolicy.enabled (or (eq .Values.database.type "internal") (eq .Values.database.type "operator")) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -33,4 +33,15 @@ spec:
       ports:
         - protocol: TCP
           port: 3306
+    {{- if eq .Values.database.type "operator" }}
+    # Allow connections from the MariaDB Operator controller (any namespace)
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              {{- toYaml .Values.database.operator.controllerLabels | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: 3306
+    {{- end }}
 {{- end }}

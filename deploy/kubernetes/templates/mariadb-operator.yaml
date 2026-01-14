@@ -40,5 +40,5 @@ spec:
     enabled: {{ .Values.database.operator.metrics.enabled }}
 
   tls:
-    enabled: {{ .Values.database.operator.tls.enabled }}
+    enabled: {{ .Values.database.ssl.enabled }}
 {{- end }}

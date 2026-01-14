@@ -47,7 +47,15 @@ spec:
               env:
                 {{- include "terminal.env.common" . | nindent 16 }}
                 {{- include "terminal.env.database" . | nindent 16 }}
+              {{- with (include "terminal.database.ssl.volumeMounts" .) }}
+              volumeMounts:
+                {{- . | nindent 16 }}
+              {{- end }}
               {{- with .Values.cronjobs.databaseCleanup.resources }}
               resources:
                 {{- toYaml . | nindent 16 }}
               {{- end }}
+          {{- with (include "terminal.database.ssl.volumes" .) }}
+          volumes:
+            {{- . | nindent 12 }}
+          {{- end }}

@@ -65,6 +65,10 @@ spec:
             {{- include "terminal.env.auth" . | nindent 12 }}
             {{- include "terminal.env.mailer" . | nindent 12 }}
             {{- include "terminal.env.provisioner" . | nindent 12 }}
+          {{- with (include "terminal.database.ssl.volumeMounts" .) }}
+          volumeMounts:
+            {{- . | nindent 12 }}
+          {{- end }}
           {{- with .Values.web.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
@@ -85,3 +89,7 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
+      {{- with (include "terminal.database.ssl.volumes" .) }}
+      volumes:
+        {{- . | nindent 8 }}
+      {{- end }}

@@ -23,27 +23,6 @@ auth:
     labelEn: University of Tartu # Button label shown to users
     labelEt: Tartu Ülikool # Button label shown to users
 
-# Database - using MariaDB Operator (available on UTHPC)
-# Alternative: set type to 'internal' to use StatefulSet instead
-database:
-  type: operator
-
-  credentials:
-    password: '' # TODO: Generate a secure password
-    rootPassword: '' # TODO: Generate a secure root password
-
-  operator:
-    storage:
-      size: 1Gi
-      # storageClassName: '' # Empty uses (cluster default)
-
-    resources:
-      requests:
-        cpu: 300m
-        memory: 256Mi
-      limits:
-        memory: 1Gi
-
 # Mailer - Azure Communication Services
 mailer:
   type: azure
@@ -70,3 +49,30 @@ web:
       - hosts:
           - terminal.example.com # TODO: Change to your domain
         secretName: terminal.example.com # TODO: Change to your domain
+
+# Database - using MariaDB Operator (available on UTHPC)
+# Alternative: set type to 'internal' to use StatefulSet instead
+database:
+  type: operator
+
+  credentials:
+    password: '' # TODO: Generate a secure password
+    rootPassword: '' # TODO: Generate a secure root password
+
+  ssl:
+    enabled: true
+
+  operator:
+    storage:
+      size: 1Gi
+      # storageClassName: '' # Empty uses (cluster default)
+
+    resources:
+      requests:
+        cpu: 300m
+        memory: 256Mi
+      limits:
+        memory: 1Gi
+
+    metrics:
+      enabled: true
