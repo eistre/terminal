@@ -15,11 +15,13 @@ provisioner:
   containerExpiryMinutes: 10
 
 database:
+  type: internal
   credentials:
     password: local-dev-password
     rootPassword: local-dev-root-password
-  persistence:
-    enabled: false
+  internal:
+    persistence:
+      enabled: false
 
 cronjobs:
   databaseCleanup:

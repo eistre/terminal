@@ -1,0 +1,78 @@
+# University of Tartu HPC Kubernetes Deployment Example
+#
+# Usage:
+#   Copy this file to 'values-hpc.yaml' and edit the configuration values as needed.
+#
+#   helm install terminal ./deploy/kubernetes \
+#     -f ./deploy/kubernetes/values-hpc.yaml \
+#     -n <your-namespace>
+#
+# Documentation: https://docs.hpc.ut.ee/public/kubernetes/
+
+auth:
+  secret: '' # TODO: Generate with: openssl rand -base64 32
+  admin:
+    email: '' # TODO: Admin account email - used for logging in
+    password: '' # TODO: Admin account password
+
+  # Microsoft OAuth (University of Tartu Azure AD)
+  microsoft:
+    clientId: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx # TODO: Azure App Registration client ID
+    clientSecret: '' # TODO: Azure App Registration secret
+    tenantId: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx # TODO: UT tenant ID (or 'organizations' for multi-tenant)
+    labelEn: University of Tartu # Button label shown to users
+    labelEt: Tartu Ülikool # Button label shown to users
+
+# Mailer - Azure Communication Services
+mailer:
+  type: azure
+  azure:
+    connectionString: '' # TODO: Azure Communication Services connection string
+    sender: noreply@your-domain.com # TODO: Verified sender address
+
+# Web application
+web:
+  ingress:
+    enabled: true
+    annotations:
+      # Required for UTHPC - issues TLS certificates via Vault
+      cert-manager.io/cluster-issuer: vault-hpc-issuer
+      # WebSocket support - extends default 60s timeout for long-lived connections
+      nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
+      nginx.ingress.kubernetes.io/proxy-send-timeout: '3600'
+    hosts:
+      - host: terminal.example.com # TODO: Change to your domain
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - terminal.example.com # TODO: Change to your domain
+        secretName: terminal.example.com # TODO: Change to your domain
+
+# Database - using MariaDB Operator (available on UTHPC)
+# Alternative: set type to 'internal' to use StatefulSet instead
+database:
+  type: operator
+
+  credentials:
+    password: '' # TODO: Generate a secure password
+    rootPassword: '' # TODO: Generate a secure root password
+
+  ssl:
+    enabled: true
+
+  operator:
+    storage:
+      size: 1Gi
+      # storageClassName: '' # Empty uses (cluster default)
+
+    resources:
+      requests:
+        cpu: 300m
+        memory: 256Mi
+      limits:
+        memory: 1Gi
+
+    metrics:
+      enabled: true

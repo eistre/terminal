@@ -1,4 +1,4 @@
-{{- if .Values.networkPolicy.enabled }}
+{{- if and .Values.networkPolicy.enabled (or (eq .Values.database.type "internal") (eq .Values.database.type "operator")) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -8,7 +8,12 @@ metadata:
 spec:
   podSelector:
     matchLabels:
+      {{- if eq .Values.database.type "internal" }}
       {{- include "terminal.mariadb.selectorLabels" . | nindent 6 }}
+      {{- else if eq .Values.database.type "operator" }}
+      app.kubernetes.io/name: mariadb
+      app.kubernetes.io/instance: {{ include "terminal.mariadb.fullname" . }}
+      {{- end }}
   policyTypes:
     - Ingress
   ingress:
@@ -19,7 +24,7 @@ spec:
               {{- include "terminal.web.selectorLabels" . | nindent 14 }}
       ports:
         - protocol: TCP
-          port: 3306
+          port: {{ .Values.database.port }}
     # Allow connections from the database cleanup cronjob
     - from:
         - podSelector:
@@ -27,5 +32,16 @@ spec:
               {{- include "terminal.databaseCleanup.selectorLabels" . | nindent 14 }}
       ports:
         - protocol: TCP
-          port: 3306
+          port: {{ .Values.database.port }}
+    {{- if eq .Values.database.type "operator" }}
+    # Allow connections from the MariaDB Operator controller (any namespace)
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              {{- toYaml .Values.database.operator.controllerLabels | nindent 14 }}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.database.port }}
+    {{- end }}
 {{- end }}

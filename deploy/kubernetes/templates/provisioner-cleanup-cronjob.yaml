@@ -1,3 +1,8 @@
+{{- include "terminal.validateEnum" (dict "value" .Values.cronjobs.concurrencyPolicy "allowed" (list "Forbid" "Allow" "Replace") "name" "cronjobs.concurrencyPolicy") }}
+{{- include "terminal.validateEnum" (dict "value" .Values.cronjobs.restartPolicy "allowed" (list "OnFailure" "Never") "name" "cronjobs.restartPolicy") }}
+{{- if .Values.cronjobs.provisionerCleanup.image.pullPolicy }}
+{{- include "terminal.validateEnum" (dict "value" .Values.cronjobs.provisionerCleanup.image.pullPolicy "allowed" (list "Always" "IfNotPresent" "Never") "name" "cronjobs.provisionerCleanup.image.pullPolicy") }}
+{{- end }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -22,6 +27,7 @@ spec:
             {{- include "terminal.provisionerCleanup.labels" . | nindent 12 }}
         spec:
           serviceAccountName: {{ include "terminal.provisionerCleanup.serviceAccountName" . }}
+          automountServiceAccountToken: true
           restartPolicy: {{ .Values.cronjobs.restartPolicy }}
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:
@@ -34,7 +40,7 @@ spec:
           containers:
             - name: provisioner-cleanup
               image: "{{ .Values.cronjobs.provisionerCleanup.image.registry }}/{{ .Values.cronjobs.provisionerCleanup.image.repository }}:{{ .Values.cronjobs.provisionerCleanup.image.tag }}"
-              imagePullPolicy: {{ .Values.cronjobs.provisionerCleanup.image.pullPolicy | default (ternary "Always" "IfNotPresent" (eq .Values.cronjobs.provisionerCleanup.image.tag "latest")) }}
+              imagePullPolicy: {{ include "terminal.imagePullPolicy" (dict "pullPolicy" .Values.cronjobs.provisionerCleanup.image.pullPolicy "tag" .Values.cronjobs.provisionerCleanup.image.tag) }}
               {{- with .Values.cronjobs.containerSecurityContext }}
               securityContext:
                 {{- toYaml . | nindent 16 }}

@@ -103,7 +103,6 @@ jobs:
           images: ${{ matrix.image }}
           tags: |
             type=raw,value=latest
-            type=sha,prefix=sha-
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -134,4 +133,3 @@ jobs:
           package-name: ${{ matrix.package }}
           package-type: container
           min-versions-to-keep: 3
-          ignore-versions: ^latest$ # Never delete 'latest'

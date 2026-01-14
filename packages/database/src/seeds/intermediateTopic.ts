@@ -123,13 +123,13 @@ export const intermediateTopic: TopicSeed = {
       translations: [
         {
           title: 'Task 7 - Working with files',
-          content: 'Download the file `https://raw.githubusercontent.com/eistre/terminal/master/apps/web/public/tammsaare.txt` and only show the number of words in it.',
+          content: 'Download the file `https://raw.githubusercontent.com/eistre/terminal/master/resources/tammsaare.txt` and only show the number of words in it.',
           hint: 'Use the `wget` and `wc` commands',
           locale: 'en',
         },
         {
           title: 'Ülesanne 7 - Failide töötlemine',
-          content: 'Lae alla fail `https://raw.githubusercontent.com/eistre/terminal/master/apps/web/public/tammsaare.txt` ja kuva ainult selles esinevate sõnade arv.',
+          content: 'Lae alla fail `https://raw.githubusercontent.com/eistre/terminal/master/resources/tammsaare.txt` ja kuva ainult selles esinevate sõnade arv.',
           hint: 'Kasuta käske `wget` ja `wc`',
           locale: 'et',
         },

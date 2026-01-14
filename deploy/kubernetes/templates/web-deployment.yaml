@@ -1,3 +1,6 @@
+{{- if .Values.web.image.pullPolicy }}
+{{- include "terminal.validateEnum" (dict "value" .Values.web.image.pullPolicy "allowed" (list "Always" "IfNotPresent" "Never") "name" "web.image.pullPolicy") }}
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5,7 +8,9 @@ metadata:
   labels:
     {{- include "terminal.web.labels" . | nindent 4 }}
 spec:
+  {{- if not .Values.web.autoscaling.enabled }}
   replicas: {{ .Values.web.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "terminal.web.selectorLabels" . | nindent 6 }}
@@ -16,12 +21,15 @@ spec:
         {{- with .Values.web.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- with .Values.web.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/terminal-configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/terminal-secret.yaml") . | sha256sum }}
+        {{- with .Values.web.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
     spec:
       serviceAccountName: {{ include "terminal.web.serviceAccountName" . }}
+      automountServiceAccountToken: true
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -45,7 +53,7 @@ spec:
       containers:
         - name: web
           image: "{{ .Values.web.image.registry }}/{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
-          imagePullPolicy: {{ .Values.web.image.pullPolicy | default (ternary "Always" "IfNotPresent" (eq .Values.web.image.tag "latest")) }}
+          imagePullPolicy: {{ include "terminal.imagePullPolicy" (dict "pullPolicy" .Values.web.image.pullPolicy "tag" .Values.web.image.tag) }}
           {{- with .Values.web.containerSecurityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
@@ -60,6 +68,10 @@ spec:
             {{- include "terminal.env.auth" . | nindent 12 }}
             {{- include "terminal.env.mailer" . | nindent 12 }}
             {{- include "terminal.env.provisioner" . | nindent 12 }}
+          {{- with (include "terminal.database.ssl.volumeMounts" .) }}
+          volumeMounts:
+            {{- . | nindent 12 }}
+          {{- end }}
           {{- with .Values.web.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
@@ -80,3 +92,7 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
+      {{- with (include "terminal.database.ssl.volumes" .) }}
+      volumes:
+        {{- . | nindent 8 }}
+      {{- end }}

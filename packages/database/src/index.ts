@@ -1,4 +1,6 @@
 import type { DatabaseSchema } from '@terminal/env/schemas';
+import type { SslOptions } from 'mysql2';
+import { readFileSync } from 'node:fs';
 import { drizzle } from 'drizzle-orm/mysql2';
 import { createEmailDomainsRepo } from './email-domains/index.js';
 import { createOps } from './ops/index.js';
@@ -6,8 +8,25 @@ import { createTopicsRepo } from './topics/index.js';
 import { createUsersRepo } from './users/index.js';
 import { createVerificationsRepo } from './verifications/index.js';
 
+function buildSslConfig(options: DatabaseSchema): SslOptions | undefined {
+  if (!options.DATABASE_SSL_ENABLED) {
+    return undefined;
+  }
+
+  return {
+    ca: options.DATABASE_SSL_CA ? readFileSync(options.DATABASE_SSL_CA, 'utf-8') : undefined,
+    rejectUnauthorized: true,
+  };
+}
+
 export function createDatabase(options: DatabaseSchema) {
-  const db = drizzle(options.DATABASE_URL, {
+  const ssl = buildSslConfig(options);
+
+  const db = drizzle({
+    connection: {
+      uri: options.DATABASE_URL,
+      ssl,
+    },
     casing: 'snake_case',
   });
 
@@ -18,6 +37,9 @@ export function createDatabase(options: DatabaseSchema) {
     users: createUsersRepo(db),
     verifications: createVerificationsRepo(db),
     ops: createOps(db),
+    close: () => {
+      db.$client.end();
+    },
   };
 }
 

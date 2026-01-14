@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-    <UPageCard :ui="{ body: 'w-full' }">
+    <UPageCard :ui="{ container: 'overflow-hidden' }">
       <template #title>
         <div class="flex items-center justify-between">
           <div class="font-semibold">
@@ -119,7 +119,7 @@ onBeforeUnmount(() => {
 
       <USeparator />
 
-      <div class="flex min-w-0 flex-col gap-4 lg:max-h-[calc(100vh-var(--ui-content-offset))]">
+      <div class="flex min-w-0 flex-col gap-4 lg:max-h-[calc(max(500px,100vh-var(--ui-content-offset)))]">
         <UButton
           :variant="selection.kind === 'topic' ? 'subtle' : 'ghost'"
           :color="selection.kind === 'topic' ? 'primary' : 'neutral'"

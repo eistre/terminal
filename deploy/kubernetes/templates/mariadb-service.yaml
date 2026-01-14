@@ -1,3 +1,4 @@
+{{- if eq .Values.database.type "internal" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,9 +8,10 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 3306
+    - port: {{ .Values.database.port }}
       targetPort: mariadb
       protocol: TCP
       name: mariadb
   selector:
     {{- include "terminal.mariadb.selectorLabels" . | nindent 4 }}
+{{- end }}

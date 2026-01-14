@@ -1,3 +1,7 @@
+{{- if eq .Values.database.type "internal" }}
+{{- if .Values.database.internal.image.pullPolicy }}
+{{- include "terminal.validateEnum" (dict "value" .Values.database.internal.image.pullPolicy "allowed" (list "Always" "IfNotPresent" "Never") "name" "database.internal.image.pullPolicy") }}
+{{- end }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -14,10 +18,10 @@ spec:
     metadata:
       labels:
         {{- include "terminal.mariadb.labels" . | nindent 8 }}
-        {{- with .Values.database.podLabels }}
+        {{- with .Values.database.internal.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- with .Values.database.podAnnotations }}
+      {{- with .Values.database.internal.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -26,33 +30,34 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.database.nodeSelector }}
+      {{- with .Values.database.internal.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.database.affinity }}
+      {{- with .Values.database.internal.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.database.tolerations }}
+      {{- with .Values.database.internal.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.database.podSecurityContext }}
+      {{- with .Values.database.internal.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      automountServiceAccountToken: false
       containers:
         - name: mariadb
-          image: "{{ .Values.database.image.registry }}/{{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}"
-          imagePullPolicy: {{ .Values.database.image.pullPolicy }}
-          {{- with .Values.database.containerSecurityContext }}
+          image: "{{ .Values.database.internal.image.registry }}/{{ .Values.database.internal.image.repository }}:{{ .Values.database.internal.image.tag }}"
+          imagePullPolicy: {{ include "terminal.imagePullPolicy" (dict "pullPolicy" .Values.database.internal.image.pullPolicy "tag" .Values.database.internal.image.tag) }}
+          {{- with .Values.database.internal.containerSecurityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
             - name: mariadb
-              containerPort: 3306
+              containerPort: {{ .Values.database.port }}
               protocol: TCP
           env:
             {{- include "terminal.env.mariadb" . | nindent 12 }}
@@ -63,7 +68,7 @@ spec:
               mountPath: /run/mysqld
             - name: mariadb-tmp
               mountPath: /tmp
-          {{- with .Values.database.resources }}
+          {{- with .Values.database.internal.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -87,7 +92,7 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 3
       volumes:
-        {{- if not .Values.database.persistence.enabled }}
+        {{- if not .Values.database.internal.persistence.enabled }}
         - name: mariadb-data
           emptyDir: {}
         {{- end }}
@@ -95,7 +100,7 @@ spec:
           emptyDir: {}
         - name: mariadb-tmp
           emptyDir: {}
-  {{- if .Values.database.persistence.enabled }}
+  {{- if .Values.database.internal.persistence.enabled }}
   volumeClaimTemplates:
     - metadata:
         name: mariadb-data
@@ -103,13 +108,14 @@ spec:
           {{- include "terminal.mariadb.labels" . | nindent 10 }}
       spec:
         accessModes:
-          - {{ .Values.database.persistence.accessMode }}
-        {{- if eq .Values.database.persistence.storageClass "-" }}
+          - {{ .Values.database.internal.persistence.accessMode }}
+        {{- if eq .Values.database.internal.persistence.storageClass "-" }}
         storageClassName: ""
-        {{- else if .Values.database.persistence.storageClass }}
-        storageClassName: {{ .Values.database.persistence.storageClass | quote }}
+        {{- else if .Values.database.internal.persistence.storageClass }}
+        storageClassName: {{ .Values.database.internal.persistence.storageClass | quote }}
         {{- end }}
         resources:
           requests:
-            storage: {{ .Values.database.persistence.size | quote }}
+            storage: {{ .Values.database.internal.persistence.size | quote }}
   {{- end }}
+{{- end }}

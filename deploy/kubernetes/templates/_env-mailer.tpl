@@ -2,7 +2,8 @@
 
 {{- /* ConfigMap data */ -}}
 {{- define "terminal.env.mailer.data" -}}
-MAILER_TYPE: {{ required "mailer.type is required" .Values.mailer.type | quote }}
+{{- include "terminal.validateEnum" (dict "value" .Values.mailer.type "allowed" (list "noop" "azure") "name" "mailer.type") -}}
+MAILER_TYPE: {{ .Values.mailer.type | quote }}
 MAILER_MAX_RETRIES: {{ .Values.mailer.maxRetries | quote }}
 MAILER_CONCURRENCY_LIMIT: {{ .Values.mailer.concurrencyLimit | quote }}
 MAILER_RESEND_COOLDOWN_SECONDS: {{ .Values.mailer.resendCooldownSeconds | quote }}
