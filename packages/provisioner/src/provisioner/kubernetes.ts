@@ -35,6 +35,10 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   private readonly releaseName: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_RELEASE_NAME'];
   private readonly sessionPrefix: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_SESSION_PREFIX'];
   private readonly serviceType: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_SERVICE_TYPE'];
+  private readonly cpuRequest: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_CPU_REQUEST'];
+  private readonly cpuLimit: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_CPU_LIMIT'];
+  private readonly memoryRequest: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_MEMORY_REQUEST'];
+  private readonly memoryLimit: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_MEMORY_LIMIT'];
 
   constructor(logger: Logger, config: KubernetesProvisionerSchema) {
     super(logger.child({ module: 'kubernetes', namespace: config.PROVISIONER_KUBERNETES_NAMESPACE }), config);
@@ -59,6 +63,10 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     this.releaseName = config.PROVISIONER_KUBERNETES_RELEASE_NAME;
     this.sessionPrefix = config.PROVISIONER_KUBERNETES_SESSION_PREFIX;
     this.serviceType = config.PROVISIONER_KUBERNETES_SERVICE_TYPE;
+    this.cpuRequest = config.PROVISIONER_KUBERNETES_CPU_REQUEST;
+    this.cpuLimit = config.PROVISIONER_KUBERNETES_CPU_LIMIT;
+    this.memoryRequest = config.PROVISIONER_KUBERNETES_MEMORY_REQUEST;
+    this.memoryLimit = config.PROVISIONER_KUBERNETES_MEMORY_LIMIT;
   }
 
   protected override async listContainersImpl(): Promise<ContainerInfo[]> {
@@ -359,7 +367,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
 
     while (Date.now() - startTime < KubernetesProvisioner.MAX_POD_READY_WAIT_MS) {
       const { status, pod } = await this.getContainerStatus(podName);
-      logger.trace({ status }, 'Polled pod staus');
+      logger.trace({ status }, 'Polled pod status');
 
       if (status === 'RUNNING') {
         logger.debug('Pod is running and ready');
@@ -435,12 +443,12 @@ export class KubernetesProvisioner extends AbstractProvisioner {
           }],
           resources: {
             requests: {
-              memory: this.containerMemoryRequest,
-              cpu: this.containerCpuRequest,
+              memory: this.memoryRequest,
+              cpu: this.cpuRequest,
             },
             limits: {
-              memory: this.containerMemoryLimit,
-              cpu: this.containerCpuLimit,
+              memory: this.memoryLimit,
+              cpu: this.cpuLimit,
             },
           },
           readinessProbe: {

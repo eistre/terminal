@@ -19,10 +19,6 @@ export abstract class AbstractProvisioner implements Provisioner {
   protected readonly appName: BaseProvisionerSchema['PROVISIONER_APP_NAME'];
   protected readonly containerExpiryMinutes: BaseProvisionerSchema['PROVISIONER_CONTAINER_EXPIRY_MINUTES'];
   protected readonly containerImage: BaseProvisionerSchema['PROVISIONER_CONTAINER_IMAGE'];
-  protected readonly containerMemoryRequest: BaseProvisionerSchema['PROVISIONER_CONTAINER_MEMORY_REQUEST'];
-  protected readonly containerCpuRequest: BaseProvisionerSchema['PROVISIONER_CONTAINER_CPU_REQUEST'];
-  protected readonly containerMemoryLimit: BaseProvisionerSchema['PROVISIONER_CONTAINER_MEMORY_LIMIT'];
-  protected readonly containerCpuLimit: BaseProvisionerSchema['PROVISIONER_CONTAINER_CPU_LIMIT'];
 
   private readonly concurrencyLimit;
   private readonly maxRetries;
@@ -35,10 +31,6 @@ export abstract class AbstractProvisioner implements Provisioner {
     this.appName = config.PROVISIONER_APP_NAME;
     this.containerExpiryMinutes = config.PROVISIONER_CONTAINER_EXPIRY_MINUTES;
     this.containerImage = config.PROVISIONER_CONTAINER_IMAGE;
-    this.containerMemoryRequest = config.PROVISIONER_CONTAINER_MEMORY_REQUEST;
-    this.containerCpuRequest = config.PROVISIONER_CONTAINER_CPU_REQUEST;
-    this.containerMemoryLimit = config.PROVISIONER_CONTAINER_MEMORY_LIMIT;
-    this.containerCpuLimit = config.PROVISIONER_CONTAINER_CPU_LIMIT;
   }
 
   /**

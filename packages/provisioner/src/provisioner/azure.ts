@@ -7,7 +7,7 @@ import type { ContainerStatus } from './abstract.js';
 import { ContainerInstanceManagementClient } from '@azure/arm-containerinstance';
 import { isRestError } from '@azure/core-rest-pipeline';
 import { CosmosClient, ErrorResponse } from '@azure/cosmos';
-import { ClientSecretCredential, DefaultAzureCredential } from '@azure/identity';
+import { DefaultAzureCredential } from '@azure/identity';
 import { AbstractProvisioner } from './abstract.js';
 
 interface SshKeyDocument {
@@ -42,35 +42,24 @@ export class AzureProvisioner extends AbstractProvisioner {
   private readonly cosmos: Container;
   private readonly resourceGroup: AzureProvisionerSchema['PROVISIONER_AZURE_RESOURCE_GROUP'];
   private readonly location: AzureProvisionerSchema['PROVISIONER_AZURE_LOCATION'];
-  private readonly ipType: AzureProvisionerSchema['PROVISIONER_AZURE_IP_TYPE'];
-  private readonly subnetId: AzureProvisionerSchema['PROVISIONER_AZURE_SUBNET_ID'];
+  private readonly cpu: AzureProvisionerSchema['PROVISIONER_AZURE_CPU'];
+  private readonly memoryGb: AzureProvisionerSchema['PROVISIONER_AZURE_MEMORY_GB'];
 
   constructor(logger: Logger, config: AzureProvisionerSchema) {
     super(logger.child({ module: 'azure', resourceGroup: config.PROVISIONER_AZURE_RESOURCE_GROUP }), config);
 
-    // Initialize Azure credentials
-    const credential = config.PROVISIONER_AZURE_USE_MANAGED_IDENTITY
-      ? new DefaultAzureCredential()
-      : new ClientSecretCredential(
-          config.PROVISIONER_AZURE_TENANT_ID!,
-          config.PROVISIONER_AZURE_CLIENT_ID!,
-          config.PROVISIONER_AZURE_CLIENT_SECRET!,
-        );
+    const credential = new DefaultAzureCredential();
+    const cosmosClient = new CosmosClient({
+      endpoint: config.PROVISIONER_AZURE_COSMOS_ENDPOINT,
+      aadCredentials: credential,
+    });
 
-    // Initialize ACI client
     this.aci = new ContainerInstanceManagementClient(credential, config.PROVISIONER_AZURE_SUBSCRIPTION_ID);
-    this.logger.debug('Initialized Azure Container Instance client');
-
-    // TODO think about this
-    // Initialize Cosmos DB client
-    const cosmosClient = new CosmosClient({ connectionString: config.PROVISIONER_AZURE_COSMOS_ENDPOINT });
     this.cosmos = cosmosClient.database(config.PROVISIONER_AZURE_COSMOS_DATABASE).container(config.PROVISIONER_AZURE_COSMOS_CONTAINER);
-    this.logger.debug('Initialized Cosmos DB client');
-
     this.resourceGroup = config.PROVISIONER_AZURE_RESOURCE_GROUP;
     this.location = config.PROVISIONER_AZURE_LOCATION;
-    this.ipType = config.PROVISIONER_AZURE_IP_TYPE;
-    this.subnetId = config.PROVISIONER_AZURE_SUBNET_ID;
+    this.cpu = config.PROVISIONER_AZURE_CPU;
+    this.memoryGb = config.PROVISIONER_AZURE_MEMORY_GB;
   }
 
   protected override async listContainersImpl(): Promise<ContainerInfo[]> {
@@ -327,60 +316,56 @@ export class AzureProvisioner extends AbstractProvisioner {
     await this.cosmos.items.upsert(sshKeyDocument);
     logger.debug('Stored private key with TTL');
 
-    // Create the container group
-    await this.aci.containerGroups.beginCreateOrUpdateAndWait(
-      this.resourceGroup,
-      containerGroupName,
-      {
-        location: this.location,
-        tags: {
-          [AzureProvisioner.TAG_APP_NAME]: this.appName,
-          [AzureProvisioner.TAG_COMPONENT]: AbstractProvisioner.COMPONENT_VALUE,
-          [AzureProvisioner.TAG_VERSION]: this.getVersionLabel(),
-          [AzureProvisioner.TAG_MANAGED_BY]: AbstractProvisioner.MANAGED_BY_VALUE,
-          [AzureProvisioner.TAG_USER_ID]: userId,
-          [AzureProvisioner.TAG_EXPIRES_AT]: expiresAt.toISOString(),
-        },
-        osType: 'Linux',
-        restartPolicy: 'OnFailure',
-        ipAddress: {
-          type: this.ipType,
-          ports: [{
-            protocol: 'TCP',
-            port: AzureProvisioner.CONTAINER_SSH_PORT,
-          }],
-        },
-        // TODO perhaps we can do this cleaner
-        // Subnet is only used for private IP
-        ...(this.ipType === 'Private' && {
-          subnetIds: [{
-            id: this.subnetId!,
-          }],
-        }),
-        containers: [{
-          name: AzureProvisioner.CONTAINER_NAME,
-          image: this.containerImage,
-          environmentVariables: [{
-            name: 'SSH_PUBLIC_KEY',
-            value: publicKey,
-          }],
-          ports: [{
-            protocol: 'TCP',
-            port: AzureProvisioner.CONTAINER_SSH_PORT,
-          }],
-          resources: {
-            requests: {
-              cpu: AzureProvisioner.parseCpu(this.containerCpuRequest),
-              memoryInGB: AzureProvisioner.parseMemory(this.containerMemoryRequest),
-            },
-            limits: {
-              cpu: AzureProvisioner.parseCpu(this.containerCpuLimit),
-              memoryInGB: AzureProvisioner.parseMemory(this.containerMemoryLimit),
-            },
+    // Create the container group, cleaning up Cosmos key on failure
+    try {
+      await this.aci.containerGroups.beginCreateOrUpdateAndWait(
+        this.resourceGroup,
+        containerGroupName,
+        {
+          location: this.location,
+          tags: {
+            [AzureProvisioner.TAG_APP_NAME]: this.appName,
+            [AzureProvisioner.TAG_COMPONENT]: AbstractProvisioner.COMPONENT_VALUE,
+            [AzureProvisioner.TAG_VERSION]: this.getVersionLabel(),
+            [AzureProvisioner.TAG_MANAGED_BY]: AbstractProvisioner.MANAGED_BY_VALUE,
+            [AzureProvisioner.TAG_USER_ID]: userId,
+            [AzureProvisioner.TAG_EXPIRES_AT]: expiresAt.toISOString(),
           },
-        }],
-      },
-    );
+          osType: 'Linux',
+          restartPolicy: 'OnFailure',
+          ipAddress: {
+            type: 'Public',
+            ports: [{
+              protocol: 'TCP',
+              port: AzureProvisioner.CONTAINER_SSH_PORT,
+            }],
+          },
+          containers: [{
+            name: AzureProvisioner.CONTAINER_NAME,
+            image: this.containerImage,
+            environmentVariables: [{
+              name: 'SSH_PUBLIC_KEY',
+              value: publicKey,
+            }],
+            ports: [{
+              protocol: 'TCP',
+              port: AzureProvisioner.CONTAINER_SSH_PORT,
+            }],
+            resources: {
+              requests: {
+                cpu: this.cpu,
+                memoryInGB: this.memoryGb,
+              },
+            },
+          }],
+        },
+      );
+    }
+    catch (error) {
+      // Clean up orphaned Cosmos key if container creation failed
+      await this.cosmos.item(userId, userId).delete().catch(() => {});
+      throw error;
+    }
 
     logger.info('Container created');
     return privateKey;
@@ -434,35 +419,6 @@ export class AzureProvisioner extends AbstractProvisioner {
 
   private getContainerGroupName(userId: string): string {
     return `${this.appName}-session-${AbstractProvisioner.sanitizeUserId(userId)}`;
-  }
-
-  // TODO perhaps we should split these up into different env vars? Or have different rules according to which mode we're on
-  /**
-   * Parse Kubernetes-style CPU format (e.g., "100m", "0.5", "1") to number of cores for Azure.
-   */
-  private static parseCpu(cpu: string): number {
-    if (cpu.endsWith('m')) {
-      // Millicores to cores
-      return Number.parseInt(cpu.slice(0, -1), 10) / 1000;
-    }
-    return Number.parseFloat(cpu);
-  }
-
-  /**
-   * Parse Kubernetes-style memory format (e.g., "64Mi", "128Mi", "1Gi") to GB for Azure.
-   */
-  private static parseMemory(memory: string): number {
-    if (memory.endsWith('Gi')) {
-      return Number.parseFloat(memory.slice(0, -2));
-    }
-    if (memory.endsWith('Mi')) {
-      return Number.parseFloat(memory.slice(0, -2)) / 1024;
-    }
-    if (memory.endsWith('Ki')) {
-      return Number.parseFloat(memory.slice(0, -2)) / (1024 * 1024);
-    }
-    // Assume bytes
-    return Number.parseFloat(memory) / (1024 * 1024 * 1024);
   }
 
   private static isNotFound(error: unknown): boolean {
