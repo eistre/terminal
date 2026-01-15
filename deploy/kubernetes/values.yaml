@@ -51,16 +51,14 @@ provisioner:
   containerExpiryMinutes: 30
   containerImage: ghcr.io/eistre/terminal-container:latest
 
-  container:
-    cpuRequest: 100m
-    cpuLimit: 250m
-    memoryRequest: 64Mi
-    memoryLimit: 128Mi
-
   kubernetes:
     serviceType: headless # Options: headless, nodePort
     # headless: connects directly to pod IP
     # nodePort: creates NodePort service, connects via node IP
+    cpuRequest: 100m
+    cpuLimit: 250m
+    memoryRequest: 64Mi
+    memoryLimit: 128Mi
 
 # Web application
 web:

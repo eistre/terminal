@@ -6,9 +6,9 @@ export const authSchema = z.object({
   AUTH_USER_EXPIRY_DAYS: z.coerce.number().int().min(1).default(90),
 
   // Microsoft OAuth - all fields required together, or none
-  AUTH_MICROSOFT_CLIENT_ID: z.string().min(1).optional(),
+  AUTH_MICROSOFT_CLIENT_ID: z.uuid().optional(),
   AUTH_MICROSOFT_CLIENT_SECRET: z.string().min(1).optional(),
-  AUTH_MICROSOFT_TENANT_ID: z.string().min(1).optional(),
+  AUTH_MICROSOFT_TENANT_ID: z.uuid().or(z.enum(['common', 'organizations', 'consumers'])).optional(),
   AUTH_MICROSOFT_LABEL_EN: z.string().min(1).optional(),
   AUTH_MICROSOFT_LABEL_ET: z.string().min(1).optional(),
 

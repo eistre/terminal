@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Set container hostname for consistent shell prompt (user@terminal)
+hostname terminal
+
 USER_NAME="user"
 USER_HOME="/home/$USER_NAME"
 SSH_DIR="$USER_HOME/.ssh"
