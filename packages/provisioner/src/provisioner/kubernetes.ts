@@ -218,9 +218,8 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     const expiresAt = AbstractProvisioner.getExpiresAt(this.containerExpiryMinutes);
     logger.debug({ expiresAt: expiresAt.toISOString() }, 'Updating pod expiration');
 
-    // "app.terminal.io/expires-at" becomes "app~0terminal~0io~1expires-at"
+    // "app.terminal.io/expires-at" becomes "app.terminal.io~1expires-at"
     const annotation = KubernetesProvisioner.EXPIRES_AT_ANNOTATION_KEY
-      .replace(/\./g, '~0')
       .replace(/\//g, '~1');
 
     await this.api.patchNamespacedPod({
