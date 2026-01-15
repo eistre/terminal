@@ -37,8 +37,6 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build packages
-        run: pnpm build --filter "@terminal/*"
       - name: Run typecheck
         run: pnpm typecheck
 
