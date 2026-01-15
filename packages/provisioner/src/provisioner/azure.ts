@@ -22,7 +22,6 @@ interface ContainerGroupStatusResult {
 }
 
 export class AzureProvisioner extends AbstractProvisioner {
-  private static readonly CONTAINER_GROUP_PREFIX = 'terminal-session';
   private static readonly CONTAINER_NAME = 'terminal';
   private static readonly CONTAINER_SSH_PORT = 22;
   private static readonly CONTAINER_SSH_USERNAME = 'user';
@@ -43,6 +42,7 @@ export class AzureProvisioner extends AbstractProvisioner {
   private readonly cosmos: Container;
   private readonly resourceGroup: AzureProvisionerSchema['PROVISIONER_AZURE_RESOURCE_GROUP'];
   private readonly location: AzureProvisionerSchema['PROVISIONER_AZURE_LOCATION'];
+  private readonly ipType: AzureProvisionerSchema['PROVISIONER_AZURE_IP_TYPE'];
   private readonly subnetId: AzureProvisionerSchema['PROVISIONER_AZURE_SUBNET_ID'];
 
   constructor(logger: Logger, config: AzureProvisionerSchema) {
@@ -61,16 +61,15 @@ export class AzureProvisioner extends AbstractProvisioner {
     this.aci = new ContainerInstanceManagementClient(credential, config.PROVISIONER_AZURE_SUBSCRIPTION_ID);
     this.logger.debug('Initialized Azure Container Instance client');
 
+    // TODO think about this
     // Initialize Cosmos DB client
-    const cosmosClient = new CosmosClient({
-      endpoint: config.PROVISIONER_AZURE_COSMOS_ENDPOINT,
-      aadCredentials: credential,
-    });
+    const cosmosClient = new CosmosClient({ connectionString: config.PROVISIONER_AZURE_COSMOS_ENDPOINT });
     this.cosmos = cosmosClient.database(config.PROVISIONER_AZURE_COSMOS_DATABASE).container(config.PROVISIONER_AZURE_COSMOS_CONTAINER);
     this.logger.debug('Initialized Cosmos DB client');
 
     this.resourceGroup = config.PROVISIONER_AZURE_RESOURCE_GROUP;
     this.location = config.PROVISIONER_AZURE_LOCATION;
+    this.ipType = config.PROVISIONER_AZURE_IP_TYPE;
     this.subnetId = config.PROVISIONER_AZURE_SUBNET_ID;
   }
 
@@ -111,7 +110,7 @@ export class AzureProvisioner extends AbstractProvisioner {
   }
 
   protected override async ensureContainerExistsImpl(userId: string): Promise<ConnectionInfo> {
-    const containerGroupName = AzureProvisioner.getContainerGroupName(userId);
+    const containerGroupName = this.getContainerGroupName(userId);
     const logger = this.logger.child({ userId, containerGroupName });
     let containerGroup: ContainerGroup;
     let privateKey: string;
@@ -180,7 +179,7 @@ export class AzureProvisioner extends AbstractProvisioner {
   }
 
   protected override async updateContainerExpirationImpl(userId: string): Promise<void> {
-    const containerGroupName = AzureProvisioner.getContainerGroupName(userId);
+    const containerGroupName = this.getContainerGroupName(userId);
     const logger = this.logger.child({ userId, containerGroupName });
 
     const expiresAt = AbstractProvisioner.getExpiresAt(this.containerExpiryMinutes);
@@ -215,7 +214,7 @@ export class AzureProvisioner extends AbstractProvisioner {
   }
 
   protected override async deleteContainerImpl(userId: string): Promise<void> {
-    const containerGroupName = AzureProvisioner.getContainerGroupName(userId);
+    const containerGroupName = this.getContainerGroupName(userId);
     const logger = this.logger.child({ userId, containerGroupName });
 
     try {
@@ -308,7 +307,7 @@ export class AzureProvisioner extends AbstractProvisioner {
   }
 
   private async createContainerGroup(userId: string): Promise<string> {
-    const containerGroupName = AzureProvisioner.getContainerGroupName(userId);
+    const containerGroupName = this.getContainerGroupName(userId);
     const logger = this.logger.child({ userId, containerGroupName });
 
     // Generate ephemeral keypair
@@ -345,15 +344,19 @@ export class AzureProvisioner extends AbstractProvisioner {
         osType: 'Linux',
         restartPolicy: 'OnFailure',
         ipAddress: {
-          type: 'Private',
+          type: this.ipType,
           ports: [{
             protocol: 'TCP',
             port: AzureProvisioner.CONTAINER_SSH_PORT,
           }],
         },
-        subnetIds: [{
-          id: this.subnetId,
-        }],
+        // TODO perhaps we can do this cleaner
+        // Subnet is only used for private IP
+        ...(this.ipType === 'Private' && {
+          subnetIds: [{
+            id: this.subnetId!,
+          }],
+        }),
         containers: [{
           name: AzureProvisioner.CONTAINER_NAME,
           image: this.containerImage,
@@ -429,10 +432,11 @@ export class AzureProvisioner extends AbstractProvisioner {
     AbstractProvisioner.abortRetry(`Timeout waiting for container ${containerGroupName} to be deleted after ${AzureProvisioner.MAX_CONTAINER_DELETION_WAIT_MS}ms`);
   }
 
-  private static getContainerGroupName(userId: string): string {
-    return `${AzureProvisioner.CONTAINER_GROUP_PREFIX}-${AbstractProvisioner.sanitizeUserId(userId)}`;
+  private getContainerGroupName(userId: string): string {
+    return `${this.appName}-session-${AbstractProvisioner.sanitizeUserId(userId)}`;
   }
 
+  // TODO perhaps we should split these up into different env vars? Or have different rules according to which mode we're on
   /**
    * Parse Kubernetes-style CPU format (e.g., "100m", "0.5", "1") to number of cores for Azure.
    */
