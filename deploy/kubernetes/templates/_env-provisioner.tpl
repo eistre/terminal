@@ -16,6 +16,7 @@ PROVISIONER_CONTAINER_CPU_LIMIT: {{ .Values.provisioner.container.cpuLimit | quo
 PROVISIONER_KUBERNETES_NAMESPACE: {{ .Release.Namespace | quote }}
 PROVISIONER_APP_NAME: {{ include "terminal.name" . | quote }}
 PROVISIONER_KUBERNETES_RELEASE_NAME: {{ .Release.Name | quote }}
+PROVISIONER_KUBERNETES_SESSION_PREFIX: {{ include "terminal.session.fullname" . | quote }}
 PROVISIONER_KUBERNETES_SERVICE_TYPE: {{ .Values.provisioner.kubernetes.serviceType | quote }}
 {{- end -}}
 
@@ -81,6 +82,11 @@ PROVISIONER_KUBERNETES_SERVICE_TYPE: {{ .Values.provisioner.kubernetes.serviceTy
     configMapKeyRef:
       name: {{ include "terminal.configmap.fullname" . }}
       key: PROVISIONER_KUBERNETES_RELEASE_NAME
+- name: PROVISIONER_KUBERNETES_SESSION_PREFIX
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "terminal.configmap.fullname" . }}
+      key: PROVISIONER_KUBERNETES_SESSION_PREFIX
 - name: PROVISIONER_KUBERNETES_SERVICE_TYPE
   valueFrom:
     configMapKeyRef:

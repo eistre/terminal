@@ -1,18 +1,18 @@
+import type { V1Pod, V1Secret, V1Service } from '@kubernetes/client-node';
 import type { KubernetesProvisionerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
 import type { ConnectionInfo, ContainerInfo } from '../provisioner.js';
 import type { ContainerStatus } from './abstract.js';
 import { Buffer } from 'node:buffer';
-import * as k8s from '@kubernetes/client-node';
+import { ApiException, CoreV1Api, KubeConfig } from '@kubernetes/client-node';
 import { AbstractProvisioner } from './abstract.js';
 
 interface PodStatusResult {
   status: ContainerStatus;
-  pod?: k8s.V1Pod;
+  pod?: V1Pod;
 }
 
 export class KubernetesProvisioner extends AbstractProvisioner {
-  private static readonly POD_PREFIX = 'terminal-session';
   private static readonly CONTAINER_NAME = 'terminal';
   private static readonly CONTAINER_SSH_PORT = 22;
   private static readonly CONTAINER_SSH_USERNAME = 'user';
@@ -30,16 +30,17 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   private static readonly MAX_POD_DELETION_WAIT_MS = 2 * 60 * 1000; // 2 minutes
   private static readonly POLL_INTERVAL_MS = 1000; // 1 second - K8s API updates quickly
 
-  private readonly api: k8s.CoreV1Api;
+  private readonly api: CoreV1Api;
   private readonly namespace: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_NAMESPACE'];
   private readonly releaseName: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_RELEASE_NAME'];
+  private readonly sessionPrefix: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_SESSION_PREFIX'];
   private readonly serviceType: KubernetesProvisionerSchema['PROVISIONER_KUBERNETES_SERVICE_TYPE'];
 
   constructor(logger: Logger, config: KubernetesProvisionerSchema) {
     super(logger.child({ module: 'kubernetes', namespace: config.PROVISIONER_KUBERNETES_NAMESPACE }), config);
 
     // Initialize Kubernetes API client
-    const kc = new k8s.KubeConfig();
+    const kc = new KubeConfig();
     if (config.KUBERNETES_SERVICE_HOST) {
       kc.loadFromCluster();
       this.logger.debug('Loaded Kubernetes config from cluster');
@@ -53,9 +54,10 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       this.logger.debug('Loaded default Kubernetes config');
     }
 
-    this.api = kc.makeApiClient(k8s.CoreV1Api);
+    this.api = kc.makeApiClient(CoreV1Api);
     this.namespace = config.PROVISIONER_KUBERNETES_NAMESPACE;
     this.releaseName = config.PROVISIONER_KUBERNETES_RELEASE_NAME;
+    this.sessionPrefix = config.PROVISIONER_KUBERNETES_SESSION_PREFIX;
     this.serviceType = config.PROVISIONER_KUBERNETES_SERVICE_TYPE;
   }
 
@@ -98,9 +100,9 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   }
 
   protected override async ensureContainerExistsImpl(userId: string): Promise<ConnectionInfo> {
-    const podName = KubernetesProvisioner.getPodName(userId);
+    const podName = this.getPodName(userId);
     const logger = this.logger.child({ userId, podName });
-    let pod: k8s.V1Pod;
+    let pod: V1Pod;
     let privateKey: string;
 
     logger.info('Ensuring pod exists');
@@ -167,7 +169,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         break;
       }
       case 'nodePort': {
-        const serviceName = KubernetesProvisioner.getServiceName(userId);
+        const serviceName = this.getServiceName(userId);
         const service = await this.api.readNamespacedService({ name: serviceName, namespace: this.namespace });
         const nodePort = service.spec
           ?.ports
@@ -202,7 +204,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   }
 
   protected override async updateContainerExpirationImpl(userId: string): Promise<void> {
-    const podName = KubernetesProvisioner.getPodName(userId);
+    const podName = this.getPodName(userId);
     const logger = this.logger.child({ userId, podName });
 
     const expiresAt = AbstractProvisioner.getExpiresAt(this.containerExpiryMinutes);
@@ -227,7 +229,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   }
 
   protected override async deleteContainerImpl(userId: string): Promise<void> {
-    const podName = KubernetesProvisioner.getPodName(userId);
+    const podName = this.getPodName(userId);
     const logger = this.logger.child({ userId, podName });
 
     try {
@@ -288,7 +290,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
   }
 
   private async getPrivateKey(userId: string): Promise<string> {
-    const secretName = KubernetesProvisioner.getSecretName(userId);
+    const secretName = this.getSecretName(userId);
     const logger = this.logger.child({ userId, secretName });
 
     try {
@@ -351,7 +353,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     return privateKey;
   }
 
-  private async waitUntilPodReady(podName: string): Promise<k8s.V1Pod> {
+  private async waitUntilPodReady(podName: string): Promise<V1Pod> {
     const startTime = Date.now();
     const logger = this.logger.child({ podName });
 
@@ -397,12 +399,12 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     AbstractProvisioner.abortRetry(`Timeout waiting for pod ${podName} to be deleted after ${KubernetesProvisioner.MAX_POD_DELETION_WAIT_MS}ms`);
   }
 
-  private buildPodManifest(userId: string, publicKey: string): k8s.V1Pod {
+  private buildPodManifest(userId: string, publicKey: string): V1Pod {
     return {
       apiVersion: 'v1',
       kind: 'Pod',
       metadata: {
-        name: KubernetesProvisioner.getPodName(userId),
+        name: this.getPodName(userId),
         namespace: this.namespace,
         labels: {
           [KubernetesProvisioner.APP_NAME_LABEL_KEY]: this.appName,
@@ -419,7 +421,6 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         },
       },
       spec: {
-        hostname: KubernetesProvisioner.CONTAINER_NAME,
         containers: [{
           name: KubernetesProvisioner.CONTAINER_NAME,
           image: this.containerImage,
@@ -456,12 +457,12 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     };
   }
 
-  private buildServiceManifest(userId: string, podUid: string): k8s.V1Service {
+  private buildServiceManifest(userId: string, podUid: string): V1Service {
     return {
       apiVersion: 'v1',
       kind: 'Service',
       metadata: {
-        name: KubernetesProvisioner.getServiceName(userId),
+        name: this.getServiceName(userId),
         namespace: this.namespace,
         labels: {
           [KubernetesProvisioner.APP_NAME_LABEL_KEY]: this.appName,
@@ -474,7 +475,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         ownerReferences: [{
           apiVersion: 'v1',
           kind: 'Pod',
-          name: KubernetesProvisioner.getPodName(userId),
+          name: this.getPodName(userId),
           uid: podUid,
           controller: true,
           blockOwnerDeletion: false,
@@ -498,12 +499,12 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     };
   }
 
-  private buildSecretManifest(userId: string, podUid: string, privateKey: string): k8s.V1Secret {
+  private buildSecretManifest(userId: string, podUid: string, privateKey: string): V1Secret {
     return {
       apiVersion: 'v1',
       kind: 'Secret',
       metadata: {
-        name: KubernetesProvisioner.getSecretName(userId),
+        name: this.getSecretName(userId),
         namespace: this.namespace,
         labels: {
           [KubernetesProvisioner.APP_NAME_LABEL_KEY]: this.appName,
@@ -516,7 +517,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         ownerReferences: [{
           apiVersion: 'v1',
           kind: 'Pod',
-          name: KubernetesProvisioner.getPodName(userId),
+          name: this.getPodName(userId),
           uid: podUid,
           controller: false,
           blockOwnerDeletion: true,
@@ -529,19 +530,19 @@ export class KubernetesProvisioner extends AbstractProvisioner {
     };
   }
 
-  private static getPodName(userId: string): string {
-    return `${KubernetesProvisioner.POD_PREFIX}-${AbstractProvisioner.sanitizeUserId(userId)}`;
+  private getPodName(userId: string): string {
+    return `${this.sessionPrefix}-${AbstractProvisioner.sanitizeUserId(userId)}`;
   }
 
-  private static getServiceName(userId: string): string {
-    return `${KubernetesProvisioner.POD_PREFIX}-${AbstractProvisioner.sanitizeUserId(userId)}-svc`;
+  private getServiceName(userId: string): string {
+    return `${this.sessionPrefix}-${AbstractProvisioner.sanitizeUserId(userId)}-svc`;
   }
 
-  private static getSecretName(userId: string): string {
-    return `${KubernetesProvisioner.POD_PREFIX}-${AbstractProvisioner.sanitizeUserId(userId)}-secret`;
+  private getSecretName(userId: string): string {
+    return `${this.sessionPrefix}-${AbstractProvisioner.sanitizeUserId(userId)}-secret`;
   }
 
   private static isNotFound(error: unknown): boolean {
-    return error instanceof k8s.ApiException && error.code === 404;
+    return error instanceof ApiException && error.code === 404;
   }
 }
