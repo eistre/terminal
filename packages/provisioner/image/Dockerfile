@@ -13,9 +13,12 @@ RUN sed -i "s/#PasswordAuthentication yes/PasswordAuthentication no/" /etc/ssh/s
 
 # Create user
 RUN useradd -m -s /bin/bash user && echo "user:password123" | chpasswd
+USER user
+
+# Copy custom bashrc with 'terminal' as hostname in prompt
+COPY packages/provisioner/image/.bashrc /home/user/.bashrc
 
 # Create files for tasks
-USER user
 RUN touch /home/user/simple_file && echo "This is a Simple file" > /home/user/simple_file
 RUN mkdir /home/user/.temporary && echo "Temporary file" > /home/user/.temporary/temporary_file
 
