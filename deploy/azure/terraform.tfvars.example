@@ -1,0 +1,61 @@
+# ==============================================================================
+# Azure Terraform Configuration Example
+# ==============================================================================
+# Copy this file to terraform.tfvars and fill in the values.
+# DO NOT commit terraform.tfvars to version control - it contains secrets.
+# ==============================================================================
+
+# ==============================================================================
+# Required Variables
+# ==============================================================================
+
+# Azure subscription ID (find in Azure Portal or run: az account show --query id -o tsv)
+subscription_id = "00000000-0000-0000-0000-000000000000"
+
+# Azure region (recommended: westeurope, northeurope, or swedencentral for Estonia)
+location = "westeurope"
+
+# Admin user credentials for the application
+admin_email    = "admin@example.com"
+admin_password = "your-secure-admin-password"
+
+# Authentication secret (minimum 32 characters)
+# Generate with: openssl rand -base64 32
+auth_secret = "your-32-character-or-longer-secret-key"
+
+# MySQL admin password (minimum 8 characters)
+# Generate with: openssl rand -base64 16
+mysql_admin_password = "your-mysql-password"
+
+# GitHub Container Registry credentials
+# Create a PAT at: https://github.com/settings/tokens with read:packages scope
+ghcr_username = "your-github-username"
+ghcr_token    = "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# ==============================================================================
+# Optional Variables (defaults shown)
+# ==============================================================================
+
+# Prefix for all resource names (3-13 lowercase alphanumeric, starts with letter)
+# resource_prefix = "terminal"
+
+# Container image configuration
+# container_image_registry = "ghcr.io"
+# container_image_owner    = "eistre"
+# container_image_tag      = "latest"
+
+# MySQL SKU (B_Standard_B1ms is the cheapest at ~$6/month)
+# mysql_sku = "B_Standard_B1ms"
+
+# Application log level (error, warn, info, debug, trace)
+# log_level = "info"
+
+# Terminal container expiry in minutes
+# container_expiry_minutes = 30
+
+# Days until inactive users are deleted
+# user_expiry_days = 90
+
+# ACI container resources (0.1 increments)
+# aci_cpu = 0.1
+# aci_memory_gb = 0.1
