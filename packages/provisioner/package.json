@@ -18,6 +18,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@azure/arm-containerinstance": "catalog:",
+    "@azure/core-rest-pipeline": "catalog:",
+    "@azure/cosmos": "catalog:",
+    "@azure/identity": "catalog:",
     "@kubernetes/client-node": "catalog:",
     "p-limit": "catalog:",
     "p-retry": "catalog:",
