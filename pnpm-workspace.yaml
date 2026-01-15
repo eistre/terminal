@@ -13,8 +13,8 @@ catalog:
   '@azure/arm-containerinstance': ^9.1.0
   '@azure/communication-email': ^1.1.0
   '@azure/core-rest-pipeline': ^1.22.2
-  '@azure/cosmos': ^4.9.0
   '@azure/identity': ^4.13.0
+  '@azure/keyvault-secrets': ^4.10.0
   '@iconify-json/flag': ^1.2.10
   '@iconify-json/lucide': ^1.2.85
   '@kubernetes/client-node': ^1.4.0

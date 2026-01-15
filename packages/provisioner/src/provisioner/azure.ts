@@ -1,20 +1,13 @@
 import type { ContainerGroup } from '@azure/arm-containerinstance';
-import type { Container } from '@azure/cosmos';
 import type { AzureProvisionerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
 import type { ConnectionInfo, ContainerInfo } from '../provisioner.js';
 import type { ContainerStatus } from './abstract.js';
 import { ContainerInstanceManagementClient } from '@azure/arm-containerinstance';
 import { isRestError } from '@azure/core-rest-pipeline';
-import { CosmosClient, ErrorResponse } from '@azure/cosmos';
 import { DefaultAzureCredential } from '@azure/identity';
+import { SecretClient } from '@azure/keyvault-secrets';
 import { AbstractProvisioner } from './abstract.js';
-
-interface SshKeyDocument {
-  id: string;
-  privateKey: string;
-  ttl: number;
-}
 
 interface ContainerGroupStatusResult {
   status: ContainerStatus;
@@ -39,7 +32,7 @@ export class AzureProvisioner extends AbstractProvisioner {
   private static readonly POLL_INTERVAL_MS = 5000; // 5 seconds - ACI state updates are slower than K8s
 
   private readonly aci: ContainerInstanceManagementClient;
-  private readonly cosmos: Container;
+  private readonly secrets: SecretClient;
   private readonly resourceGroup: AzureProvisionerSchema['PROVISIONER_AZURE_RESOURCE_GROUP'];
   private readonly location: AzureProvisionerSchema['PROVISIONER_AZURE_LOCATION'];
   private readonly cpu: AzureProvisionerSchema['PROVISIONER_AZURE_CPU'];
@@ -47,15 +40,10 @@ export class AzureProvisioner extends AbstractProvisioner {
 
   constructor(logger: Logger, config: AzureProvisionerSchema) {
     super(logger.child({ module: 'azure', resourceGroup: config.PROVISIONER_AZURE_RESOURCE_GROUP }), config);
-
     const credential = new DefaultAzureCredential();
-    const cosmosClient = new CosmosClient({
-      endpoint: config.PROVISIONER_AZURE_COSMOS_ENDPOINT,
-      aadCredentials: credential,
-    });
 
     this.aci = new ContainerInstanceManagementClient(credential, config.PROVISIONER_AZURE_SUBSCRIPTION_ID);
-    this.cosmos = cosmosClient.database(config.PROVISIONER_AZURE_COSMOS_DATABASE).container(config.PROVISIONER_AZURE_COSMOS_CONTAINER);
+    this.secrets = new SecretClient(config.PROVISIONER_AZURE_KEYVAULT_URL, credential);
     this.resourceGroup = config.PROVISIONER_AZURE_RESOURCE_GROUP;
     this.location = config.PROVISIONER_AZURE_LOCATION;
     this.cpu = config.PROVISIONER_AZURE_CPU;
@@ -172,7 +160,6 @@ export class AzureProvisioner extends AbstractProvisioner {
     const logger = this.logger.child({ userId, containerGroupName });
 
     const expiresAt = AbstractProvisioner.getExpiresAt(this.containerExpiryMinutes);
-    const ttlSeconds = this.containerExpiryMinutes * 60;
     logger.debug({ expiresAt: expiresAt.toISOString() }, 'Updating container expiration');
 
     // Update the expires-at tag
@@ -185,26 +172,19 @@ export class AzureProvisioner extends AbstractProvisioner {
       [AzureProvisioner.TAG_EXPIRES_AT]: expiresAt.toISOString(),
     };
 
-    await Promise.all([
-      this.aci.containerGroups.update(
-        this.resourceGroup,
-        containerGroupName,
-        { tags: updatedTags },
-      ),
-      // Update TTL in Cosmos DB (patch operation resets TTL countdown)
-      this.cosmos.item(userId, userId)
-        .patch([{ op: 'replace', path: '/ttl', value: ttlSeconds }])
-        .catch((error: unknown) => {
-          logger.warn({ error }, 'Failed to update Cosmos DB TTL');
-        }),
-    ]);
+    await this.aci.containerGroups.update(
+      this.resourceGroup,
+      containerGroupName,
+      { tags: updatedTags },
+    );
 
     logger.info('Container expiration updated');
   }
 
   protected override async deleteContainerImpl(userId: string): Promise<void> {
     const containerGroupName = this.getContainerGroupName(userId);
-    const logger = this.logger.child({ userId, containerGroupName });
+    const secretName = this.getSecretName(userId);
+    const logger = this.logger.child({ userId, containerGroupName, secretName });
 
     try {
       logger.debug('Deleting container');
@@ -221,16 +201,17 @@ export class AzureProvisioner extends AbstractProvisioner {
     }
 
     try {
-      await this.cosmos.item(userId, userId).delete();
-      logger.debug('SSH key deleted from Cosmos DB');
+      // Delete the secret - it will auto-purge after Key Vault retention period
+      await this.secrets.beginDeleteSecret(secretName);
+      logger.debug('SSH key deleted from Key Vault');
     }
     catch (error: unknown) {
       if (AzureProvisioner.isNotFound(error)) {
-        logger.debug('SSH key not found in Cosmos DB, treating as already deleted');
+        logger.debug('SSH key not found in Key Vault, treating as already deleted');
         return;
       }
 
-      logger.warn({ error }, 'Failed to delete SSH key from Cosmos DB');
+      logger.warn({ error }, 'Failed to delete SSH key from Key Vault');
     }
   }
 
@@ -274,21 +255,22 @@ export class AzureProvisioner extends AbstractProvisioner {
   }
 
   private async getPrivateKey(userId: string): Promise<string> {
-    const logger = this.logger.child({ userId });
+    const secretName = this.getSecretName(userId);
+    const logger = this.logger.child({ userId, secretName });
 
     try {
-      const { resource } = await this.cosmos.item(userId, userId).read<SshKeyDocument>();
+      const secret = await this.secrets.getSecret(secretName);
 
-      if (!resource?.privateKey) {
-        AbstractProvisioner.abortRetry(`SSH key entry for user ${userId} missing privateKey`);
+      if (!secret.value) {
+        AbstractProvisioner.abortRetry(`SSH key secret for user ${userId} has no value`);
       }
 
-      logger.trace('Retrieved private key from Cosmos DB');
-      return resource.privateKey;
+      logger.trace('Retrieved private key from Key Vault');
+      return secret.value;
     }
     catch (error: unknown) {
       if (AzureProvisioner.isNotFound(error)) {
-        AbstractProvisioner.abortRetry(`SSH key for user ${userId} not found in Cosmos DB`);
+        AbstractProvisioner.abortRetry(`SSH key for user ${userId} not found in Key Vault`);
       }
 
       throw error;
@@ -297,26 +279,20 @@ export class AzureProvisioner extends AbstractProvisioner {
 
   private async createContainerGroup(userId: string): Promise<string> {
     const containerGroupName = this.getContainerGroupName(userId);
-    const logger = this.logger.child({ userId, containerGroupName });
+    const secretName = this.getSecretName(userId);
+    const logger = this.logger.child({ userId, containerGroupName, secretName });
 
     // Generate ephemeral keypair
     const { publicKey, privateKey } = AbstractProvisioner.generateKeypair();
     logger.debug('Generated ephemeral Ed25519 keypair');
 
     const expiresAt = AbstractProvisioner.getExpiresAt(this.containerExpiryMinutes);
-    const ttlSeconds = this.containerExpiryMinutes * 60;
 
-    // Store the private key in Cosmos DB with TTL
-    const sshKeyDocument: SshKeyDocument = {
-      id: userId,
-      privateKey,
-      ttl: ttlSeconds,
-    };
+    // Store the private key in Key Vault
+    await this.secrets.setSecret(secretName, privateKey);
+    logger.debug('Stored private key in Key Vault');
 
-    await this.cosmos.items.upsert(sshKeyDocument);
-    logger.debug('Stored private key with TTL');
-
-    // Create the container group, cleaning up Cosmos key on failure
+    // Create the container group, cleaning up key on failure
     try {
       await this.aci.containerGroups.beginCreateOrUpdateAndWait(
         this.resourceGroup,
@@ -362,8 +338,10 @@ export class AzureProvisioner extends AbstractProvisioner {
       );
     }
     catch (error) {
-      // Clean up orphaned Cosmos key if container creation failed
-      await this.cosmos.item(userId, userId).delete().catch(() => {});
+      // Clean up orphaned key if container creation failed
+      this.secrets.beginDeleteSecret(secretName).catch((error) => {
+        logger.warn({ error }, 'Failed to clean up orphaned SSH key');
+      });
       throw error;
     }
 
@@ -421,12 +399,11 @@ export class AzureProvisioner extends AbstractProvisioner {
     return `${this.appName}-session-${AbstractProvisioner.sanitizeUserId(userId)}`;
   }
 
+  private getSecretName(userId: string): string {
+    return `${this.appName}-session-${AbstractProvisioner.sanitizeUserId(userId)}-secret`;
+  }
+
   private static isNotFound(error: unknown): boolean {
-    // ACI uses RestError with statusCode
-    if (isRestError(error) && error.statusCode === 404) {
-      return true;
-    }
-    // Cosmos uses ErrorResponse with code
-    return error instanceof ErrorResponse && error.code === 404;
+    return isRestError(error) && error.statusCode === 404;
   }
 }
