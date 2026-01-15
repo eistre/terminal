@@ -232,7 +232,7 @@ export class AzureProvisioner extends AbstractProvisioner {
       // Abort on terminal failure states
       if (provisioningState === 'Failed') {
         const events = containerGroup.containers?.[0]?.instanceView?.events ?? [];
-        AbstractProvisioner.abortRetry(`Container failed: ${events[events.length - 1].message || 'Unknown'}`);
+        AbstractProvisioner.abortRetry(`Container failed: ${events[-1]?.message || 'Unknown'}`);
       }
       if (instanceState === 'Terminated') {
         AbstractProvisioner.abortRetry(`Container terminated unexpectedly`);
