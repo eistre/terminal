@@ -52,8 +52,8 @@ mailer:
   # SMTP (required when type: smtp)
   smtp:
     host: ''
-    port: ''
-    secure: ''
+    port: 587
+    secure: false
     user: ''
     pass: ''
 

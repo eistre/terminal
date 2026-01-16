@@ -15,11 +15,16 @@ function toggleLocale() {
 </script>
 
 <template>
-  <UTooltip arrow :text="tooltipText">
-    <UButton
-      :icon="flagIcon"
-      variant="ghost"
-      @click="toggleLocale"
-    />
-  </UTooltip>
+  <ClientOnly>
+    <UTooltip arrow :text="tooltipText">
+      <UButton
+        :icon="flagIcon"
+        variant="ghost"
+        @click="toggleLocale"
+      />
+    </UTooltip>
+    <template #fallback>
+      <USkeleton class="w-10 h-10 rounded-full bg-primary/75" />
+    </template>
+  </ClientOnly>
 </template>

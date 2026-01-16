@@ -14,6 +14,8 @@ MAILER_RESEND_COOLDOWN_SECONDS: {{ .Values.mailer.resendCooldownSeconds | quote 
   {{- if not .Values.mailer.smtp.host -}}
     {{- fail "mailer.smtp.host is required when mailer.type=smtp" -}}
   {{- end -}}
+{{- end -}}
+{{- if eq .Values.mailer.type "smtp" }}
 MAILER_SENDER: {{ .Values.mailer.sender | quote }}
 MAILER_SMTP_HOST: {{ .Values.mailer.smtp.host | quote }}
 MAILER_SMTP_PORT: {{ .Values.mailer.smtp.port | quote }}
@@ -81,7 +83,7 @@ MAILER_SMTP_PASS: {{ .Values.mailer.smtp.pass | quote }}
     configMapKeyRef:
       name: {{ include "terminal.configmap.fullname" . }}
       key: MAILER_SMTP_SECURE
-  {{- if .Values.mailer.smtp.user }}
+{{- if .Values.mailer.smtp.user }}
 - name: MAILER_SMTP_USER
   valueFrom:
     secretKeyRef:
@@ -92,6 +94,6 @@ MAILER_SMTP_PASS: {{ .Values.mailer.smtp.pass | quote }}
     secretKeyRef:
       name: {{ include "terminal.secret.fullname" . }}
       key: MAILER_SMTP_PASS
-  {{- end }}
+{{- end }}
 {{- end }}
 {{- end -}}
