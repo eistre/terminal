@@ -18,7 +18,9 @@ auth:
   # Keycloak OIDC (UTHPC SSO)
   keycloak:
     clientId: '' # TODO: Keycloak client ID
-    clientSecret: '' # TODO: Keycloak client secret
+    clientSecret: '' # TODO: Keycloak client secret (omit if using existingSecret)
+    existingSecret: '' # Optional: existing Secret name that contains the client secret
+    existingSecretKey: '' # Required when existingSecret is set
     issuer: '' # TODO: e.g., https://keycloak.example.edu/realms/your-realm
     labelEn: University of Tartu # Button label shown to users
     labelEt: Tartu Ülikool # Button label shown to users

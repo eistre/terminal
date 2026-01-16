@@ -31,10 +31,12 @@ auth:
     labelEn: '' # Button label for English locale
     labelEt: '' # Button label for Estonian locale
 
-  # Keycloak OIDC (Optional - first 3 fields required together or none)
+  # Keycloak OIDC (Optional - clientId + issuer + (clientSecret or existingSecret+existingSecretKey))
   keycloak:
     clientId: ''
     clientSecret: ''
+    existingSecret: '' # Optional: use an existing Secret for clientSecret
+    existingSecretKey: '' # Required when existingSecret is set
     issuer: '' # e.g., https://keycloak.example.edu/realms/your-realm
     labelEn: '' # Button label for English locale
     labelEt: '' # Button label for Estonian locale

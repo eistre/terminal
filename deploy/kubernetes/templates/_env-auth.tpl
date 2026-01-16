@@ -34,16 +34,20 @@ AUTH_KEYCLOAK_LABEL_ET: {{ .Values.auth.keycloak.labelEt | quote }}
 {{- if and (gt $msftDefined 0) (lt $msftDefined 3) -}}
   {{- fail "Microsoft OIDC requires all 3 fields (clientId, clientSecret, tenantId) or none" -}}
 {{- end -}}
-{{- /* Validate Keycloak OIDC - all 3 fields required or none */ -}}
-{{- $keycloakFields := list .Values.auth.keycloak.clientId .Values.auth.keycloak.clientSecret .Values.auth.keycloak.issuer -}}
-{{- $keycloakDefined := 0 -}}
-{{- range $keycloakFields -}}
-  {{- if . -}}
-    {{- $keycloakDefined = add1 $keycloakDefined -}}
-  {{- end -}}
+{{- /* Validate Keycloak OIDC - clientId + issuer + (clientSecret or existingSecret+existingSecretKey) */ -}}
+{{- $keycloakClientId := .Values.auth.keycloak.clientId -}}
+{{- $keycloakIssuer := .Values.auth.keycloak.issuer -}}
+{{- $keycloakClientSecret := .Values.auth.keycloak.clientSecret -}}
+{{- $keycloakExistingSecret := .Values.auth.keycloak.existingSecret -}}
+{{- $keycloakExistingSecretKey := .Values.auth.keycloak.existingSecretKey -}}
+{{- $keycloakHasExisting := and $keycloakExistingSecret $keycloakExistingSecretKey -}}
+{{- $keycloakHasSecret := or $keycloakClientSecret $keycloakHasExisting -}}
+{{- $keycloakAny := or $keycloakClientId $keycloakIssuer $keycloakClientSecret $keycloakExistingSecret $keycloakExistingSecretKey -}}
+{{- if and $keycloakAny (not (and $keycloakClientId $keycloakIssuer $keycloakHasSecret)) -}}
+  {{- fail "Keycloak OIDC requires clientId, issuer, and either clientSecret or existingSecret+existingSecretKey" -}}
 {{- end -}}
-{{- if and (gt $keycloakDefined 0) (lt $keycloakDefined 3) -}}
-  {{- fail "Keycloak OIDC requires all 3 fields (clientId, clientSecret, issuer) or none" -}}
+{{- if and $keycloakClientSecret $keycloakHasExisting -}}
+  {{- fail "Keycloak OIDC: set either clientSecret or existingSecret, not both" -}}
 {{- end -}}
 AUTH_SECRET: {{ required "auth.secret is required (min 32 characters)" .Values.auth.secret | quote }}
 AUTH_ADMIN_EMAIL: {{ required "auth.admin.email is required" .Values.auth.admin.email | quote }}
@@ -55,7 +59,9 @@ AUTH_MICROSOFT_TENANT_ID: {{ .Values.auth.microsoft.tenantId | quote }}
 {{- end }}
 {{- if .Values.auth.keycloak.clientId }}
 AUTH_KEYCLOAK_CLIENT_ID: {{ .Values.auth.keycloak.clientId | quote }}
+{{- if not .Values.auth.keycloak.existingSecret }}
 AUTH_KEYCLOAK_CLIENT_SECRET: {{ .Values.auth.keycloak.clientSecret | quote }}
+{{- end }}
 AUTH_KEYCLOAK_ISSUER: {{ .Values.auth.keycloak.issuer | quote }}
 {{- end }}
 {{- end -}}
@@ -133,11 +139,19 @@ AUTH_KEYCLOAK_ISSUER: {{ .Values.auth.keycloak.issuer | quote }}
     secretKeyRef:
       name: {{ include "terminal.secret.fullname" . }}
       key: AUTH_KEYCLOAK_CLIENT_ID
+{{- if .Values.auth.keycloak.existingSecret }}
+- name: AUTH_KEYCLOAK_CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.auth.keycloak.existingSecret | quote }}
+      key: {{ .Values.auth.keycloak.existingSecretKey | quote }}
+{{- else }}
 - name: AUTH_KEYCLOAK_CLIENT_SECRET
   valueFrom:
     secretKeyRef:
       name: {{ include "terminal.secret.fullname" . }}
       key: AUTH_KEYCLOAK_CLIENT_SECRET
+{{- end }}
 - name: AUTH_KEYCLOAK_ISSUER
   valueFrom:
     secretKeyRef:
