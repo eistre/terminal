@@ -44,8 +44,8 @@ university authentication.
 | `@terminal/env` | Environment variable validation using Zod |
 | `@terminal/evaluator` | Task completion evaluator using regex pattern matching |
 | `@terminal/logger` | Logging utility using Pino |
-| `@terminal/mailer` | Email service abstraction (Azure Communication Services) |
-| `@terminal/provisioner` | Kubernetes container provisioner for Ubuntu sandbox pods |
+| `@terminal/mailer` | Email service abstraction (Azure Communication Services, SMTP) |
+| `@terminal/provisioner` | Container provisioner for Ubuntu sandbox pods (Kubernetes, Azure Container Instances) |
 | `@terminal/session` | SSH session management for container connections |
 | `@terminal/eslint` | Shared ESLint configuration |
 | `@terminal/typescript` | Shared TypeScript configuration |

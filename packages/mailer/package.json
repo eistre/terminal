@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@azure/communication-email": "catalog:",
+    "nodemailer": "catalog:",
     "p-limit": "catalog:",
     "p-retry": "catalog:"
   },
@@ -27,6 +28,7 @@
     "@terminal/eslint": "workspace:*",
     "@terminal/logger": "workspace:*",
     "@terminal/typescript": "workspace:*",
+    "@types/nodemailer": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:"
   }

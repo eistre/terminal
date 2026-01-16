@@ -1,6 +1,6 @@
 import type { ConnectionInfo } from '@terminal/provisioner';
 import type { ClientChannel, ConnectConfig } from 'ssh2';
-import type { Session } from './session.ts';
+import type { Session } from './session.js';
 import { Client } from 'ssh2';
 import { SessionImpl } from './session.js';
 

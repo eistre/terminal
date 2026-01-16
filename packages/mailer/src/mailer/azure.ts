@@ -12,7 +12,7 @@ export class AzureMailer extends AbstractMailer {
     super(logger.child({ module: 'azure' }), config);
 
     this.client = new EmailClient(config.MAILER_AZURE_CONNECTION_STRING);
-    this.senderAddress = config.MAILER_AZURE_SENDER;
+    this.senderAddress = config.MAILER_SENDER;
   }
 
   protected override async sendImpl(to: string, subject: string, text: string, html: string): Promise<void> {

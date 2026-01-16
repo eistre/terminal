@@ -1,9 +1,9 @@
-import type { AzureProvisionerSchema } from './provisioner/azure.ts';
-import type { BaseProvisionerSchema } from './provisioner/base.ts';
-import type { KubernetesProvisionerSchema } from './provisioner/kubernetes.ts';
+import type { AzureProvisionerSchema } from './provisioner/azure.js';
+import type { BaseProvisionerSchema } from './provisioner/base.js';
+import type { KubernetesProvisionerSchema } from './provisioner/kubernetes.js';
 import { z } from 'zod';
-import { azureProvisionerSchema } from './provisioner/azure.ts';
-import { kubernetesProvisionerSchema } from './provisioner/kubernetes.ts';
+import { azureProvisionerSchema } from './provisioner/azure.js';
+import { kubernetesProvisionerSchema } from './provisioner/kubernetes.js';
 
 export const provisionerSchema = z.discriminatedUnion('PROVISIONER_TYPE', [
   kubernetesProvisionerSchema,

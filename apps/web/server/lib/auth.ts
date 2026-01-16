@@ -3,6 +3,7 @@ import type { Logger } from '@terminal/logger';
 import type {
   AuthContext,
   BetterAuthOptions,
+  BetterAuthPlugin,
   GenericEndpointContext,
   MiddlewareContext,
   MiddlewareOptions,
@@ -16,7 +17,7 @@ import * as schema from '@terminal/database/schema/auth';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
-import { admin, emailOTP } from 'better-auth/plugins';
+import { admin, emailOTP, genericOAuth, keycloak } from 'better-auth/plugins';
 import { useDatabase } from '~~/server/lib/database';
 import { useEnv } from '~~/server/lib/env';
 import { useLogger } from '~~/server/lib/logger';
@@ -195,6 +196,30 @@ function createAuth() {
     };
   }
 
+  const plugins: BetterAuthPlugin[] = [];
+  if (!isNoopMailer) {
+    plugins.push(emailOTP({
+      overrideDefaultEmailVerification: true,
+      async sendVerificationOTP(params, request) {
+        await handleSendVerificationOTP(params, request, database, logger);
+      },
+    }));
+  }
+
+  if (env.AUTH_KEYCLOAK_CLIENT_ID) {
+    trustedProviders.push('keycloak');
+    plugins.push(genericOAuth({
+      config: [
+        keycloak({
+          clientId: env.AUTH_KEYCLOAK_CLIENT_ID,
+          clientSecret: env.AUTH_KEYCLOAK_CLIENT_SECRET!,
+          issuer: env.AUTH_KEYCLOAK_ISSUER!,
+          pkce: true,
+        }),
+      ],
+    }));
+  }
+
   return betterAuth({
     socialProviders,
     secret: env.AUTH_SECRET,
@@ -255,16 +280,7 @@ function createAuth() {
     },
     plugins: [
       admin(),
-      ...(!isNoopMailer
-        ? [
-            emailOTP({
-              overrideDefaultEmailVerification: true,
-              async sendVerificationOTP(params, request) {
-                await handleSendVerificationOTP(params, request, database, logger);
-              },
-            }),
-          ]
-        : []),
+      ...plugins,
     ],
     logger: {
       log: (level, message, ...args) => {
