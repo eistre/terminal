@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { baseProvisionerSchema } from './base.ts';
+import { baseProvisionerSchema } from './base.js';
 
 // Kubernetes resource format patterns (basic validation, K8s validates fully itself)
 // CPU: digits, optional decimal, optional 'm' suffix (e.g., '100m', '0.5', '1')
