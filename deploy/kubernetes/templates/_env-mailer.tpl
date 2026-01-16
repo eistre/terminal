@@ -2,25 +2,39 @@
 
 {{- /* ConfigMap data */ -}}
 {{- define "terminal.env.mailer.data" -}}
-{{- include "terminal.validateEnum" (dict "value" .Values.mailer.type "allowed" (list "noop" "azure") "name" "mailer.type") -}}
+{{- include "terminal.validateEnum" (dict "value" .Values.mailer.type "allowed" (list "noop" "smtp") "name" "mailer.type") -}}
 MAILER_TYPE: {{ .Values.mailer.type | quote }}
 MAILER_MAX_RETRIES: {{ .Values.mailer.maxRetries | quote }}
 MAILER_CONCURRENCY_LIMIT: {{ .Values.mailer.concurrencyLimit | quote }}
 MAILER_RESEND_COOLDOWN_SECONDS: {{ .Values.mailer.resendCooldownSeconds | quote }}
+{{- if eq .Values.mailer.type "smtp" -}}
+  {{- if not .Values.mailer.sender -}}
+    {{- fail "mailer.sender is required when mailer.type=smtp" -}}
+  {{- end -}}
+  {{- if not .Values.mailer.smtp.host -}}
+    {{- fail "mailer.smtp.host is required when mailer.type=smtp" -}}
+  {{- end -}}
+MAILER_SENDER: {{ .Values.mailer.sender | quote }}
+MAILER_SMTP_HOST: {{ .Values.mailer.smtp.host | quote }}
+MAILER_SMTP_PORT: {{ .Values.mailer.smtp.port | quote }}
+MAILER_SMTP_SECURE: {{ .Values.mailer.smtp.secure | quote }}
+{{- end -}}
 {{- end -}}
 
 {{- /* Secret data */ -}}
 {{- define "terminal.env.mailer.secret.data" -}}
-{{- /* Validate Azure mailer - required when type=azure */ -}}
-{{- if eq .Values.mailer.type "azure" -}}
-  {{- if not .Values.mailer.azure.connectionString -}}
-    {{- fail "mailer.azure.connectionString is required when mailer.type=azure" -}}
+{{- /* Validate SMTP auth fields - optional, but must be provided together */ -}}
+{{- if eq .Values.mailer.type "smtp" -}}
+  {{- if and .Values.mailer.smtp.user (not .Values.mailer.smtp.pass) -}}
+    {{- fail "mailer.smtp.pass is required when mailer.smtp.user is set" -}}
   {{- end -}}
-  {{- if not .Values.mailer.azure.sender -}}
-    {{- fail "mailer.azure.sender is required when mailer.type=azure" -}}
+  {{- if and .Values.mailer.smtp.pass (not .Values.mailer.smtp.user) -}}
+    {{- fail "mailer.smtp.user is required when mailer.smtp.pass is set" -}}
   {{- end -}}
-MAILER_AZURE_CONNECTION_STRING: {{ .Values.mailer.azure.connectionString | quote }}
-MAILER_AZURE_SENDER: {{ .Values.mailer.azure.sender | quote }}
+  {{- if .Values.mailer.smtp.user -}}
+MAILER_SMTP_USER: {{ .Values.mailer.smtp.user | quote }}
+MAILER_SMTP_PASS: {{ .Values.mailer.smtp.pass | quote }}
+  {{- end -}}
 {{- end -}}
 {{- end -}}
 
@@ -46,16 +60,38 @@ MAILER_AZURE_SENDER: {{ .Values.mailer.azure.sender | quote }}
     configMapKeyRef:
       name: {{ include "terminal.configmap.fullname" . }}
       key: MAILER_RESEND_COOLDOWN_SECONDS
-{{- if eq .Values.mailer.type "azure" }}
-- name: MAILER_AZURE_CONNECTION_STRING
+{{- if eq .Values.mailer.type "smtp" }}
+- name: MAILER_SENDER
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "terminal.configmap.fullname" . }}
+      key: MAILER_SENDER
+- name: MAILER_SMTP_HOST
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "terminal.configmap.fullname" . }}
+      key: MAILER_SMTP_HOST
+- name: MAILER_SMTP_PORT
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "terminal.configmap.fullname" . }}
+      key: MAILER_SMTP_PORT
+- name: MAILER_SMTP_SECURE
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "terminal.configmap.fullname" . }}
+      key: MAILER_SMTP_SECURE
+  {{- if .Values.mailer.smtp.user }}
+- name: MAILER_SMTP_USER
   valueFrom:
     secretKeyRef:
       name: {{ include "terminal.secret.fullname" . }}
-      key: MAILER_AZURE_CONNECTION_STRING
-- name: MAILER_AZURE_SENDER
+      key: MAILER_SMTP_USER
+- name: MAILER_SMTP_PASS
   valueFrom:
     secretKeyRef:
       name: {{ include "terminal.secret.fullname" . }}
-      key: MAILER_AZURE_SENDER
+      key: MAILER_SMTP_PASS
+  {{- end }}
 {{- end }}
 {{- end -}}

@@ -23,12 +23,16 @@ auth:
     labelEn: University of Tartu # Button label shown to users
     labelEt: Tartu Ülikool # Button label shown to users
 
-# Mailer - Azure Communication Services
+# Mailer - SMTP relay
 mailer:
-  type: azure
-  azure:
-    connectionString: '' # TODO: Azure Communication Services connection string
-    sender: noreply@your-domain.com # TODO: Verified sender address
+  type: smtp
+  sender: noreply@example.com # TODO: Sender address (e.g., name@example.com)
+  smtp:
+    host: '' # TODO: SMTP host
+    port: '' # TODO: SMTP port
+    secure: '' # TODO: true for SMTPS
+    user: '' # Optional
+    pass: '' # Optional
 
 # Web application
 web:

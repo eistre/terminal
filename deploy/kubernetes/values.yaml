@@ -41,15 +41,19 @@ auth:
 
 # Mailer
 mailer:
-  type: noop # Options: noop, azure
+  type: noop # Options: noop, smtp
   maxRetries: 3
   concurrencyLimit: 10
   resendCooldownSeconds: 30
+  sender: '' # Required when type: smtp
 
-  # Azure Communication Services (required when type: azure)
-  azure:
-    connectionString: ''
-    sender: ''
+  # SMTP (required when type: smtp)
+  smtp:
+    host: ''
+    port: ''
+    secure: ''
+    user: ''
+    pass: ''
 
 # Provisioner
 provisioner:
