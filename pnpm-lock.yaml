@@ -50,8 +50,8 @@ catalogs:
       specifier: ^23.6.2
       version: 23.6.2
     '@tsconfig/node24':
-      specifier: ^24.0.3
-      version: 24.0.3
+      specifier: ^24.0.4
+      version: 24.0.4
     '@types/lodash-es':
       specifier: ^4.17.12
       version: 4.17.12
@@ -83,8 +83,8 @@ catalogs:
       specifier: ^6.0.0
       version: 6.0.0
     better-auth:
-      specifier: ^1.4.12
-      version: 1.4.12
+      specifier: ^1.4.13
+      version: 1.4.13
     drizzle-kit:
       specifier: ^0.31.8
       version: 0.31.8
@@ -104,8 +104,8 @@ catalogs:
       specifier: ^4.17.22
       version: 4.17.22
     mysql2:
-      specifier: ^3.16.0
-      version: 3.16.0
+      specifier: ^3.16.1
+      version: 3.16.1
     nodemailer:
       specifier: ^7.0.2
       version: 7.0.12
@@ -238,10 +238,10 @@ importers:
     dependencies:
       '@nuxt/ui':
         specifier: 'catalog:'
-        version: 4.3.0(cb311a4eb89cc6e4aafbdac11a77371f)
+        version: 4.3.0(37938f413d47bc1f07dc49a8b9d6acbc)
       '@nuxtjs/i18n':
         specifier: 'catalog:'
-        version: 10.2.1(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@vue/compiler-dom@3.5.26)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(magicast@0.5.1)(rollup@4.55.1)(vue@3.5.26(typescript@5.9.3))
+        version: 10.2.1(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@vue/compiler-dom@3.5.26)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(magicast@0.5.1)(rollup@4.55.1)(vue@3.5.26(typescript@5.9.3))
       '@sindresorhus/slugify':
         specifier: 'catalog:'
         version: 3.0.0
@@ -268,7 +268,7 @@ importers:
         version: link:../../packages/session
       '@vueuse/nuxt':
         specifier: 'catalog:'
-        version: 14.1.0(magicast@0.5.1)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))
+        version: 14.1.0(magicast@0.5.1)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))
       '@xterm/addon-fit':
         specifier: 'catalog:'
         version: 0.11.0
@@ -280,10 +280,10 @@ importers:
         version: 6.0.0
       better-auth:
         specifier: 'catalog:'
-        version: 1.4.12(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0)(vue@3.5.26(typescript@5.9.3))
+        version: 1.4.13(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1)(vue@3.5.26(typescript@5.9.3))
       nuxt:
         specifier: 'catalog:'
-        version: 4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2)
+        version: 4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2)
       sortablejs:
         specifier: 'catalog:'
         version: 1.15.6
@@ -332,10 +332,10 @@ importers:
     dependencies:
       drizzle-orm:
         specifier: 'catalog:'
-        version: 0.45.1(kysely@0.28.9)(mysql2@3.16.0)
+        version: 0.45.1(kysely@0.28.9)(mysql2@3.16.1)
       mysql2:
         specifier: 'catalog:'
-        version: 3.16.0
+        version: 3.16.1
     devDependencies:
       '@terminal/env':
         specifier: workspace:*
@@ -567,7 +567,7 @@ importers:
         version: 23.6.2
       '@tsconfig/node24':
         specifier: 'catalog:'
-        version: 24.0.3
+        version: 24.0.4
 
 packages:
 
@@ -985,8 +985,8 @@ packages:
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
 
-  '@better-auth/core@1.4.12':
-    resolution: {integrity: sha512-VfqZwMAEl9rnGx092BIZ2Q5z8rt7jjN2OAbvPqehufSKZGmh8JsdtZRBMl/CHQir9bwi2Ev0UF4+7TQp+DXEMg==}
+  '@better-auth/core@1.4.13':
+    resolution: {integrity: sha512-+8OrU/9T9mkNNKCfTv9UMlNhl9qBKsXIS8d1JNrtuCkud8Ps0+jYvbBlwa90nFmDy8X96c9UIsq+eMhPs1SDXA==}
     peerDependencies:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
@@ -995,10 +995,10 @@ packages:
       kysely: ^0.28.5
       nanostores: ^1.0.1
 
-  '@better-auth/telemetry@1.4.12':
-    resolution: {integrity: sha512-4q504Og42PzkUbZjXDt+FyeYaS0WZmAlEOC3nbBCZDObTVCRUnGgJW52B2maJ7BCVvAQgBGLEeQmQzU5+63J0A==}
+  '@better-auth/telemetry@1.4.13':
+    resolution: {integrity: sha512-bH77Scx0K0lRIuRuHUUBLLMJ/rd9T2Tties1RniDLU8kclVwjboJQbfUY5FIamZwdayf2o0psNgS4rkaZUq+Qg==}
     peerDependencies:
-      '@better-auth/core': 1.4.12
+      '@better-auth/core': 1.4.13
 
   '@better-auth/utils@0.3.0':
     resolution: {integrity: sha512-W+Adw6ZA6mgvnSnhOki270rwJ42t4XzSK6YWGF//BbVXL6SwCLWfyzBc1lN2m/4RM28KubdBKQ4X5VMoLRNPQw==}
@@ -3309,8 +3309,8 @@ packages:
   '@tsconfig/node-ts@23.6.2':
     resolution: {integrity: sha512-WcU3KR3tHB8XMotRBpUEGfPLT3W0gAhrHcTxU7mNQ4N1+fwF3LbjpWP07TuhZtN5ehK3bcK/R4Zzqp7Pqd7Nqg==}
 
-  '@tsconfig/node24@24.0.3':
-    resolution: {integrity: sha512-vcERKtKQKHgzt/vfS3Gjasd8SUI2a0WZXpgJURdJsMySpS5+ctgbPfuLj2z/W+w4lAfTWxoN4upKfu2WzIRYnw==}
+  '@tsconfig/node24@24.0.4':
+    resolution: {integrity: sha512-2A933l5P5oCbv6qSxHs7ckKwobs8BDAe9SJ/Xr2Hy+nDlwmLE1GhFh/g/vXGRZWgxBg9nX/5piDtHR9Dkw/XuA==}
 
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
@@ -3995,13 +3995,13 @@ packages:
   bcrypt-pbkdf@1.0.2:
     resolution: {integrity: sha512-qeFIXtP4MSoi6NLqO12WfqARWWuCKi2Rn/9hJLEmtB5yTNr9DqFWkJRCf2qShWzPeAMRnOgCrq0sg/KLv5ES9w==}
 
-  better-auth@1.4.12:
-    resolution: {integrity: sha512-FsFMnWgk+AGrxsIGbpWLCibgYcbm6uNhPHln3ohXFDXSRa0gk39Beuh54Q+x6ml2qYodF0snxf/tPtDpBI/JiA==}
+  better-auth@1.4.13:
+    resolution: {integrity: sha512-frGQmYT0rglidLpx91SP9n4ztaNBFGBb0JrWSdMTAHvhBkmQlUT/43e0IboMK2mPrAZFlvhdcMV8jCnqpYVE9A==}
     peerDependencies:
       '@lynx-js/react': '*'
       '@prisma/client': ^5.0.0 || ^6.0.0 || ^7.0.0
       '@sveltejs/kit': ^2.0.0
-      '@tanstack/react-start': ^1.0.0
+      '@tanstack/start-server-core': ^1.0.0
       better-sqlite3: ^12.0.0
       drizzle-kit: '>=0.31.4'
       drizzle-orm: '>=0.41.0'
@@ -4023,7 +4023,7 @@ packages:
         optional: true
       '@sveltejs/kit':
         optional: true
-      '@tanstack/react-start':
+      '@tanstack/start-server-core':
         optional: true
       better-sqlite3:
         optional: true
@@ -6048,8 +6048,8 @@ packages:
   muggle-string@0.4.1:
     resolution: {integrity: sha512-VNTrAak/KhO2i8dqqnqnAHOa3cYBwXEZe9h+D5h/1ZqFSTEFHdM65lR7RoIqq3tBBYavsOXV84NoHXZ0AkPyqQ==}
 
-  mysql2@3.16.0:
-    resolution: {integrity: sha512-AEGW7QLLSuSnjCS4pk3EIqOmogegmze9h8EyrndavUQnIUcfkVal/sK7QznE+a3bc6rzPbAiui9Jcb+96tPwYA==}
+  mysql2@3.16.1:
+    resolution: {integrity: sha512-b75qsDB3ieYEzMsT1uRGsztM/sy6vWPY40uPZlVVl8eefAotFCoS7jaDB5DxDNtlW5kdVGd9jptSpkvujNxI2A==}
     engines: {node: '>= 8.0'}
 
   named-placeholders@1.1.6:
@@ -8597,7 +8597,7 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@better-auth/core@1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)':
+  '@better-auth/core@1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)':
     dependencies:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
@@ -8608,9 +8608,9 @@ snapshots:
       nanostores: 1.1.0
       zod: 4.3.5
 
-  '@better-auth/telemetry@1.4.12(@better-auth/core@1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))':
+  '@better-auth/telemetry@1.4.13(@better-auth/core@1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))':
     dependencies:
-      '@better-auth/core': 1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/core': 1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
 
@@ -9466,7 +9466,7 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@nuxt/fonts@0.12.1(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(ioredis@5.9.1)(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))':
+  '@nuxt/fonts@0.12.1(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(ioredis@5.9.1)(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
       '@nuxt/devtools-kit': 3.1.1(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
@@ -9475,7 +9475,7 @@ snapshots:
       defu: 6.1.4
       esbuild: 0.25.12
       fontaine: 0.7.0
-      fontless: 0.1.0(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(ioredis@5.9.1)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
+      fontless: 0.1.0(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(ioredis@5.9.1)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       h3: 1.15.4
       jiti: 2.6.1
       magic-regexp: 0.10.0
@@ -9488,7 +9488,7 @@ snapshots:
       ufo: 1.6.2
       unifont: 0.6.0
       unplugin: 2.3.11
-      unstorage: 1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(ioredis@5.9.1)
+      unstorage: 1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(ioredis@5.9.1)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -9584,7 +9584,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/nitro-server@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(ioredis@5.9.1)(magicast@0.5.1)(mysql2@3.16.0)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(typescript@5.9.3)':
+  '@nuxt/nitro-server@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(ioredis@5.9.1)(magicast@0.5.1)(mysql2@3.16.1)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(typescript@5.9.3)':
     dependencies:
       '@nuxt/devalue': 2.0.2
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
@@ -9601,15 +9601,15 @@ snapshots:
       impound: 1.0.0
       klona: 2.0.6
       mocked-exports: 0.1.1
-      nitropack: 2.13.0(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0)
-      nuxt: 4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2)
+      nitropack: 2.13.0(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1)
+      nuxt: 4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2)
       pathe: 2.0.3
       pkg-types: 2.3.0
       radix3: 1.1.2
       std-env: 3.10.0
       ufo: 1.6.2
       unctx: 2.5.0
-      unstorage: 1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(ioredis@5.9.1)
+      unstorage: 1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(ioredis@5.9.1)
       vue: 3.5.26(typescript@5.9.3)
       vue-bundle-renderer: 2.2.0
       vue-devtools-stub: 0.1.0
@@ -9673,12 +9673,12 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/ui@4.3.0(cb311a4eb89cc6e4aafbdac11a77371f)':
+  '@nuxt/ui@4.3.0(37938f413d47bc1f07dc49a8b9d6acbc)':
     dependencies:
       '@iconify/vue': 5.0.0(vue@3.5.26(typescript@5.9.3))
       '@internationalized/date': 3.10.1
       '@internationalized/number': 3.6.5
-      '@nuxt/fonts': 0.12.1(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(ioredis@5.9.1)(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
+      '@nuxt/fonts': 0.12.1(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(ioredis@5.9.1)(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       '@nuxt/icon': 2.2.0(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
       '@nuxt/schema': 4.2.2
@@ -9781,7 +9781,7 @@ snapshots:
       - vite
       - vue
 
-  '@nuxt/vite-builder@4.2.2(@types/node@24.10.6)(eslint@9.39.2(jiti@2.6.1))(lightningcss@1.30.2)(magicast@0.5.1)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3))(yaml@2.8.2)':
+  '@nuxt/vite-builder@4.2.2(@types/node@24.10.6)(eslint@9.39.2(jiti@2.6.1))(lightningcss@1.30.2)(magicast@0.5.1)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3))(yaml@2.8.2)':
     dependencies:
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
       '@rollup/plugin-replace': 6.0.3(rollup@4.55.1)
@@ -9801,7 +9801,7 @@ snapshots:
       magic-string: 0.30.21
       mlly: 1.8.0
       mocked-exports: 0.1.1
-      nuxt: 4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2)
+      nuxt: 4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2)
       pathe: 2.0.3
       pkg-types: 2.3.0
       postcss: 8.5.6
@@ -9849,7 +9849,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxtjs/i18n@10.2.1(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@vue/compiler-dom@3.5.26)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(magicast@0.5.1)(rollup@4.55.1)(vue@3.5.26(typescript@5.9.3))':
+  '@nuxtjs/i18n@10.2.1(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@vue/compiler-dom@3.5.26)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(magicast@0.5.1)(rollup@4.55.1)(vue@3.5.26(typescript@5.9.3))':
     dependencies:
       '@intlify/core': 11.2.8
       '@intlify/h3': 0.7.4
@@ -9876,7 +9876,7 @@ snapshots:
       ufo: 1.6.2
       unplugin: 2.3.11
       unplugin-vue-router: 0.16.2(@vue/compiler-sfc@3.5.26)(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
-      unstorage: 1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(ioredis@5.9.1)
+      unstorage: 1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(ioredis@5.9.1)
       vue-i18n: 11.2.8(vue@3.5.26(typescript@5.9.3))
       vue-router: 4.6.4(vue@3.5.26(typescript@5.9.3))
     transitivePeerDependencies:
@@ -11011,7 +11011,7 @@ snapshots:
 
   '@tsconfig/node-ts@23.6.2': {}
 
-  '@tsconfig/node24@24.0.3': {}
+  '@tsconfig/node24@24.0.4': {}
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
@@ -11588,13 +11588,13 @@ snapshots:
 
   '@vueuse/metadata@14.1.0': {}
 
-  '@vueuse/nuxt@14.1.0(magicast@0.5.1)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))':
+  '@vueuse/nuxt@14.1.0(magicast@0.5.1)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))':
     dependencies:
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
       '@vueuse/core': 14.1.0(vue@3.5.26(typescript@5.9.3))
       '@vueuse/metadata': 14.1.0
       local-pkg: 1.1.2
-      nuxt: 4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2)
+      nuxt: 4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2)
       vue: 3.5.26(typescript@5.9.3)
     transitivePeerDependencies:
       - magicast
@@ -11781,10 +11781,10 @@ snapshots:
     dependencies:
       tweetnacl: 0.14.5
 
-  better-auth@1.4.12(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0)(vue@3.5.26(typescript@5.9.3)):
+  better-auth@1.4.13(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1)(vue@3.5.26(typescript@5.9.3)):
     dependencies:
-      '@better-auth/core': 1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
-      '@better-auth/telemetry': 1.4.12(@better-auth/core@1.4.12(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
+      '@better-auth/core': 1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/telemetry': 1.4.13(@better-auth/core@1.4.13(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
@@ -11797,8 +11797,8 @@ snapshots:
       zod: 4.3.5
     optionalDependencies:
       drizzle-kit: 0.31.8
-      drizzle-orm: 0.45.1(kysely@0.28.9)(mysql2@3.16.0)
-      mysql2: 3.16.0
+      drizzle-orm: 0.45.1(kysely@0.28.9)(mysql2@3.16.1)
+      mysql2: 3.16.1
       vue: 3.5.26(typescript@5.9.3)
 
   better-call@1.1.7(zod@4.3.5):
@@ -12123,10 +12123,10 @@ snapshots:
 
   dateformat@4.6.3: {}
 
-  db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0):
+  db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1):
     optionalDependencies:
-      drizzle-orm: 0.45.1(kysely@0.28.9)(mysql2@3.16.0)
-      mysql2: 3.16.0
+      drizzle-orm: 0.45.1(kysely@0.28.9)(mysql2@3.16.1)
+      mysql2: 3.16.1
 
   debug@4.4.3:
     dependencies:
@@ -12216,10 +12216,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0):
+  drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1):
     optionalDependencies:
       kysely: 0.28.9
-      mysql2: 3.16.0
+      mysql2: 3.16.1
 
   dunder-proto@1.0.1:
     dependencies:
@@ -12918,7 +12918,7 @@ snapshots:
       unicode-properties: 1.4.1
       unicode-trie: 2.0.0
 
-  fontless@0.1.0(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(ioredis@5.9.1)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)):
+  fontless@0.1.0(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(ioredis@5.9.1)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)):
     dependencies:
       consola: 3.4.2
       css-tree: 3.1.0
@@ -12932,7 +12932,7 @@ snapshots:
       pathe: 2.0.3
       ufo: 1.6.2
       unifont: 0.6.0
-      unstorage: 1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(ioredis@5.9.1)
+      unstorage: 1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(ioredis@5.9.1)
     optionalDependencies:
       vite: 7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:
@@ -13990,7 +13990,7 @@ snapshots:
 
   muggle-string@0.4.1: {}
 
-  mysql2@3.16.0:
+  mysql2@3.16.1:
     dependencies:
       aws-ssl-profiles: 1.1.2
       denque: 2.1.0
@@ -14023,7 +14023,7 @@ snapshots:
 
   natural-orderby@5.0.0: {}
 
-  nitropack@2.13.0(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0):
+  nitropack@2.13.0(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.1
       '@rollup/plugin-alias': 6.0.0(rollup@4.55.1)
@@ -14044,7 +14044,7 @@ snapshots:
       cookie-es: 2.0.0
       croner: 9.1.0
       crossws: 0.3.5
-      db0: 0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0)
+      db0: 0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1)
       defu: 6.1.4
       destr: 2.0.5
       dot-prop: 10.1.0
@@ -14090,7 +14090,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       unimport: 5.6.0
       unplugin-utils: 0.3.1
-      unstorage: 1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(ioredis@5.9.1)
+      unstorage: 1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(ioredis@5.9.1)
       untyped: 2.0.0
       unwasm: 0.5.2
       youch: 4.1.0-beta.13
@@ -14164,16 +14164,16 @@ snapshots:
 
   nuxt-define@1.0.0: {}
 
-  nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2):
+  nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2):
     dependencies:
       '@dxup/nuxt': 0.2.2(magicast@0.5.1)
       '@nuxt/cli': 3.32.0(cac@6.7.14)(magicast@0.5.1)
       '@nuxt/devtools': 3.1.1(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
-      '@nuxt/nitro-server': 4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(ioredis@5.9.1)(magicast@0.5.1)(mysql2@3.16.0)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(typescript@5.9.3)
+      '@nuxt/nitro-server': 4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(ioredis@5.9.1)(magicast@0.5.1)(mysql2@3.16.1)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(typescript@5.9.3)
       '@nuxt/schema': 4.2.2
       '@nuxt/telemetry': 2.6.6(magicast@0.5.1)
-      '@nuxt/vite-builder': 4.2.2(@types/node@24.10.6)(eslint@9.39.2(jiti@2.6.1))(lightningcss@1.30.2)(magicast@0.5.1)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.0)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3))(yaml@2.8.2)
+      '@nuxt/vite-builder': 4.2.2(@types/node@24.10.6)(eslint@9.39.2(jiti@2.6.1))(lightningcss@1.30.2)(magicast@0.5.1)(nuxt@4.2.2(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(@parcel/watcher@2.5.1)(@types/node@24.10.6)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.1)(lightningcss@1.30.2)(magicast@0.5.1)(mysql2@3.16.1)(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.6)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2))(optionator@0.9.4)(rollup@4.55.1)(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))(vue@3.5.26(typescript@5.9.3))(yaml@2.8.2)
       '@unhead/vue': 2.1.1(vue@3.5.26(typescript@5.9.3))
       '@vue/shared': 3.5.26
       c12: 3.3.3(magicast@0.5.1)
@@ -15669,7 +15669,7 @@ snapshots:
       '@unrs/resolver-binding-win32-ia32-msvc': 1.11.1
       '@unrs/resolver-binding-win32-x64-msvc': 1.11.1
 
-  unstorage@1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0))(ioredis@5.9.1):
+  unstorage@1.17.3(@azure/cosmos@4.9.0)(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/keyvault-secrets@4.10.0)(db0@0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1))(ioredis@5.9.1):
     dependencies:
       anymatch: 3.1.3
       chokidar: 4.0.3
@@ -15684,7 +15684,7 @@ snapshots:
       '@azure/data-tables': 13.3.2
       '@azure/identity': 4.13.0
       '@azure/keyvault-secrets': 4.10.0
-      db0: 0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.0))(mysql2@3.16.0)
+      db0: 0.3.4(drizzle-orm@0.45.1(kysely@0.28.9)(mysql2@3.16.1))(mysql2@3.16.1)
       ioredis: 5.9.1
 
   untun@0.1.3:
