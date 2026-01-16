@@ -23,11 +23,19 @@ auth:
     email: '' # Required
     password: '' # Required
 
-  # Microsoft OAuth (Optional - all fields required together or none)
+  # Microsoft OAuth (Optional - first 3 fields required together or none)
   microsoft:
     clientId: ''
     clientSecret: ''
     tenantId: '' # Options: {tenant-id}, common, organizations, consumers
+    labelEn: '' # Button label for English locale
+    labelEt: '' # Button label for Estonian locale
+
+  # Keycloak OIDC (Optional - first 3 fields required together or none)
+  keycloak:
+    clientId: ''
+    clientSecret: ''
+    issuer: '' # e.g., https://keycloak.example.edu/realms/your-realm
     labelEn: '' # Button label for English locale
     labelEt: '' # Button label for Estonian locale
 

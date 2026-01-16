@@ -25,13 +25,23 @@ export default defineNitroPlugin((nitroApp) => {
     const config: PublicConfig = {
       emailVerificationEnabled: env.MAILER_TYPE !== 'noop',
       adminEmail: env.AUTH_ADMIN_EMAIL,
+      providers: {},
     };
 
     if (env.AUTH_MICROSOFT_CLIENT_ID) {
-      config.microsoft = {
+      config.providers.microsoft = {
         labels: {
-          en: env.AUTH_MICROSOFT_LABEL_EN ?? 'Microsoft',
-          et: env.AUTH_MICROSOFT_LABEL_ET ?? 'Microsoft',
+          en: env.AUTH_MICROSOFT_LABEL_EN || 'Microsoft',
+          et: env.AUTH_MICROSOFT_LABEL_ET || 'Microsoft',
+        },
+      };
+    }
+
+    if (env.AUTH_KEYCLOAK_CLIENT_ID) {
+      config.providers.keycloak = {
+        labels: {
+          en: env.AUTH_KEYCLOAK_LABEL_EN || 'Keycloak',
+          et: env.AUTH_KEYCLOAK_LABEL_ET || 'Keycloak',
         },
       };
     }

@@ -1,10 +1,10 @@
 export interface PublicConfig {
   emailVerificationEnabled: boolean;
   adminEmail: string;
-  microsoft?: {
+  providers: Record<'microsoft' | 'keycloak' | string, {
     labels: {
       en: string;
       et: string;
     };
-  };
+  }>;
 }
