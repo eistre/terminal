@@ -28,6 +28,12 @@ variable "principal_id" {
   type        = string
 }
 
+variable "allowed_ip_addresses" {
+  description = "List of public IPs allowed"
+  type        = list(string)
+  default     = []
+}
+
 variable "tags" {
   description = "Common tags to apply to all resources"
   type        = map(string)
