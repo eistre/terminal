@@ -1,7 +1,4 @@
-# ==============================================================================
-# Required Variables
-# ==============================================================================
-
+# Required variables
 variable "subscription_id" {
   description = "Azure subscription ID"
   type        = string
@@ -48,18 +45,17 @@ variable "mysql_admin_password" {
 variable "ghcr_username" {
   description = "GitHub username for pulling container images from ghcr.io"
   type        = string
+  default     = ""
 }
 
 variable "ghcr_token" {
   description = "GitHub Personal Access Token with read:packages scope"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
-# ==============================================================================
-# Optional Variables
-# ==============================================================================
-
+# Optional variables
 variable "resource_prefix" {
   description = "Prefix for all resource names (lowercase, alphanumeric)"
   type        = string
@@ -83,6 +79,12 @@ variable "container_image_owner" {
   default     = "eistre"
 }
 
+variable "communication_data_location" {
+  description = "Data residency for Azure Communication Services (e.g., United States, Europe)"
+  type        = string
+  default     = "Europe"
+}
+
 variable "container_image_tag" {
   description = "Tag for container images"
   type        = string
@@ -95,13 +97,25 @@ variable "mysql_sku" {
   default     = "B_Standard_B1ms"
 }
 
-variable "log_level" {
+variable "mysql_backup_retention_days" {
+  description = "Backup retention in days (1-35)"
+  type        = number
+  default     = 7
+}
+
+variable "mysql_enable_auto_grow" {
+  description = "Enable MySQL storage auto-grow"
+  type        = bool
+  default     = true
+}
+
+variable "logger_level" {
   description = "Application log level"
   type        = string
   default     = "info"
 
   validation {
-    condition     = contains(["error", "warn", "info", "debug", "trace"], var.log_level)
+    condition     = contains(["error", "warn", "info", "debug", "trace"], var.logger_level)
     error_message = "log_level must be one of: error, warn, info, debug, trace"
   }
 }

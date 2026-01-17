@@ -1,7 +1,4 @@
-# ==============================================================================
-# Local Values
-# ==============================================================================
-
+# Local variables
 locals {
   # Common tags applied to all resources (mirrors Azure provisioner pattern)
   common_tags = {
@@ -10,10 +7,7 @@ locals {
   }
 }
 
-# ==============================================================================
 # Resource Group
-# ==============================================================================
-
 resource "azurerm_resource_group" "main" {
   name     = "${var.resource_prefix}-rg"
   location = var.location
@@ -30,16 +24,9 @@ resource "random_string" "suffix" {
   special = false
 }
 
-# ==============================================================================
-# Data Sources
-# ==============================================================================
-
 data "azurerm_client_config" "current" {}
 
-# ==============================================================================
 # Managed Identity (shared by Container Apps for Azure resource access)
-# ==============================================================================
-
 resource "azurerm_user_assigned_identity" "main" {
   name                = "${var.resource_prefix}-identity"
   resource_group_name = azurerm_resource_group.main.name
@@ -55,23 +42,22 @@ resource "azurerm_role_assignment" "contributor" {
   principal_id         = azurerm_user_assigned_identity.main.principal_id
 }
 
-# ==============================================================================
-# Modules
-# ==============================================================================
-
 # Database module - MySQL Flexible Server
 module "database" {
   source = "./modules/database"
 
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
   name_prefix         = var.resource_prefix
   random_suffix       = random_string.suffix.result
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
 
-  admin_username = "terminaladmin"
+  admin_username = "terminal"
   admin_password = var.mysql_admin_password
   database_name  = "terminal"
   sku_name       = var.mysql_sku
+
+  backup_retention_days = var.mysql_backup_retention_days
+  enable_auto_grow      = var.mysql_enable_auto_grow
 
   tags = local.common_tags
 }
@@ -80,9 +66,10 @@ module "database" {
 module "communication" {
   source = "./modules/communication"
 
-  resource_group_name = azurerm_resource_group.main.name
   name_prefix         = var.resource_prefix
   random_suffix       = random_string.suffix.result
+  resource_group_name = azurerm_resource_group.main.name
+  data_location       = var.communication_data_location
 
   tags = local.common_tags
 }
@@ -91,10 +78,10 @@ module "communication" {
 module "keyvault" {
   source = "./modules/keyvault"
 
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
   name_prefix         = var.resource_prefix
   random_suffix       = random_string.suffix.result
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
 
   tenant_id    = data.azurerm_client_config.current.tenant_id
   principal_id = azurerm_user_assigned_identity.main.principal_id
@@ -106,11 +93,12 @@ module "keyvault" {
 module "container_apps" {
   source = "./modules/container-apps"
 
+  name_prefix         = var.resource_prefix
+  random_suffix       = random_string.suffix.result
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
-  name_prefix         = var.resource_prefix
 
-  # Managed identity (created at root level to avoid circular dependency with keyvault)
+  # Managed identity
   managed_identity_id        = azurerm_user_assigned_identity.main.id
   managed_identity_client_id = azurerm_user_assigned_identity.main.client_id
 
@@ -141,7 +129,7 @@ module "container_apps" {
   aci_memory_gb            = var.aci_memory_gb
 
   # General configuration
-  log_level        = var.log_level
+  logger_level     = var.logger_level
   user_expiry_days = var.user_expiry_days
 
   tags = local.common_tags

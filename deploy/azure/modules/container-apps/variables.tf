@@ -54,12 +54,14 @@ variable "image_tag" {
 variable "ghcr_username" {
   description = "GitHub username for pulling images"
   type        = string
+  default     = ""
 }
 
 variable "ghcr_token" {
   description = "GitHub token for pulling images"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 # Database configuration

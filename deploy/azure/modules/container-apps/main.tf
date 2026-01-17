@@ -8,9 +8,9 @@ locals {
 
 # Container App Environment
 resource "azurerm_container_app_environment" "main" {
-  name                       = "${var.name_prefix}-env-${var.random_suffix}"
-  location                   = var.location
-  resource_group_name        = var.resource_group_name
+  name                = "${var.name_prefix}-env-${var.random_suffix}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   tags = merge(var.tags, { component = "environment" })
 }
@@ -27,15 +27,21 @@ resource "azurerm_container_app" "web" {
     identity_ids = [var.managed_identity_id]
   }
 
-  registry {
-    server               = var.image_registry
-    username             = var.ghcr_username
-    password_secret_name = "ghcr-token"
+  dynamic "registry" {
+    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    content {
+      server               = var.image_registry
+      username             = var.ghcr_username
+      password_secret_name = "ghcr-token"
+    }
   }
 
-  secret {
-    name  = "ghcr-token"
-    value = var.ghcr_token
+  dynamic "secret" {
+    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    content {
+      name  = "ghcr-token"
+      value = var.ghcr_token
+    }
   }
 
   secret {
@@ -228,15 +234,21 @@ resource "azurerm_container_app_job" "database_cleanup" {
     replica_completion_count = 1
   }
 
-  registry {
-    server               = var.image_registry
-    username             = var.ghcr_username
-    password_secret_name = "ghcr-token"
+  dynamic "registry" {
+    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    content {
+      server               = var.image_registry
+      username             = var.ghcr_username
+      password_secret_name = "ghcr-token"
+    }
   }
 
-  secret {
-    name  = "ghcr-token"
-    value = var.ghcr_token
+  dynamic "secret" {
+    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    content {
+      name  = "ghcr-token"
+      value = var.ghcr_token
+    }
   }
 
   secret {
@@ -300,15 +312,21 @@ resource "azurerm_container_app_job" "provisioner_cleanup" {
     identity_ids = [var.managed_identity_id]
   }
 
-  registry {
-    server               = var.image_registry
-    username             = var.ghcr_username
-    password_secret_name = "ghcr-token"
+  dynamic "registry" {
+    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    content {
+      server               = var.image_registry
+      username             = var.ghcr_username
+      password_secret_name = "ghcr-token"
+    }
   }
 
-  secret {
-    name  = "ghcr-token"
-    value = var.ghcr_token
+  dynamic "secret" {
+    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    content {
+      name  = "ghcr-token"
+      value = var.ghcr_token
+    }
   }
 
   secret {
