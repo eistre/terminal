@@ -13,6 +13,12 @@ variable "name_prefix" {
   type        = string
 }
 
+variable "random_suffix" {
+  description = "Random suffix for globally unique names (optional)"
+  type        = string
+  default     = ""
+}
+
 variable "tags" {
   description = "Common tags to apply to all resources"
   type        = map(string)
@@ -120,7 +126,7 @@ variable "aci_memory_gb" {
 }
 
 # General configuration
-variable "log_level" {
+variable "logger_level" {
   description = "Application log level"
   type        = string
 }

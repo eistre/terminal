@@ -21,6 +21,7 @@ variable "random_suffix" {
 variable "admin_username" {
   description = "MySQL admin username"
   type        = string
+  default     = "terminal"
 }
 
 variable "admin_password" {
@@ -34,9 +35,22 @@ variable "database_name" {
   type        = string
 }
 
+variable "backup_retention_days" {
+  description = "Backup retention in days"
+  type        = number
+  default     = 7
+}
+
+variable "enable_auto_grow" {
+  description = "Enable storage auto-grow to prevent out-of-space errors"
+  type        = bool
+  default     = true
+}
+
 variable "sku_name" {
   description = "SKU name for MySQL Flexible Server"
   type        = string
+  default     = "B_Standard_B1ms"
 }
 
 variable "tags" {

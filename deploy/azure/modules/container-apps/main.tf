@@ -1,35 +1,25 @@
-# ==============================================================================
-# Local Values
-# ==============================================================================
-
+# Local values for container image paths
 locals {
-  # Container image paths
   web_image                 = "${var.image_registry}/${var.image_owner}/terminal-web:${var.image_tag}"
   database_cleanup_image    = "${var.image_registry}/${var.image_owner}/terminal-database-cleanup:${var.image_tag}"
   provisioner_cleanup_image = "${var.image_registry}/${var.image_owner}/terminal-provisioner-cleanup:${var.image_tag}"
   container_image           = "${var.image_registry}/${var.image_owner}/terminal-container:${var.image_tag}"
 }
 
-# ==============================================================================
-# Container Apps Environment
-# ==============================================================================
-
+# Container App Environment
 resource "azurerm_container_app_environment" "main" {
-  name                = "${var.name_prefix}-env"
-  resource_group_name = var.resource_group_name
-  location            = var.location
+  name                       = "${var.name_prefix}-env-${var.random_suffix}"
+  location                   = var.location
+  resource_group_name        = var.resource_group_name
 
   tags = merge(var.tags, { component = "environment" })
 }
 
-# ==============================================================================
-# Web Application (Azure Container App)
-# ==============================================================================
-
+# Container App for Web Application
 resource "azurerm_container_app" "web" {
-  name                         = "${var.name_prefix}-web"
-  resource_group_name          = var.resource_group_name
+  name                         = "${var.name_prefix}-web-${var.random_suffix}"
   container_app_environment_id = azurerm_container_app_environment.main.id
+  resource_group_name          = var.resource_group_name
   revision_mode                = "Single"
 
   identity {
@@ -95,8 +85,8 @@ resource "azurerm_container_app" "web" {
       }
 
       env {
-        name  = "LOG_LEVEL"
-        value = var.log_level
+        name  = "LOGGER_LEVEL"
+        value = var.logger_level
       }
 
       # Database
@@ -118,7 +108,7 @@ resource "azurerm_container_app" "web" {
 
       env {
         name  = "AUTH_USER_EXPIRY_DAYS"
-        value = tostring(var.user_expiry_days)
+        value = var.user_expiry_days
       }
 
       env {
@@ -154,13 +144,18 @@ resource "azurerm_container_app" "web" {
       }
 
       env {
+        name  = "PROVISIONER_APP_NAME"
+        value = var.name_prefix
+      }
+
+      env {
         name  = "PROVISIONER_CONTAINER_IMAGE"
         value = local.container_image
       }
 
       env {
         name  = "PROVISIONER_CONTAINER_EXPIRY_MINUTES"
-        value = tostring(var.container_expiry_minutes)
+        value = var.container_expiry_minutes
       }
 
       env {
@@ -185,12 +180,12 @@ resource "azurerm_container_app" "web" {
 
       env {
         name  = "PROVISIONER_AZURE_CPU"
-        value = tostring(var.aci_cpu)
+        value = var.aci_cpu
       }
 
       env {
         name  = "PROVISIONER_AZURE_MEMORY_GB"
-        value = tostring(var.aci_memory_gb)
+        value = var.aci_memory_gb
       }
 
       # Managed Identity Client ID for Azure SDK
@@ -206,7 +201,7 @@ resource "azurerm_container_app" "web" {
       custom_rule_type = "cpu"
       metadata = {
         type  = "Utilization"
-        value = "70"
+        value = "80"
       }
     }
   }
@@ -217,15 +212,12 @@ resource "azurerm_container_app" "web" {
   })
 }
 
-# ==============================================================================
-# Database Cleanup Job (CronJob)
-# ==============================================================================
-
+# Container App Job for Database Cleanup
 resource "azurerm_container_app_job" "database_cleanup" {
-  name                         = "${var.name_prefix}-db-cleanup"
+  name                         = "${var.name_prefix}-db-cleanup-${var.random_suffix}"
   resource_group_name          = var.resource_group_name
-  location                     = var.location
   container_app_environment_id = azurerm_container_app_environment.main.id
+  location                     = var.location
 
   replica_timeout_in_seconds = 300
   replica_retry_limit        = 2
@@ -265,8 +257,8 @@ resource "azurerm_container_app_job" "database_cleanup" {
       }
 
       env {
-        name  = "LOG_LEVEL"
-        value = var.log_level
+        name  = "LOGGER_LEVEL"
+        value = var.logger_level
       }
 
       env {
@@ -278,11 +270,6 @@ resource "azurerm_container_app_job" "database_cleanup" {
         name  = "DATABASE_SSL_ENABLED"
         value = "true"
       }
-
-      env {
-        name  = "AUTH_USER_EXPIRY_DAYS"
-        value = tostring(var.user_expiry_days)
-      }
     }
   }
 
@@ -292,15 +279,12 @@ resource "azurerm_container_app_job" "database_cleanup" {
   })
 }
 
-# ==============================================================================
-# Provisioner Cleanup Job (CronJob)
-# ==============================================================================
-
+# Container App Job for Provisioner Cleanup
 resource "azurerm_container_app_job" "provisioner_cleanup" {
-  name                         = "${var.name_prefix}-prov-cleanup"
+  name                         = "${var.name_prefix}-prov-cleanup-${var.random_suffix}"
   resource_group_name          = var.resource_group_name
-  location                     = var.location
   container_app_environment_id = azurerm_container_app_environment.main.id
+  location                     = var.location
 
   replica_timeout_in_seconds = 300
   replica_retry_limit        = 2
@@ -346,7 +330,7 @@ resource "azurerm_container_app_job" "provisioner_cleanup" {
 
       env {
         name  = "LOG_LEVEL"
-        value = var.log_level
+        value = var.logger_level
       }
 
       env {
@@ -365,13 +349,13 @@ resource "azurerm_container_app_job" "provisioner_cleanup" {
       }
 
       env {
-        name  = "PROVISIONER_CONTAINER_IMAGE"
-        value = local.container_image
+        name  = "PROVISIONER_APP_NAME"
+        value = var.name_prefix
       }
 
       env {
-        name  = "PROVISIONER_CONTAINER_EXPIRY_MINUTES"
-        value = tostring(var.container_expiry_minutes)
+        name  = "PROVISIONER_CONTAINER_IMAGE"
+        value = local.container_image
       }
 
       env {
@@ -392,16 +376,6 @@ resource "azurerm_container_app_job" "provisioner_cleanup" {
       env {
         name  = "PROVISIONER_AZURE_KEYVAULT_URL"
         value = var.keyvault_url
-      }
-
-      env {
-        name  = "PROVISIONER_AZURE_CPU"
-        value = tostring(var.aci_cpu)
-      }
-
-      env {
-        name  = "PROVISIONER_AZURE_MEMORY_GB"
-        value = tostring(var.aci_memory_gb)
       }
 
       # Managed Identity Client ID for Azure SDK
