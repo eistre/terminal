@@ -200,10 +200,12 @@ export class AzureProvisioner extends AbstractProvisioner {
       }
     }
 
+    // Clean up the SSH key so the name can be reused immediately
     try {
-      // Delete the secret - it will auto-purge after Key Vault retention period
-      await this.secrets.beginDeleteSecret(secretName);
-      logger.debug('SSH key deleted from Key Vault');
+      const deletePoller = await this.secrets.beginDeleteSecret(secretName);
+      await deletePoller.pollUntilDone();
+      await this.secrets.purgeDeletedSecret(secretName);
+      logger.debug('SSH key purged from Key Vault');
     }
     catch (error: unknown) {
       if (AzureProvisioner.isNotFound(error)) {
@@ -211,7 +213,7 @@ export class AzureProvisioner extends AbstractProvisioner {
         return;
       }
 
-      logger.warn({ error }, 'Failed to delete SSH key from Key Vault');
+      logger.warn({ error }, 'Failed to purge SSH key from Key Vault');
     }
   }
 
@@ -339,9 +341,12 @@ export class AzureProvisioner extends AbstractProvisioner {
     }
     catch (error) {
       // Clean up orphaned key if container creation failed
-      this.secrets.beginDeleteSecret(secretName).catch((error) => {
-        logger.warn({ error }, 'Failed to clean up orphaned SSH key');
-      });
+      this.secrets.beginDeleteSecret(secretName)
+        .then(poller => poller.pollUntilDone())
+        .then(() => this.secrets.purgeDeletedSecret(secretName))
+        .catch((error) => {
+          logger.warn({ error }, 'Failed to clean up orphaned SSH key');
+        });
       throw error;
     }
 
