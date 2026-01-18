@@ -1,0 +1,28 @@
+# Template to fill in (prod/long-lived)
+# Usage:
+#   Copy to terraform.prod.tfvars (or terraform.tfvars), replace all TODOs, then:
+#     terraform plan  -var-file=terraform.prod.tfvars
+#     terraform apply -var-file=terraform.prod.tfvars
+# All required values are empty strings to prevent accidental use as-is.
+
+subscription_id      = "" # TODO Azure subscription ID
+location             = "" # TODO Azure region, e.g., westeurope
+admin_email          = "" # TODO admin login email
+admin_password       = "" # TODO admin password (min 8 chars)
+auth_secret          = "" # TODO 32+ char secret, e.g., openssl rand -base64 32
+mysql_admin_password = "" # TODO MySQL admin password (min 8 chars)
+
+# Container registry (leave empty if images are public)
+ghcr_username = "" # TODO GitHub username or leave blank
+ghcr_token    = "" # TODO PAT with read:packages or leave blank
+
+# Optional overrides (defaults used when left commented)
+# resource_prefix             = "terminal"
+# container_image_tag         = "latest"
+# mysql_backup_retention_days = 7
+# mysql_enable_auto_grow      = true
+# logger_level                = "info"
+# container_expiry_minutes    = 30
+# user_expiry_days            = 90
+# aci_cpu                     = 0.1
+# aci_memory_gb               = 0.1

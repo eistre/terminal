@@ -139,7 +139,7 @@ resource "azurerm_container_app" "web" {
       }
 
       env {
-        name  = "MAILER_AZURE_SENDER"
+        name  = "MAILER_SENDER"
         value = var.mailer_sender
       }
 
@@ -347,7 +347,7 @@ resource "azurerm_container_app_job" "provisioner_cleanup" {
       }
 
       env {
-        name  = "LOG_LEVEL"
+        name  = "LOGGER_LEVEL"
         value = var.logger_level
       }
 

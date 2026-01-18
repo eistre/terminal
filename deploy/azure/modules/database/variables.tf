@@ -53,6 +53,12 @@ variable "sku_name" {
   default     = "B_Standard_B1ms"
 }
 
+variable "mysql_version" {
+  description = "MySQL version"
+  type        = string
+  default     = "8.4"
+}
+
 variable "tags" {
   description = "Common tags to apply to all resources"
   type        = map(string)

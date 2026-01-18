@@ -97,6 +97,12 @@ variable "mysql_sku" {
   default     = "B_Standard_B1ms"
 }
 
+variable "mysql_version" {
+  description = "MySQL version"
+  type        = string
+  default     = "8.4"
+}
+
 variable "mysql_backup_retention_days" {
   description = "Backup retention in days (1-35)"
   type        = number

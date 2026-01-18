@@ -1,6 +1,5 @@
 terraform {
-  required_version = ">= 1.14.3"
-
+  required_version = ">= 1.11.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -14,5 +13,14 @@ terraform {
 }
 
 provider "azurerm" {
-  subscription_id = var.subscription_id
+  features {}
+  subscription_id                 = var.subscription_id
+  resource_provider_registrations = "core"
+  resource_providers_to_register = [
+    "Microsoft.App",
+    "Microsoft.Communication",
+    "Microsoft.DBforMySQL",
+    "Microsoft.ContainerInstance",
+    "Microsoft.KeyVault"
+  ]
 }

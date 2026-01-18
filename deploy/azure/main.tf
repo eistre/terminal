@@ -9,7 +9,7 @@ locals {
 
 # Resource Group
 resource "azurerm_resource_group" "main" {
-  name     = "${var.resource_prefix}-rg"
+  name     = "${var.resource_prefix}-rg-${random_string.suffix.result}"
   location = var.location
 
   tags = local.common_tags
@@ -28,7 +28,7 @@ data "azurerm_client_config" "current" {}
 
 # Managed Identity (shared by Container Apps for Azure resource access)
 resource "azurerm_user_assigned_identity" "main" {
-  name                = "${var.resource_prefix}-identity"
+  name                = "${var.resource_prefix}-identity-${random_string.suffix.result}"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
 
@@ -55,6 +55,7 @@ module "database" {
   admin_password = var.mysql_admin_password
   database_name  = "terminal"
   sku_name       = var.mysql_sku
+  mysql_version  = var.mysql_version
 
   backup_retention_days = var.mysql_backup_retention_days
   enable_auto_grow      = var.mysql_enable_auto_grow
@@ -122,7 +123,7 @@ module "container_apps" {
   admin_password = var.admin_password
 
   # Provisioner configuration
-  subscription_id          = var.subscription_id
+  subscription_id          = data.azurerm_client_config.current.subscription_id
   keyvault_url             = module.keyvault.vault_url
   container_expiry_minutes = var.container_expiry_minutes
   aci_cpu                  = var.aci_cpu

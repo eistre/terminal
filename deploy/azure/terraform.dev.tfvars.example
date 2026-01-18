@@ -1,0 +1,29 @@
+# Quickstart example (dev/test)
+# Usage:
+#   Copy to terraform.dev.tfvars (or terraform.tfvars) and run:
+#     terraform plan  -var-file=terraform.dev.tfvars
+#     terraform apply -var-file=terraform.dev.tfvars
+# Rotate all secrets before any non-throwaway use.
+
+# Required
+subscription_id      = "00000000-0000-0000-0000-000000000000"
+location             = "northeurope"
+admin_email          = "admin@admin.sec"
+admin_password       = "terminal_password"
+auth_secret          = "cloud-test-secret-must-be-at-least-32-chars!"
+mysql_admin_password = "Cloud-Test-Root-123-Password"
+
+# Container registry (empty = public images, supply creds if private)
+ghcr_username = ""
+ghcr_token    = ""
+
+# Optional overrides (commented to use defaults)
+# resource_prefix             = "terminal"
+# container_image_tag         = "latest"
+# mysql_backup_retention_days = 7
+# mysql_enable_auto_grow      = true
+# logger_level                = "info"
+# container_expiry_minutes    = 30
+# user_expiry_days            = 90
+# aci_cpu                     = 0.1
+# aci_memory_gb               = 0.1
