@@ -13,11 +13,6 @@ variable "name_prefix" {
   type        = string
 }
 
-variable "random_suffix" {
-  description = "Random suffix for globally unique names"
-  type        = string
-}
-
 variable "tenant_id" {
   description = "Azure AD tenant ID"
   type        = string

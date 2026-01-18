@@ -13,11 +13,6 @@ variable "name_prefix" {
   type        = string
 }
 
-variable "random_suffix" {
-  description = "Random suffix for globally unique names"
-  type        = string
-}
-
 variable "admin_username" {
   description = "MySQL admin username"
   type        = string

@@ -1,6 +1,6 @@
 # Azure Key Vault for SSH key storage
 resource "azurerm_key_vault" "main" {
-  name                       = "${var.name_prefix}-kv-${var.random_suffix}"
+  name                       = "${var.name_prefix}-keyvault"
   resource_group_name        = var.resource_group_name
   location                   = var.location
   tenant_id                  = var.tenant_id

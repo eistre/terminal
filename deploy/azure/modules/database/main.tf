@@ -1,6 +1,6 @@
 # Azure MySQL Flexible Server
 resource "azurerm_mysql_flexible_server" "main" {
-  name                   = "${var.name_prefix}-mysql-${var.random_suffix}"
+  name                   = "${var.name_prefix}-mysql"
   resource_group_name    = var.resource_group_name
   location               = var.location
   administrator_login    = var.admin_username

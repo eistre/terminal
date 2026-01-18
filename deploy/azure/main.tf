@@ -9,7 +9,7 @@ locals {
 
 # Resource Group
 resource "azurerm_resource_group" "main" {
-  name     = "${var.resource_prefix}-rg-${random_string.suffix.result}"
+  name     = "${var.resource_prefix}-rg"
   location = var.location
 
   tags = local.common_tags
@@ -28,7 +28,7 @@ data "azurerm_client_config" "current" {}
 
 # Managed Identity (shared by Container Apps for Azure resource access)
 resource "azurerm_user_assigned_identity" "main" {
-  name                = "${var.resource_prefix}-identity-${random_string.suffix.result}"
+  name                = "${var.resource_prefix}-identity"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
 
@@ -47,7 +47,6 @@ module "database" {
   source = "./modules/database"
 
   name_prefix         = var.resource_prefix
-  random_suffix       = random_string.suffix.result
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
 
@@ -80,7 +79,6 @@ module "keyvault" {
   source = "./modules/keyvault"
 
   name_prefix         = var.resource_prefix
-  random_suffix       = random_string.suffix.result
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
 
@@ -95,7 +93,6 @@ module "container_apps" {
   source = "./modules/container-apps"
 
   name_prefix         = var.resource_prefix
-  random_suffix       = random_string.suffix.result
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
 
