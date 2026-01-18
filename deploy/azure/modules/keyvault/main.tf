@@ -5,7 +5,7 @@ resource "azurerm_key_vault" "main" {
   location                   = var.location
   tenant_id                  = var.tenant_id
   soft_delete_retention_days = 7
-  purge_protection_enabled   = true
+  purge_protection_enabled   = false
   rbac_authorization_enabled = true
   sku_name                   = "standard"
 
@@ -13,7 +13,7 @@ resource "azurerm_key_vault" "main" {
   public_network_access_enabled = true
   network_acls {
     bypass         = "AzureServices"
-    default_action = "Deny"
+    default_action = "Allow"
   }
 
   tags = merge(var.tags, { component = "keyvault" })

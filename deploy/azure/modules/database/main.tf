@@ -23,8 +23,8 @@ resource "azurerm_mysql_flexible_database" "main" {
   name                = var.database_name
   resource_group_name = var.resource_group_name
   server_name         = azurerm_mysql_flexible_server.main.name
-  charset             = "utf8"
-  collation           = "utf8_unicode_ci"
+  charset             = "utf8mb3"
+  collation           = "utf8mb3_unicode_ci"
 }
 
 # Firewall rule to allow Azure services

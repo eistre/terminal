@@ -220,7 +220,7 @@ resource "azurerm_container_app" "web" {
 
 # Container App Job for Database Cleanup
 resource "azurerm_container_app_job" "database_cleanup" {
-  name                         = "${var.name_prefix}-db-cleanup-${var.random_suffix}"
+  name                         = "${var.name_prefix}-database-cleanup-${var.random_suffix}"
   resource_group_name          = var.resource_group_name
   container_app_environment_id = azurerm_container_app_environment.main.id
   location                     = var.location
@@ -293,7 +293,7 @@ resource "azurerm_container_app_job" "database_cleanup" {
 
 # Container App Job for Provisioner Cleanup
 resource "azurerm_container_app_job" "provisioner_cleanup" {
-  name                         = "${var.name_prefix}-prov-cleanup-${var.random_suffix}"
+  name                         = "${var.name_prefix}-provisioner-cleanup-${var.random_suffix}"
   resource_group_name          = var.resource_group_name
   container_app_environment_id = azurerm_container_app_environment.main.id
   location                     = var.location
