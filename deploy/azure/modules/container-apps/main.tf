@@ -201,14 +201,9 @@ resource "azurerm_container_app" "web" {
       }
     }
 
-    # Autoscaling based on CPU utilization
-    custom_scale_rule {
-      name             = "cpu-scaling"
-      custom_rule_type = "cpu"
-      metadata = {
-        type  = "Utilization"
-        value = "80"
-      }
+    http_scale_rule {
+      name                = "http-concurrency"
+      concurrent_requests = 30
     }
   }
 
