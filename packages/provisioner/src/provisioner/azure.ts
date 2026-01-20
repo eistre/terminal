@@ -15,11 +15,6 @@ interface ContainerGroupStatusResult {
 }
 
 export class AzureProvisioner extends AbstractProvisioner {
-  private static readonly CONTAINER_NAME = 'terminal';
-  private static readonly CONTAINER_SSH_PORT = 22;
-  private static readonly CONTAINER_SSH_USERNAME = 'user';
-
-  // Azure-specific tag keys (equivalent to Kubernetes labels)
   private static readonly TAG_APP_NAME = 'app';
   private static readonly TAG_COMPONENT = 'component';
   private static readonly TAG_VERSION = 'version';
@@ -149,8 +144,8 @@ export class AzureProvisioner extends AbstractProvisioner {
     return {
       userId,
       host: ipAddress,
-      port: AzureProvisioner.CONTAINER_SSH_PORT,
-      username: AzureProvisioner.CONTAINER_SSH_USERNAME,
+      port: AbstractProvisioner.CONTAINER_SSH_PORT,
+      username: AbstractProvisioner.CONTAINER_SSH_USERNAME,
       privateKey,
     };
   }
@@ -315,11 +310,11 @@ export class AzureProvisioner extends AbstractProvisioner {
             type: 'Public',
             ports: [{
               protocol: 'TCP',
-              port: AzureProvisioner.CONTAINER_SSH_PORT,
+              port: AbstractProvisioner.CONTAINER_SSH_PORT,
             }],
           },
           containers: [{
-            name: AzureProvisioner.CONTAINER_NAME,
+            name: AbstractProvisioner.CONTAINER_NAME,
             image: this.containerImage,
             environmentVariables: [{
               name: 'SSH_PUBLIC_KEY',
@@ -327,7 +322,7 @@ export class AzureProvisioner extends AbstractProvisioner {
             }],
             ports: [{
               protocol: 'TCP',
-              port: AzureProvisioner.CONTAINER_SSH_PORT,
+              port: AbstractProvisioner.CONTAINER_SSH_PORT,
             }],
             resources: {
               requests: {

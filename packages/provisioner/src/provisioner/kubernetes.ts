@@ -13,11 +13,6 @@ interface PodStatusResult {
 }
 
 export class KubernetesProvisioner extends AbstractProvisioner {
-  private static readonly CONTAINER_NAME = 'terminal';
-  private static readonly CONTAINER_SSH_PORT = 22;
-  private static readonly CONTAINER_SSH_USERNAME = 'user';
-
-  // Kubernetes-specific label keys (following k8s conventions)
   private static readonly APP_NAME_LABEL_KEY = 'app.kubernetes.io/name';
   private static readonly INSTANCE_LABEL_KEY = 'app.kubernetes.io/instance';
   private static readonly COMPONENT_LABEL_KEY = 'app.kubernetes.io/component';
@@ -172,7 +167,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         }
 
         host = podIP;
-        port = KubernetesProvisioner.CONTAINER_SSH_PORT;
+        port = AbstractProvisioner.CONTAINER_SSH_PORT;
         logger.debug({ host, podIP }, 'Using pod IP for headless mode');
         break;
       }
@@ -181,7 +176,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         const service = await this.api.readNamespacedService({ name: serviceName, namespace: this.namespace });
         const nodePort = service.spec
           ?.ports
-          ?.find(port => port.port === KubernetesProvisioner.CONTAINER_SSH_PORT)
+          ?.find(port => port.port === AbstractProvisioner.CONTAINER_SSH_PORT)
           ?.nodePort;
 
         if (!nodePort) {
@@ -206,7 +201,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       userId,
       host,
       port,
-      username: KubernetesProvisioner.CONTAINER_SSH_USERNAME,
+      username: AbstractProvisioner.CONTAINER_SSH_USERNAME,
       privateKey,
     };
   }
@@ -261,7 +256,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       const pod = await this.api.readNamespacedPod({ name: podName, namespace: this.namespace });
       const phase = pod.status?.phase;
       const containerStatus = pod.status?.containerStatuses
-        ?.find(status => status.name === KubernetesProvisioner.CONTAINER_NAME);
+        ?.find(status => status.name === AbstractProvisioner.CONTAINER_NAME);
 
       logger.trace({ phase, deletionTimestamp: pod.metadata?.deletionTimestamp, ready: containerStatus?.ready }, 'Pod status');
 
@@ -429,7 +424,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       },
       spec: {
         containers: [{
-          name: KubernetesProvisioner.CONTAINER_NAME,
+          name: AbstractProvisioner.CONTAINER_NAME,
           image: this.containerImage,
           imagePullPolicy: 'IfNotPresent',
           env: [{
@@ -438,7 +433,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
           }],
           ports: [{
             name: 'ssh',
-            containerPort: KubernetesProvisioner.CONTAINER_SSH_PORT,
+            containerPort: AbstractProvisioner.CONTAINER_SSH_PORT,
           }],
           resources: {
             requests: {
@@ -452,7 +447,7 @@ export class KubernetesProvisioner extends AbstractProvisioner {
           },
           readinessProbe: {
             tcpSocket: {
-              port: KubernetesProvisioner.CONTAINER_SSH_PORT,
+              port: AbstractProvisioner.CONTAINER_SSH_PORT,
             },
             initialDelaySeconds: 3,
             periodSeconds: 3,
@@ -498,8 +493,8 @@ export class KubernetesProvisioner extends AbstractProvisioner {
         },
         ports: [{
           name: 'ssh',
-          port: KubernetesProvisioner.CONTAINER_SSH_PORT,
-          targetPort: KubernetesProvisioner.CONTAINER_SSH_PORT,
+          port: AbstractProvisioner.CONTAINER_SSH_PORT,
+          targetPort: AbstractProvisioner.CONTAINER_SSH_PORT,
           protocol: 'TCP',
         }],
       },
