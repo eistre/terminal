@@ -1,4 +1,3 @@
-import type { EmailMessage } from '@azure/communication-email';
 import type { AzureMailerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
 import { EmailClient } from '@azure/communication-email';
@@ -16,7 +15,9 @@ export class AzureMailer extends AbstractMailer {
   }
 
   protected override async sendImpl(to: string, subject: string, text: string, html: string): Promise<void> {
-    const message: EmailMessage = {
+    this.logger.debug({ to, subject }, 'Sending email via Azure');
+
+    const poller = await this.client.beginSend({
       senderAddress: this.senderAddress,
       content: {
         subject,
@@ -26,11 +27,8 @@ export class AzureMailer extends AbstractMailer {
       recipients: {
         to: [{ address: to }],
       },
-    };
+    });
 
-    this.logger.debug({ to, subject }, 'Sending email via Azure');
-
-    const poller = await this.client.beginSend(message);
     const response = await poller.pollUntilDone();
 
     this.logger.debug({ operationId: response.id, to, subject }, 'Email sent via Azure');
