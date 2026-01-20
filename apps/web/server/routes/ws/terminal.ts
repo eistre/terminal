@@ -234,6 +234,11 @@ export default defineWebSocketHandler({
       return;
     }
 
+    if (msg.type === 'terminal/ping') {
+      peer.send(encode({ type: 'terminal/pong' }));
+      return;
+    }
+
     const ctx = peer.context.terminal as TerminalContext | undefined;
     const logger = ctx ? baseLogger.child({ userId: ctx.userId }) : baseLogger;
 

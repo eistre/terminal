@@ -18,6 +18,10 @@ export type Message = {
   code?: ErrorCode;
   message?: string;
 } | {
+  type: 'terminal/ping';
+} | {
+  type: 'terminal/pong';
+} | {
   type: 'task/done';
   taskId: number;
 } | {
