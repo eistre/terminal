@@ -10,6 +10,7 @@ packages:
 
 catalog:
   '@antfu/eslint-config': ^7.0.1
+  '@aws-sdk/client-sesv2': ^3.971.0
   '@azure/arm-containerinstance': ^9.1.0
   '@azure/communication-email': ^1.1.0
   '@azure/core-rest-pipeline': ^1.22.2
