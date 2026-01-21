@@ -268,9 +268,11 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       if (phase === 'Failed') {
         AbstractProvisioner.abortRetry(`Pod failed: ${pod.status?.reason || 'Unknown'}`);
       }
+
       if (phase === 'Succeeded') {
         AbstractProvisioner.abortRetry('Pod completed unexpectedly');
       }
+
       if (phase === 'Unknown') {
         AbstractProvisioner.abortRetry('Pod status unknown');
       }
@@ -321,7 +323,6 @@ export class KubernetesProvisioner extends AbstractProvisioner {
 
     // Generate ephemeral keypair
     const { publicKey, privateKey } = AbstractProvisioner.generateKeypair();
-    logger.debug('Generated ephemeral Ed25519 keypair');
 
     // Create the pod with the public key
     const pod = await this.api.createNamespacedPod({
@@ -391,7 +392,6 @@ export class KubernetesProvisioner extends AbstractProvisioner {
       logger.trace({ status }, 'Polled pod deletion');
 
       if (status === 'MISSING') {
-        logger.debug('Pod deletion complete');
         return;
       }
 

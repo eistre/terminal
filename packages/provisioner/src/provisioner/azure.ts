@@ -56,7 +56,8 @@ export class AzureProvisioner extends AbstractProvisioner {
 
       // Only include containers managed by this provisioner
       if (tags[AzureProvisioner.TAG_MANAGED_BY] !== AbstractProvisioner.MANAGED_BY_VALUE
-        || tags[AzureProvisioner.TAG_COMPONENT] !== AbstractProvisioner.COMPONENT_VALUE) {
+        || tags[AzureProvisioner.TAG_COMPONENT] !== AbstractProvisioner.COMPONENT_VALUE
+        || tags[AzureProvisioner.TAG_APP_NAME] !== this.appName) {
         continue;
       }
 
@@ -112,7 +113,7 @@ export class AzureProvisioner extends AbstractProvisioner {
         break;
       }
       case 'PENDING': {
-        logger.debug('Container is pending, waiting for running status and retrieving existing key');
+        logger.debug('Container is pending, waiting for running status');
         const [key, runningContainerGroup] = await Promise.all([
           this.getPrivateKey(userId),
           this.waitUntilContainerGroupRunning(containerGroupName),
@@ -123,7 +124,7 @@ export class AzureProvisioner extends AbstractProvisioner {
         break;
       }
       case 'RUNNING': {
-        logger.debug('Container exists, validating and updating expiration');
+        logger.debug('Container is running, updating expiration');
         const [key] = await Promise.all([
           this.getPrivateKey(userId),
           this.updateContainerExpirationImpl(userId),
@@ -231,6 +232,7 @@ export class AzureProvisioner extends AbstractProvisioner {
         const events = containerGroup.containers?.[0]?.instanceView?.events ?? [];
         AbstractProvisioner.abortRetry(`Container failed: ${events[-1]?.message || 'Unknown'}`);
       }
+
       if (instanceState === 'Terminated') {
         AbstractProvisioner.abortRetry(`Container terminated unexpectedly`);
       }
@@ -281,8 +283,6 @@ export class AzureProvisioner extends AbstractProvisioner {
 
     // Generate ephemeral keypair
     const { publicKey, privateKey } = AbstractProvisioner.generateKeypair();
-    logger.debug('Generated ephemeral Ed25519 keypair');
-
     const expiresAt = AbstractProvisioner.getExpiresAt(this.containerExpiryMinutes);
 
     // Store the private key in Key Vault
@@ -334,7 +334,7 @@ export class AzureProvisioner extends AbstractProvisioner {
         },
       );
     }
-    catch (error) {
+    catch (error: unknown) {
       // Clean up orphaned key if container creation failed
       this.secrets.beginDeleteSecret(secretName)
         .then(poller => poller.pollUntilDone())
@@ -385,7 +385,6 @@ export class AzureProvisioner extends AbstractProvisioner {
       logger.trace({ status }, 'Polled container deletion status');
 
       if (status === 'MISSING') {
-        logger.debug('Container deletion complete');
         return;
       }
 
