@@ -31,6 +31,7 @@ const tooltip = computed(() => {
         :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
         variant="ghost"
         class="text-white"
+        size="xl"
         @click="isDark = !isDark"
       />
     </UTooltip>

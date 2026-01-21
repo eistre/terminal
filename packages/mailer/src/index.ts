@@ -1,6 +1,7 @@
 import type { MailerSchema } from '@terminal/env/schemas';
 import type { Logger } from '@terminal/logger';
 import type { Mailer } from './mailer.js';
+import { AwsMailer } from './mailer/aws.js';
 import { AzureMailer } from './mailer/azure.js';
 import { NoopMailer } from './mailer/noop.js';
 import { SmtpMailer } from './mailer/smtp.js';
@@ -12,6 +13,8 @@ export function createMailer(
   config: MailerSchema,
 ): Mailer {
   switch (config.MAILER_TYPE) {
+    case 'aws':
+      return new AwsMailer(logger, config);
     case 'azure':
       return new AzureMailer(logger, config);
     case 'smtp':

@@ -12,6 +12,9 @@ export type ContainerStatus = 'RUNNING' | 'PENDING' | 'TERMINATING' | 'MISSING';
 
 export abstract class AbstractProvisioner implements Provisioner {
   // Shared label/tag values for identifying managed containers
+  protected static readonly CONTAINER_NAME = 'terminal';
+  protected static readonly CONTAINER_SSH_PORT = 22;
+  protected static readonly CONTAINER_SSH_USERNAME = 'user';
   protected static readonly COMPONENT_VALUE = 'session';
   protected static readonly MANAGED_BY_VALUE = 'terminal-provisioner';
 

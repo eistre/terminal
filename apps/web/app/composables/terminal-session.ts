@@ -47,6 +47,12 @@ export function useTerminalSession(slug: string) {
     autoReconnect: false,
     autoConnect: false,
     onMessage,
+    heartbeat: {
+      message: encode({ type: 'terminal/ping' }),
+      responseMessage: encode({ type: 'terminal/pong' }),
+      interval: 30000,
+      pongTimeout: 30000,
+    },
   });
 
   const socketStatus = ws.status;

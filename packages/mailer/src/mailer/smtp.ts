@@ -32,7 +32,10 @@ export class SmtpMailer extends AbstractMailer {
     this.logger.debug({ to, subject }, 'Sending email via SMTP');
 
     const response = await this.transporter.sendMail({
-      from: this.senderAddress,
+      from: {
+        name: 'Terminal',
+        address: this.senderAddress,
+      },
       to,
       subject,
       text,
