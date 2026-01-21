@@ -50,8 +50,8 @@ export function useTerminalSession(slug: string) {
     heartbeat: {
       message: encode({ type: 'terminal/ping' }),
       responseMessage: encode({ type: 'terminal/pong' }),
-      interval: 15000,
-      pongTimeout: 15000,
+      interval: 30000,
+      pongTimeout: 30000,
     },
   });
 
