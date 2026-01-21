@@ -20,6 +20,7 @@ function toggleLocale() {
       <UButton
         :icon="flagIcon"
         variant="ghost"
+        size="xl"
         @click="toggleLocale"
       />
     </UTooltip>

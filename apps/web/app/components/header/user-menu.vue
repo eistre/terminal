@@ -76,10 +76,11 @@ const items: ComputedRef<DropdownMenuItem[]> = computed(() => {
       trailing-icon="i-lucide-chevron-down"
       variant="ghost"
       color="neutral"
+      size="xl"
       class="font-semibold text-white"
     >
       <span class="hidden md:inline">{{ session.data?.user.name }}</span>
-      <UIcon name="i-lucide-circle-user" class="md:hidden" />
+      <UIcon name="i-lucide-circle-user" class="md:hidden" size="20" />
     </UButton>
   </UDropdownMenu>
 </template>
