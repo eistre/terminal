@@ -1,27 +1,27 @@
 variable "region" {
-  description = "AWS region (provider configuration)"
+  description = "AWS region"
   type        = string
 }
 
 variable "name_prefix" {
-  description = "Prefix for Lightsail database resource name"
+  description = "Prefix for resource names"
   type        = string
 }
 
 variable "admin_username" {
-  description = "Database admin username"
+  description = "MySQL admin username"
   type        = string
   default     = "terminal"
 }
 
 variable "admin_password" {
-  description = "Database admin password"
+  description = "MySQL admin password"
   type        = string
   sensitive   = true
 }
 
 variable "database_name" {
-  description = "Database name"
+  description = "Name of the database to create"
   type        = string
 }
 
