@@ -16,10 +16,10 @@
   },
   "emailDomains": {
     "title": "Email domains",
-    "description": "Manage allowed email domains and verification bypass.",
+    "description": "Manage allowed email domains and verification bypass. Use exact domains (example.com) or subdomain rules (.example.com, .org).",
     "addDomain": "Add domain",
     "fieldDomain": "Domain",
-    "placeholderDomain": "example.com",
+    "placeholderDomain": "example.com or .example.com",
     "fieldSkipVerification": "Skip verification",
     "tableDomain": "Domain",
     "tableSkipVerification": "Skip verification",

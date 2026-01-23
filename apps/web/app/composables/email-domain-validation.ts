@@ -1,4 +1,4 @@
-import { normalizeEmailDomain } from '#shared/email-domains-validation';
+import { normalizedMatchesEmailDomainRule, normalizeEmailDomain } from '#shared/email-domains-validation';
 
 export function useEmailDomainValidation() {
   const config = useConfig();
@@ -22,7 +22,7 @@ export function useEmailDomainValidation() {
 
     const domain = normalizeEmailDomain(normalized.slice(at + 1));
     const allowedDomains = allowedDomainsData.value?.domains ?? [];
-    return allowedDomains.some(d => d.domain === domain);
+    return allowedDomains.some(d => normalizedMatchesEmailDomainRule(domain, normalizeEmailDomain(d.domain)));
   }
 
   return {
