@@ -3,11 +3,28 @@ variable "resource_prefix" {
   type        = string
 }
 
-variable "session_container_image" {
-  description = "Session container image used by the AWS provisioner"
+variable "tags" {
+  description = "Common tags to apply to all resources"
+  type        = map(string)
+}
+
+# Container image configuration
+variable "image_registry" {
+  description = "Container image registry"
   type        = string
 }
 
+variable "image_owner" {
+  description = "Container image owner/organization"
+  type        = string
+}
+
+variable "image_tag" {
+  description = "Tag for container images"
+  type        = string
+}
+
+# Session task configuration
 variable "session_task_cpu" {
   description = "ECS task CPU units for session containers (e.g. 256)"
   type        = string
@@ -23,6 +40,7 @@ variable "session_cpu_architecture" {
   type        = string
 }
 
+# IAM configuration
 variable "execution_role_arn" {
   description = "ECS task execution role ARN"
   type        = string
@@ -33,6 +51,7 @@ variable "provisioner_task_role_arn" {
   type        = string
 }
 
+# Networking configuration
 variable "session_subnet_ids" {
   description = "Subnet IDs for session tasks and cleanup jobs"
   type        = list(string)
@@ -43,27 +62,14 @@ variable "session_security_group_ids" {
   type        = list(string)
 }
 
+# Database configuration
 variable "database_url" {
   description = "Database URL used by cleanup jobs"
   type        = string
 }
 
+# General configuration
 variable "logger_level" {
   description = "Logger level for cleanup jobs"
   type        = string
-}
-
-variable "database_cleanup_image" {
-  description = "Database cleanup job image"
-  type        = string
-}
-
-variable "provisioner_cleanup_image" {
-  description = "Provisioner cleanup job image"
-  type        = string
-}
-
-variable "tags" {
-  description = "Common tags to apply to all resources"
-  type        = map(string)
 }

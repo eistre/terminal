@@ -1,14 +1,20 @@
 data "aws_region" "current" {}
 
+# Local values for container image paths
 locals {
-  session_task_family = "${var.resource_prefix}-session"
+  session_task_family       = "${var.resource_prefix}-session"
+  session_container_image   = "${var.image_registry}/${var.image_owner}/terminal-container:${var.image_tag}"
+  database_cleanup_image    = "${var.image_registry}/${var.image_owner}/terminal-database-cleanup:${var.image_tag}"
+  provisioner_cleanup_image = "${var.image_registry}/${var.image_owner}/terminal-provisioner-cleanup:${var.image_tag}"
 }
 
+# ECS cluster
 resource "aws_ecs_cluster" "main" {
   name = "${var.resource_prefix}-ecs"
   tags = merge(var.tags, { component = "ecs" })
 }
 
+# Session task definition
 resource "aws_ecs_task_definition" "session" {
   family                   = local.session_task_family
   network_mode             = "awsvpc"
@@ -25,7 +31,7 @@ resource "aws_ecs_task_definition" "session" {
   container_definitions = jsonencode([
     {
       name      = "terminal"
-      image     = var.session_container_image
+      image     = local.session_container_image
       essential = true
       portMappings = [
         {
@@ -34,15 +40,16 @@ resource "aws_ecs_task_definition" "session" {
         }
       ]
       healthCheck = {
-        command     = ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/22'"]
-        interval    = 10
-        timeout     = 5
-        retries     = 2
+        command  = ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/22'"]
+        interval = 10
+        timeout  = 5
+        retries  = 2
       }
     }
   ])
 }
 
+# Cleanup task definition for database cleanup
 resource "aws_ecs_task_definition" "database_cleanup" {
   family                   = "${var.resource_prefix}-database-cleanup"
   network_mode             = "awsvpc"
@@ -59,7 +66,7 @@ resource "aws_ecs_task_definition" "database_cleanup" {
   container_definitions = jsonencode([
     {
       name      = "database-cleanup"
-      image     = var.database_cleanup_image
+      image     = local.database_cleanup_image
       essential = true
       environment = [
         { name = "NODE_ENV", value = "production" },
@@ -71,6 +78,7 @@ resource "aws_ecs_task_definition" "database_cleanup" {
   ])
 }
 
+# Cleanup task definition for provisioner cleanup
 resource "aws_ecs_task_definition" "provisioner_cleanup" {
   family                   = "${var.resource_prefix}-provisioner-cleanup"
   network_mode             = "awsvpc"
@@ -88,14 +96,14 @@ resource "aws_ecs_task_definition" "provisioner_cleanup" {
   container_definitions = jsonencode([
     {
       name      = "provisioner-cleanup"
-      image     = var.provisioner_cleanup_image
+      image     = local.provisioner_cleanup_image
       essential = true
       environment = [
         { name = "NODE_ENV", value = "production" },
         { name = "LOGGER_LEVEL", value = var.logger_level },
         { name = "PROVISIONER_TYPE", value = "aws" },
         { name = "PROVISIONER_APP_NAME", value = var.resource_prefix },
-        { name = "PROVISIONER_CONTAINER_IMAGE", value = var.session_container_image },
+        { name = "PROVISIONER_CONTAINER_IMAGE", value = local.session_container_image },
         { name = "PROVISIONER_AWS_REGION", value = data.aws_region.current.name },
         { name = "PROVISIONER_AWS_ECS_CLUSTER", value = aws_ecs_cluster.main.name },
         { name = "PROVISIONER_AWS_TASK_FAMILY", value = aws_ecs_task_definition.session.family },
@@ -107,7 +115,7 @@ resource "aws_ecs_task_definition" "provisioner_cleanup" {
   ])
 }
 
-# EventBridge schedule to run cleanup jobs.
+# EventBridge schedule to run cleanup jobs
 data "aws_iam_policy_document" "events_assume" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -147,18 +155,21 @@ resource "aws_iam_role_policy" "events" {
   policy = data.aws_iam_policy_document.events.json
 }
 
+# EventBridge rule for database cleanup
 resource "aws_cloudwatch_event_rule" "database_cleanup" {
   name                = "${var.resource_prefix}-database-cleanup"
   schedule_expression = "cron(0 0 * * ? *)"
   tags                = merge(var.tags, { component = "ecs" })
 }
 
+# EventBridge rule for provisioner cleanup
 resource "aws_cloudwatch_event_rule" "provisioner_cleanup" {
   name                = "${var.resource_prefix}-provisioner-cleanup"
   schedule_expression = "cron(0/15 * * * ? *)"
   tags                = merge(var.tags, { component = "ecs" })
 }
 
+# EventBridge target for database cleanup
 resource "aws_cloudwatch_event_target" "database_cleanup" {
   rule     = aws_cloudwatch_event_rule.database_cleanup.name
   arn      = aws_ecs_cluster.main.arn
@@ -177,6 +188,7 @@ resource "aws_cloudwatch_event_target" "database_cleanup" {
   }
 }
 
+# EventBridge target for provisioner cleanup
 resource "aws_cloudwatch_event_target" "provisioner_cleanup" {
   rule     = aws_cloudwatch_event_rule.provisioner_cleanup.name
   arn      = aws_ecs_cluster.main.arn

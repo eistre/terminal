@@ -13,23 +13,27 @@ data "aws_iam_policy_document" "ecs_task_assume" {
   }
 }
 
+# ECS task execution role
 resource "aws_iam_role" "ecs_execution" {
   name               = "${var.resource_prefix}-ecs-exec"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_assume.json
   tags               = merge(var.tags, { component = "iam" })
 }
 
+# Attach ECS task execution policy
 resource "aws_iam_role_policy_attachment" "ecs_execution" {
   role       = aws_iam_role.ecs_execution.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# Provisioner task role
 resource "aws_iam_role" "provisioner_task" {
   name               = "${var.resource_prefix}-provisioner-task"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_assume.json
   tags               = merge(var.tags, { component = "iam" })
 }
 
+# Local values for permissions and ARNs
 locals {
   secret_prefix    = "${var.resource_prefix}-session-"
   ecs_cluster      = "${var.resource_prefix}-ecs"
@@ -96,6 +100,7 @@ data "aws_iam_policy_document" "provisioner" {
   }
 }
 
+# Attach provisioner policy to task role
 resource "aws_iam_role_policy" "provisioner_task" {
   role   = aws_iam_role.provisioner_task.id
   policy = data.aws_iam_policy_document.provisioner.json
@@ -107,11 +112,13 @@ resource "aws_iam_user" "web" {
   tags = merge(var.tags, { component = "iam" })
 }
 
+# IAM policy for the web app user
 resource "aws_iam_user_policy" "web" {
   user   = aws_iam_user.web.name
   policy = data.aws_iam_policy_document.provisioner.json
 }
 
+# Access key for the web app user
 resource "aws_iam_access_key" "web" {
   user = aws_iam_user.web.name
 }

@@ -72,11 +72,6 @@ variable "admin_password" {
 }
 
 # Provisioner configuration
-variable "provisioner_container_image" {
-  description = "Provisioner container image"
-  type        = string
-}
-
 variable "provisioner_container_expiry_minutes" {
   description = "Minutes until terminal containers expire"
   type        = number

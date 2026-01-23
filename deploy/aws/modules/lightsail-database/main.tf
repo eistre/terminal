@@ -1,4 +1,4 @@
-# Lightsail MySQL Database
+# Lightsail MySQL database
 resource "aws_lightsail_database" "main" {
   relational_database_name = "${var.name_prefix}-mysql"
   master_database_name     = var.database_name

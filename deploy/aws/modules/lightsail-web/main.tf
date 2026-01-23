@@ -3,7 +3,8 @@ data "aws_region" "current" {}
 
 # Local values for container image paths
 locals {
-  web_image = "${var.image_registry}/${var.image_owner}/terminal-web:${var.image_tag}"
+  web_image                   = "${var.image_registry}/${var.image_owner}/terminal-web:${var.image_tag}"
+  provisioner_container_image = "${var.image_registry}/${var.image_owner}/terminal-container:${var.image_tag}"
 
   # Local values for environment variables
   web_environment = {
@@ -29,7 +30,7 @@ locals {
     # Provisioner
     PROVISIONER_TYPE                     = "aws"
     PROVISIONER_APP_NAME                 = var.name_prefix
-    PROVISIONER_CONTAINER_IMAGE          = var.provisioner_container_image
+    PROVISIONER_CONTAINER_IMAGE          = local.provisioner_container_image
     PROVISIONER_CONTAINER_EXPIRY_MINUTES = var.provisioner_container_expiry_minutes
     PROVISIONER_AWS_REGION               = data.aws_region.current.name
     PROVISIONER_AWS_ECS_CLUSTER          = var.ecs_cluster_name
