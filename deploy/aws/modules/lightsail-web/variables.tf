@@ -42,6 +42,11 @@ variable "database_url" {
   sensitive   = true
 }
 
+variable "mysql_ssl_ca_base64" {
+  description = "Base64-encoded MySQL CA certificate"
+  type        = string
+}
+
 # Email configuration
 variable "mailer_sender" {
   description = "Email sender address"

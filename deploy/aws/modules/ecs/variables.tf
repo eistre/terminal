@@ -68,6 +68,11 @@ variable "database_url" {
   type        = string
 }
 
+variable "mysql_ssl_ca_base64" {
+  description = "Base64-encoded MySQL CA certificate"
+  type        = string
+}
+
 # General configuration
 variable "logger_level" {
   description = "Logger level for cleanup jobs"

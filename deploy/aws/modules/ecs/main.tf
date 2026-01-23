@@ -73,6 +73,7 @@ resource "aws_ecs_task_definition" "database_cleanup" {
         { name = "LOGGER_LEVEL", value = var.logger_level },
         { name = "DATABASE_URL", value = var.database_url },
         { name = "DATABASE_SSL_ENABLED", value = "true" },
+        { name = "DATABASE_SSL_CA_BASE64", value = var.mysql_ssl_ca_base64 },
       ]
     }
   ])
@@ -110,6 +111,7 @@ resource "aws_ecs_task_definition" "provisioner_cleanup" {
         { name = "PROVISIONER_AWS_SUBNETS", value = join(",", var.session_subnet_ids) },
         { name = "PROVISIONER_AWS_SECURITY_GROUPS", value = join(",", var.session_security_group_ids) },
         { name = "PROVISIONER_AWS_USE_PUBLIC_IP", value = "true" },
+        { name = "DATABASE_SSL_CA_BASE64", value = var.mysql_ssl_ca_base64 },
       ]
     }
   ])

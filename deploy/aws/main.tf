@@ -1,3 +1,8 @@
+# RDS CA bundle for Lightsail MySQL
+data "http" "rds_ca_bundle" {
+  url = "https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem"
+}
+
 # Local variables
 locals {
   # Common tags applied to all resources
@@ -8,6 +13,9 @@ locals {
 
   # Register other resources with the Application Registry
   app_tags = merge(local.common_tags, aws_servicecatalogappregistry_application.main.application_tag)
+
+  # MySQL CA bundle (base64)
+  mysql_ssl_ca_base64 = base64encode(data.http.rds_ca_bundle.response_body)
 }
 
 # AppRegistry application
@@ -60,6 +68,7 @@ module "ecs" {
   session_security_group_ids = module.networking.security_group_ids
   database_url               = module.lightsail_database.connection_string
   logger_level               = var.logger_level
+  mysql_ssl_ca_base64        = local.mysql_ssl_ca_base64
   tags                       = local.app_tags
 }
 
@@ -80,6 +89,7 @@ module "lightsail_web" {
   mailer_ses_region                    = var.mailer_ses_region
   logger_level                         = var.logger_level
   user_expiry_days                     = var.user_expiry_days
+  mysql_ssl_ca_base64                  = local.mysql_ssl_ca_base64
   provisioner_container_expiry_minutes = var.provisioner_container_expiry_minutes
   ecs_cluster_name                     = module.ecs.cluster_name
   session_task_family                  = module.ecs.session_task_family
