@@ -347,16 +347,6 @@ resource "azurerm_container_app_job" "provisioner_cleanup" {
       }
 
       env {
-        name        = "DATABASE_URL"
-        secret_name = "database-url"
-      }
-
-      env {
-        name  = "DATABASE_SSL_ENABLED"
-        value = "true"
-      }
-
-      env {
         name  = "PROVISIONER_TYPE"
         value = "azure"
       }
