@@ -1,6 +1,9 @@
-# RDS CA bundle for Lightsail MySQL
+# AWS region from provider configuration
+data "aws_region" "current" {}
+
+# RDS CA bundle for Lightsail MySQL (region-specific)
 data "http" "rds_ca_bundle" {
-  url = "https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem"
+  url = "https://truststore.pki.rds.amazonaws.com/${data.aws_region.current.region}/${data.aws_region.current.region}-bundle.pem"
 }
 
 # Local variables
