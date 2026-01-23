@@ -1,6 +1,6 @@
 # Local variables
 locals {
-  # Common tags applied to all resources (mirrors Azure provisioner pattern)
+  # Common tags applied to all resources
   common_tags = {
     app        = var.resource_prefix
     managed-by = "terraform"

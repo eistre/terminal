@@ -8,7 +8,7 @@
 subscription_id      = "" # TODO Azure subscription ID
 location             = "" # TODO Azure region, e.g., westeurope
 admin_email          = "" # TODO admin login email
-admin_password       = "" # TODO admin password (min 8 chars)
+admin_password       = "" # TODO admin password (min 8 chars, max 41 chars)
 auth_secret          = "" # TODO 32+ char secret, e.g., openssl rand -base64 32
 mysql_admin_password = "" # TODO MySQL admin password (min 8 chars)
 
