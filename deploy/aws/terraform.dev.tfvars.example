@@ -1,0 +1,25 @@
+# Quickstart example (dev/test)
+# Usage:
+#   Copy to terraform.dev.tfvars (or terraform.tfvars) and run:
+#     terraform plan  -var-file=terraform.dev.tfvars
+#     terraform apply -var-file=terraform.dev.tfvars
+# Rotate all secrets before any non-throwaway use.
+
+resource_prefix = "terminal"
+aws_region      = "eu-north-1"
+
+# Required secrets
+admin_email    = "admin@admin.sec"
+admin_password = "terminal_password"
+auth_secret    = "cloud-test-secret-must-be-at-least-32-chars!"
+mailer_sender  = "no-reply@example.com"
+
+# Lightsail DB credentials
+mysql_admin_password = "Cloud-Test-Root-123-Password"
+db_public   = true
+
+# Optional overrides
+# lightsail_power = "nano" # nano or micro
+# image_registry = "ghcr.io"
+# image_owner = "eistre"
+# image_tag = "latest"
