@@ -5,10 +5,13 @@
 #     terraform apply -var-file=terraform.prod.tfvars
 # All required values are empty strings to prevent accidental use as-is.
 
+# Required secrets
 admin_email               = "" # TODO admin login email
 admin_password            = "" # TODO admin password (min 8 chars)
 auth_secret               = "" # TODO 32+ char secret, e.g., openssl rand -base64 32
 mailer_sender             = "" # TODO verified SES sender email (leave blank to disable)
+
+# Lightsail DB credentials
 mysql_admin_password      = "" # TODO MySQL admin password (min 8 chars)
 mysql_publicly_accessible = true
 

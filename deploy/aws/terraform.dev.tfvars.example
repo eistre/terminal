@@ -5,9 +5,6 @@
 #     terraform apply -var-file=terraform.dev.tfvars
 # Rotate all secrets before any non-throwaway use.
 
-resource_prefix = "terminal"
-aws_region      = "eu-north-1"
-
 # Required secrets
 admin_email    = "admin@admin.sec"
 admin_password = "terminal_password"
@@ -19,7 +16,22 @@ mysql_admin_password = "Cloud-Test-Root-123-Password"
 mysql_publicly_accessible = true
 
 # Optional overrides
-# lightsail_power = "nano" # nano or micro
-# image_registry = "ghcr.io"
-# image_owner = "eistre"
-# image_tag = "latest"
+# resource_prefix                      = "terminal"
+# aws_region                           = "eu-north-1"
+# mailer_ses_region                    = "eu-north-1"
+# image_registry                       = "ghcr.io"
+# image_owner                          = "eistre"
+# image_tag                            = "latest"
+# lightsail_power                      = "nano"
+# lightsail_scale                      = 1
+# mysql_blueprint_id                   = "mysql_8_4"
+# mysql_bundle_id                      = "micro_2_0"
+# mysql_database_name                  = "terminal"
+# mysql_admin_username                 = "terminal"
+# mysql_publicly_accessible            = false
+# session_task_cpu                     = "256"
+# session_task_memory                  = "512"
+# session_cpu_architecture             = "X86_64"
+# provisioner_container_expiry_minutes = 30
+# logger_level                         = "info"
+# user_expiry_days                     = 90
