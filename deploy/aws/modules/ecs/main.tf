@@ -104,7 +104,7 @@ resource "aws_ecs_task_definition" "provisioner_cleanup" {
         { name = "PROVISIONER_TYPE", value = "aws" },
         { name = "PROVISIONER_APP_NAME", value = var.resource_prefix },
         { name = "PROVISIONER_CONTAINER_IMAGE", value = local.session_container_image },
-        { name = "PROVISIONER_AWS_REGION", value = data.aws_region.current.name },
+        { name = "PROVISIONER_AWS_REGION", value = data.aws_region.current.region },
         { name = "PROVISIONER_AWS_ECS_CLUSTER", value = aws_ecs_cluster.main.name },
         { name = "PROVISIONER_AWS_TASK_FAMILY", value = aws_ecs_task_definition.session.family },
         { name = "PROVISIONER_AWS_SUBNETS", value = join(",", var.session_subnet_ids) },

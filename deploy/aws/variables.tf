@@ -27,8 +27,8 @@ variable "mysql_admin_password" {
   sensitive   = true
 
   validation {
-    condition     = length(var.mysql_admin_password) >= 8
-    error_message = "mysql_admin_password must be at least 8 characters long"
+    condition     = length(var.mysql_admin_password) >= 8 && length(var.mysql_admin_password) <= 41
+    error_message = "mysql_admin_password must be between 8 and 41 characters long"
   }
 }
 

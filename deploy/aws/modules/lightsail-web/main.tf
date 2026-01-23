@@ -32,7 +32,7 @@ locals {
       PROVISIONER_APP_NAME                 = var.name_prefix
       PROVISIONER_CONTAINER_IMAGE          = local.provisioner_container_image
       PROVISIONER_CONTAINER_EXPIRY_MINUTES = var.provisioner_container_expiry_minutes
-      PROVISIONER_AWS_REGION               = data.aws_region.current.name
+      PROVISIONER_AWS_REGION               = data.aws_region.current.region
       PROVISIONER_AWS_ECS_CLUSTER          = var.ecs_cluster_name
       PROVISIONER_AWS_TASK_FAMILY          = var.session_task_family
       PROVISIONER_AWS_SUBNETS              = join(",", var.subnet_ids)
@@ -42,7 +42,7 @@ locals {
       # AWS SDK
       AWS_ACCESS_KEY_ID     = var.aws_access_key_id
       AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
-      AWS_DEFAULT_REGION    = data.aws_region.current.name
+      AWS_DEFAULT_REGION    = data.aws_region.current.region
     },
     local.mailer_type == "aws" ? {
       MAILER_SENDER     = var.mailer_sender

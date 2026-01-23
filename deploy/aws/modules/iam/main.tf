@@ -38,9 +38,9 @@ locals {
   secret_prefix    = "${var.resource_prefix}-session-"
   ecs_cluster      = "${var.resource_prefix}-ecs"
   ecs_task_family  = "${var.resource_prefix}-session"
-  ecs_cluster_arn  = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster/${local.ecs_cluster}"
-  ecs_task_def_arn = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:task-definition/${local.ecs_task_family}:*"
-  ecs_task_arn     = "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:task/${local.ecs_cluster}/*"
+  ecs_cluster_arn  = "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:cluster/${local.ecs_cluster}"
+  ecs_task_def_arn = "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:task-definition/${local.ecs_task_family}:*"
+  ecs_task_arn     = "arn:aws:ecs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:task/${local.ecs_cluster}/*"
 }
 
 # Provisioner permissions (ECS + Secrets Manager)
@@ -95,7 +95,7 @@ data "aws_iam_policy_document" "provisioner" {
       "secretsmanager:RestoreSecret",
     ]
     resources = [
-      "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${local.secret_prefix}*",
+      "arn:aws:secretsmanager:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:secret:${local.secret_prefix}*",
     ]
   }
 }
