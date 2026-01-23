@@ -1,5 +1,6 @@
 import type { DatabaseSchema } from '@terminal/env/schemas';
 import type { SslOptions } from 'mysql2';
+import { Buffer } from 'node:buffer';
 import { readFileSync } from 'node:fs';
 import { drizzle } from 'drizzle-orm/mysql2';
 import { createEmailDomainsRepo } from './email-domains/index.js';
@@ -13,8 +14,16 @@ function buildSslConfig(options: DatabaseSchema): SslOptions | undefined {
     return undefined;
   }
 
+  const ca = options.DATABASE_SSL_CA_BASE64
+    ? Buffer.from(options.DATABASE_SSL_CA_BASE64, 'base64').toString('utf-8')
+    : undefined;
+
+  const caFromPath = options.DATABASE_SSL_CA
+    ? readFileSync(options.DATABASE_SSL_CA, 'utf-8')
+    : undefined;
+
   return {
-    ca: options.DATABASE_SSL_CA ? readFileSync(options.DATABASE_SSL_CA, 'utf-8') : undefined,
+    ca: ca ?? caFromPath,
     rejectUnauthorized: true,
   };
 }
