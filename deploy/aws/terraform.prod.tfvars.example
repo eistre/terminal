@@ -8,7 +8,7 @@
 admin_email          = "" # TODO admin login email
 admin_password       = "" # TODO admin password (min 8 chars)
 auth_secret          = "" # TODO 32+ char secret, e.g., openssl rand -base64 32
-mailer_sender        = "" # TODO verified SES sender email
+mailer_sender        = "" # TODO verified SES sender email (leave blank to disable)
 mysql_admin_password = "" # TODO MySQL admin password (min 8 chars)
 
 # Optional overrides (defaults used when left commented)
@@ -20,11 +20,11 @@ mysql_admin_password = "" # TODO MySQL admin password (min 8 chars)
 # image_tag                           = "latest"
 # lightsail_power                     = "nano"
 # lightsail_scale                     = 1
-# db_blueprint_id                     = "mysql_8_4"
-# db_bundle_id                        = "micro_2_0"
-# db_name                             = "terminal"
-# db_username                         = "terminal"
-# db_public                           = false
+# mysql_blueprint_id                  = "mysql_8_4"
+# mysql_bundle_id                     = "micro_2_0"
+# mysql_database_name                 = "terminal"
+# mysql_admin_username                = "terminal"
+# mysql_publicly_accessible           = false
 # session_task_cpu                    = "256"
 # session_task_memory                 = "512"
 # session_cpu_architecture            = "X86_64"

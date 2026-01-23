@@ -104,31 +104,31 @@ variable "lightsail_scale" {
   default     = 1
 }
 
-variable "db_blueprint_id" {
+variable "mysql_blueprint_id" {
   description = "Lightsail DB blueprint ID"
   type        = string
   default     = "mysql_8_4"
 }
 
-variable "db_bundle_id" {
+variable "mysql_bundle_id" {
   description = "Lightsail DB bundle ID"
   type        = string
   default     = "micro_2_0"
 }
 
-variable "db_name" {
+variable "mysql_database_name" {
   description = "Database name"
   type        = string
   default     = "terminal"
 }
 
-variable "db_username" {
-  description = "Database username"
+variable "mysql_admin_username" {
+  description = "MySQL admin username"
   type        = string
   default     = "terminal"
 }
 
-variable "db_public" {
+variable "mysql_publicly_accessible" {
   description = "Whether the Lightsail DB is publicly accessible (public endpoint)"
   type        = bool
   default     = false

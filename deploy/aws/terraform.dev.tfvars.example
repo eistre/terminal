@@ -12,11 +12,11 @@ aws_region      = "eu-north-1"
 admin_email    = "admin@admin.sec"
 admin_password = "terminal_password"
 auth_secret    = "cloud-test-secret-must-be-at-least-32-chars!"
-mailer_sender  = "no-reply@example.com"
+mailer_sender  = "no-reply@example.com" # Leave blank to disable email
 
 # Lightsail DB credentials
 mysql_admin_password = "Cloud-Test-Root-123-Password"
-db_public   = true
+mysql_publicly_accessible = true
 
 # Optional overrides
 # lightsail_power = "nano" # nano or micro

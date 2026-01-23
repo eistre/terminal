@@ -5,45 +5,50 @@ data "aws_region" "current" {}
 locals {
   web_image                   = "${var.image_registry}/${var.image_owner}/terminal-web:${var.image_tag}"
   provisioner_container_image = "${var.image_registry}/${var.image_owner}/terminal-container:${var.image_tag}"
+  mailer_type                 = var.mailer_sender == "" ? "noop" : "aws"
 
   # Local values for environment variables
-  web_environment = {
-    # General environment variables
-    NODE_ENV     = "production"
-    LOGGER_LEVEL = var.logger_level
+  web_environment = merge(
+    {
+      # General environment variables
+      NODE_ENV     = "production"
+      LOGGER_LEVEL = var.logger_level
 
-    # Database
-    DATABASE_URL         = var.database_url
-    DATABASE_SSL_ENABLED = "true"
+      # Database
+      DATABASE_URL         = var.database_url
+      DATABASE_SSL_ENABLED = "true"
 
-    # Auth
-    AUTH_SECRET           = var.auth_secret
-    AUTH_USER_EXPIRY_DAYS = var.user_expiry_days
-    AUTH_ADMIN_EMAIL      = var.admin_email
-    AUTH_ADMIN_PASSWORD   = var.admin_password
+      # Auth
+      AUTH_SECRET           = var.auth_secret
+      AUTH_USER_EXPIRY_DAYS = var.user_expiry_days
+      AUTH_ADMIN_EMAIL      = var.admin_email
+      AUTH_ADMIN_PASSWORD   = var.admin_password
 
-    # Mailer
-    MAILER_TYPE       = "aws"
-    MAILER_SENDER     = var.mailer_sender
-    MAILER_SES_REGION = var.mailer_ses_region
+      # Mailer
+      MAILER_TYPE = local.mailer_type
 
-    # Provisioner
-    PROVISIONER_TYPE                     = "aws"
-    PROVISIONER_APP_NAME                 = var.name_prefix
-    PROVISIONER_CONTAINER_IMAGE          = local.provisioner_container_image
-    PROVISIONER_CONTAINER_EXPIRY_MINUTES = var.provisioner_container_expiry_minutes
-    PROVISIONER_AWS_REGION               = data.aws_region.current.name
-    PROVISIONER_AWS_ECS_CLUSTER          = var.ecs_cluster_name
-    PROVISIONER_AWS_TASK_FAMILY          = var.session_task_family
-    PROVISIONER_AWS_SUBNETS              = join(",", var.subnet_ids)
-    PROVISIONER_AWS_SECURITY_GROUPS      = join(",", var.security_group_ids)
-    PROVISIONER_AWS_USE_PUBLIC_IP        = "true"
+      # Provisioner
+      PROVISIONER_TYPE                     = "aws"
+      PROVISIONER_APP_NAME                 = var.name_prefix
+      PROVISIONER_CONTAINER_IMAGE          = local.provisioner_container_image
+      PROVISIONER_CONTAINER_EXPIRY_MINUTES = var.provisioner_container_expiry_minutes
+      PROVISIONER_AWS_REGION               = data.aws_region.current.name
+      PROVISIONER_AWS_ECS_CLUSTER          = var.ecs_cluster_name
+      PROVISIONER_AWS_TASK_FAMILY          = var.session_task_family
+      PROVISIONER_AWS_SUBNETS              = join(",", var.subnet_ids)
+      PROVISIONER_AWS_SECURITY_GROUPS      = join(",", var.security_group_ids)
+      PROVISIONER_AWS_USE_PUBLIC_IP        = "true"
 
-    # AWS SDK
-    AWS_ACCESS_KEY_ID     = var.aws_access_key_id
-    AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
-    AWS_DEFAULT_REGION    = data.aws_region.current.name
-  }
+      # AWS SDK
+      AWS_ACCESS_KEY_ID     = var.aws_access_key_id
+      AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
+      AWS_DEFAULT_REGION    = data.aws_region.current.name
+    },
+    local.mailer_type == "aws" ? {
+      MAILER_SENDER     = var.mailer_sender
+      MAILER_SES_REGION = var.mailer_ses_region
+    } : {}
+  )
 }
 
 # Lightsail Container Service

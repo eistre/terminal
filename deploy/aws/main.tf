@@ -35,12 +35,12 @@ module "iam" {
 module "lightsail_database" {
   source              = "./modules/lightsail-database"
   name_prefix         = var.resource_prefix
-  database_name       = var.db_name
-  admin_username      = var.db_username
+  database_name       = var.mysql_database_name
+  admin_username      = var.mysql_admin_username
   admin_password      = var.mysql_admin_password
-  blueprint_id        = var.db_blueprint_id
-  bundle_id           = var.db_bundle_id
-  publicly_accessible = var.db_public
+  blueprint_id        = var.mysql_blueprint_id
+  bundle_id           = var.mysql_bundle_id
+  publicly_accessible = var.mysql_publicly_accessible
   tags                = local.app_tags
 }
 
