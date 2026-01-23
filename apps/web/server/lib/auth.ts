@@ -22,6 +22,7 @@ import { useDatabase } from '~~/server/lib/database';
 import { useEnv } from '~~/server/lib/env';
 import { useLogger } from '~~/server/lib/logger';
 import { buildEmailVerificationOtpEmail, useMailer } from '~~/server/lib/mailer';
+import { normalizedMatchesEmailDomainRule, normalizeEmailDomain } from '~~/shared/email-domains-validation';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const AUTH_PATHS = { SIGN_UP: '/sign-up/email', SIGN_IN: '/sign-in/email' };
@@ -47,6 +48,33 @@ function getEmailDomain(email: string): string | null {
   return domain.length > 0 ? domain : null;
 }
 
+function selectEmailDomainRule(domain: string, rules: { domain: string; skipVerification: boolean }[]): { domain: string; skipVerification: boolean } | null {
+  const normalizedDomain = normalizeEmailDomain(domain);
+  let bestRule: { domain: string; skipVerification: boolean } | null = null;
+  let bestSuffixLength = -1;
+
+  for (const rule of rules) {
+    const normalizedRule = normalizeEmailDomain(rule.domain);
+    const isSuffixRule = normalizedRule.startsWith('.');
+    const target = isSuffixRule ? normalizedRule.slice(1) : normalizedRule;
+
+    if (!normalizedMatchesEmailDomainRule(normalizedDomain, normalizedRule)) {
+      continue;
+    }
+
+    if (!isSuffixRule) {
+      return rule;
+    }
+
+    if (target.length > bestSuffixLength) {
+      bestRule = rule;
+      bestSuffixLength = target.length;
+    }
+  }
+
+  return bestRule;
+}
+
 function isAdminEmail(email: string): boolean {
   const env = useEnv();
   return normalizeEmail(email) === normalizeEmail(env.AUTH_ADMIN_EMAIL);
@@ -70,7 +98,8 @@ async function validateEmailDomainForAuth(email: string, database: Database): Pr
     return { allowed: false, skipVerification: false };
   }
 
-  const rule = await database.emailDomains.catalog.get(domain);
+  const rules = await database.emailDomains.catalog.list();
+  const rule = selectEmailDomainRule(domain, rules);
   if (!rule) {
     return { allowed: false, skipVerification: false };
   }

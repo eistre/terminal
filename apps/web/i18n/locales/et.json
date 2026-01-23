@@ -16,10 +16,10 @@
   },
   "emailDomains": {
     "title": "E-posti domeenid",
-    "description": "Halda lubatud e-posti domeene ja kinnituste vahelejätmist.",
+    "description": "Halda lubatud e-posti domeene ja kinnituste vahelejätmist. Kasuta täpseid domeene (example.com) või alamdomeenireegleid (.example.com, .org).",
     "addDomain": "Lisa domeen",
     "fieldDomain": "Domeen",
-    "placeholderDomain": "example.com",
+    "placeholderDomain": "example.com või .example.com",
     "fieldSkipVerification": "Jäta kinnitamine vahele",
     "tableDomain": "Domeen",
     "tableSkipVerification": "Jäta kinnitamine vahele",
