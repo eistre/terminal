@@ -15,15 +15,17 @@ This project is a continuation of two Bachelor's thesis projects:
 
 This project creates isolated Ubuntu sandboxes that allow users to practice Linux command line tasks in a safe
 environment. Admin users have the ability to modify, create, and delete tasks. The application features automatic
-task completion detection, multi-language support (English/Estonian), and integrates with Microsoft OAuth for
-university authentication.
+task completion detection with file system monitoring, multi-language support (English/Estonian), and integrates with
+multiple OAuth providers for university authentication. Email domain allowlists provide control over user registration.
 
 ## Tech Stack
 
 - **Frontend**: Nuxt 4, Vue 3, Nuxt UI, Tailwind CSS, xterm.js
 - **Backend**: Nuxt server, Better Auth, Drizzle ORM
 - **Database**: MySQL/MariaDB
-- **Infrastructure**: Kubernetes, Docker
+- **Infrastructure**: Kubernetes, Docker, Azure Container Instances, AWS ECS
+- **Email**: Azure Communication Services, AWS SES, SMTP
+- **Secret Storage**: Kubernetes Secrets, Azure Key Vault, AWS Secrets Manager
 - **Monorepo**: pnpm workspaces, Turborepo
 
 ## Project Structure
@@ -44,8 +46,8 @@ university authentication.
 | `@terminal/env` | Environment variable validation using Zod |
 | `@terminal/evaluator` | Task completion evaluator using regex pattern matching |
 | `@terminal/logger` | Logging utility using Pino |
-| `@terminal/mailer` | Email service abstraction (Azure Communication Services, SMTP) |
-| `@terminal/provisioner` | Container provisioner for Ubuntu sandbox pods (Kubernetes, Azure Container Instances) |
+| `@terminal/mailer` | Email service abstraction (Azure Communication Services, AWS SES, SMTP) |
+| `@terminal/provisioner` | Container provisioner for Ubuntu sandbox pods (Kubernetes, Azure Container Instances, AWS ECS) |
 | `@terminal/session` | SSH session management for container connections |
 | `@terminal/eslint` | Shared ESLint configuration |
 | `@terminal/typescript` | Shared TypeScript configuration |
@@ -54,10 +56,10 @@ university authentication.
 
 ### Prerequisites
 
-- Node.js 24.x
-- pnpm 10.x
+- Node.js ^24.11.0
+- pnpm 10.28.1
 - Docker
-- Kubernetes cluster (for container provisioning)
+- Container platform: Kubernetes cluster, Azure subscription, or AWS account
 
 ### Development
 
