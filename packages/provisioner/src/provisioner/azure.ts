@@ -57,9 +57,7 @@ export class AzureProvisioner extends AbstractProvisioner {
       // Only include containers managed by this provisioner
       if (tags[AzureProvisioner.TAG_MANAGED_BY] !== AbstractProvisioner.MANAGED_BY_VALUE
         || tags[AzureProvisioner.TAG_COMPONENT] !== AbstractProvisioner.COMPONENT_VALUE
-        || tags[AzureProvisioner.TAG_APP_NAME] !== this.appName) {
-        continue;
-      }
+        || tags[AzureProvisioner.TAG_APP_NAME] !== this.appName) { continue; }
 
       const userId = tags[AzureProvisioner.TAG_USER_ID];
       const expiresAt = tags[AzureProvisioner.TAG_EXPIRES_AT];

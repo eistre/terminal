@@ -36,9 +36,7 @@ function isValidEmailDomainRule(value: string): boolean {
   if (value.includes('@')
     || value === '.'
     || !value.includes('.')
-    || value.endsWith('.')) {
-    return false;
-  }
+    || value.endsWith('.')) { return false; }
 
   if (value.startsWith('.')) {
     return !value.endsWith('.')
