@@ -1,8 +1,12 @@
 catalogMode: strict
 cleanupUnusedCatalogs: true
-injectWorkspacePackages: true
 shellEmulator: true
 trustPolicy: no-downgrade
+
+# Force legacy deploy mode to avoid requiring injectWorkspacePackages=true.
+# Without this, TypeScript fails to resolve workspace package types during 'pnpm install'
+# because dist folders don't exist yet when packages are hard-linked to the store.
+forceLegacyDeploy: true
 
 packages:
   - apps/*
@@ -41,11 +45,11 @@ catalog:
   better-auth: ^1.4.18
   drizzle-kit: ^0.31.9
   drizzle-orm: ^0.45.1
-  eslint: ^10.0.0
+  eslint: ^9.39.2
   eslint-plugin-turbo: ^2.8.7
   husky: ^9.1.7
   lodash-es: ^4.17.23
-  mysql2: ^3.17.0
+  mysql2: ^3.17.1
   nodemailer: ^8.0.1
   nuxt: ^4.3.1
   p-limit: ^7.3.0
@@ -59,6 +63,6 @@ catalog:
   turbo: ^2.8.7
   typescript: ^5.9.3
   vue: ^3.5.28
-  vue-router: ^5.0.2
+  vue-router: ^4.6.4
   vue-tsc: ^3.2.4
   zod: ^4.3.6
