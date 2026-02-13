@@ -353,9 +353,7 @@ export class AwsProvisioner extends AbstractProvisioner {
 
       if (tags[AwsProvisioner.TAG_MANAGED_BY] !== AbstractProvisioner.MANAGED_BY_VALUE
         || tags[AwsProvisioner.TAG_COMPONENT] !== AbstractProvisioner.COMPONENT_VALUE
-        || tags[AwsProvisioner.TAG_APP_NAME] !== this.appName) {
-        continue;
-      }
+        || tags[AwsProvisioner.TAG_APP_NAME] !== this.appName) { continue; }
 
       if (userId && tags[AwsProvisioner.TAG_USER_ID] !== userId) {
         continue;
