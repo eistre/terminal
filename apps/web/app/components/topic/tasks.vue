@@ -63,7 +63,7 @@ function toggleHint(item: number) {
       >
         <template #body="{ item }">
           <div class="p-2.5 space-y-2">
-            <div class="text-muted">
+            <div class="text-muted wrap-break-word">
               {{ item.content }}
             </div>
 
@@ -76,7 +76,7 @@ function toggleHint(item: number) {
               >
                 {{ visibleHints.has(item.id) ? t('topic.hideHint') : t('topic.showHint') }}
               </UButton>
-              <div v-if="visibleHints.has(item.id)" class="p-3 border rounded-md bg-muted">
+              <div v-if="visibleHints.has(item.id)" class="p-3 border rounded-md bg-muted wrap-break-word">
                 {{ item.hint }}
               </div>
             </div>
