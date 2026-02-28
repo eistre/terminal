@@ -2,7 +2,7 @@
 
 ## Master's Thesis Project
 
-This project is a continuation of two Bachelors' thesis projects:
+This project is a continuation of two Bachelor's thesis projects:
 
 1. **Initial Proof of Concept (POC)** by Joonas Halapuu
    ([Bachelor's thesis project](https://gitlab.com/JoonasHalapuu/ubuntuterminal)) - The foundational POC that
