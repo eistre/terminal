@@ -1,1 +1,3 @@
 pnpm lint
+terraform fmt -check -recursive deploy/aws
+terraform fmt -check -recursive deploy/azure
