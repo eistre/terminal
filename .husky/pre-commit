@@ -1,3 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+
+echo "Running pnpm lint"
 pnpm lint
-terraform fmt -check -recursive deploy/aws
-terraform fmt -check -recursive deploy/azure
+
+if command -v terraform >/dev/null 2>&1; then
+  echo "Running terraform fmt (aws)"
+  terraform fmt -check -recursive deploy/aws
+  echo "Running terraform fmt (azure)"
+  terraform fmt -check -recursive deploy/azure
+else
+  echo "terraform not found; skipping fmt checks" >&2
+fi
