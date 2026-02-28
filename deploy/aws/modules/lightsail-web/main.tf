@@ -15,8 +15,8 @@ locals {
       LOGGER_LEVEL = var.logger_level
 
       # Database
-      DATABASE_URL         = var.database_url
-      DATABASE_SSL_ENABLED = "true"
+      DATABASE_URL           = var.database_url
+      DATABASE_SSL_ENABLED   = "true"
       DATABASE_SSL_CA_BASE64 = var.mysql_ssl_ca_base64
 
       # Auth
