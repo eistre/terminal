@@ -1,6 +1,6 @@
 # Linux Terminal Exercise Environment
 
-### Master's Thesis Project
+## Master's Thesis Project
 
 This project is a continuation of two Bachelor's thesis projects:
 
