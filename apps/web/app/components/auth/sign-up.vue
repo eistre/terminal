@@ -88,6 +88,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
   <UAuthForm
     :schema="schema"
     :fields="fields"
+    loading-auto
     @submit="onSubmit"
   />
 </template>
