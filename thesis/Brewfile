@@ -1,0 +1,3 @@
+cask "mactex-no-gui"
+brew "pygments"
+brew "python@3.13"

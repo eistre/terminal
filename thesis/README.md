@@ -77,6 +77,18 @@ Visual Studio (VS) Code is a lightweight IDE with very powerful extensions. To w
 
 You also need to separately install LaTeX itself on your computer.
 
+#### On macOS
+
+For this repository, the preferred local setup on macOS is:
+```bash
+brew bundle --file thesis/Brewfile
+eval "$(/usr/libexec/path_helper)"
+cd thesis
+latexmk -pdf thesis.tex
+```
+
+This template uses `minted` for code listings. The repository includes a local `thesis/latexminted` wrapper that forces TeX Live's `latexminted` launcher to run with Python 3.13. This avoids the Python 3.14 incompatibility observed with TeX Live 2026 on this setup.
+
 #### On Windows
 Download the [Tex Live](https://www.tug.org/texlive/windows.html#:~:text=install%2Dtl%2Dwindows.exe) software. When installing, you can select *Advaned* and change *full scheme* (8 GB) to *basic scheme* (~400 MB). Regardless of your choice, you have to install the packages `latexmk` and `latexmk.windows` manually.
 
@@ -96,6 +108,12 @@ sudo apt install --no-install-recommends --no-install-suggests texlive-plain-gen
 ```
 
 ## Usage
+
+For this repository, compile from `thesis/thesis.tex`. The current thesis is set up in English, and the recommended local build command is:
+```bash
+cd thesis
+latexmk -pdf thesis.tex
+```
 
 1. Open the `thesis.tex` from the root folder and comment in Your chosen thesis language. In subsequent instructions, let's assume You chose English.
 2. Open the folder `english` and find the file `main.tex`. In that file, fill in the information about Your thesis. That file also defines what sections will be included in your document.
