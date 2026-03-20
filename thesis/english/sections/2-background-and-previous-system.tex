@@ -43,4 +43,79 @@ Eistre~\cite{eistre_veebipohise_nodate} reports that the resulting environment w
 During this period, the platform was used by 382 participants.
 He concludes that the overall outcome was successful, while also noting minor issues observed during the session, which informed further improvements for continued production use.
 
-The following section outlines the architecture and cloud deployment of the baseline system, which serves as the starting point for the work presented in this thesis.
+The following subchapter outlines the architecture and cloud deployment of the baseline system, which serves as the starting point for the work presented in this thesis.
+
+\subsection{Architecture and Deployment of the Previous System} \label{subsec:architecture-and-deployment-of-the-previous-system}
+This subchapter outlines the baseline system developed in Eistre's thesis~\cite{eistre_veebipohise_nodate}, which serves as the technical starting point for this master's thesis.
+It first describes the application's internal architecture and operational flow, focusing on its main components and technological choices.
+It then summarizes the Azure-based deployment architecture, including the services used to host the application and provision user-specific container environments.
+
+\subsubsection{System Architecture} \label{subsubsec:system-architecture}
+Eistre~\cite{eistre_veebipohise_nodate} outlines the baseline system as a production-oriented web-based Linux command-line learning environment redesigned for cloud deployment and sustained course use.
+The implementation was largely rewritten in TypeScript using Node.js and the Nuxt 3 framework, which provided a structured basis for both the user interface and server-side logic.
+Figure~\ref{fig:baseline-system-architecture} illustrates the system's main components and the runtime interactions between them.
+
+\begin{figure}[ht]
+    \centering
+    % TODO Temporary placeholder image. Replace with the final architecture diagram.
+    \includegraphics[width=\textwidth]{figures/Figure1-Keywords}
+    \caption{Baseline system architecture of Eistre's implementation, adapted from~\cite{eistre_veebipohise_nodate}.}
+    \label{fig:baseline-system-architecture}
+\end{figure}
+
+Eistre~\cite{eistre_veebipohise_nodate} structures the environment around four main components: a client-side user interface, a server-side application interface (API), a MySQL database, and a Kubernetes cluster that provisions isolated Linux environments.
+At runtime, the browser-based terminal communicates with the API layer, which brokers interaction with a user-specific Linux container in Kubernetes and records user progress and task state in MySQL\@.
+The client-side interface is developed using Vue.js with Nuxt and supports features like user registration and authentication, topic navigation, task solving, and administrative views for managing topics and tasks.
+The interface also supports both English and Estonian, as well as theme switching.
+
+Eistre~\cite{eistre_veebipohise_nodate} conceptualizes the server-side application as the central coordination layer of the platform.
+It manages authentication and sessions, exposes API endpoints consumed by the user interface, and orchestrates operations that require persistence or interaction with the Linux execution environment.
+In particular, the backend provides user-specific Linux environments, manages their lifecycle, and brokers terminal interaction between the browser and the container runtime.
+It also determines task completion based on predefined criteria and records progress updates when completion conditions are satisfied.
+This positions the backend as the primary integration point among the user interface, the database, and the container runtime.
+
+Eistre~\cite{eistre_veebipohise_nodate} reports that the baseline system uses a MySQL database to maintain a persistent state, including user accounts, topics and their underlying tasks, and user progress.
+Persisting these elements supports continuity across sessions and enables centralized management of task content without redeployment.
+The database access layer is implemented using an Object-Relational Mapping (ORM) layer, providing typed access to relational entities and simplifying the handling of relationships between users, topics, and tasks.
+
+Eistre~\cite{eistre_veebipohise_nodate} further explains that the learning environment uses containerization to provide isolated Linux execution environments and employs Kubernetes to manage the lifecycle of per-user containers (pods).
+When a user initiates a terminal session, the system allocates a dedicated Kubernetes namespace and provisions an isolated Linux environment for that user, enabling repeatable task execution while preventing cross-user interference.
+Since these environments consume compute resources, the architecture incorporates automated cleanup procedures that terminate inactive user environments after a configured idle period, reclaiming resources and keeping the cluster load manageable during course usage.
+He also notes that the backend interacts with the cluster programmatically using the Kubernetes JavaScript Client library.
+
+This foundational architecture serves as the initial framework for the cost and deployment optimizations that are subsequently introduced in this thesis.
+
+\subsubsection{Cloud Deployment on Azure} \label{subsubsec:cloud-deployment-on-azure}
+Eistre~\cite{eistre_veebipohise_nodate} reports that the baseline system was deployed on Microsoft Azure.
+Azure was chosen in part because it offers educational credits to students, which made it a cost-effective choice for an academic project.
+In his thesis, the application was containerized and deployed using Azure's managed container and Kubernetes offerings, specifically Azure Container Apps (ACA) and Azure Kubernetes Service (AKS).
+Figure~\ref{fig:azure-deployment-overview} provides a deployment-level overview of the baseline environment and the Azure services created for it.
+
+\begin{figure}[ht]
+    \centering
+    % TODO Temporary placeholder image. Replace with the final deployment diagram.
+    \includegraphics[width=\textwidth]{figures/Figure1-Keywords}
+    \caption{Azure deployment overview of Eistre's baseline system, adapted from~\cite{eistre_veebipohise_nodate}.}
+    \label{fig:azure-deployment-overview}
+\end{figure}
+
+In this design, the Nuxt application was packaged into a container image and run as a single Azure Container App instance, with fixed resource reservations, including 0.5 vCPU and 1 GB of memory, in the Sweden Central region~\cite{eistre_veebipohise_nodate}.
+According to Microsoft's documentation, Azure Container Apps is a serverless container hosting service that allows applications to run without managing the underlying infrastructure~\cite{noauthor_azure_nodate}.
+The service handled execution of the web application and acted as the primary entry point for users by exposing the user interface and backend API endpoints.
+
+While Azure Container Apps hosts the web application itself, Eistre~\cite{eistre_veebipohise_nodate} notes that the interactive Linux environments required for the terminal tasks are provisioned separately on Azure Kubernetes Service (AKS).
+According to Microsoft's documentation, AKS is a managed Kubernetes service that offloads control-plane management, simplifies cluster operations, and offers scalability~\cite{noauthor_what_nodate}.
+Eistre~\cite{eistre_veebipohise_nodate} points out that the cluster was configured using B2s virtual machines (2 vCPU, 4 GB memory, 128 GB storage) and that, although the application ran in Sweden Central, the cluster was deployed in Norway East due to limitations of the Azure student subscription.
+
+A central motivation for the Azure-based deployment was cost-aware operation.
+Eistre~\cite{eistre_veebipohise_nodate} highlights that continuously running a Kubernetes cluster can incur significant baseline cost even when there is no active classroom usage.
+To address this, the baseline system implements an AKS control mechanism where the application can start and stop the cluster based on demand.
+When a user initiates a session while the cluster is stopped, the platform triggers cluster startup and presents a waiting state until the cluster becomes available.
+Conversely, he also notes that when the system is idle for a configured period, the cluster can be stopped to avoid paying for unused compute capacity.
+
+Eistre~\cite{eistre_veebipohise_nodate} also describes a small set of supporting Azure services created as part of the baseline deployment in addition to compute and container orchestration.
+These include Azure Communication Services for email delivery, which is used for account verification, a storage account, which is used to persist private key pairs across restarts, and a MySQL-backed database for persisting users, topics, tasks, and progress.
+He also notes that the database was initially hosted on PlanetScale and later migrated to Azure's managed MySQL offering after PlanetScale discontinued the free tier.
+Figure~\ref{fig:azure-deployment-overview} summarizes the high-level dependencies between these services and the end-to-end flow from the client to the provisioned environment.
+
+This Azure deployment model forms the baseline operational environment for this thesis, which focuses on improving cost efficiency and deployment robustness while preserving the functional behavior of the system described in this subchapter.
