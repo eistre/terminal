@@ -1,3 +1,7 @@
+%! suppress = MissingImport
+%! suppress = UnresolvedReference
+%! suppress = Unicode
+% TODO check footnotes
 \section{Background and Previous System} \label{sec:background-and-previous-system}
 This chapter establishes the baseline for the thesis.
 It first introduces a browser-based Linux command-line practice environment and summarizes prior development efforts, starting from the initial prototype and continuing with the later bachelor's thesis implementation.
@@ -74,7 +78,7 @@ In particular, the backend provides user-specific Linux environments, manages th
 It also determines task completion based on predefined criteria and records progress updates when completion conditions are satisfied.
 This positions the backend as the primary integration point among the user interface, the database, and the container runtime.
 
-Eistre~\cite{eistre_veebipohise_nodate} reports that the baseline system uses a MySQL database to maintain a persistent state, including user accounts, topics and their underlying tasks, and user progress.
+Eistre~\cite{eistre_veebipohise_nodate} reports that the baseline system uses a MySQL database to maintain persistent state, including user accounts, topics and their underlying tasks, and user progress.
 Persisting these elements supports continuity across sessions and enables centralized management of task content without redeployment.
 The database access layer is implemented using an Object-Relational Mapping (ORM) layer, providing typed access to relational entities and simplifying the handling of relationships between users, topics, and tasks.
 
@@ -119,3 +123,88 @@ He also notes that the database was initially hosted on PlanetScale and later mi
 Figure~\ref{fig:azure-deployment-overview} summarizes the high-level dependencies between these services and the end-to-end flow from the client to the provisioned environment.
 
 This Azure deployment model forms the baseline operational environment for this thesis, which focuses on improving cost efficiency and deployment robustness while preserving the functional behavior of the system described in this subchapter.
+
+\subsection{Limitations and Improvement Opportunities} \label{subsec:limitations-and-improvement-opportunities}
+
+While the cloud-enabled platform developed in Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} represented a significant advance over the initial prototype, it also exposed several limitations and challenges.
+This subchapter summarizes the key issues in the baseline system and motivates the concrete improvements explored in later chapters of this thesis.
+
+\subsubsection{Cost Factor} \label{subsubsec:cost-factor}
+A significant limitation of the baseline system was its cost structure in the cloud-hosted environment.
+Figure~\ref{fig:azure-cost-july-2025} illustrates the Azure cost breakdown for July 2025, a period of minimal usage.
+In July, the deployment incurred a total monthly expense of €52.88.
+The majority of these costs were attributed to fixed, always-on resources, such as the Azure Database for MySQL (€26.90), the AKS load balancer (€13.62), and Azure Container Apps hosting the application (€8.92).
+Consequently, maintaining the platform’s readiness for use resulted in a baseline expenditure exceeding €50 per month, even with minimal or no user activity.
+
+\begin{figure}[ht]
+    \centering
+    % TODO Temporary placeholder image. Replace with the July 2025 Azure cost chart.
+    \includegraphics[width=\textwidth]{figures/figure3-jul2025}
+    \caption{Azure cost breakdown of the baseline deployment for July 2025.}
+    \label{fig:azure-cost-july-2025}
+\end{figure}
+
+Figure~\ref{fig:azure-cost-september-2025} presents the cost breakdown for September 2025, reflecting an active semester with a total monthly expenditure of €93.12.
+In addition to the fixed components, such as the database, load balancer, and container app hosting, a significant portion of the cost came from AKS-related virtual machine compute (€18.45), increased storage (€14.26), and other supporting services.
+This suggests that classroom-scale usage results in additional variable costs beyond the baseline, potentially elevating the overall monthly expense to €100 or more when the cluster is frequently activated and supports concurrent users.
+
+\begin{figure}[ht]
+    \centering
+    % TODO Temporary placeholder image. Replace with the September 2025 Azure cost chart.
+    \includegraphics[width=\textwidth]{figures/figure4-sep2025}
+    \caption{Azure cost breakdown of the baseline deployment for September 2025.}
+    \label{fig:azure-cost-september-2025}
+\end{figure}
+
+These observations highlight the importance of cost optimization as a primary area for improvement in this thesis.
+Although the baseline system had already implemented demand-based cluster start and stop mechanisms, the figures show that idle costs remained substantial, and peak usage continued to result in significant compute and supporting service charges.
+Therefore, opportunities for improvement include minimizing the always-on footprint to bring idle costs closer to zero, as well as exploring alternative deployment strategies that are more cost-effective for intermittent workloads, while maintaining the functional requirements of the baseline interactive per-user Linux environments.
+
+\subsubsection{Deprecated Authentication Library} \label{subsubsec:deprecated-authentication-library}
+The previous version of the learning environment relied on the Lucia authentication library to implement core authentication functionality, including user registration, login, and session management~\cite{eistre_veebipohise_nodate}.
+According to the Lucia maintainer, the project would be deprecated by March 2025 and would transition away from being a maintained, general-purpose authentication library~\cite{noauthor_fresh_nodate}.
+Consequently, Lucia is now positioned primarily as an educational resource for learning about authentication implementation rather than a long-term dependency for production systems~\cite{noauthor_fresh_nodate}.
+This shift indicates that Lucia is no longer a dependable long-term solution for the platform’s authentication layer.
+
+This deprecation poses a significant risk to the platform’s maintainability.
+Continued dependence on an unsupported library may result in delayed or nonexistent security updates, increased friction when upgrading adjacent frameworks, and elevated long-term maintenance costs.
+To mitigate these risks, the system should be updated to integrate an authentication library or service that is actively maintained and widely adopted, while preserving the baseline requirements for user verification and session management.
+This modification will improve the long-term maintainability and security of the platform’s authentication layer.
+
+\subsubsection{Outdated Dependencies} \label{subsubsec:outdated-dependencies}
+A further limitation of the baseline system is its reliance on dependencies that inevitably become outdated over time, creating both maintainability and security risks.
+Prior research indicates that delayed library updates are common in web ecosystems and are linked to exposure to known vulnerabilities.
+Lauinger et al.~\cite{lauinger_thou_2017} discovered that a significant proportion of websites contain at least one JavaScript library version with a known vulnerability, with the time lag behind the latest release often measured in years.
+Furthermore, Pashchenko et al.~\cite{pashchenko_qualitative_2020} report that decisions regarding dependency updates frequently involve trade-offs between security, compatibility, and engineering effort, which can result in postponed updates even when the associated risks are recognized.
+
+These risks are particularly relevant for framework-level dependencies that form the core of the application stack.
+The baseline system was developed using Nuxt 3~\cite{eistre_veebipohise_nodate}, whereas newer stable major releases, such as Nuxt 4, are now available~\cite{noauthor_roadmap_nodate}.
+In addition to lifecycle considerations, older framework versions may contain publicly disclosed vulnerabilities.
+For instance, CVE-2025-27415 identifies a cache-poisoning issue affecting Nuxt versions prior to 3.16.0 in specific CDN (content delivery network) configurations, which was fixed in Nuxt 3.16.0~\cite{noauthor_nvd_nodate}.
+This example illustrates that dependency versions can directly influence the security and reliability of the system.
+
+Taken together, these findings motivate dependency modernization as a vital improvement objective in this thesis.
+To reduce exposure to known vulnerabilities and to maintain compatibility with current runtimes and tooling, the implementation should update core frameworks and supporting packages to currently supported, stable versions as part of the modernization effort.
+
+\subsubsection{General Improvements} \label{subsubsec:general-improvements}
+In addition to the limitations previously described, several further opportunities for improvement were identified in the design of the baseline system.
+The baseline demonstrated an operational scalability limitation under classroom-scale load.
+The thesis supervisor noted that in some instances students were unable to access an interactive shell session because the AKS node pool could not scale due to Azure quota constraints.
+
+Second, the content model did not natively support localization for topics and tasks.
+Although the user interface supported multiple languages, equivalent learning content had to be duplicated per locale, increasing maintenance overhead and creating a risk of inconsistencies when content changed.
+A key improvement is to store each topic and task once and attach language-specific translations in the database, enabling consistent updates while still presenting localized content to users.
+
+Finally, the baseline authentication approach can be improved from a usability perspective by integrating the University’s single sign-on capabilities.
+Enabling institutional login would simplify onboarding and align access control with existing university identity management, thereby improving the overall user experience.
+
+\subsubsection{Infrastructure as Code} \label{subsubsec:infrastructure-as-code}
+An additional limitation of the baseline system was the high setup overhead needed to replicate the environment.
+Deploying the platform required cloud knowledge and coordination of several prerequisites, such as managed database provisioning, container hosting configuration, and Kubernetes cluster setup.
+In practice, this involved following a comprehensive, step-by-step deployment procedure, which is challenging to replicate consistently across environments.
+This type of manual, interactive infrastructure configuration is widely recognized as slow and prone to mistakes, especially as system complexity grows~\cite{guerriero_adoption_2019}.
+
+This limitation can be addressed through DevOps practices that emphasize automation and repeatability across development and operations.
+Guerriero et al.~\cite{guerriero_adoption_2019} describe DevOps as practices that combine software development and IT operations, and they position Infrastructure as Code as a DevOps tactic where infrastructure is managed through reusable definition files rather than interactive configuration.
+Additionally, Bali and Walia~\cite{bali_enhancing_2023} note that IaC emerged to mitigate configuration drift and to reduce reliance on individually configured, non-reproducible environments, and that representing infrastructure state as code improves repeatability while reducing manual, error-prone operations.
+Together, these perspectives motivate adopting IaC for platform deployment as a means to reduce setup friction, improve reproducibility, and lower the risk of human error.
