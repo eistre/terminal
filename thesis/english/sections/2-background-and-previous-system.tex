@@ -1,0 +1,46 @@
+\section{Background and Previous System} \label{sec:background-and-previous-system}
+This chapter establishes the baseline for the thesis.
+It first introduces a browser-based Linux command-line practice environment and summarizes prior development efforts, starting from the initial prototype and continuing with the later bachelor's thesis implementation.
+It then outlines the architecture and Azure deployment of the previous system that serves as the starting point for this master's thesis.
+Finally, the chapter identifies the main limitations and outlines the improvement opportunities that guide the design and evaluation in later chapters.
+
+\subsection{Motivation and Prior Work} \label{subsec:motivation-and-prior-work}
+Linux command-line knowledge remains an important skill in many computing roles, particularly in system administration and automation.
+Consequently, hands-on command-line practice is a relevant educational goal.
+Earlier development work at the University of Tartu explored how such practice can be supported using a browser-based platform, beginning with an initial prototype and progressing to a more stable cloud-hosted implementation.
+
+\subsubsection{The Importance of the Linux Command Line} \label{subsubsec:the-importance-of-the-linux-command-line}
+Proficiency in command-line operations is a valuable skill due to the widespread use of Linux-based systems in modern computing infrastructure, which are often operated and maintained through terminal-centric workflows.
+An observable indicator of Linux's prevalence in production computing environments is provided by high-performance computing.
+According to TOP500 statistics, Linux is the operating system family used by all TOP500-ranked supercomputers~\cite{noauthor_operating_nodate}.
+In such environments, administration, troubleshooting, and automation typically depend on command-line tools and remote terminal access instead of graphical interfaces.
+
+This view aligns with academic perspectives on skills and learning.
+Švábenský et al.~\cite{svabensky_toolset_2021} characterize the Linux command-line interface as common both in higher education computing environments and in software development practices.
+They also advocate for studying command-line interactions to enhance comprehension and facilitate hands-on learning.
+Likewise, Bailey and Zilles~\cite{bailey_uassign_2019} treat terminal skills as a topic worth teaching and assessing through authentic terminal actions, and they present an approach for interactive, auto-graded terminal assignments.
+
+At the University of Tartu, Linux and its command line are treated as core topics in systems-oriented teaching.
+For example, Linux command-line work plays a central role in the ``Operating Systems'' and ``Computer Security'' courses.
+This instructional need motivated the development of a browser-based learning environment in two main iterations.
+The first was a proof-of-concept prototype described by Halapuu~\cite{halapuu_eestikeelse_nodate}, and the second was a cloud-hosted implementation presented in Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate}.
+These two iterations are summarized in the following subchapters.
+
+\subsubsection{Initial Proof-of-Concept} \label{subsubsec:initial-proof-of-concept}
+Halapuu~\cite{halapuu_eestikeelse_nodate} presents the first iteration of the browser-based Linux command-line learning environment.
+In Halapuu's thesis, the prototype provides students with a web terminal connected to an isolated Linux environment, enabling interactive command execution and task-based learning within the browser.
+The prototype also includes an automatic task-checking approach based on observable outcomes such as command output and filesystem changes, which allowed students to receive immediate feedback and progress through tasks.
+
+Halapuu~\cite{halapuu_eestikeelse_nodate} further reports that the proof-of-concept application was deployed inside the University's internal network and run on the supervisor's university laptop.
+The platform was tested in the ``Computer Security'' course context with over one hundred participants.
+Based on the reported evaluation, he concludes that the overall approach was viable for course use, while also identifying improvement opportunities related to stability, security, and maintainability.
+
+\subsubsection{Cloud-Hosted Implementation} \label{subsubsec:cloud-hosted-implementation}
+After the initial proof-of-concept had been used in the supervisor's courses for two years, Eistre~\cite{eistre_veebipohise_nodate} advanced the system into a cloud-hosted platform designed for sustained course use.
+In Eistre's thesis, the work addresses limitations identified during previous use and sets goals such as improving stability and maintainability, supporting both Estonian and English, and deploying the system in a more robust cloud environment.
+
+Eistre~\cite{eistre_veebipohise_nodate} reports that the resulting environment was evaluated in the context of the ``Computer Security'' course in February 2024.
+During this period, the platform was used by 382 participants.
+He concludes that the overall outcome was successful, while also noting minor issues observed during the session, which informed further improvements for continued production use.
+
+The following section outlines the architecture and cloud deployment of the baseline system, which serves as the starting point for the work presented in this thesis.
