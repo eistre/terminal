@@ -54,6 +54,7 @@ These measures align with De Silva et al.~\cite{de_silva_generative_2025} and Ma
 The revised system architecture separates the interactive learning workflow from infrastructure-specific concerns and periodic maintenance.
 This design preserves the user-facing workflow while allowing the execution backend and operational mechanisms to differ across deployments.
 
+% TODO
 PLACEHOLDER FIGURE 5. Revised architecture.
 
 Figure 5 groups the system into four conceptual components.
@@ -115,14 +116,60 @@ At a high level, the provisioner supports four operations.
 It can list currently active user containers, ensure a user container exists and create one if it is not present, update the container expiration time while the user remains active, and delete the container once it is no longer required.
 The provisioner interface is shown in the code snippet below.
 
+% TODO
 TODO PROVISIONER INTERFACE SNIPPET
+```
+export interface Provisioner {
+  /**
+  * List user IDs and expiration times for all containers.
+  * @returns List of user IDs and expiration times
+  */
+  listContainers: () => Promise<ContainerInfo[]>;
+
+  /**
+  * Ensure a container exists for the given user ID.
+  * If it does not exist, create it.
+  * @param userId Unique identifier for the user
+  */
+  ensureContainerExists: (userId: string) => Promise<ConnectionInfo>;
+
+  /**
+  * Update the expiration time of an existing container.
+  * @param userId Unique identifier for the user
+  */
+  updateContainerExpiration: (userId: string) => Promise<void>;
+
+  /**
+  * Delete a container and all associated resources.
+  * @param userId Unique identifier for the user
+  */
+  deleteContainer: (userId: string) => Promise<void>;
+}
+```
 
 The provisioning interface is implemented by classes specific to each provider, while shared operational concerns are centralized in a common base class, AbstractProvisioner.
 In this base class, each provisioning operation is wrapped with a concurrency limiter to cap simultaneous operations against provider APIs, a per-user lock to serialize operations per user, and retry logic to handle transient failures.
 For concurrency limiting and retry handling, the p-limit and p-retry packages are used.
 The following code snippet demonstrates this wrapping for one of the interface functions, illustrating how the public method enforces shared guarantees while delegating provider-specific work to the underlying implementation method.
 
+% TODO
 TODO ABSTRACT WRAPPER SNIPPET
+```
+export abstract class AbstractProvisioner implements Provisioner {
+  /**
+  * @inheritDoc
+  * @param userId Unique identifier for the user
+  */
+  async ensureContainerExists(userId: string): Promise<ConnectionInfo> {
+    return this.withConcurrencyLimit(() =>
+    this.withLock(userId, () =>
+    this.withRetry(() => this.ensureContainerExistsImpl(userId))),
+    );
+  }
+
+  protected abstract ensureContainerExistsImpl(userId: string): Promise<ConnectionInfo>;
+}
+```
 
 In practice, these wrappers are important under classroom-scale usage patterns and bursty traffic, such as page refreshes and repeated session starts.
 Per-user serialization prevents race conditions where concurrent requests attempt to create or delete the same user's container.
@@ -142,9 +189,28 @@ Lifecycle management is treated as a first-class operational concern to prevent 
 User containers are intentionally time-bound and carry an inactivity-based expiration timestamp that is extended during activity via updateContainerExpiration().
 Enforcement of expiration is separated from the main web application via the scheduled provisioner cleanup job described in Section 3.2. At a high level, the cleanup job periodically lists managed containers using listContainers(), identifies those whose expiration time is in the past, and deletes them through deleteContainer(userId).
 This separation ensures that expired containers are reclaimed even if the main application is scaled down during idle periods, aligning the operational footprint more closely with actual usage.
-A simplified version of the cleanup flow (excluding logging and error handling) is shown below.
+A simplified version of the cleanup flow (excluding logging) is shown below.
 
+% TODO
 PLACEHOLDER FOR PROVISIONER CLEANUP SNIPPET
+```
+try {
+  // List all containers
+  const containers = await provisioner.listContainers();
+
+  // Filter expired containers
+  const now = new Date();
+  const expired = containers.filter(container => container.expiresAt <= now);
+
+  // Delete expired containers
+  const results = await Promise.allSettled(
+    expired.map(container => provisioner.deleteContainer(container.userId)),
+  );
+}
+catch (error) {
+  process.exit(1);
+}
+```
 
 Although this subsection focuses on the provisioner module because it is the most complex, the same interface-driven design pattern is applied across other internal packages.
 For example, the mailer package is structured around a provider boundary, including implementations for both standard SMTP (Simple Mail Transfer Protocol) and Azure Communication Services, the session module encapsulates the WebSocket and SSH bridging responsibilities behind a stable API, and the evaluator package isolates output buffering and regex-based validation logic.
@@ -216,6 +282,7 @@ The selected editing mode is therefore not an independent state that could drift
 If neither locale is yet populated, the editor falls back to a default locale, allowing content creation to begin in a predictable way.
 Figure X presents the editor in single-language mode, where content is entered for only one locale.
 
+% TODO
 Figure X. Task editor in single-language mode
 
 In the simpler case, the editor can therefore be used to create or modify a topic or task in only one language.
@@ -226,6 +293,7 @@ Instead of creating separate tasks per language, the editor allows the administr
 This better reflects the revised schema, where one structural task may have several textual representations depending on locale.
 Figure Y shows the dual-language mode, where both English and Estonian translations are edited within the same workflow.
 
+% TODO
 Figure Y. Task editor in dual-language mode with completeness indicators
 
 The editor also provides lightweight completeness feedback through status indicators shown in the outline and action area.
