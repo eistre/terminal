@@ -101,3 +101,136 @@ In this way, dependency updates were treated as part of the broader codebase mod
 Finally, clearer modular boundaries improve validation, readability, and maintainability by enabling more localized reasoning and testing.
 Structuring the codebase into reusable packages and independently runnable apps makes it easier to extend in the future without destabilizing the overall workflow of the application.
 The next section builds on this structure by describing the provisioning abstraction and the lifecycle management approach implemented behind the provisioning interface.
+
+\subsection{Container Provisioning and Lifecycle Management} \label{subsec:container-provisioning-and-lifecycle-management}
+The updated system introduces a provider-agnostic provisioning layer responsible for the creation, maintenance, and deletion of the user-specific Linux containers required for interactive terminal sessions.
+This is a central change from the baseline, as it encapsulates provider-specific runtime logic behind a stable API, allowing the same user-facing workflow to operate across different execution backends.
+
+\subsubsection{Provisioner Interface and Shared Abstraction} \label{subsubsec:provisioner-interface-and-shared-abstraction}
+To decouple the core application from provider-specific details, the system defines an abstract provisioning interface that all backends must implement.
+Upon application startup, a factory function evaluates the environment configuration and instantiates the appropriate provisioner implementation.
+This approach ensures that the application relies solely on a stable API, while provider-specific logic is contained within the implementation classes.
+
+At a high level, the provisioner supports four operations.
+It can list currently active user containers, ensure a user container exists and create one if it is not present, update the container expiration time while the user remains active, and delete the container once it is no longer required.
+The provisioner interface is shown in the code snippet below.
+
+TODO PROVISIONER INTERFACE SNIPPET
+
+The provisioning interface is implemented by classes specific to each provider, while shared operational concerns are centralized in a common base class, AbstractProvisioner.
+In this base class, each provisioning operation is wrapped with a concurrency limiter to cap simultaneous operations against provider APIs, a per-user lock to serialize operations per user, and retry logic to handle transient failures.
+For concurrency limiting and retry handling, the p-limit and p-retry packages are used.
+The following code snippet demonstrates this wrapping for one of the interface functions, illustrating how the public method enforces shared guarantees while delegating provider-specific work to the underlying implementation method.
+
+TODO ABSTRACT WRAPPER SNIPPET
+
+In practice, these wrappers are important under classroom-scale usage patterns and bursty traffic, such as page refreshes and repeated session starts.
+Per-user serialization prevents race conditions where concurrent requests attempt to create or delete the same user's container.
+Concurrency limiting reduces the likelihood of overwhelming provider APIs during spikes, and retry logic improves robustness against temporary network failures or throttling.
+Additionally, the base class provides shared utilities for lifecycle management, including computing expiration timestamps, applying consistent metadata tags or labels, and generating fresh SSH key pairs for new containers, ensuring consistent behaviour across providers.
+
+\subsubsection{Lifecycle Model, Cleanup, and Provider Implementations} \label{subsubsec:lifecycle-model-cleanup-and-provider-implementations}
+The provisioner abstraction presents a provider-agnostic API. For example, listContainers() returns a list of user identifiers and expiration timestamps for all managed containers, regardless of whether the underlying runtime is Kubernetes or another backend.
+Likewise, ensureContainerExists(userId) guarantees that the system can obtain connection information for a ready interactive container, even though the internal handling differs per provider.
+Provider implementations therefore encapsulate the relevant state transitions, such as handling the absence of a container by creating one, waiting or polling while a container is starting, and refreshing expiration metadata when a container is already running.
+
+Currently, three container runtime providers are supported.
+These are Kubernetes, Azure, and AWS. All implementations follow the same lifecycle model by attaching common metadata to managed resources, such as the user identifier and expiration time, enabling consistent enumeration and reclamation of inactive containers.
+The deployment setup and provider-specific configuration are described in Chapter 4.
+
+Lifecycle management is treated as a first-class operational concern to prevent resource leakage and control costs.
+User containers are intentionally time-bound and carry an inactivity-based expiration timestamp that is extended during activity via updateContainerExpiration().
+Enforcement of expiration is separated from the main web application via the scheduled provisioner cleanup job described in Section 3.2. At a high level, the cleanup job periodically lists managed containers using listContainers(), identifies those whose expiration time is in the past, and deletes them through deleteContainer(userId).
+This separation ensures that expired containers are reclaimed even if the main application is scaled down during idle periods, aligning the operational footprint more closely with actual usage.
+A simplified version of the cleanup flow (excluding logging and error handling) is shown below.
+
+PLACEHOLDER FOR PROVISIONER CLEANUP SNIPPET
+
+Although this subsection focuses on the provisioner module because it is the most complex, the same interface-driven design pattern is applied across other internal packages.
+For example, the mailer package is structured around a provider boundary, including implementations for both standard SMTP (Simple Mail Transfer Protocol) and Azure Communication Services, the session module encapsulates the WebSocket and SSH bridging responsibilities behind a stable API, and the evaluator package isolates output buffering and regex-based validation logic.
+Even where only a single implementation exists today, these boundaries keep responsibilities explicit and reduce the likelihood that infrastructure or operational concerns leak into the user-facing application.
+
+\subsection{Authentication and authorization} \label{subsec:authentication-and-authorization}
+In the authentication layer, the updated system replaces the Lucia package with an actively maintained solution that supports session management and single sign-on (SSO) based on OAuth 2.0 and OpenID Connect (OIDC). This is a central change from the baseline, as it removes dependency on a deprecated library discussed in Section 2.3.2 and enables standards-based identity integration for long-term maintainability and secure access control.
+
+\subsubsection{Authentication Design and Implementation} \label{subsubsec:authentication-design-and-implementation}
+Authentication is essential for this learning platform to identify users and ensure continuity of sessions for individual Linux container environments.
+User accounts enable the system to associate and store task results for each student and to limit access to authorized users.
+This approach preserves progress across sessions and reduces the risk of misuse or excessive load by requiring authenticated access before provisioning cost-incurring resources.
+
+Given Lucia's deprecation, continuing to rely on it was not suitable for a production system.
+As an alternative, the updated system adopts Better Auth, a framework-agnostic authentication library that provides built-in support for common workflows and simplifies long-term maintenance.
+Better Auth supports email and password login, session management, role-based authorization, and OAuth 2.0 / OIDC integration for SSO. In addition, the updated system implements an email domain allowlist to restrict registration and login to approved domains, for example, ut.ee.
+This helps ensure the platform is used only by the intended audience.
+
+Internally, Better Auth reduces the amount of custom authentication code compared to Lucia by providing standardized handlers and integrations for typical authentication flows.
+This decreases the likelihood of implementation errors and makes the authentication layer easier to evolve alongside the rest of the stack.
+Overall, the new design preserves the baseline requirements for verification and sessions while improving maintainability and enabling SSO-based onboarding.
+
+\subsubsection{OIDC / OAuth2} \label{subsubsec:oidc-/-oauth2}
+OpenID Connect (OIDC) is an authentication protocol built on top of the OAuth 2.0 framework.
+Fett et al.~\cite{fett_comprehensive_2016} describe OAuth 2.0 as a widely deployed authorization framework and as the foundation for OpenID Connect.
+Fett et al.~\cite{fett_web_2017} further explain that OIDC allows a relying party to delegate authentication to an identity provider and to verify the result using a cryptographically signed id token.
+
+At a high level, the platform uses the OIDC authorization code flow.
+As described by Fett et al.~\cite{fett_web_2017}, the user is redirected from the application to the identity provider, authenticates there, and is then redirected back with an authorization code.
+They further explain that the relying party exchanges this code for tokens, validates the returned id token, and then establishes a session for the authenticated user.
+
+In the current implementation, this flow can also use PKCE (Proof Key for Code Exchange), which adds an additional verification step during token exchange and improves resistance to authorization code interception.
+The web application currently supports both Microsoft Entra ID, which was used during testing, and Keycloak, which is used for university integration, as OIDC providers through environment variable configuration.
+After successful token validation, the authenticated external identity is mapped to the platform's internal user and session model, which is then used for progress tracking and authorization decisions.
+
+A standards-based OIDC integration improves interoperability and maintainability compared with provider-specific or custom authentication logic.
+Fett et al.~\cite{fett_comprehensive_2016} show that secure OAuth-based systems depend on correct flow handling and validation under recommended best practices, while Fett et al.~\cite{fett_web_2017} provide the corresponding OIDC-specific analysis.
+In the context of this platform, OIDC therefore provides a suitable and extensible basis for single sign-on support.
+
+\subsection{Improved localisation and task editor} \label{subsec:improved-localisation-and-task-editor}
+The revised system improves both the internal localisation model and the administrative workflow for managing multilingual learning content.
+Although the baseline platform already supported multiple interface languages, the updated implementation extends this to the content model itself.
+This was achieved by redesigning topics and tasks so that language-independent structure is separated from language-specific text, and by introducing an editor that supports both single-language and dual-language authoring.
+
+\subsubsection{Improved Localisation} \label{subsubsec:improved-localisation}
+A significant improvement in the revised implementation is the use of separate translation tables for topics and tasks.
+In the updated schema, the topics and tasks tables store the stable logical structure of the educational content, including identifiers, ordering, and task evaluation configurations.
+Additionally, the locale-specific textual fields are stored separately in topic_translations and task_translations tables.
+Consequently, titles, descriptions, and hints are no longer tied directly to the structural entity, but are instead attached as translations for each locale.
+
+This design improves maintainability and consistency by eliminating the need to duplicate topics or tasks across multiple languages.
+It also ensures that the logical components of a task, such as its order, regular expression, or monitored path, are shared across all language variants, thereby minimizing the potential for structural divergence between the Estonian and English versions over time.
+Additionally, the uniqueness constraints on entity and locale combinations guarantee that each topic or task is limited to a single translation per language, thereby maintaining a predictable and consistent multilingual content model.
+
+An additional benefit of this structure is that user progress is maintained independently of language.
+Task completion is recorded using stable task and topic identifiers rather than specific translation entries.
+Consequently, users can switch between supported interface locales without disrupting continuity, while still seeing the same logical exercise sequence in their chosen language.
+This enhances the robustness of the localisation model compared to a duplication-based approach, where each language version would function as a separate exercise set.
+
+\subsubsection{Task Editor} \label{subsubsec:task-editor}
+To support the revised localisation model, the administrative task editor was redesigned to manage both single-language and dual-language content entries.
+Instead of storing a separate configuration flag for editor mode, the implementation determines the editing mode directly from the available topic translations.
+The mode is determined from the presence of non-empty topic titles for each locale.
+If only one locale contains content, the editor functions in single-language mode for that locale.
+Conversely, if both Estonian and English titles are available, the editor transitions to dual-language mode.
+
+This approach keeps the editor logic consistent with the underlying content structure.
+The selected editing mode is therefore not an independent state that could drift out of sync with the stored translations, but instead reflects the current multilingual completeness of the topic.
+If neither locale is yet populated, the editor falls back to a default locale, allowing content creation to begin in a predictable way.
+Figure X presents the editor in single-language mode, where content is entered for only one locale.
+
+Figure X. Task editor in single-language mode
+
+In the simpler case, the editor can therefore be used to create or modify a topic or task in only one language.
+This is useful when content is intended for a single audience, or when a translation has not yet been prepared.
+In this mode, the interface remains compact and reduces unnecessary editing overhead.
+When bilingual content is required, the same editor supports entering both language variants within a unified workflow.
+Instead of creating separate tasks per language, the editor allows the administrator to manage multiple translations for the same underlying topic or task entity.
+This better reflects the revised schema, where one structural task may have several textual representations depending on locale.
+Figure Y shows the dual-language mode, where both English and Estonian translations are edited within the same workflow.
+
+Figure Y. Task editor in dual-language mode with completeness indicators
+
+The editor also provides lightweight completeness feedback through status indicators shown in the outline and action area.
+Tasks or topics with all required values present are marked with an OK indicator, whereas entries with missing mandatory fields are marked as MISSING. This allows administrators to identify incomplete translations or task definitions without opening every item individually, which becomes particularly useful when editing larger bilingual exercise sets.
+As a result, the redesign improves editorial workflow by making it easier to maintain parity between language variants while also reducing duplication in content management.
+
+Together, the improvements described in this chapter establish the revised implementation of the platform.
+The following chapter builds on this by describing the concrete deployment setups and infrastructure choices used to run the system across different environments.
