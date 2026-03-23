@@ -49,3 +49,55 @@ Given the risk of integrating incorrect or overly complex generated changes, exp
 Large refactors were divided into smaller, reversible steps, and changes were only accepted after passing type checks, linting, and manual verification.
 Additionally, security- and cost-sensitive areas received stricter review.
 These measures align with De Silva et al.~\cite{de_silva_generative_2025} and Malamas et al.~\cite{malamas_toward_2025}, who emphasize that LLM-driven iteration still requires conventional engineering rigor to prevent issues related to correctness and maintainability.
+
+\subsection{Architecture Overview} \label{subsec:architecture-overview}
+The revised system architecture separates the interactive learning workflow from infrastructure-specific concerns and periodic maintenance.
+This design preserves the user-facing workflow while allowing the execution backend and operational mechanisms to differ across deployments.
+
+PLACEHOLDER FIGURE 5. Revised architecture.
+
+Figure 5 groups the system into four conceptual components.
+The first is the browser, responsible for rendering the web interface and hosting the interactive terminal.
+The second is the main application environment.
+It contains the primary Nuxt server and the scheduled maintenance jobs.
+In this context, the Nuxt server provides both the Vue.js user interface and the API surface used by the frontend.
+The third component is the database, which retains the persistent application state required for continuity and administration, including user data, progress, and educational content.
+The fourth component is the container execution environment, which provides isolated Linux sessions for users during terminal-based exercises.
+
+A significant architectural change compared to the baseline system is the separation of maintenance tasks from the primary application into dedicated runnable functions deployed as scheduled jobs.
+As illustrated in Figure 5, these are represented by the provisioner cleanup cronjob and the database cleanup cronjob.
+The provisioner cleanup job enforces lifecycle policies for user container environments, such as removing expired sessions, while the database cleanup job removes expired verification tokens and inactive user records in accordance with retention policies.
+This separation prevents the main application process from running indefinitely solely to perform periodic maintenance tasks.
+It also enables deployments where the main application can be scaled down during periods of inactivity when it is cost-effective, while scheduled maintenance continues to execute and preserve system consistency.
+
+During an active terminal session, the browser establishes a persistent connection to the backend API to support interactive input and output.
+The backend then bridges this traffic to the user's Linux session in the container execution environment.
+The details of how the user session is provisioned and how lifecycle rules are implemented are covered in later sections.
+
+This overview remains provider-agnostic and focuses on the conceptual decomposition of the system.
+The following sections describe the modularization of the codebase, the provisioning abstraction and lifecycle management, the authentication and authorization design, and the improved data model and localisation support.
+
+\subsection{Modularization, Modernization, and Codebase Structure} \label{subsec:modularization-modernization-and-codebase-structure}
+The revised implementation restructures the codebase around explicit modular boundaries.
+The primary objective is to reduce coupling between unrelated concerns, thereby ensuring that changes remain local, more comprehensible, and less prone to introducing regressions throughout the system.
+This approach aligns with the fundamental principles of modularity.
+Parnas~\cite{parnas_criteria_1972} argues that the effectiveness of modularization depends on the system's decomposition, highlighting that good decomposition enhances flexibility and comprehensibility by concealing design decisions within module boundaries.
+Recent work on modular monolith architectures reports similar maintainability and reduced operational overhead benefits in modern cloud environments~\cite{al-qoran_modular_2025}.
+
+The new code repository layout is organized as a monorepo with two top-level directories, /apps and /packages.
+The /apps directory contains runnable units that can be deployed independently, including the main Nuxt web application, which hosts both the Vue.js user interface as well as the API, and the two scheduled maintenance jobs mentioned in the previous subchapter.
+The /packages directory contains reusable service modules that are imported by the runnable apps.
+These modules encapsulate specific functionality behind stable interfaces, such as provider-agnostic container provisioning, session handling, and configuration.
+This allows the runnable apps to remain comparatively thin orchestration layers, depending on the interfaces rather than the internal details of the modules.
+
+This restructure also supports the architectural goal of decoupling maintenance from the main interactive learning workflow.
+Both scheduled jobs in the /apps directory reuse the same core modules in /packages as the main Nuxt application, but run as separate executables on a schedule.
+This avoids keeping the main application running indefinitely solely to perform cleanup and enables deployments where the interactive application can be scaled down during idle periods while maintenance continues to enforce lifecycle and retention policies.
+
+The modernization effort also included updating core frameworks and supporting dependencies to currently supported stable versions where feasible.
+One example was the migration of the main application from Nuxt 3 to Nuxt 4, which addressed the outdated dependency baseline identified in Section 2.3.3.
+In this way, dependency updates were treated as part of the broader codebase modernization effort rather than as isolated package-management tasks.
+
+Finally, clearer modular boundaries improve validation, readability, and maintainability by enabling more localized reasoning and testing.
+Structuring the codebase into reusable packages and independently runnable apps makes it easier to extend in the future without destabilizing the overall workflow of the application.
+The next section builds on this structure by describing the provisioning abstraction and the lifecycle management approach implemented behind the provisioning interface.
