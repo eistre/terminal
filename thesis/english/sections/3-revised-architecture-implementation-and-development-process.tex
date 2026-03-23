@@ -1,0 +1,51 @@
+%! suppress = UnresolvedReference
+% TODO check footnotes
+\section{Revised Architecture, Implementation, and Development Process} \label{sec:revised-architecture-implementation-and-development-process}
+This chapter outlines the modernized architecture and implementation of the Linux command-line learning environment.
+Building upon the baseline system described in Chapter 2, the new design prioritizes modularity, improved maintainability, and cost-efficient operation.
+The following sections detail the revised system architecture, key technological choices, and the implementation of essential components.
+Collectively, these modifications seek to mitigate the shortcomings of the prior version while maintaining the platform's fundamental functionality.
+
+\subsection{Development Process and AI-assisted Refactoring Workflow} \label{subsec:development-process-and-ai-assisted-refactoring-workflow}
+The implementation work in this thesis required coordinated refactoring across multiple layers of the baseline system while keeping the codebase operational throughout the change.
+To speed up this process, the author used LLM-based (large language model) coding assistants as interactive tools for refactor planning, scaffolding, and iterative debugging.
+However, final responsibility for design decisions, integration, and verification remained with the author.
+
+\subsubsection{AI-assisted Development} \label{subsubsec:ai-assisted-development}
+Recent software engineering literature describes LLM-assisted development as a shift toward more conversational, intent-driven workflows, where developers specify goals and constraints in natural language and use AI tools to scaffold or generate implementation artifacts.
+Beaulieu et al.~\cite{beaulieu_vibe_2025} frame this as a move away from syntax-centric programming toward more dialog-based and intent-driven collaboration with AI tools, and they connect such tools to reduced repetitive manual effort.
+Similarly, De Silva et al.~\cite{de_silva_generative_2025} describe vibe coding as a conversational natural-language process for prototype development, where functionality is gradually developed through collaboration with an AI coding assistant and refined through successive prompts.
+
+At the same time, the literature emphasizes that these productivity gains require careful oversight.
+De Silva et al.~\cite{de_silva_generative_2025} warn that conversational workflows can encourage acceptance of generated code with limited understanding or review, which increases the risk of hidden defects and non-functional risks such as security, performance, and maintainability problems.
+They recommend human review, critical evaluation of AI outputs, and hybrid workflows that combine AI assistance with conventional engineering practice.
+Malamas et al.~\cite{malamas_toward_2025} further highlight that while conversational interaction can speed up prototyping, generated code may still be erroneous or insufficiently structured, requiring developer control and review for successful integration.
+
+In this thesis, AI-assisted coding was therefore treated as a development support method rather than as an autonomous implementation process.
+The tools were used to speed up planning, draft boilerplate, suggest refactor steps, and help interpret concrete error messages, but architectural decisions, code integration, and final acceptance of changes remained the responsibility of the author.
+
+\subsubsection{Refactoring Workflow} \label{subsubsec:refactoring-workflow}
+% TODO add references for the concrete tools and models used, or move these details to an appendix after the next Zotero export.
+AI assistance was primarily used through OpenCode, a command-line coding application, together with GitHub Copilot, via GitHub Education, for model access.
+The primary models used were Claude Sonnet 4.5 and GPT-5.2-Codex, selected based on availability and suitability for coding and debugging tasks.
+
+Most of the significant changes, such as the container provisioning abstraction and the localisation redesign, followed a consistent workflow:
+
+\begin{enumerate}
+\item Scope and constraint definition: define a concrete implementation goal together with technical constraints and acceptance conditions;
+\item Prompt-driven planning and design exploration: ask the assistant to analyze the existing code and propose a development plan;
+\item Plan iteration: refine the proposed approach through discussion until the intended change scope is clear;
+\item Scaffold and draft code changes: generate boilerplate and first-pass implementations to reduce repetitive manual work;
+\item Review and integration: inspect, simplify, and adapt the generated output before integrating it into the codebase;
+\item Verification and iteration: validate the result through type checking, linting, and manual testing, then use concrete failures as input for follow-up fixes.
+\end{enumerate}
+
+% TODO
+One example prompt used for refactoring is shown below:
+
+PROMPT PLACEHOLDER - use code block or something similar
+
+Given the risk of integrating incorrect or overly complex generated changes, explicit validation steps were applied.
+Large refactors were divided into smaller, reversible steps, and changes were only accepted after passing type checks, linting, and manual verification.
+Additionally, security- and cost-sensitive areas received stricter review.
+These measures align with De Silva et al.~\cite{de_silva_generative_2025} and Malamas et al.~\cite{malamas_toward_2025}, who emphasize that LLM-driven iteration still requires conventional engineering rigor to prevent issues related to correctness and maintainability.
