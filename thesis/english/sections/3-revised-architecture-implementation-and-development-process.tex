@@ -136,16 +136,15 @@ For concurrency limiting and retry handling, the p-limit and p-retry packages ar
 The following code snippet demonstrates this wrapping for one of the interface functions, illustrating how the public method enforces shared guarantees while delegating provider-specific work to the underlying implementation method.
 
 \begin{minted}{typescript}
-export abstract class AbstractProvisioner implements Provisioner {
-  async ensureContainerExists(userId: string): Promise<ConnectionInfo> {
-    return this.withConcurrencyLimit(() =>
-      this.withLock(userId, () =>
-        this.withRetry(() => this.ensureContainerExistsImpl(userId))),
-    );
-  }
-
-  protected abstract ensureContainerExistsImpl(userId: string): Promise<ConnectionInfo>;
+async ensureContainerExists(userId: string): Promise<ConnectionInfo> {
+  return this.withConcurrencyLimit(() =>
+    this.withLock(userId, () =>
+      this.withRetry(() => this.ensureContainerExistsImpl(userId)))
+  );
 }
+
+protected abstract ensureContainerExistsImpl(userId: string):
+  Promise<ConnectionInfo>;
 \end{minted}
 
 In practice, these wrappers are important under classroom-scale usage patterns and bursty traffic, such as page refreshes and repeated session starts.
@@ -170,19 +169,17 @@ This separation ensures that expired containers are reclaimed even if the main a
 A simplified version of the cleanup flow (excluding logging) is shown below.
 
 \begin{minted}{typescript}
-try {
-  const containers = await provisioner.listContainers();
+const containers = await provisioner.listContainers();
 
-  const now = new Date();
-  const expired = containers.filter(container => container.expiresAt <= now);
+const now = new Date();
+const expired = containers.filter(container =>
+  container.expiresAt <= now
+);
 
-  const results = await Promise.allSettled(
-    expired.map(container => provisioner.deleteContainer(container.userId)),
-  );
-}
-catch (error) {
-  process.exit(1);
-}
+const results = await Promise.allSettled(
+  expired.map(container =>
+    provisioner.deleteContainer(container.userId))
+);
 \end{minted}
 
 Although this subsection focuses on the provisioner module because it is the most complex, the same interface-driven design pattern is applied across other internal packages.
