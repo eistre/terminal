@@ -167,7 +167,7 @@ User containers are intentionally time-bound and carry an inactivity-based expir
 Enforcement of expiration is separated from the main web application via the scheduled provisioner cleanup job described in Section~\ref{subsec:architecture-overview}.
 At a high level, the cleanup job periodically lists managed containers using \texttt{listContainers()}, identifies those whose expiration time is in the past, and deletes them through \texttt{deleteContainer(userId)}.
 This separation ensures that expired containers are reclaimed even if the main application is scaled down during idle periods, aligning the operational footprint more closely with actual usage.
-A simplified version of the cleanup flow (excluding logging) is shown below.
+A simplified version of the cleanup flow (excluding logging and error handling) is shown below.
 
 \begin{minted}{typescript}
 const containers = await provisioner.listContainers();
