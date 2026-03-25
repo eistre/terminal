@@ -1,3 +1,4 @@
+%! suppress = MissingImport
 %! suppress = UnresolvedReference
 % TODO check footnotes
 \section{Deployment Environments and Infrastructure Setup} \label{sec:deployment-environments-and-infrastructure-setup}
@@ -16,7 +17,7 @@ Across all target environments, the deployment design was guided by several shar
 First, the platform had to support isolated Linux-based execution environments for individual users, as this is central to the teaching model of the system.
 Second, the deployment process needed to become reproducible and maintainable, replacing the more manual setup process of the earlier implementation with a clearer and more structured approach.
 Third, the system needed reliable persistence and integration between the application, database, and supporting services.
-Finally, because one of the main goals of this thesis is cost optimization, deployment choices also had to account for operational overhead and cost effectiveness.
+Finally, because one of the main goals of this thesis is cost optimization, deployment choices also had to account for operational overhead and cost-effectiveness.
 
 Based on these goals, the University of Tartu HPC Kubernetes environment was selected as one of the deployment targets.
 This platform was particularly relevant because the original application model was already based on containers and Kubernetes, making the university-managed Kubernetes service a natural continuation of that design.
@@ -71,10 +72,17 @@ The application was installed in the terminal-cs-ut-ee namespace and made access
 The Helm release deployed the main web application together with the Kubernetes resources required to operate the platform in this environment.
 These included the application Deployment, the public-facing Service and Ingress, the database layer configured using the MariaDB operator, cleanup CronJobs, and additional namespace-level resources such as service accounts, role bindings, and network policies.
 The deployment remained fully contained within the designated namespace, while public access was provided through the UT HPC ingress infrastructure~\cite{noauthor_ingress_nodate}.
-Figure W presents the UT HPC Kubernetes deployment of the platform, showing the namespace-scoped application components, ingress path, database layer, and per-user containers.
+Figure 8 presents the UT HPC Kubernetes deployment of the platform, showing the namespace-scoped application components, ingress path, database layer, and per-user containers.
 
+\begin{figure}[ht]
+  \centering
+  % TODO Temporary placeholder image. Replace with the final architecture diagram.
+  \includegraphics[width=\textwidth]{figures/figure8-todo}
+  \caption{TODO.}
+  \label{fig:todo}
+\end{figure}
 % TODO
-Figure W. Deployment architecture of the platform in the UT HPC Kubernetes environment
+Figure 8. Deployment architecture of the platform in the UT HPC Kubernetes environment
 
 Public access was implemented through a Kubernetes Ingress resource.
 UT HPC documentation identifies ingress as a supported method for publishing HTTP applications to the public internet through its managed proxy infrastructure, while routing, DNS records, and TLS certificates were coordinated with HPC support~\cite{noauthor_ingress_nodate}.
