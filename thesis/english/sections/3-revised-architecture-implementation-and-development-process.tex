@@ -41,10 +41,23 @@ Most of the significant changes, such as the container provisioning abstraction 
 \item Verification and iteration: validate the result through type checking, linting, and manual testing, then use concrete failures as input for follow-up fixes.
 \end{enumerate}
 
-% TODO
 One example prompt used for refactoring is shown below:
 
-PROMPT PLACEHOLDER - use code block or something similar
+\begin{minted}{text}
+Analyze the existing Kubernetes-specific runtime administration
+and provisioning logic in this codebase and propose a refactoring plan
+for restructuring it into a modular provisioner layer.
+
+Focus on the following:
+- extract an abstract container provisioning interface from the current
+  Kubernetes specific pod and environment administration logic;
+- define a Kubernetes implementation behind that interface;
+- follow the new modular structure used in the repository,
+  placing the provisioner package inside the `packages/` directory;
+- introduce shared concurrency control, retry handling, and safeguards
+  for provisioning operations;
+- identify sensible implementation steps for carrying out the refactor.
+\end{minted}
 
 Given the risk of integrating incorrect or overly complex generated changes, explicit validation steps were applied.
 Large refactors were divided into smaller, reversible steps, and changes were only accepted after passing type checks, linting, and manual verification.
