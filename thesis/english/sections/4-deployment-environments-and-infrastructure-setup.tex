@@ -1,3 +1,4 @@
+%! suppress = UnresolvedReference
 % TODO check footnotes
 \section{Deployment Environments and Infrastructure Setup} \label{sec:deployment-environments-and-infrastructure-setup}
 This chapter describes the deployment environments and infrastructure setup of the revised Linux command-line learning platform.
@@ -33,8 +34,8 @@ In addition to serving as one of the target platforms in the cross-environment c
 
 \subsubsection{UT HPC as a Deployment Environment} \label{subsubsec:ut-hpc-as-a-deployment-environment}
 The University of Tartu HPC Centre provides multiple research- and teaching-oriented computing services, including a managed Kubernetes service for hosting containerized workloads.
-According to the UT HPC service description, the Kubernetes cluster is deployed on bare-metal nodes within the University of Tartu network in a high-availability configuration, while users are granted managed, namespace-level access rather than responsibility for administering the underlying cluster infrastructure \href{https://www.zotero.org/google-docs/?jghIBt}{[22]}.
-In this model, projects are assigned dedicated namespaces, enabling application deployment and management within a namespace-scoped environment, while broader cluster administration remains outside the scope of ordinary user access \href{https://www.zotero.org/google-docs/?OG0wNu}{[23]}.
+According to the UT HPC service description, the Kubernetes cluster is deployed on bare-metal nodes within the University of Tartu network in a high-availability configuration, while users are granted managed, namespace-level access rather than responsibility for administering the underlying cluster infrastructure~\cite{center_kubernetes_nodate}.
+In this model, projects are assigned dedicated namespaces, enabling application deployment and management within a namespace-scoped environment, while broader cluster administration remains outside the scope of ordinary user access~\cite{noauthor_quick_nodate}.
 
 In the context of this thesis, the UT HPC Kubernetes environment was a relevant deployment target for two primary reasons.
 Firstly, the revised platform was already based on containerized services and Kubernetes-oriented execution logic, making the managed Kubernetes environment a technically compatible continuation of the application design.
@@ -43,24 +44,24 @@ As a result, the UT HPC environment was not only one of the platforms included i
 
 \subsubsection{Access and Namespace Provisioning} \label{subsubsec:access-and-namespace-provisioning}
 Access to the UT HPC Kubernetes environment was obtained through the namespace request process described in the UT HPC documentation.
-According to the UT HPC Kubernetes quick start guide, access can be requested either by submitting a Kubernetes request or by contacting HPC support directly \href{https://www.zotero.org/google-docs/?jevKC6}{[23]}.
-As part of the request, the applicant can specify details such as the domain name, deployment lifetime, project repository, and whether the application requires a database \href{https://www.zotero.org/google-docs/?yldcjS}{[24]}.
-After the request has been processed, the user is notified by email and access is granted at the namespace level \href{https://www.zotero.org/google-docs/?ZBtVYp}{[23]}.
+According to the UT HPC Kubernetes quick start guide, access can be requested either by submitting a Kubernetes request or by contacting HPC support directly~\cite{noauthor_quick_nodate}.
+As part of the request, the applicant can specify details such as the domain name, deployment lifetime, project repository, and whether the application requires a database~\cite{center_container_nodate}.
+After the request has been processed, the user is notified by email and access is granted at the namespace level~\cite{noauthor_quick_nodate}.
 
 As part of this thesis, the application was deployed into the namespace terminal-cs-ut-ee.
-After the namespace had been provisioned, cluster access was configured using the kubeconfig file-based access model described in the UT HPC documentation \href{https://www.zotero.org/google-docs/?bdneRQ}{[23]}.
+After the namespace had been provisioned, cluster access was configured using the kubeconfig file-based access model described in the UT HPC documentation~\cite{noauthor_quick_nodate}.
 In addition to the namespace provisioning itself, several deployment-specific integrations were coordinated directly with UT HPC support by email.
-These included exposing the application under the public hostname terminal.cs.ut.ee through the UT HPC ingress infrastructure \href{https://www.zotero.org/google-docs/?vqVOGd}{[25]}, configuring single sign-on through an HPC-managed Keycloak instance, and configuring SMTP settings required for sending platform validation emails.
+These included exposing the application under the public hostname terminal.cs.ut.ee through the UT HPC ingress infrastructure~\cite{noauthor_ingress_nodate}, configuring single sign-on through an HPC-managed Keycloak instance, and configuring SMTP settings required for sending platform validation emails.
 UT HPC support also provided a monitoring dashboard for standard workload metrics, including pod CPU usage, memory usage, and the number of active student containers.
 
 \subsubsection{Helm} \label{subsubsec:helm}
 The application was deployed to the UT HPC Kubernetes environment using Helm.
-Helm is described by its maintainers as a package manager for Kubernetes that simplifies the deployment and lifecycle management of applications through charts \href{https://www.zotero.org/google-docs/?2sXWzA}{[26]}.
-In Helm terminology, a chart is a structured package containing the files needed to describe an application's Kubernetes resources, including templates that are rendered into manifests using supplied configuration values \href{https://www.zotero.org/google-docs/?ilJyz3}{[27]}.
+Helm is described by its maintainers as a package manager for Kubernetes that simplifies the deployment and lifecycle management of applications through charts~\cite{noauthor_helm_nodate}.
+In Helm terminology, a chart is a structured package containing the files needed to describe an application's Kubernetes resources, including templates that are rendered into manifests using supplied configuration values~\cite{noauthor_charts_nodate}.
 This made Helm a suitable deployment mechanism for the UT HPC environment, where the cluster infrastructure was already available and the main requirement was to deploy the application's resources within the allocated namespace.
 
 In this project, the Helm chart was used to bundle the Kubernetes resource templates required by the platform and to separate reusable defaults from environment-specific settings.
-Helm supports this by allowing the baseline configuration from values.yaml to be overridden through user-provided values files or command-line parameters \href{https://www.zotero.org/google-docs/?2qrCAL}{[28]}.
+Helm supports this by allowing the baseline configuration from values.yaml to be overridden through user-provided values files or command-line parameters~\cite{noauthor_values_nodate}.
 This made it possible to preserve a common chart structure while adapting settings needed for UT HPC, such as ingress-related options and database configuration.
 In practice, deployment to UT HPC mainly involved providing the appropriate environment-specific values and installing the chart in the assigned namespace.
 This approach made the setup repeatable and reduced maintenance effort over time.
@@ -69,21 +70,21 @@ This approach made the setup repeatable and reduced maintenance effort over time
 The application was installed in the terminal-cs-ut-ee namespace and made accessible to users via the public hostname terminal.cs.ut.ee.
 The Helm release deployed the main web application together with the Kubernetes resources required to operate the platform in this environment.
 These included the application Deployment, the public-facing Service and Ingress, the database layer configured using the MariaDB operator, cleanup CronJobs, and additional namespace-level resources such as service accounts, role bindings, and network policies.
-The deployment remained fully contained within the designated namespace, while public access was provided through the UT HPC ingress infrastructure \href{https://www.zotero.org/google-docs/?3ATwJD}{[25]}.
+The deployment remained fully contained within the designated namespace, while public access was provided through the UT HPC ingress infrastructure~\cite{noauthor_ingress_nodate}.
 Figure W presents the UT HPC Kubernetes deployment of the platform, showing the namespace-scoped application components, ingress path, database layer, and per-user containers.
 
 % TODO
 Figure W. Deployment architecture of the platform in the UT HPC Kubernetes environment
 
 Public access was implemented through a Kubernetes Ingress resource.
-UT HPC documentation identifies ingress as a supported method for publishing HTTP applications to the public internet through its managed proxy infrastructure, while routing, DNS records, and TLS certificates were coordinated with HPC support \href{https://www.zotero.org/google-docs/?BYokft}{[25]}.
+UT HPC documentation identifies ingress as a supported method for publishing HTTP applications to the public internet through its managed proxy infrastructure, while routing, DNS records, and TLS certificates were coordinated with HPC support~\cite{noauthor_ingress_nodate}.
 Within the namespace, the web application was deployed as a standard Kubernetes Deployment behind a Service, with optional autoscaling available through chart configuration for the UT HPC environment.
 Configuration was kept separate from the application code by storing non-sensitive settings in ConfigMaps and providing sensitive values as Secrets.
 Service accounts and access control resources were used to define the permissions required by the application and its supporting workloads.
 Network policies were additionally used to restrict communication paths between the main application, the database, and the per-user execution environments.
 
-The database layer was deployed using MariaDB, one of the supported database options in the UT HPC Kubernetes environment \href{https://www.zotero.org/google-docs/?NzbAeu}{[29]}.
-This was also appropriate for the project because MariaDB documentation describes MariaDB as having historically functioned as a drop-in replacement for equivalent MySQL versions, making it a compatible continuation of the earlier MySQL-based setup \href{https://www.zotero.org/google-docs/?5VpAsI}{[30]}.
+The database layer was deployed using MariaDB, one of the supported database options in the UT HPC Kubernetes environment~\cite{noauthor_databases_nodate}.
+This was also appropriate for the project because MariaDB documentation describes MariaDB as having historically functioned as a drop-in replacement for equivalent MySQL versions, making it a compatible continuation of the earlier MySQL-based setup~\cite{noauthor_mariadb_2026}.
 In addition to the main web application and database components, the chart deployed periodic cleanup jobs to remove expired session resources and other stale state.
 Per-user execution environments were integrated into the same namespace-scoped deployment model, allowing interactive student containers to be created and managed alongside the main platform while remaining within the security and networking boundaries defined for the namespace.
 
