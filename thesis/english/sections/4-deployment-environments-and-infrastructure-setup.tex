@@ -1,6 +1,8 @@
 %! suppress = MissingImport
 %! suppress = UnresolvedReference
 % TODO check footnotes
+
+
 \section{Deployment Environments and Infrastructure Setup} \label{sec:deployment-environments-and-infrastructure-setup}
 This chapter describes the deployment environments and infrastructure setup of the revised Linux command-line learning platform.
 It first outlines the deployment goals and the rationale for selecting the University of Tartu HPC Kubernetes environment, Microsoft Azure, and Amazon Web Services as target platforms.
@@ -72,17 +74,15 @@ The application was installed in the terminal-cs-ut-ee namespace and made access
 The Helm release deployed the main web application together with the Kubernetes resources required to operate the platform in this environment.
 These included the application Deployment, the public-facing Service and Ingress, the database layer configured using the MariaDB operator, cleanup CronJobs, and additional namespace-level resources such as service accounts, role bindings, and network policies.
 The deployment remained fully contained within the designated namespace, while public access was provided through the UT HPC ingress infrastructure~\cite{noauthor_ingress_nodate}.
-Figure 8 presents the UT HPC Kubernetes deployment of the platform, showing the namespace-scoped application components, ingress path, database layer, and per-user containers.
+Figure~\ref{fig:ut-hpc-deployment-overview} presents the UT HPC Kubernetes deployment of the platform, showing the namespace-scoped application components, ingress path, database layer, and per-user containers.
 
 \begin{figure}[ht]
   \centering
-  % TODO Temporary placeholder image. Replace with the final architecture diagram.
-  \includegraphics[width=\textwidth]{figures/figure8-todo}
-  \caption{TODO.}
-  \label{fig:todo}
+  % TODO Temporary placeholder image. Replace with the final deployment diagram.
+  \includegraphics[width=\textwidth]{figures/Figure1-Keywords}
+  \caption{Deployment architecture of the platform in the UT HPC Kubernetes environment.}
+  \label{fig:ut-hpc-deployment-overview}
 \end{figure}
-% TODO
-Figure 8. Deployment architecture of the platform in the UT HPC Kubernetes environment
 
 Public access was implemented through a Kubernetes Ingress resource.
 UT HPC documentation identifies ingress as a supported method for publishing HTTP applications to the public internet through its managed proxy infrastructure, while routing, DNS records, and TLS certificates were coordinated with HPC support~\cite{noauthor_ingress_nodate}.

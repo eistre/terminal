@@ -2,6 +2,8 @@
 %! suppress = UnresolvedReference
 %! suppress = Unicode
 % TODO check footnotes
+
+
 \section{Background and Previous System} \label{sec:background-and-previous-system}
 This chapter establishes the educational and technical baseline for the thesis.
 It first motivates the educational relevance of browser-based Linux command-line practice and situates the work within two earlier iterations of the learning environment developed at the University of Tartu.
@@ -62,11 +64,11 @@ Its implementation was largely rewritten in TypeScript using Node.js and the Nux
 Figure~\ref{fig:baseline-system-architecture} illustrates the system's main components and the runtime interactions between them.
 
 \begin{figure}[ht]
-    \centering
-    % TODO Temporary placeholder image. Replace with the final architecture diagram.
-    \includegraphics[width=\textwidth]{figures/Figure1-Keywords}
-    \caption{Baseline system architecture of Eistre's implementation, adapted from~\cite{eistre_veebipohise_nodate}.}
-    \label{fig:baseline-system-architecture}
+  \centering
+  % TODO Temporary placeholder image. Replace with the final architecture diagram.
+  \includegraphics[width=\textwidth]{figures/Figure1-Keywords}
+  \caption{Baseline system architecture of Eistre's implementation, adapted from~\cite{eistre_veebipohise_nodate}.}
+  \label{fig:baseline-system-architecture}
 \end{figure}
 
 The architecture is organized around four main components.
@@ -99,11 +101,11 @@ The application was containerized and deployed using Azure's managed container a
 Figure~\ref{fig:azure-deployment-overview} provides a deployment-level overview of the baseline environment and the Azure services created for it.
 
 \begin{figure}[ht]
-    \centering
-    % TODO Temporary placeholder image. Replace with the final deployment diagram.
-    \includegraphics[width=\textwidth]{figures/Figure1-Keywords}
-    \caption{Azure deployment overview of Eistre's baseline system, adapted from~\cite{eistre_veebipohise_nodate}.}
-    \label{fig:azure-deployment-overview}
+  \centering
+  % TODO Temporary placeholder image. Replace with the final deployment diagram.
+  \includegraphics[width=\textwidth]{figures/Figure1-Keywords}
+  \caption{Azure deployment overview of Eistre's baseline system, adapted from~\cite{eistre_veebipohise_nodate}.}
+  \label{fig:azure-deployment-overview}
 \end{figure}
 
 In this design, the Nuxt application was packaged into a container image and run as a single Azure Container App instance, with fixed resource reservations, including 0.5 vCPU and 1 GB of memory, in the Sweden Central region~\cite{eistre_veebipohise_nodate}.
@@ -142,11 +144,11 @@ The majority of these costs were attributed to fixed, always-on resources, such 
 Consequently, maintaining the platform’s readiness for use resulted in a baseline expenditure exceeding €50 per month, even with minimal or no user activity.
 
 \begin{figure}[ht]
-    \centering
-    % TODO Temporary placeholder image. Replace with the July 2025 Azure cost chart.
-    \includegraphics[width=\textwidth]{figures/figure3-jul2025}
-    \caption{Azure cost breakdown of the baseline deployment for July 2025.}
-    \label{fig:azure-cost-july-2025}
+  \centering
+  % TODO Temporary placeholder image. Replace with the July 2025 Azure cost chart.
+  \includegraphics[width=\textwidth]{figures/figure3-jul2025}
+  \caption{Azure cost breakdown of the baseline deployment for July 2025.}
+  \label{fig:azure-cost-july-2025}
 \end{figure}
 
 Figure~\ref{fig:azure-cost-september-2025} presents the cost breakdown for September 2025, reflecting an active semester with a total monthly expenditure of €93.12.
@@ -154,11 +156,11 @@ In addition to the fixed components, such as the database, load balancer, and co
 This suggests that classroom-scale usage results in additional variable costs beyond the baseline, potentially elevating the overall monthly expense to €100 or more when the cluster is frequently activated and supports concurrent users.
 
 \begin{figure}[ht]
-    \centering
-    % TODO Temporary placeholder image. Replace with the September 2025 Azure cost chart.
-    \includegraphics[width=\textwidth]{figures/figure4-sep2025}
-    \caption{Azure cost breakdown of the baseline deployment for September 2025.}
-    \label{fig:azure-cost-september-2025}
+  \centering
+  % TODO Temporary placeholder image. Replace with the September 2025 Azure cost chart.
+  \includegraphics[width=\textwidth]{figures/figure4-sep2025}
+  \caption{Azure cost breakdown of the baseline deployment for September 2025.}
+  \label{fig:azure-cost-september-2025}
 \end{figure}
 
 Taken together, these observations show that the main issue was not simply that cloud infrastructure incurred costs, but that the operational model of the previous deployment remained poorly matched to intermittent educational workloads.

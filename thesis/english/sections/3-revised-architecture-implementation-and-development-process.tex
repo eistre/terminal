@@ -1,6 +1,8 @@
 %! suppress = MissingImport
 %! suppress = UnresolvedReference
 % TODO check footnotes
+
+
 \section{Revised Architecture, Implementation, and Development Process} \label{sec:revised-architecture-implementation-and-development-process}
 This chapter outlines the modernized architecture and implementation of the Linux command-line learning environment.
 Building upon the baseline system described in Chapter 2, the new design prioritizes modularity, improved maintainability, and cost-efficient operation.
@@ -33,12 +35,12 @@ The primary models used were Claude Sonnet 4.5 and GPT-5.2-Codex, selected based
 Most of the significant changes, such as the container provisioning abstraction and the localisation redesign, followed a consistent workflow:
 
 \begin{enumerate}
-\item Scope and constraint definition: define a concrete implementation goal together with technical constraints and acceptance conditions;
-\item Prompt-driven planning and design exploration: ask the assistant to analyze the existing code and propose a development plan;
-\item Plan iteration: refine the proposed approach through discussion until the intended change scope is clear;
-\item Scaffold and draft code changes: generate boilerplate and first-pass implementations to reduce repetitive manual work;
-\item Review and integration: inspect, simplify, and adapt the generated output before integrating it into the codebase;
-\item Verification and iteration: validate the result through type checking, linting, and manual testing, then use concrete failures as input for follow-up fixes.
+  \item Scope and constraint definition: define a concrete implementation goal together with technical constraints and acceptance conditions;
+  \item Prompt-driven planning and design exploration: ask the assistant to analyze the existing code and propose a development plan;
+  \item Plan iteration: refine the proposed approach through discussion until the intended change scope is clear;
+  \item Scaffold and draft code changes: generate boilerplate and first-pass implementations to reduce repetitive manual work;
+  \item Review and integration: inspect, simplify, and adapt the generated output before integrating it into the codebase;
+  \item Verification and iteration: validate the result through type checking, linting, and manual testing, then use concrete failures as input for follow-up fixes.
 \end{enumerate}
 
 One example prompt used for refactoring is shown below:
@@ -69,11 +71,11 @@ The revised system architecture separates the interactive learning workflow from
 This design preserves the user-facing workflow while allowing the execution backend and operational mechanisms to differ across deployments.
 
 \begin{figure}[ht]
-    \centering
-    % TODO Temporary placeholder image. Replace with the final architecture diagram.
-    \includegraphics[width=\textwidth]{figures/figure5-revised-architecture-overview}
-    \caption{Revised architecture overview of the modernized learning environment.}
-    \label{fig:revised-architecture-overview}
+  \centering
+  % TODO Temporary placeholder image. Replace with the final architecture diagram.
+  \includegraphics[width=\textwidth]{figures/figure5-revised-architecture-overview}
+  \caption{Revised architecture overview of the modernized learning environment.}
+  \label{fig:revised-architecture-overview}
 \end{figure}
 
 Figure~\ref{fig:revised-architecture-overview} groups the system into four conceptual components.
@@ -267,11 +269,11 @@ If neither locale is yet populated, the editor falls back to a default locale, a
 Figure~\ref{fig:task-editor-single-language} presents the editor in single-language mode, where content is entered for only one locale.
 
 \begin{figure}[ht]
-    \centering
-    % TODO Temporary placeholder image. Replace with the final architecture diagram.
-    \includegraphics[width=\textwidth]{figures/figure6-task-editor-single-language}
-    \caption{Task editor in single-language mode.}
-    \label{fig:task-editor-single-language}
+  \centering
+  % TODO Temporary placeholder image. Replace with the final architecture diagram.
+  \includegraphics[width=\textwidth]{figures/figure6-task-editor-single-language}
+  \caption{Task editor in single-language mode.}
+  \label{fig:task-editor-single-language}
 \end{figure}
 
 In the simpler case, the editor can therefore be used to create or modify a topic or task in only one language.
@@ -283,11 +285,11 @@ This better reflects the revised schema, where one structural task may have seve
 Figure~\ref{fig:task-editor-dual-language} shows the dual-language mode, where both English and Estonian translations are edited within the same workflow.
 
 \begin{figure}[ht]
-    \centering
-    % TODO Temporary placeholder image. Replace with the final architecture diagram.
-    \includegraphics[width=\textwidth]{figures/figure7-task-editor-dual-language}
-    \caption{Task editor in dual-language mode with completeness indicators.}
-    \label{fig:task-editor-dual-language}
+  \centering
+  % TODO Temporary placeholder image. Replace with the final architecture diagram.
+  \includegraphics[width=\textwidth]{figures/figure7-task-editor-dual-language}
+  \caption{Task editor in dual-language mode with completeness indicators.}
+  \label{fig:task-editor-dual-language}
 \end{figure}
 
 The editor also provides lightweight completeness feedback through status indicators shown in the outline and action area.
