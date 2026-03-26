@@ -32,7 +32,7 @@ AWS was included to extend the comparison beyond a single provider and to evalua
 Together, these three platforms provide a basis for comparing institutional hosting and public cloud deployment models in a consistent manner.
 
 \subsection{University Kubernetes Cluster} \label{subsec:university-kubernetes-cluster}
-This section presents the deployment of the revised platform in the University of Tartu HPC Kubernetes environment.
+This subchapter presents the deployment of the revised platform in the University of Tartu HPC Kubernetes environment.
 In addition to serving as one of the target platforms in the cross-environment comparison, this deployment is also relevant as a concrete example of how a university-hosted educational application can be deployed in the managed Kubernetes environment provided by UT HPC. The following subchapters first introduce the UT HPC Kubernetes environment and the namespace access process, and then describe how the application was deployed there using Helm and integrated with the supporting services required for operation.
 
 \subsubsection{UT HPC as a Deployment Environment} \label{subsubsec:ut-hpc-as-a-deployment-environment}
@@ -102,8 +102,21 @@ At the same time, some parts of the deployment, including public exposure, singl
 Nevertheless, the environment proved to be a realistic and technically compatible option for future university-hosted use of the platform.
 
 \subsection{Microsoft Azure} \label{subsec:microsoft-azure}
-% TODO
-TODO
+This subchapter discusses the deployment of the revised platform on Microsoft Azure.
+Azure was kept as the target environment because the baseline implementation described in chapter~\ref{subsubsec:cloud-deployment-on-azure} was already hosted there, making it the most direct platform for modernization and comparison.
+While the University of Tartu HPC deployment shows how the platform can be hosted in institutional Kubernetes infrastructure, the Azure deployment serves as a public-cloud alternative that highlights managed services, infrastructure automation, and lower always-on costs.
+
+
+\subsubsection{Azure as a Deployment Environment} \label{subsubsec:azure-as-a-deployment-environment}
+Microsoft Azure was selected as a deployment target because it provides the clearest continuation of the baseline system and therefore allows the revised design to be compared with the previous Azure-based deployment model.
+As described in chapter~\ref{subsubsec:cloud-deployment-on-azure}, the earlier implementation used Azure Container Apps (ACA) for the main web application and Azure Kubernetes Service (AKS) for the Linux execution environments~\cite{eistre_veebipohise_nodate}.
+Although this architecture was functional, it still retained some of the cost and operational characteristics of cluster-based orchestration, since the execution environments relied on AKS worker nodes and related infrastructure even when user activity was low~\cite{eistre_veebipohise_nodate}.
+
+For the revised implementation, Azure remained relevant, but the service choices were reconsidered.
+The main goal was to preserve the same educational workflow while reducing idle infrastructure overhead and simplifying the operational model.
+As a result, the revised Azure deployment moves away from a cluster-centric execution model and instead uses a combination of managed and consumption-oriented services that better fit the platform's intermittent classroom usage pattern.
+This made Azure a suitable environment not only for continuity with the baseline system, but also for evaluating whether a more lightweight Azure-native architecture could better support the thesis goals of maintainability and cost optimization.
+
 
 \subsection{Amazon Web Services} \label{subsec:amazon-web-services}
 % TODO
