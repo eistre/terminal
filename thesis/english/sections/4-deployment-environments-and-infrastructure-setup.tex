@@ -106,7 +106,6 @@ This subchapter discusses the deployment of the revised platform on Microsoft Az
 Azure was kept as the target environment because the baseline implementation described in chapter~\ref{subsubsec:cloud-deployment-on-azure} was already hosted there, making it the most direct platform for modernization and comparison.
 While the University of Tartu HPC deployment shows how the platform can be hosted in institutional Kubernetes infrastructure, the Azure deployment serves as a public-cloud alternative that highlights managed services, infrastructure automation, and lower always-on costs.
 
-
 \subsubsection{Azure as a Deployment Environment} \label{subsubsec:azure-as-a-deployment-environment}
 Microsoft Azure was selected as a deployment target because it provides the clearest continuation of the baseline system and therefore allows the revised design to be compared with the previous Azure-based deployment model.
 As described in chapter~\ref{subsubsec:cloud-deployment-on-azure}, the earlier implementation used Azure Container Apps (ACA) for the main web application and Azure Kubernetes Service (AKS) for the Linux execution environments~\cite{eistre_veebipohise_nodate}.
@@ -117,6 +116,17 @@ The main goal was to preserve the same educational workflow while reducing idle 
 As a result, the revised Azure deployment moves away from a cluster-centric execution model and instead uses a combination of managed and consumption-oriented services that better fit the platform's intermittent classroom usage pattern.
 This made Azure a suitable environment not only for continuity with the baseline system, but also for evaluating whether a more lightweight Azure-native architecture could better support the thesis goals of maintainability and cost optimization.
 
+\subsubsection{Terraform} \label{subsubsec:terraform}
+% TODO citations
+The revised Azure deployment was provisioned using Terraform.
+According to the Terraform documentation, Terraform is an infrastructure-as-code (IaC) tool that allows infrastructure to be specified in configuration files and managed through a repeatable workflow~\cite{X}.
+Compared with the more manual setup process used in the previous system, this allowed the Azure infrastructure to be expressed declaratively.
+
+In this project, Terraform was used to define the Azure infrastructure required by the platform while keeping reusable infrastructure definitions separate from deployment-specific configuration.
+Terraform supports this by providing input variables, which make it possible to supply configuration values separately from the core infrastructure code~\cite{Y}.
+This made it possible to keep a common infrastructure definition while adjusting specific settings for different deployments.
+In practice, provisioning the Azure environment mainly involved providing the required variable values and applying the Terraform configuration.
+This improved the reproducibility of the deployment process and reduced maintenance effort over time.
 
 \subsection{Amazon Web Services} \label{subsec:amazon-web-services}
 % TODO
