@@ -128,13 +128,9 @@ In practice, provisioning the Azure environment mainly involved providing the re
 This improved the reproducibility of the deployment process and reduced maintenance effort over time.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-azure}
-% TODO perhaps mention that the entire environment was provisioned in North Europe location as that saw the relative lowest costs at the time of the thesis work (and no need for split location deployments due to quotas)
-% TODO we should somehow mention that the maintenance jobs were deployed with ACA jobs
-% TODO should we cite ACA here? (\cite{noauthor_azure_nodate)
-Similarly to the baseline Azure Deployment, the revised Azure deployment is centered around Azure Container Apps (ACA) as the hosting environment for the main web application as well as the scheduled maintenance jobs.
-In this environment, the main Nuxt application runs as a containerized web workload, while the database cleanup and provisioner cleanup functions are deployed separately as scheduled jobs.
-% TODO reference actual chapter 3 label
-This matches the architectural separation described in Chapter~3, where periodic maintenance was moved out of the main application process.
+Similarly to the baseline Azure deployment, the revised Azure deployment is centered around Azure Container Apps (ACA), which hosts the main web application, while the scheduled maintenance workloads are deployed as Azure Container Apps Jobs, which execute containerized tasks for a finite duration and then stop~\cite{noauthor_azure_nodate,craigshoemaker_jobs_nodate}.
+In this environment, the main Nuxt application runs as a containerized web workload, while the database cleanup and provisioner cleanup functions run as separate scheduled jobs.
+This matches the architectural separation described in Section~\ref{subsec:architecture-overview}, where periodic maintenance was moved out of the main application process.
 
 \begin{figure}[ht]
   \centering
@@ -151,9 +147,9 @@ The use of ACI allows the platform to provide isolated containers for each user 
 Compared with the baseline AKS model, this reduces infrastructure as well as operational overhead as the application does not need to manage cluster runtime for cost optimization.
 In this model, the runtime cost of the session containers is determined by the requested vCPU and memory resources together with the duration of the session~\cite{noauthor_pricing_nodate}.
 
-The database layer is implemented using the same Azure Database for MySQL Flexible Server deployment model as in the baseline system using the cheapest available configuration to minimize costs (B1ms burstable tier with 1 vCPU and 2 GB of memory). % TODO cite https://azure.microsoft.com/en-us/pricing/details/mysql/ and eistre_veebipohise_nodate
- % TODO explain that as opposed to a storage account, key vault is used for storing sensitive values such as SSH private keys cite https://learn.microsoft.com/en-us/azure/key-vault/general/overview and eistre_veebipohise_nodate
-Similar to the baseline system, email delivery for account verification is handled through Azure Communication Services using an Azure-managed email domain. % TODO cite Azure Communication Services here https://learn.microsoft.com/en-us/azure/communication-services/ and https://learn.microsoft.com/en-us/azure/communication-services/concepts/email/email-overview, and eistre_veebipohise_nodate
+The database layer is implemented using the same Azure Database for MySQL Flexible Server deployment model as in the baseline system, using the cheapest available configuration to minimize costs (B1ms burstable tier with 1 vCPU and 2 GB of memory)~\cite{noauthor_flexible_nodate,eistre_veebipohise_nodate}.
+Unlike the baseline implementation, which relied on Azure Files to store per-session SSH keys, the revised deployment uses Azure Key Vault for secret storage~\cite{msmbaldwin_azure_nodate,eistre_veebipohise_nodate}.
+Similar to the baseline system, email delivery for account verification is handled through Azure Communication Services using an Azure-managed email domain~\cite{sroons_azure_nodate,bashan-git_overview_nodate,eistre_veebipohise_nodate}.
 
 % TODO for this chapter, we should note that this environment doesn't support university SSO and instead relies on similar functionality as in the baseline system, where user accounts are managed within the application and email verification is used for account validation. This is a significant difference compared to the UT HPC deployment, where single sign-on was integrated through the university-managed Keycloak instance. Also operational overhead was reduced as the application didn't need to worry about stopping / starting the cluster to optimize costs, which also eliminated an apparent delay for users when the system wasn't already running.
 From an operational perspective, the revised Azure deployment differs from the baseline primarily in its reduced dependence on cluster-based infrastructure.
