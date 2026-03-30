@@ -117,13 +117,12 @@ As a result, the revised Azure deployment moves away from a cluster-centric exec
 This made Azure a suitable environment not only for continuity with the baseline system, but also for evaluating whether a more lightweight Azure-native architecture could better support the thesis goals of maintainability and cost optimization.
 
 \subsubsection{Terraform} \label{subsubsec:terraform}
-% TODO citations
 The revised Azure deployment was provisioned using Terraform.
-According to the Terraform documentation, Terraform is an infrastructure-as-code (IaC) tool that allows infrastructure to be specified in configuration files and managed through a repeatable workflow~\cite{X}.
+According to the Terraform documentation, Terraform is an infrastructure-as-code (IaC) tool that allows infrastructure to be specified in configuration files and managed through a repeatable workflow~\cite{noauthor_what_nodate-1}.
 Compared with the more manual setup process used in the previous system, this allowed the Azure infrastructure to be expressed declaratively.
 
 In this project, Terraform was used to define the Azure infrastructure required by the platform while keeping reusable infrastructure definitions separate from deployment-specific configuration.
-Terraform supports this by providing input variables, which make it possible to supply configuration values separately from the core infrastructure code~\cite{Y}.
+Terraform supports this by providing input variables, which make it possible to supply configuration values separately from the core infrastructure code~\cite{noauthor_use_nodate}.
 This made it possible to keep a common infrastructure definition while adjusting specific settings for different deployments.
 In practice, provisioning the Azure environment mainly involved providing the required variable values and applying the Terraform configuration.
 This improved the reproducibility of the deployment process and reduced maintenance effort over time.
@@ -147,10 +146,10 @@ This matches the architectural separation described in Chapter~3, where periodic
 
 Figure~\ref{fig:azure-deployment-overview-revised} illustrates the revised Azure deployment.
 Users access the platform through the public endpoint provisioned for the application by ACA, which then routes traffic to the main web application container.
-When an interactive terminal session is requested, the application provisions a new user-specific Linux container through Azure Container Instances (ACI). % TODO should cite ACI here https://learn.microsoft.com/en-us/azure/container-instances/container-instances-overview
-The use of ACI allows the platform to provide isolated containers for each user without the need to maintain any virtual machines or cluster infrastructure. % TODO cite ACI here https://learn.microsoft.com/en-us/azure/container-instances/container-instances-overview
+When an interactive terminal session is requested, the application provisions a new user-specific Linux container through Azure Container Instances (ACI)~\cite{tomvcassidy_serverless_nodate}.
+The use of ACI allows the platform to provide isolated containers for each user without the need to maintain any virtual machines or cluster infrastructure~\cite{tomvcassidy_serverless_nodate}.
 Compared with the baseline AKS model, this reduces infrastructure as well as operational overhead as the application does not need to manage cluster runtime for cost optimization.
-In the model, the runtime cost of the session containers is determined by the requested vCPU and memory resources together with the duration of the session. % TODO cite ACI pricing here https://azure.microsoft.com/en-us/pricing/details/container-instances/
+In this model, the runtime cost of the session containers is determined by the requested vCPU and memory resources together with the duration of the session~\cite{noauthor_pricing_nodate}.
 
 The database layer is implemented using the same Azure Database for MySQL Flexible Server deployment model as in the baseline system using the cheapest available configuration to minimize costs (B1ms burstable tier with 1 vCPU and 2 GB of memory). % TODO cite https://azure.microsoft.com/en-us/pricing/details/mysql/ and eistre_veebipohise_nodate
  % TODO explain that as opposed to a storage account, key vault is used for storing sensitive values such as SSH private keys cite https://learn.microsoft.com/en-us/azure/key-vault/general/overview and eistre_veebipohise_nodate
@@ -158,7 +157,8 @@ Similar to the baseline system, email delivery for account verification is handl
 
 % TODO for this chapter, we should note that this environment doesn't support university SSO and instead relies on similar functionality as in the baseline system, where user accounts are managed within the application and email verification is used for account validation. This is a significant difference compared to the UT HPC deployment, where single sign-on was integrated through the university-managed Keycloak instance. Also operational overhead was reduced as the application didn't need to worry about stopping / starting the cluster to optimize costs, which also eliminated an apparent delay for users when the system wasn't already running.
 From an operational perspective, the revised Azure deployment differs from the baseline primarily in its reduced dependence on cluster-based infrastructure.
-The main web application and the scheduled jobs remain deployable as managed container workloads, while the used session containers are provisioned on demand through ACI\@.
+The main web application and the scheduled jobs remain deployable as managed container workloads, while session containers are provisioned on demand through ACI\@.
+It also eliminates the need to stop and restart a Kubernetes cluster to control idle costs, avoiding the starting delay when the system is accessed after inactivity.
 This design is better aligned with the irregular usage pattern of the learning platform, where demand is concentrated around course sessions rather than spread uniformly over time.
 At the same time, Azure still provides a technically compatible and realistic long-term hosting option, especially for cases where an Azure-native deployment path is preferred for administrative or institutional reasons.
 
