@@ -166,16 +166,10 @@ AWS was included as an additional public cloud platform to complement the Azure-
 In this way, the AWS deployment broadens the cross-platform comparison by adding another public-cloud reference point for infrastructure automation, operational overhead, and cost drivers.
 
 \subsubsection{AWS as a Deployment Environment} \label{subsubsec:aws-as-a-deployment-environment}
-AWS was selected as the additional public-cloud comparison platform to broaden the evaluation beyond a single provider and to assess the portability of the redesigned architecture.
-Unlike the UT HPC deployment, which relies on a Kubernetes cluster, the AWS deployment uses managed and serverless services that do not require maintaining Kubernetes worker nodes or other continuously running orchestration infrastructure for session execution.
-This makes AWS suitable for evaluating an alternative cloud-native deployment path while keeping the core application requirements unchanged.
-
-In the revised AWS design, the HTTP-facing web application is hosted separately from the user-specific terminal environments.
-An alternative considered for the main web application was hosting it as an ECS service behind an Application Load Balancer.
-However, AWS pricing for Application Load Balancer includes a fixed hourly charge in addition to usage-based Load Balancer Capacity Unit charges, which would have introduced a higher always-on cost baseline than the selected Lightsail configuration~\cite{noauthor_elb_pricing_nodate}.
-Amazon Lightsail container services were therefore chosen for the always-on web layer because they provide a managed container runtime with explicit capacity settings and predictable monthly pricing based on the selected power and scale~\cite{noauthor_lightsail_container_services_nodate,noauthor_lightsail_pricing_nodate}.
-At the same time, Lightsail container services expose only an HTTPS public endpoint for the application layer~\cite{noauthor_lightsail_container_services_nodate,noauthor_lightsail_container_service_deployments_nodate}.
-Because the learning platform also requires isolated SSH-accessible Linux environments for interactive sessions, those environments are provisioned separately as Amazon ECS tasks on AWS Fargate.
+Amazon Web Services was selected as an additional public cloud deployment target to broaden the evaluation beyond a single cloud provider.
+Similarly to Azure, AWS provides a realistic environment for assessing how the redesigned platform can be deployed using managed cloud services rather than Kubernetes resources.
+Unlike the University of Tartu HPC deployment, which represents institutional Kubernetes hosting, the AWS deployment reflects an alternative public cloud model based on managed services and on-demand resource usage.
+This makes AWS a suitable comparison platform for evaluating another major public cloud environment while keeping the core application requirements unchanged.
 
 \subsubsection{Terraform} \label{subsubsec:terraform-aws}
 Similarly to the Azure deployment, the AWS environment was provisioned using Terraform~\cite{noauthor_what_nodate-1}.
