@@ -170,13 +170,7 @@ Amazon Web Services was selected as an additional public cloud deployment target
 Similarly to Azure, AWS provides a realistic environment for assessing how the redesigned platform can be deployed using managed cloud services rather than Kubernetes resources.
 Unlike the University of Tartu HPC deployment, which represents institutional Kubernetes hosting, the AWS deployment reflects an alternative public cloud model based on managed services and on-demand resource usage.
 This makes AWS a suitable comparison platform for evaluating another major public cloud environment while keeping the core application requirements unchanged.
-
-\subsubsection{Terraform} \label{subsubsec:terraform-aws}
-Similarly to the Azure deployment, the AWS environment was provisioned using Terraform~\cite{noauthor_what_nodate-1}.
-In this project, Terraform was used to define the AWS infrastructure required by the platform while keeping reusable infrastructure definitions separate from deployment-specific configuration.
-Terraform supports this by providing input variables, which make it possible to supply configuration values separately from the core infrastructure code~\cite{noauthor_use_nodate}.
-In practice, provisioning the AWS environment mainly involved providing the required variable values and applying the Terraform configuration.
-This improved reproducibility and reduced the effort required to recreate or adjust the deployment.
+The AWS infrastructure was provisioned similarly to Azure using Terraform, with the root configuration connecting reusable modules and supplying the required values through input variables.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-aws}
 The revised AWS deployment combines an always-on web hosting layer with on-demand and scheduled container workloads.
