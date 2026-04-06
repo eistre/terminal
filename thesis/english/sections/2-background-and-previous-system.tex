@@ -31,7 +31,7 @@ This instructional need motivated the development of a browser-based learning en
 The first was an initial proof-of-concept implementation described by Halapuu~\cite{halapuu_eestikeelse_nodate}, and the second was a cloud-hosted implementation presented in Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate}.
 Together, these iterations establish both the educational relevance of the environment and the direct technical lineage on which the present thesis builds.
 
-\subsubsection{Initial Proof-of-Concept} \label{subsubsec:initial-proof-of-concept}
+\subsubsection{Initial Proof of Concept} \label{subsubsec:initial-proof-of-concept}
 Halapuu's thesis~\cite{halapuu_eestikeelse_nodate} introduced the first browser-based iteration of the Linux command-line learning environment as a proof of concept.
 The prototype provided students with a web terminal connected to an isolated Linux environment, enabling interactive command execution and task-based learning directly in the browser.
 It also included an automatic task-checking approach based on observable outcomes such as command output and filesystem changes, allowing students to receive immediate feedback and progress through tasks without waiting for manual review.
@@ -41,7 +41,7 @@ It was tested in the context of the ``Computer Security'' course with over one h
 At the same time, the deployment model and overall implementation left important concerns related to stability, security, and maintainability unresolved.
 These limitations were consistent with an early feasibility-focused implementation and helped define the need for a more production-oriented successor.
 
-\subsubsection{Cloud-Hosted Implementation} \label{subsubsec:cloud-hosted-implementation}
+\subsubsection{Cloud Hosted Implementation} \label{subsubsec:cloud-hosted-implementation}
 After the initial proof-of-concept had been used in the supervisor's courses for two years, Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} transformed the environment into a cloud-hosted platform intended for sustained course use.
 This second iteration addressed limitations observed during earlier use and introduced goals such as improved stability and maintainability, bilingual support in Estonian and English, and deployment in a more robust cloud environment.
 
@@ -136,7 +136,7 @@ This deployment model established a functional cloud-based operating environment
 While the cloud-enabled platform developed in Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} represented a significant advance over the initial prototype, it also exposed several limitations and challenges.
 This section summarizes the key issues in the baseline system and clarifies why they matter for the modernization and cost-optimization work described in later chapters.
 
-\subsubsection{Cost Factor} \label{subsubsec:cost-factor}
+\subsubsection{Cost Structure} \label{subsubsec:cost-structure}
 A significant limitation of the baseline system was its cost structure in the cloud-hosted environment.
 Figure~\ref{fig:azure-cost-july-2025} illustrates the Azure cost breakdown for July 2025, a period of minimal usage.
 In July 2025, the deployment incurred a total monthly expense of €52.88.
@@ -195,7 +195,7 @@ This example illustrates that dependency versions can directly influence the sec
 Taken together, these findings indicate that dependency modernization is a necessary part of maintaining the system's security posture and long-term compatibility.
 In the context of this thesis, the literature on dependency risk points to a concrete modernization requirement in the application stack inherited from the previous system.
 
-\subsubsection{General Improvements} \label{subsubsec:general-improvements}
+\subsubsection{Additional Improvement Opportunities} \label{subsubsec:additional-improvement-opportunities}
 In addition to the previously described cost and maintainability issues, the previous system exposed several further operational and usability limitations that are relevant to the later redesign.
 First, the platform showed a scalability concern under classroom-scale load.
 According to observations reported by the thesis supervisor, some students were at times unable to access an interactive shell session because the AKS node pool could not scale due to Azure quota constraints.\footnote{Based on private communication with thesis supervisor Alo Peets.}

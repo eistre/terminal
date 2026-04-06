@@ -3,18 +3,18 @@
 % TODO check footnotes
 
 
-\section{Revised Architecture, Implementation, and Development Process} \label{sec:revised-architecture-implementation-and-development-process}
+\section{Revised Architecture and Implementation} \label{sec:revised-architecture-and-implementation}
 This chapter outlines the modernized architecture and implementation of the Linux command-line learning environment.
 Building upon the baseline system described in Chapter 2, the new design prioritizes modularity, improved maintainability, and cost-efficient operation.
 The following sections detail the revised system architecture, key technological choices, and the implementation of essential components.
 Collectively, these modifications seek to mitigate the shortcomings of the prior version while maintaining the platform's fundamental functionality.
 
-\subsection{Development Process and AI-assisted Refactoring Workflow} \label{subsec:development-process-and-ai-assisted-refactoring-workflow}
+\subsection{Development Process and AI Assisted Refactoring} \label{subsec:development-process-and-ai-assisted-refactoring}
 The implementation work in this thesis required coordinated refactoring across multiple layers of the baseline system while keeping the codebase operational throughout the change.
 To speed up this process, the author used LLM-based (large language model) coding assistants as interactive tools for refactor planning, scaffolding, and iterative debugging.
 However, final responsibility for design decisions, integration, and verification remained with the author.
 
-\subsubsection{AI-assisted Development} \label{subsubsec:ai-assisted-development}
+\subsubsection{AI Assisted Development} \label{subsubsec:ai-assisted-development}
 Recent software engineering literature describes LLM-assisted development as a shift toward more conversational, intent-driven workflows, where developers specify goals and constraints in natural language and use AI tools to scaffold or generate implementation artifacts.
 Beaulieu et al.~\cite{beaulieu_vibe_2025} frame this as a move away from syntax-centric programming toward more dialog-based and intent-driven collaboration with AI tools, and they connect such tools to reduced repetitive manual effort.
 Similarly, De Silva et al.~\cite{de_silva_generative_2025} describe vibe coding as a conversational natural-language process for prototype development, where functionality is gradually developed through collaboration with an AI coding assistant and refined through successive prompts.
@@ -28,11 +28,12 @@ In this thesis, AI-assisted coding was therefore treated as a development suppor
 The tools were used to speed up planning, draft boilerplate, suggest refactor steps, and help interpret concrete error messages, but architectural decisions, code integration, and final acceptance of changes remained the responsibility of the author.
 
 \subsubsection{Refactoring Workflow} \label{subsubsec:refactoring-workflow}
-% TODO add references for the concrete tools and models used, or move these details to an appendix after the next Zotero export.
+% TODO add proper citations for OpenCode, GitHub Copilot, Claude Sonnet 4.5, and GPT-5.2-Codex,
+% and add a thesis-wide AI usage disclosure in the introduction or appendix in line with UT guidelines.
 AI assistance was primarily used through OpenCode, a command-line coding application, together with GitHub Copilot, via GitHub Education, for model access.
 The primary models used were Claude Sonnet 4.5 and GPT-5.2-Codex, selected based on availability and suitability for coding and debugging tasks.
 
-Most of the significant changes, such as the container provisioning abstraction and the localisation redesign, followed a consistent workflow:
+Most of the significant changes, such as the container provisioning abstraction and the localization redesign, followed a consistent workflow:
 
 \begin{enumerate}
   \item Scope and constraint definition: define a concrete implementation goal together with technical constraints and acceptance conditions;
@@ -97,9 +98,9 @@ The backend then bridges this traffic to the user's Linux session in the contain
 The details of how the user session is provisioned and how lifecycle rules are implemented are covered in later sections.
 
 This overview remains provider-agnostic and focuses on the conceptual decomposition of the system.
-The following sections describe the modularization of the codebase, the provisioning abstraction and lifecycle management, the authentication and authorization design, and the improved data model and localisation support.
+The following sections describe the modularization of the codebase, the provisioning abstraction and lifecycle management, the authentication and authorization design, and the improved data model and localization support.
 
-\subsection{Modularization, Modernization, and Codebase Structure} \label{subsec:modularization-modernization-and-codebase-structure}
+\subsection{Codebase Modularization and Modernization} \label{subsec:codebase-modularization-and-modernization}
 The revised implementation restructures the codebase around explicit modular boundaries.
 The primary objective is to reduce coupling between unrelated concerns, thereby ensuring that changes remain local, more comprehensible, and less prone to introducing regressions throughout the system.
 This approach aligns with the fundamental principles of modularity.
@@ -166,9 +167,9 @@ protected abstract ensureContainerExistsImpl(userId: string):
 In practice, these wrappers are important under classroom-scale usage patterns and bursty traffic, such as page refreshes and repeated session starts.
 Per-user serialization prevents race conditions where concurrent requests attempt to create or delete the same user's container.
 Concurrency limiting reduces the likelihood of overwhelming provider APIs during spikes, and retry logic improves robustness against temporary network failures or throttling.
-Additionally, the base class provides shared utilities for lifecycle management, including computing expiration timestamps, applying consistent metadata tags or labels, and generating fresh SSH key pairs for new containers, ensuring consistent behaviour across providers.
+Additionally, the base class provides shared utilities for lifecycle management, including computing expiration timestamps, applying consistent metadata tags or labels, and generating fresh SSH key pairs for new containers, ensuring consistent behavior across providers.
 
-\subsubsection{Lifecycle Model, Cleanup, and Provider Implementations} \label{subsubsec:lifecycle-model-cleanup-and-provider-implementations}
+\subsubsection{Lifecycle Management and Provider Implementations} \label{subsubsec:lifecycle-management-and-provider-implementations}
 The provisioner abstraction presents a provider-agnostic API. For example, \texttt{listContainers()} returns a list of user identifiers and expiration timestamps for all managed containers, regardless of whether the underlying runtime is Kubernetes or another backend.
 Likewise, \texttt{ensureContainerExists(userId)} guarantees that the system can obtain connection information for a ready interactive container, even though the internal handling differs per provider.
 Provider implementations therefore encapsulate the relevant state transitions, such as handling the absence of a container by creating one, waiting or polling while a container is starting, and refreshing expiration metadata when a container is already running.
@@ -199,10 +200,10 @@ const results = await Promise.allSettled(
 \end{minted}
 
 Although this subsection focuses on the provisioner module because it is the most complex, the same interface-driven design pattern is applied across other internal packages.
-For example, the mailer package is structured around a provider boundary, including implementations for both standard SMTP (Simple Mail Transfer Protocol) and Azure Communication Services, the session module encapsulates the WebSocket and SSH bridging responsibilities behind a stable API, and the evaluator package isolates output buffering and regex-based validation logic.
+For example, the session module encapsulates the WebSocket and SSH bridging responsibilities behind a stable API, and the evaluator package isolates output buffering and regex-based validation logic.
 Even where only a single implementation exists today, these boundaries keep responsibilities explicit and reduce the likelihood that infrastructure or operational concerns leak into the user-facing application.
 
-\subsection{Authentication and authorization} \label{subsec:authentication-and-authorization}
+\subsection{Authentication and Authorization} \label{subsec:authentication-and-authorization}
 In the authentication layer, the updated system replaces the Lucia package with an actively maintained solution that supports session management and single sign-on (SSO) based on OAuth 2.0 and OpenID Connect (OIDC). This is a central change from the baseline, as it removes dependency on a deprecated library discussed in Section~\ref{subsubsec:deprecated-authentication-library} and enables standards-based identity integration for long-term maintainability and secure access control.
 
 \subsubsection{Authentication Design and Implementation} \label{subsubsec:authentication-design-and-implementation}
@@ -219,7 +220,7 @@ Internally, Better Auth reduces the amount of custom authentication code compare
 This decreases the likelihood of implementation errors and makes the authentication layer easier to evolve alongside the rest of the stack.
 Overall, the new design preserves the baseline requirements for verification and sessions while improving maintainability and enabling SSO-based onboarding.
 
-\subsubsection{OIDC / OAuth2} \label{subsubsec:oidc-/-oauth2}
+\subsubsection{OpenID Connect Based Single Sign On} \label{subsubsec:openid-connect-based-single-sign-on}
 OpenID Connect (OIDC) is an authentication protocol built on top of the OAuth 2.0 framework.
 Fett et al.~\cite{fett_comprehensive_2016} describe OAuth 2.0 as a widely deployed authorization framework and as the foundation for OpenID Connect.
 Fett et al.~\cite{fett_web_2017} further explain that OIDC allows a relying party to delegate authentication to an identity provider and to verify the result using a cryptographically signed id token.
@@ -236,12 +237,12 @@ A standards-based OIDC integration improves interoperability and maintainability
 Fett et al.~\cite{fett_comprehensive_2016} show that secure OAuth-based systems depend on correct flow handling and validation under recommended best practices, while Fett et al.~\cite{fett_web_2017} provide the corresponding OIDC-specific analysis.
 In the context of this platform, OIDC therefore provides a suitable and extensible basis for single sign-on support.
 
-\subsection{Improved localisation and task editor} \label{subsec:improved-localisation-and-task-editor}
-The revised system improves both the internal localisation model and the administrative workflow for managing multilingual learning content.
+\subsection{Improved Localization and Task Editor} \label{subsec:improved-localization-and-task-editor}
+The revised system improves both the internal localization model and the administrative workflow for managing multilingual learning content.
 Although the baseline platform already supported multiple interface languages, the updated implementation extends this to the content model itself.
 This was achieved by redesigning topics and tasks so that language-independent structure is separated from language-specific text, and by introducing an editor that supports both single-language and dual-language authoring.
 
-\subsubsection{Improved Localisation} \label{subsubsec:improved-localisation}
+\subsubsection{Localization Model} \label{subsubsec:localization-model}
 A significant improvement in the revised implementation is the use of separate translation tables for topics and tasks.
 In the updated schema, the topics and tasks tables store the stable logical structure of the educational content, including identifiers, ordering, and task evaluation configurations.
 Additionally, the locale-specific textual fields are stored separately in \texttt{topic\_translations} and \texttt{task\_translations} tables.
@@ -254,10 +255,10 @@ Additionally, the uniqueness constraints on entity and locale combinations guara
 An additional benefit of this structure is that user progress is maintained independently of language.
 Task completion is recorded using stable task and topic identifiers rather than specific translation entries.
 Consequently, users can switch between supported interface locales without disrupting continuity, while still seeing the same logical exercise sequence in their chosen language.
-This enhances the robustness of the localisation model compared to a duplication-based approach, where each language version would function as a separate exercise set.
+This enhances the robustness of the localization model compared to a duplication-based approach, where each language version would function as a separate exercise set.
 
 \subsubsection{Task Editor} \label{subsubsec:task-editor}
-To support the revised localisation model, the administrative task editor was redesigned to manage both single-language and dual-language content entries.
+To support the revised localization model, the administrative task editor was redesigned to manage both single-language and dual-language content entries.
 Instead of storing a separate configuration flag for editor mode, the implementation determines the editing mode directly from the available topic translations.
 The mode is determined from the presence of non-empty topic titles for each locale.
 If only one locale contains content, the editor functions in single-language mode for that locale.
