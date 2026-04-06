@@ -154,10 +154,9 @@ Regarding authentication, the Azure deployment does not integrate with the unive
 Accordingly, it follows the same pattern as the baseline Azure system, where users register within the application and validate their accounts via email.
 This keeps the Azure deployment self-contained within the cloud environment.
 
-% TODO 1 - https://learn.microsoft.com/en-us/azure/container-apps/scale-app
 From an operational perspective, the revised Azure deployment differs from the baseline primarily in its reduced dependence on cluster-based infrastructure.
 The main web application and the scheduled jobs remain deployable as managed container workloads, while session containers are provisioned on demand through ACI\@.
-In addition, the ACA web application was configured with a minimum replica count of zero, allowing the web layer to scale to zero during idle periods [1].
+In addition, the ACA web application was configured with a minimum replica count of zero, allowing the web layer to scale to zero during idle periods~\cite{craigshoemaker_scaling_nodate}.
 It also eliminates the need to stop and restart a Kubernetes cluster to control idle costs, avoiding the starting delay when the system is accessed after inactivity.
 This design is better aligned with the irregular usage pattern of the learning platform, where demand is concentrated around course sessions rather than spread uniformly over time.
 At the same time, Azure still provides a technically compatible and realistic long-term hosting option, especially for cases where an Azure-native deployment path is preferred for administrative or institutional reasons.
@@ -175,15 +174,10 @@ This makes AWS a suitable comparison platform for evaluating another major publi
 The AWS infrastructure was provisioned similarly to Azure using Terraform, with the root configuration connecting reusable modules and supplying the required values through input variables.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-aws}
-% TODO 1 - https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-container-services.html
-% TODO 2 - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html
-% TODO 3 - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-load-balancing.html
-% TODO 4 - https://aws.amazon.com/elasticloadbalancing/pricing/
-% TODO 5 - https://aws.amazon.com/lightsail/pricing/
 The AWS deployment combines an always-on web hosting layer with on-demand and scheduled container workloads.
-The main Nuxt web application is deployed to Amazon Lightsail container services, while the database cleanup and provisioner cleanup workloads run as scheduled ECS tasks on AWS Fargate [1, 2, 3].
-An alternative considered for the main web application was an ECS service behind an Application Load Balancer [4].
-Compared with the selected Lightsail container service setup, that design would add separate load balancing infrastructure and a higher always-on cost baseline, so Lightsail container services were chosen as the more cost-effective option for the continuously running web layer [4, 5].
+The main Nuxt web application is deployed to Amazon Lightsail container services, while the database cleanup and provisioner cleanup workloads run as scheduled ECS tasks on AWS Fargate~\cite{noauthor_deploy_nodate,noauthor_architect_nodate}.
+An alternative considered for the main web application was an ECS service behind an Application Load Balancer~\cite{noauthor_use_nodate-1}.
+Compared with the selected Lightsail container service setup, that design would add separate load balancing infrastructure and a higher always-on cost baseline, so Lightsail container services were chosen as the more cost-effective option for the continuously running web layer~\cite{noauthor_elastic_nodate,noauthor_amazon_nodate}.
 
 \begin{figure}[ht]
   \centering
@@ -193,24 +187,17 @@ Compared with the selected Lightsail container service setup, that design would 
   \label{fig:aws-deployment-overview-revised}
 \end{figure}
 
-% TODO 1 - https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-container-services-deployments.html
 Figure~\ref{fig:aws-deployment-overview-revised} illustrates the AWS deployment.
-Users access the platform through the HTTPS endpoint of the Lightsail container service deployment, which routes requests to the main web application container [1].
+Users access the platform through the HTTPS endpoint of the Lightsail container service deployment, which routes requests to the main web application container~\cite{noauthor_create_nodate}.
 When an interactive terminal session is requested, the application launches a new Linux container for the user on ECS using AWS Fargate.
 In this design, session environments are created on demand as isolated tasks rather than kept running continuously.
 
-% TODO 1 - https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html
-% TODO 2 - https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-choosing-a-database.html
-% TODO 3 - https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-databases.html
-For secret storage, the AWS deployment uses AWS Secrets Manager to store the per-session SSH keys [1].
+For secret storage, the AWS deployment uses AWS Secrets Manager to store the per-session SSH keys~\cite{noauthor_what_nodate-2}.
 To support this workflow, the deployment also defines AWS IAM roles and credentials that allow the web application to launch and manage ECS tasks and access the session secrets required for terminal provisioning.
-For the database layer, data is stored in a managed MySQL database provided by Amazon Lightsail using the Micro plan.
-In the deployed configuration, the database uses the Micro plan [2, 3].
+For the database layer, data is stored in a managed MySQL database provided by Amazon Lightsail using the Micro plan~\cite{noauthor_select_nodate,noauthor_create_nodate-1}.
 Regarding authentication, the AWS deployment did not integrate with the university-managed Keycloak service, as that setup is specific to the UT HPC environment.
 
-% TODO 1 - https://aws.amazon.com/lightsail/pricing/
-% TODO 2 - https://aws.amazon.com/fargate/pricing/
-From an operational perspective, the AWS deployment uses a Lightsail container service with the Nano plan for the always-on web layer [1].
-Similarly to the Azure section, the cost of terminal sessions depends on the requested resources and the runtime of the Fargate tasks [2].
+From an operational perspective, the AWS deployment uses a Lightsail container service with the Nano plan for the always-on web layer~\cite{noauthor_amazon_nodate}.
+Similarly to the Azure section, the cost of terminal sessions depends on the requested resources and the runtime of the Fargate tasks~\cite{noauthor_aws_nodate}.
 However, unlike the Azure ACA deployment, the Lightsail container service does not provide a comparable scale-to-zero configuration for the web layer.
 Overall, the AWS deployment avoids a continuously running cluster for session execution, but it does so by combining several managed AWS services with different pricing and operational characteristics.
