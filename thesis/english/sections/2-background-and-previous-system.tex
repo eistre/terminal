@@ -1,6 +1,5 @@
 %! suppress = MissingImport
 %! suppress = UnresolvedReference
-%! suppress = Unicode
 % TODO check footnotes
 
 
@@ -173,7 +172,7 @@ This shift indicates a dependency lifecycle risk in the platform's authenticatio
 This deprecation poses a significant risk to the platform’s maintainability.
 Continued dependence on an unsupported library may result in delayed or nonexistent security updates, increased friction when upgrading adjacent frameworks, and elevated long-term maintenance costs.
 In the context of this thesis, the issue is therefore not merely one library replacement but the need to modernize a critical subsystem while preserving the baseline requirements for user verification and session management.
-This subsection thus exposes a maintainability and modernization problem rather than an isolated dependency change.
+This subchapter thus exposes a maintainability and modernization problem rather than an isolated dependency change.
 
 \subsubsection{Outdated Dependencies} \label{subsubsec:outdated-dependencies}
 A further limitation of the baseline system is its reliance on dependencies that inevitably become outdated over time, creating both maintainability and security risks.
@@ -194,7 +193,7 @@ In the context of this thesis, the literature on dependency risk points to a con
 \subsubsection{Additional Improvement Opportunities} \label{subsubsec:additional-improvement-opportunities}
 In addition to the previously described cost and maintainability issues, the previous system exposed several further operational and usability limitations that are relevant to the later redesign.
 First, the platform showed a scalability concern under classroom-scale load.
-According to observations reported by the thesis supervisor, some students were at times unable to access an interactive shell session because the AKS node pool could not scale due to Azure quota constraints.\footnote{Based on private communication with thesis supervisor Alo Peets.}
+According to observations reported by the thesis supervisor, some students were at times unable to access an interactive shell session because the AKS node pool could not scale due to Azure quota constraints\footnote{Based on private communication with thesis supervisor Alo Peets.}.
 This suggests that functional correctness alone was insufficient in practice and that the deployment also had to support classroom demand more reliably.
 The issue therefore points to a reliability and scalability limitation relevant to the redesign.
 
