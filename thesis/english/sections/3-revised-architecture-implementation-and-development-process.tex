@@ -5,9 +5,9 @@
 
 \section{Revised Architecture and Implementation} \label{sec:revised-architecture-and-implementation}
 This chapter outlines the modernized architecture and implementation of the Linux command-line learning environment.
-Building upon the baseline system described in Chapter 2, the new design prioritizes modularity, improved maintainability, and cost-efficient operation.
-The following sections detail the revised system architecture, key technological choices, and the implementation of essential components.
-Collectively, these modifications seek to mitigate the shortcomings of the prior version while maintaining the platform's fundamental functionality.
+Building upon the baseline system described in chapter~\ref{sec:background-and-previous-system}, it focuses on five main implementation changes that addressed the baseline limitations.
+These changes are the modularization of the codebase, the introduction of a provider-agnostic provisioning layer, the separation of cleanup jobs from the main application, the redesign of authentication and single sign-on support, and the redesign of multilingual content management.
+Together, these changes improved maintainability, portability, and operational efficiency while preserving the core learning workflow of the platform.
 
 \subsection{Development Process and AI Assisted Refactoring} \label{subsec:development-process-and-ai-assisted-refactoring}
 The implementation work in this thesis required coordinated refactoring across multiple layers of the baseline system while keeping the codebase operational throughout the change.
@@ -15,22 +15,17 @@ To speed up this process, the author used LLM-based (large language model) codin
 However, final responsibility for design decisions, integration, and verification remained with the author.
 
 \subsubsection{AI Assisted Development} \label{subsubsec:ai-assisted-development}
-Recent software engineering literature describes LLM-assisted development as a shift toward more conversational, intent-driven workflows, where developers specify goals and constraints in natural language and use AI tools to scaffold or generate implementation artifacts.
-Beaulieu et al.~\cite{beaulieu_vibe_2025} frame this as a move away from syntax-centric programming toward more dialog-based and intent-driven collaboration with AI tools, and they connect such tools to reduced repetitive manual effort.
-Similarly, De Silva et al.~\cite{de_silva_generative_2025} describe vibe coding as a conversational natural-language process for prototype development, where functionality is gradually developed through collaboration with an AI coding assistant and refined through successive prompts.
+% TODO perhaps use some other citations about AI-assisted coding, not papers about vibe coding
+Recent software engineering literature describes large language model (LLM) assisted development as a more conversational workflow, where developers describe goals in natural language and use AI tools to draft implementation artifacts~\cite{beaulieu_vibe_2025,de_silva_generative_2025}.
+The same literature also emphasizes that effective use of these tools depends on human review, because generated code may remain incorrect or poorly structured and may introduce maintainability, security, or performance problems if accepted uncritically~\cite{de_silva_generative_2025,malamas_toward_2025}.
 
-At the same time, the literature emphasizes that these productivity gains require careful oversight.
-De Silva et al.~\cite{de_silva_generative_2025} warn that conversational workflows can encourage acceptance of generated code with limited understanding or review, which increases the risk of hidden defects and non-functional risks such as security, performance, and maintainability problems.
-They recommend human review, critical evaluation of AI outputs, and hybrid workflows that combine AI assistance with conventional engineering practice.
-Malamas et al.~\cite{malamas_toward_2025} further highlight that while conversational interaction can speed up prototyping, generated code may still be erroneous or insufficiently structured, requiring developer control and review for successful integration.
-
-In this thesis, AI-assisted coding was therefore treated as a development support method rather than as an autonomous implementation process.
-The tools were used to speed up planning, draft boilerplate, suggest refactor steps, and help interpret concrete error messages, but architectural decisions, code integration, and final acceptance of changes remained the responsibility of the author.
+In this thesis, AI-assisted coding was used as a support method for planning, scaffolding, boilerplate generation, and debugging.
+Architectural decisions, integration, and final acceptance of changes remained the responsibility of the author.
 
 \subsubsection{Refactoring Workflow} \label{subsubsec:refactoring-workflow}
-% TODO add proper citations for OpenCode, GitHub Copilot, Claude Sonnet 4.5, and GPT-5.2-Codex,
+% TODO add proper citations for Claude Sonnet 4.5, and GPT-5.2-Codex - can be done after final zotero export
 % and add a thesis-wide AI usage disclosure in the introduction or appendix in line with UT guidelines.
-AI assistance was primarily used through OpenCode, a command-line coding application, together with GitHub Copilot, via GitHub Education, for model access.
+AI assistance was primarily used through OpenCode\footnote{\url{https://opencode.ai/}}, a command-line AI coding tool, whereas access to the underlying models was obtained through GitHub Copilot using the GitHub Education student benefit~\cite{noauthor_supported_nodate,noauthor_students_2026}.
 The primary models used were Claude Sonnet 4.5 and GPT-5.2-Codex, selected based on availability and suitability for coding and debugging tasks.
 
 Most of the significant changes, such as the container provisioning abstraction and the localization redesign, followed a consistent workflow:
@@ -63,7 +58,8 @@ Focus on the following:
 \end{minted}
 
 Given the risk of integrating incorrect or overly complex generated changes, explicit validation steps were applied.
-Large refactors were divided into smaller, reversible steps, and changes were only accepted after passing type checks, linting, and manual verification.
+Large refactors were divided into smaller, reversible steps.
+Changes were accepted only after passing type checks, linting, and manual verification.
 Additionally, security- and cost-sensitive areas received stricter review.
 These measures align with De Silva et al.~\cite{de_silva_generative_2025} and Malamas et al.~\cite{malamas_toward_2025}, who emphasize that LLM-driven iteration still requires conventional engineering rigor to prevent issues related to correctness and maintainability.
 
@@ -87,42 +83,41 @@ The third component is the database, which retains the persistent application st
 The fourth component is the container execution environment, which provides isolated Linux sessions for users during terminal-based exercises.
 
 A significant architectural change compared to the baseline system is the separation of maintenance tasks from the primary application into dedicated runnable functions deployed as scheduled jobs.
-As illustrated in Figure~\ref{fig:revised-architecture-overview}, these are represented by the provisioner cleanup cronjob and the database cleanup cronjob.
-The provisioner cleanup job enforces lifecycle policies for user container environments, such as removing expired sessions, while the database cleanup job removes expired verification tokens and inactive user records in accordance with retention policies.
-This separation prevents the main application process from running indefinitely solely to perform periodic maintenance tasks.
-It also enables deployments where the main application can be scaled down during periods of inactivity when it is cost-effective, while scheduled maintenance continues to execute and preserve system consistency.
+As illustrated in Figure~\ref{fig:revised-architecture-overview}, these are represented by the provisioner cleanup job and the database cleanup job.
+The provisioner cleanup job enforces lifecycle policies for user container environments, while the database cleanup job removes expired verification tokens and inactive user records in accordance with retention policies.
+This separation means that the main application does not need to run indefinitely only to perform periodic maintenance.
+It also allows deployments where the main application can be scaled down during idle periods while maintenance continues to preserve system consistency.
 
 During an active terminal session, the browser establishes a persistent connection to the backend API to support interactive input and output.
 The backend then bridges this traffic to the user's Linux session in the container execution environment.
-The details of how the user session is provisioned and how lifecycle rules are implemented are covered in later sections.
+The details of how the user session is provisioned and how lifecycle rules are implemented are covered in later subchapters.
 
 This overview remains provider-agnostic and focuses on the conceptual decomposition of the system.
-The following sections describe the modularization of the codebase, the provisioning abstraction and lifecycle management, the authentication and authorization design, and the improved data model and localization support.
+The following subchapters explain the implementation changes behind this decomposition and show how they improved portability, maintainability, and operational overhead across deployments.
 
 \subsection{Codebase Modularization and Modernization} \label{subsec:codebase-modularization-and-modernization}
 The revised implementation restructures the codebase around explicit modular boundaries.
-The primary objective is to reduce coupling between unrelated concerns, thereby ensuring that changes remain local, more comprehensible, and less prone to introducing regressions throughout the system.
+The goal is to keep infrastructure concerns, application logic, and operational tasks separate so that changes remain local and easier to reason about.
 This approach aligns with the fundamental principles of modularity.
 Parnas~\cite{parnas_criteria_1972} argues that the effectiveness of modularization depends on the system's decomposition, highlighting that good decomposition enhances flexibility and comprehensibility by concealing design decisions within module boundaries.
 Recent work on modular monolith architectures reports similar maintainability and reduced operational overhead benefits in modern cloud environments~\cite{al-qoran_modular_2025}.
 
-The new code repository layout is organized as a monorepo with two top-level directories, \path{/apps} and \path{/packages}.
-The \path{/apps} directory contains runnable units that can be deployed independently, including the main Nuxt web application, which hosts both the Vue.js user interface as well as the API, and the two scheduled maintenance jobs mentioned in the previous subchapter.
-The \path{/packages} directory contains reusable service modules that are imported by the runnable apps.
-These modules encapsulate specific functionality behind stable interfaces, such as provider-agnostic container provisioning, session handling, and configuration.
-This allows the runnable apps to remain comparatively thin orchestration layers, depending on the interfaces rather than the internal details of the modules.
+The repository is organized as a monorepo with the top-level directories \path{apps/} and \path{packages/}.
+The \path{apps/} directory contains the runnable units that are deployed independently, namely the main Nuxt web application and the two scheduled cleanup jobs.
+The \path{packages/} directory contains reusable modules such as the provisioner, session, evaluator, database, mailer, and environment configuration packages.
+These modules encapsulate specific functionality behind stable interfaces, which allows the runnable applications to remain comparatively thin orchestration layers.
 
 This restructure also supports the architectural goal of decoupling maintenance from the main interactive learning workflow.
-Both scheduled jobs in the \path{/apps} directory reuse the same core modules in \path{/packages} as the main Nuxt application, but run as separate executables on a schedule.
+Both scheduled jobs in \path{apps/} reuse the same core modules in \path{packages/} as the main Nuxt application, but run as separate executables on a schedule.
 This avoids keeping the main application running indefinitely solely to perform cleanup and enables deployments where the interactive application can be scaled down during idle periods while maintenance continues to enforce lifecycle and retention policies.
 
 The modernization effort also included updating core frameworks and supporting dependencies to currently supported stable versions where feasible.
-One example was the migration of the main application from Nuxt 3 to Nuxt 4, which addressed the outdated dependency baseline identified in Section 2.3.3.
+One example was the migration of the main application from Nuxt 3 to Nuxt 4, which addressed the outdated dependency baseline identified in subchapter~\ref{subsubsec:outdated-dependencies}.
 In this way, dependency updates were treated as part of the broader codebase modernization effort rather than as isolated package-management tasks.
 
-Finally, clearer modular boundaries improve validation, readability, and maintainability by enabling more localized reasoning and testing.
-Structuring the codebase into reusable packages and independently runnable apps makes it easier to extend in the future without destabilizing the overall workflow of the application.
-The next section builds on this structure by describing the provisioning abstraction and the lifecycle management approach implemented behind the provisioning interface.
+Clearer modular boundaries also improve validation, readability, and maintainability by enabling more localized reasoning and testing.
+Structuring the codebase into reusable packages and independently runnable applications makes it easier to extend the system without destabilizing the overall workflow of the platform.
+The next subchapter builds on this structure by describing the provisioning abstraction and the lifecycle management approach implemented behind the provisioning interface.
 
 \subsection{Container Provisioning and Lifecycle Management} \label{subsec:container-provisioning-and-lifecycle-management}
 The updated system introduces a provider-agnostic provisioning layer responsible for the creation, maintenance, and deletion of the user-specific Linux containers required for interactive terminal sessions.
@@ -135,6 +130,7 @@ This approach ensures that the application relies solely on a stable API, while 
 
 At a high level, the provisioner supports four operations.
 It can list currently active user containers, ensure a user container exists and create one if it is not present, update the container expiration time while the user remains active, and delete the container once it is no longer required.
+Together, these four operations cover the full container lifecycle required by the application while leaving provider-specific startup, polling, metadata handling, and secret management inside the implementation classes.
 The provisioner interface is shown in the code snippet below.
 
 \begin{minted}{typescript}
@@ -169,41 +165,29 @@ Concurrency limiting reduces the likelihood of overwhelming provider APIs during
 Additionally, the base class provides shared utilities for lifecycle management, including computing expiration timestamps, applying consistent metadata tags or labels, and generating fresh SSH key pairs for new containers, ensuring consistent behavior across providers.
 
 \subsubsection{Lifecycle Management and Provider Implementations} \label{subsubsec:lifecycle-management-and-provider-implementations}
-The provisioner abstraction presents a provider-agnostic API. For example, \texttt{listContainers()} returns a list of user identifiers and expiration timestamps for all managed containers, regardless of whether the underlying runtime is Kubernetes or another backend.
-Likewise, \texttt{ensureContainerExists(userId)} guarantees that the system can obtain connection information for a ready interactive container, even though the internal handling differs per provider.
-Provider implementations therefore encapsulate the relevant state transitions, such as handling the absence of a container by creating one, waiting or polling while a container is starting, and refreshing expiration metadata when a container is already running.
+The provisioner abstraction presents a provider-agnostic API\@.
+For example, \texttt{listContainers()} returns a list of user identifiers and expiration timestamps for all managed containers regardless of the underlying runtime.
+Likewise, \texttt{ensureContainerExists(userId)} guarantees that the system can obtain connection information for a ready interactive container even though the internal handling differs per provider.
+Provider implementations therefore encapsulate the relevant state transitions, such as creating a missing container, waiting while a container is starting, and refreshing expiration metadata when a container is already running.
 
-Currently, three container runtime providers are supported.
-These are Kubernetes, Azure, and AWS. All implementations follow the same lifecycle model by attaching common metadata to managed resources, such as the user identifier and expiration time, enabling consistent enumeration and reclamation of inactive containers.
-The deployment setup and provider-specific configuration are described in Chapter 4.
+Currently, three execution backends are supported.
+These are Kubernetes, Azure Container Instances (ACI), and Amazon ECS on AWS Fargate.
+All implementations follow the same lifecycle model by attaching common metadata to managed resources, such as the user identifier and expiration time, enabling consistent enumeration and reclamation of inactive containers.
+The deployment setup and provider-specific configuration are described in chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
 
 Lifecycle management is treated as a first-class operational concern to prevent resource leakage and control costs.
 User containers are intentionally time-bound and carry an inactivity-based expiration timestamp that is extended during activity via \texttt{updateContainerExpiration()}.
-Enforcement of expiration is separated from the main web application via the scheduled provisioner cleanup job described in Section~\ref{subsec:architecture-overview}.
-At a high level, the cleanup job periodically lists managed containers using \texttt{listContainers()}, identifies those whose expiration time is in the past, and deletes them through \texttt{deleteContainer(userId)}.
+Enforcement of expiration is separated from the main web application via the scheduled provisioner cleanup job described in subchapter~\ref{subsec:architecture-overview}.
+At a high level, the cleanup job periodically lists managed containers, identifies those whose expiration time is in the past, and deletes them through the same interface.
 This separation ensures that expired containers are reclaimed even if the main application is scaled down during idle periods, aligning the operational footprint more closely with actual usage.
-A simplified version of the cleanup flow (excluding logging and error handling) is shown below.
 
-\begin{minted}{typescript}
-const containers = await provisioner.listContainers();
-
-const now = new Date();
-const expired = containers.filter(container =>
-  container.expiresAt <= now
-);
-
-const results = await Promise.allSettled(
-  expired.map(container =>
-    provisioner.deleteContainer(container.userId))
-);
-\end{minted}
-
-Although this subsection focuses on the provisioner module because it is the most complex, the same interface-driven design pattern is applied across other internal packages.
+Although this subchapter focuses on the provisioner module because it is the most complex, the same interface-driven design pattern is applied across other internal packages.
 For example, the session module encapsulates the WebSocket and SSH bridging responsibilities behind a stable API, and the evaluator package isolates output buffering and regex-based validation logic.
 Even where only a single implementation exists today, these boundaries keep responsibilities explicit and reduce the likelihood that infrastructure or operational concerns leak into the user-facing application.
 
 \subsection{Authentication and Authorization} \label{subsec:authentication-and-authorization}
-In the authentication layer, the updated system replaces the Lucia package with an actively maintained solution that supports session management and single sign-on (SSO) based on OAuth 2.0 and OpenID Connect (OIDC). This is a central change from the baseline, as it removes dependency on a deprecated library discussed in Section~\ref{subsubsec:deprecated-authentication-library} and enables standards-based identity integration for long-term maintainability and secure access control.
+In the authentication layer, the revised system replaces the Lucia package with an actively maintained solution that supports session management and single sign-on (SSO) based on OAuth 2.0 and OpenID Connect (OIDC).
+This change removes the dependency on the deprecated library discussed in subchapter~\ref{subsubsec:deprecated-authentication-library} and provides a more maintainable basis for secure access control.
 
 \subsubsection{Authentication Design and Implementation} \label{subsubsec:authentication-design-and-implementation}
 Authentication is essential for this learning platform to identify users and ensure continuity of sessions for individual Linux container environments.
@@ -211,13 +195,13 @@ User accounts enable the system to associate and store task results for each stu
 This approach preserves progress across sessions and reduces the risk of misuse or excessive load by requiring authenticated access before provisioning cost-incurring resources.
 
 Given Lucia's deprecation, continuing to rely on it was not suitable for a production system.
-As an alternative, the updated system adopts Better Auth, a framework-agnostic authentication library that provides built-in support for common workflows and simplifies long-term maintenance.
-Better Auth supports email and password login, session management, role-based authorization, and OAuth 2.0 / OIDC integration for SSO. In addition, the updated system implements an email domain allowlist to restrict registration and login to approved domains, for example, \texttt{ut.ee}.
+As an alternative, the updated system adopts Better Auth, an authentication library that provides built-in support for common authentication workflows and simplifies long-term maintenance~\cite{noauthor_better_nodate}.
+In the revised system, the authentication layer supports email-based login, session management, and OIDC integration for SSO~\cite{noauthor_better_nodate}.
+In addition, the revised system implements an email domain allowlist to restrict registration and login to approved domains, for example, \texttt{ut.ee}.
 This helps ensure the platform is used only by the intended audience.
 
-Internally, Better Auth reduces the amount of custom authentication code compared to Lucia by providing standardized handlers and integrations for typical authentication flows.
-This decreases the likelihood of implementation errors and makes the authentication layer easier to evolve alongside the rest of the stack.
-Overall, the new design preserves the baseline requirements for verification and sessions while improving maintainability and enabling SSO-based onboarding.
+Compared to Lucia, Better Auth reduces the amount of custom authentication code by providing standardized handlers and integrations for the required workflows.
+This decreases the likelihood of implementation errors, makes the authentication layer easier to evolve alongside the rest of the stack, and provides a standards-based basis for SSO onboarding.
 
 \subsubsection{OpenID Connect Based Single Sign On} \label{subsubsec:openid-connect-based-single-sign-on}
 OpenID Connect (OIDC) is an authentication protocol built on top of the OAuth 2.0 framework.
@@ -225,12 +209,12 @@ Fett et al.~\cite{fett_comprehensive_2016} describe OAuth 2.0 as a widely deploy
 Fett et al.~\cite{fett_web_2017} further explain that OIDC allows a relying party to delegate authentication to an identity provider and to verify the result using a cryptographically signed id token.
 
 At a high level, the platform uses the OIDC authorization code flow.
-As described by Fett et al.~\cite{fett_web_2017}, the user is redirected from the application to the identity provider, authenticates there, and is then redirected back with an authorization code.
-They further explain that the relying party exchanges this code for tokens, validates the returned id token, and then establishes a session for the authenticated user.
+As described by Fett et al.~\cite{fett_web_2017}, the user is redirected from the application to the identity provider, authenticates there, and is then redirected back with an authorization code that is exchanged for tokens and used to establish a session.
 
-In the current implementation, this flow can also use PKCE (Proof Key for Code Exchange), which adds an additional verification step during token exchange and improves resistance to authorization code interception.
+In the current implementation, this flow can also use PKCE (Proof Key for Code Exchange), which adds a verification step during token exchange and improves resistance to authorization code interception.
 The web application currently supports both Microsoft Entra ID, which was used during testing, and Keycloak, which is used for university integration, as OIDC providers through environment variable configuration.
 After successful token validation, the authenticated external identity is mapped to the platform's internal user and session model, which is then used for progress tracking and authorization decisions.
+This gives the platform a direct path to university identity integration and reduces onboarding friction in deployments where institutional login is available.
 
 A standards-based OIDC integration improves interoperability and maintainability compared with provider-specific or custom authentication logic.
 Fett et al.~\cite{fett_comprehensive_2016} show that secure OAuth-based systems depend on correct flow handling and validation under recommended best practices, while Fett et al.~\cite{fett_web_2017} provide the corresponding OIDC-specific analysis.
@@ -243,12 +227,13 @@ This was achieved by redesigning topics and tasks so that language-independent s
 
 \subsubsection{Localization Model} \label{subsubsec:localization-model}
 A significant improvement in the revised implementation is the use of separate translation tables for topics and tasks.
+In the previous system, equivalent learning content had to be duplicated per language.
 In the updated schema, the topics and tasks tables store the stable logical structure of the educational content, including identifiers, ordering, and task evaluation configurations.
 Additionally, the locale-specific textual fields are stored separately in \texttt{topic\_translations} and \texttt{task\_translations} tables.
-Consequently, titles, descriptions, and hints are no longer tied directly to the structural entity, but are instead attached as translations for each locale.
+Consequently, titles, descriptions, and hints are no longer tied directly to the structural entity but are instead attached as translations for each locale.
 
-This design improves maintainability and consistency by eliminating the need to duplicate topics or tasks across multiple languages.
-It also ensures that the logical components of a task, such as its order, regular expression, or monitored path, are shared across all language variants, thereby minimizing the potential for structural divergence between the Estonian and English versions over time.
+This design eliminates the need to duplicate topics or tasks across multiple languages.
+It also ensures that the logical components of a task, such as its order, regular expression, or monitored path, are shared across all language variants, which reduces the risk of structural divergence between the Estonian and English versions over time.
 Additionally, the uniqueness constraints on entity and locale combinations guarantee that each topic or task is limited to a single translation per language, thereby maintaining a predictable and consistent multilingual content model.
 
 An additional benefit of this structure is that user progress is maintained independently of language.
@@ -258,13 +243,9 @@ This enhances the robustness of the localization model compared to a duplication
 
 \subsubsection{Task Editor} \label{subsubsec:task-editor}
 To support the revised localization model, the administrative task editor was redesigned to manage both single-language and dual-language content entries.
-Instead of storing a separate configuration flag for editor mode, the implementation determines the editing mode directly from the available topic translations.
-The mode is determined from the presence of non-empty topic titles for each locale.
+Instead of storing a separate configuration flag for editor mode, the implementation determines the mode directly from the available topic translations.
 If only one locale contains content, the editor functions in single-language mode for that locale.
-Conversely, if both Estonian and English titles are available, the editor transitions to dual-language mode.
-
-This approach keeps the editor logic consistent with the underlying content structure.
-The selected editing mode is therefore not an independent state that could drift out of sync with the stored translations, but instead reflects the current multilingual completeness of the topic.
+If both Estonian and English titles are available, the editor transitions to dual-language mode.
 If neither locale is yet populated, the editor falls back to a default locale, allowing content creation to begin in a predictable way.
 Figure~\ref{fig:task-editor-single-language} presents the editor in single-language mode, where content is entered for only one locale.
 
@@ -275,13 +256,9 @@ Figure~\ref{fig:task-editor-single-language} presents the editor in single-langu
   \label{fig:task-editor-single-language}
 \end{figure}
 
-In the simpler case, the editor can therefore be used to create or modify a topic or task in only one language.
-This is useful when content is intended for a single audience or when a translation has not yet been prepared.
-In this mode, the interface remains compact and reduces unnecessary editing overhead.
-When bilingual content is required, the same editor supports entering both language variants within a unified workflow.
-Instead of creating separate tasks per language, the editor allows the administrator to manage multiple translations for the same underlying topic or task entity.
-This better reflects the revised schema, where one structural task may have several textual representations depending on locale.
-Figure~\ref{fig:task-editor-dual-language} shows the dual-language mode, where both English and Estonian translations are edited within the same workflow.
+In the simpler case, the editor can be used to create or modify a topic or task in only one language.
+When bilingual content is required, the same editor supports both language variants within the same interface for the same underlying topic or task entity.
+Figure~\ref{fig:task-editor-dual-language} shows the dual-language mode, where both English and Estonian translations are edited within the same interface.
 
 \begin{figure}[ht]
   \centering
@@ -291,7 +268,8 @@ Figure~\ref{fig:task-editor-dual-language} shows the dual-language mode, where b
 \end{figure}
 
 The editor also provides lightweight completeness feedback through status indicators shown in the outline and action area.
-Tasks or topics with all required values present are marked with an OK indicator, whereas entries with missing mandatory fields are marked as MISSING. This allows administrators to identify incomplete translations or task definitions without opening every item individually, which becomes particularly useful when editing larger bilingual exercise sets.
+Tasks or topics with all required values present are marked with the indicator ``OK'', whereas entries with missing mandatory fields are marked as ``MISSING''.
+This allows administrators to identify incomplete translations or task definitions without opening every item individually, which is particularly useful when editing larger bilingual exercise sets.
 As a result, the redesign improves the editorial workflow by making it easier to maintain parity between language variants while also reducing duplication in content management.
 
 Together, the improvements described in this chapter establish the revised implementation of the platform.
