@@ -1,0 +1,198 @@
+%! suppress = MissingImport
+%! suppress = UnresolvedReference
+% TODO check footnotes
+% TODO check figure placements
+
+
+\section{Evaluation and Discussion} \label{sec:evaluation-and-discussion}
+This chapter evaluates the revised Linux command-line learning platform in real course use and analyzes the results from two perspectives.
+The first is a cross-environment comparison among the University of Tartu HPC deployment, Microsoft Azure, and Amazon Web Services.
+The second is a comparison between the previous Azure deployment described in chapter~\ref{sec:background-and-previous-system} and the revised Azure deployment described in chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
+
+\subsection{Evaluation Setting} \label{subsec:evaluation-setting}
+The evaluation was carried out in the context of the University of Tartu course ``Computer Security''.
+The deployments were used in practical session 1 of the course.
+A key deliverable of the session was to complete the tasks in the ``Operating Systems and Computer Security'' topic of the learning environment.
+The observation period covered February 2026 and March 2026.
+
+February 2026 was the more intensive phase of the evaluation, as practical session 1 took place during that month and most of the activity related to it also occurred then.
+March 2026 served as a calmer follow-up period.
+At the start of the evaluation period, the practical session materials linked students to the University of Tartu HPC deployment and the Azure deployment.
+After approximately one week, the Azure link was replaced with the AWS deployment so that the later part of the observation period covered the UT HPC and AWS variants instead.
+This arrangement made it possible to direct at least some practical-session traffic to all three deployment environments.
+
+The UT HPC deployment functioned as the primary environment throughout the evaluation period, whereas the Azure and AWS deployments served as secondary environments for comparison.
+This was mainly because the UT HPC variant was the university-hosted deployment and already supported the institutional access model used in the course.
+
+\subsection{Course Use} \label{subsec:results-of-course-use}
+During the evaluation period, the revised system supported the intended practical session workflow.
+Students were able to access the browser-based learning environment, open interactive Linux sessions, and work through the relevant course material in the environments made available to them.
+No notable operational incidents were observed during the evaluation period\footnote{Based on private communication with thesis supervisor Alo Peets.}.
+
+Based on registered accounts, the UT HPC, Azure, and AWS deployments were used by 176, 25, and 12 users respectively during the evaluation period.
+This distribution indicates that the UT HPC deployment was the most widely used environment.
+This is consistent with its role as the primary environment linked in the course materials and with its support for the institutional access model.
+The more relevant differences between the deployment environments concerned their operational model and cost structure, which are analyzed in the following subchapters.
+
+\subsection{Comparison with the Previous Azure Deployment} \label{subsec:comparison-with-the-previous-azure-deployment}
+The revised Azure deployment can be treated as the direct successor to the previous Azure deployment described in chapter~\ref{sec:background-and-previous-system}.
+This makes it possible to evaluate how well the redesign addressed the earlier cost and operational limitations that motivated the work.
+
+In the previous Azure deployment, the main web application was hosted on Azure Container Apps, while the interactive Linux environments were provisioned through Azure Kubernetes Service.
+Although the previous design included start and stop logic for the cluster, chapter~\ref{sec:background-and-previous-system} showed that the deployment still had a comparatively high baseline cost.
+This was because the web application had to remain continuously available and the overall setup depended on cluster-related infrastructure and other cloud components.
+By contrast, the revised Azure deployment replaces the cluster-centric execution model with Azure Container Instances for session provisioning and uses scheduled jobs for maintenance tasks outside the main application process.
+
+Figure~\ref{fig:azure-cost-february-2026} shows the Azure cost breakdown of the revised deployment for February 2026, which was the more active month of the evaluation period.
+In February 2026, the revised Azure deployment incurred a total monthly cost of €13.43.
+The primary cost component was Azure Database for MySQL at €12.25, whereas Azure Container Instances accounted for €1.18 and the remaining services contributed less than €0.01 each.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{figures/figure11-azure-feb2026}
+  \caption{Azure cost breakdown of the revised deployment for February 2026.}
+  \label{fig:azure-cost-february-2026}
+\end{figure}
+
+Figure~\ref{fig:azure-cost-march-2026} presents the corresponding Azure cost breakdown for March 2026, which represented a calmer follow-up period.
+In March 2026, the revised Azure deployment incurred a total monthly cost of €13.52.
+Again, Azure Database for MySQL was the highest cost contributor at €13.49.
+Azure Container Instances accounted for €0.03, whereas the remaining services contributed less than €0.01 each.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{figures/figure12-azure-mar2026}
+  \caption{Azure cost breakdown of the revised deployment for March 2026.}
+  \label{fig:azure-cost-march-2026}
+\end{figure}
+
+Compared with the previous Azure deployment discussed in chapter~\ref{sec:background-and-previous-system}, these figures indicate a significant reduction in the always-on cost footprint of the Azure-based hosting model.
+The baseline deployment incurred €52.88 in July 2025 under minimal usage and €93.12 in September 2025 during an active semester, whereas the revised Azure deployment remained close to €13.50 in both February and March 2026.
+Most of the cost came from the managed database, while the cost of Azure Container Instances remained small in both months.
+No visible Azure Container Apps cost component appeared in these monthly breakdowns.
+
+These observations reflect the architectural redesign of the Azure deployment.
+The absence of a visible Azure Container Apps cost component was most likely due to the free monthly grant in Azure Container Apps pricing (180{,}000 vCPU-seconds, 360{,}000 GiB-seconds, and 2 million requests) and the application's ability to scale to zero~\cite{noauthor_azure_nodate-2}.
+The revised deployment no longer depends on AKS worker nodes, load balancer costs, or other cluster-related infrastructure that previously contributed to the Azure baseline cost.
+This means that the revised Azure deployment is better aligned with the irregular usage pattern of the course than the earlier Azure-based baseline.
+
+\subsection{Cost Comparison of the Three Deployment Environments} \label{subsec:cost-comparison-of-the-three-deployment-environments}
+This subchapter compares the monthly cost structures of the three deployed environments used in the evaluation.
+The comparison covers February 2026 and March 2026, which represented the more active and calmer parts of the observation period respectively.
+It first explains the cost comparison basis and estimation method used and then presents the comparison results.
+
+\subsubsection{Cost Comparison Basis and Estimation Method} \label{subsubsec:cost-comparison-basis-and-estimation-method}
+The cost data for Azure are presented in figures~\ref{fig:azure-cost-february-2026} and~\ref{fig:azure-cost-march-2026}, while the supporting screenshots used to compile the cost data for AWS and UT HPC can be found in Appendix~\ref{app:aws-cost-evidence} and Appendix~\ref{app:uthpc-monitoring-evidence} respectively.
+The costs for Azure were available directly in euros, whereas the cost data for AWS were reported in USD\@.
+To ensure easier comparability, the AWS costs were converted to euros using the European Central Bank’s month end exchange rates for the corresponding months, specifically 1 EUR = 1.1805 USD for February 2026 and 1 EUR = 1.1498 USD for March 2026\footnote{\url{https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html}, accessed 04/15/2026.}.
+For AWS, the comparison also includes the standard monthly price of the Lightsail database Micro bundle, even though this amount was not found in the AWS cost data during the evaluation period.
+This adjustment was made because the database bundle was covered by a temporary three-month free-tier offer for new accounts~\cite{noauthor_select_nodate,noauthor_amazon_nodate}.
+Also, including the standard bundle price provides a more accurate representation of the recurring cost after the temporary offer ends.
+
+At the time of this thesis, the UT HPC environment did not yet provide a per-namespace Kubernetes cost reporting tool\footnote{Based on private communication with UT HPC support.}
+For that reason, the UT HPC cost data had to be estimated manually using the UT HPC pricing calculator~\cite{center_calculate_nodate} together with the monitoring dashboard described in chapter~\ref{subsubsec:access-and-namespace-provisioning}.
+According to the UT HPC pricing model, Kubernetes resources are billed based on the greater of actual usage or requested resources, with costs calculated per minute~\cite{center_calculate_nodate}.
+The rates applied in this thesis were €0.003 for each CPU core hour, €0.0013 for each GB hour of memory, and €0.138 for each TB hour of SSD storage~\cite{center_calculate_nodate}.
+For the persistent workloads observed during February and March 2026, the dashboard screenshots collected for this thesis did not indicate any sustained usage exceeding the configured requests.
+Consequently, the UT HPC estimate below was based on the requested resources of the continuously running web application and MariaDB components.
+
+To account for interactive terminal sessions, the estimate additionally included an approximate session component based on the observed number of session pods in the monitoring dashboard.
+A total of 122 session pods were counted for February and 11 for March.
+These counts were based on the number of session pods for which metrics were shown in the dashboard each month, and an average runtime of approximately one hour per observed pod was assumed for the cost estimation.
+This assumption was considered plausible because session containers were configured with a 30-minute expiry time, the expiration was refreshed during active use, and the expired containers were removed by a periodic cleanup job rather than immediately.
+The UT HPC estimate was therefore divided into persistent and session components, calculated using equations~\ref{eq:monthly-persistent-cost} and~\ref{eq:monthly-session-cost} respectively.
+
+\begin{equation}
+  \begin{aligned}
+    \text{monthly persistent cost} ={}& (\text{CPU rate} \times \text{requested CPU} \\
+    &+ \text{memory rate} \times \text{requested memory} \\
+    &+ \text{storage rate} \times \text{requested storage}) \\
+    &\times 24\text{h} \times \text{number of days}
+  \end{aligned}
+  \label{eq:monthly-persistent-cost}
+\end{equation}
+
+\begin{equation}
+  \begin{aligned}
+    \text{monthly session cost} ={}& \text{number of pods} \times \text{average session duration} \\
+    &\times (\text{CPU rate} \times \text{requested CPU} \\
+    &+ \text{memory rate} \times \text{requested memory})
+  \end{aligned}
+  \label{eq:monthly-session-cost}
+\end{equation}
+
+Using these calculations, a monthly cost estimate was derived for UT HPC and then compared with the corresponding Azure and AWS cost data.
+The resulting comparison is presented in the following subchapter.
+
+\subsubsection{Comparison Results} \label{subsubsec:comparison-results}
+Table~\ref{tab:environment-cost-comparison} summarizes the monthly cost comparison across the three deployment environments for February 2026 and March 2026.
+It also highlights the main cost drivers identified for each environment.
+
+\begin{table}[htb!]
+    \centering
+    \caption{Cost comparison of the deployment environments in February 2026 and March 2026.}
+    \label{tab:environment-cost-comparison}
+    \begin{tblr}{
+        width=1.0\textwidth,
+        hlines,
+        vlines,
+        colspec = {Q[l,font=\bfseries] Q[c] Q[c] X[l]},
+        row{1} = {font=\bfseries},
+    }
+    Environment & February 2026 & March 2026 & Main cost drivers \\
+    UT HPC (estimate) & ~€1.97 & ~€2.12 & Web deployment, MariaDB, session containers \\
+    Azure (actual) & €13.43 & €13.52 & Azure Database for MySQL, Azure Container Instances \\
+    AWS (adjusted) & €19.10 & €19.99 & Lightsail Container, Lightsail database, Elastic Container Service \\
+    \end{tblr}
+\end{table}
+
+Table~\ref{tab:environment-cost-comparison} shows that the UT HPC deployment had the lowest direct monthly cost in this evaluation.
+However, it is important to note that the UT HPC cost estimate is less direct than the Azure and AWS cost data, as it is derived from calculator rates, monitoring dashboard observations, and an approximate session-duration assumption, rather than from a provider billing dashboard.
+Among the two public cloud options, Azure was the cheaper deployment in both months, maintaining a cost close to €13.50, with Azure Database for MySQL as the primary cost component.
+The adjusted total cost for AWS remained close to €20, reflecting the combined expenses of the continuously operating Lightsail web layer, the database bundle, and Elastic Container Service.
+The cost structures of the environments also differed.
+The UT HPC estimate was driven primarily by the reserved baseline of the web application and database, together with a smaller session component.
+Azure was dominated by the managed database service, whereas AWS was influenced by the combination of a continuously running web layer and database bundle, with smaller contributions from ECS and VPC costs.
+
+\subsection{Discussion} \label{subsec:discussion}
+Overall, the evaluation suggests that the redesigned platform preserved the core educational workflow of the previous system while improving its operational characteristics.
+The platform was used in real course activity across all three deployment environments with no notable operational incidents observed during the evaluation period.
+This, together with the architectural continuity described in chapter~\ref{sec:revised-architecture-and-implementation}, suggests that the modernization effort did not interfere with the platform's primary purpose of providing isolated browser-based Linux environments for interactive course use.
+
+The clearest evidence of improvement is observed in the comparison with the previous Azure deployment.
+As discussed in chapter~\ref{sec:background-and-previous-system}, the central limitation of the baseline system was not solely the incurred costs of cloud hosting, but also that the deployment model was poorly aligned with the uneven usage pattern.
+Even with the start and stop logic for the Kubernetes cluster, the earlier Azure deployment continued to incur significant always-on cost.
+In contrast, the revised Azure deployment remained close to €13.50 in both observed months, with most of the cost attributed to the managed database rather than to continuously running execution infrastructure.
+This indicates that the redesign successfully addressed the main baseline problem identified in chapter~\ref{sec:background-and-previous-system}, which was the mismatch between the platform's uneven usage pattern and the fixed cost structure of the previous cloud deployment.
+
+The cross-environment comparison further shows that the revised architecture is adaptable across three different operational models.
+The UT HPC deployment appears to be the strongest fit for long-term institutional use, as it combines the lowest observed cost with university-managed hosting and integration with institutional access management.
+However, this conclusion should be approached with some caution, as the UT HPC cost estimate is based on pricing rules and monitoring observations rather than a direct provider billing report.
+Azure appears to be the strongest public-cloud option because it shows the lowest idle footprint among the public-cloud deployments while remaining within a single provider ecosystem.
+AWS demonstrates that the provider-agnostic design can be transferred beyond Azure.
+However, its continuously running web layer results in a higher baseline cost, making it less attractive for this type of irregular usage pattern.
+
+Taken together, these results indicate that the redesign was successful not only as code level modernization, but also as an architectural correction of the baseline system's operational model.
+The work improved portability, maintainability, and deployment reproducibility while reducing the cost burden required for keeping the platform ready for use.
+From the perspective of future teaching use, the most suitable long-term deployment appears to be the UT HPC environment when institutional support and integration are available, whereas Azure represents the most suitable self-contained public-cloud deployment.
+
+\subsection{Future Work} \label{subsec:future-work}
+Although the revised platform functioned successfully in course use, the evaluation also reveals several directions for further improvement.
+These directions concern both the platform itself and the methodology with which future evaluations could be carried out.
+
+One important future improvement would be stronger observability.
+The current evaluation is centered primarily on cost and practical course use.
+However, future work could benefit from a more systematic collection of operational metrics, such as session startup times, concurrent active users, resource consumption, and cleanup behavior across different environments.
+Additionally, the evaluation partially depended on provider-specific platform metrics, suggesting that instrumentation integrated directly into the platform would support more consistent cross-environment measurement.
+This would allow for more detailed comparisons in later studies and simplify the analysis of the system under larger or more diverse usage patterns.
+
+A second improvement would be the expansion of the learning content supported by the platform.
+The course use described in this thesis focused on a limited set of Linux command-line tasks.
+Future development could extend the platform with exercises covering additional command-line topics, different levels of difficulty, and a broader range of task formats.
+At the same time, the current environment preparation is constrained by a relatively fixed Dockerfile-based configuration that creates task-specific files and folders in a predefined way.
+A useful improvement would therefore be a more flexible task-dependent setup model in which each exercise can specify its own preparation steps before a session starts.
+This approach would support a wider variety of learning scenarios and reduce dependence on a single hard-coded environment structure.
+
+Finally, future work could focus on integration with different educational platforms.
+For example, integrating with a learning management system such as Moodle could support automated grading and more consistent management of course activities around the terminal exercises.
+Such integration would make the platform easier to incorporate into routine teaching practices and would extend its role from a standalone exercise environment toward a more complete component of the course workflow.
