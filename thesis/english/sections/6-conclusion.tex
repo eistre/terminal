@@ -1,6 +1,23 @@
-\section{Conclusion} \label{Conclusion}
-This thesis template has given an overview and recommendations on various formatting and text creation techniques. For specific rules, it is useful to see the Guidelines for preparing and grading of graduation theses at the Institute of Computer Science of the University of Tartu document. Although this template focused on the LaTeX technology, the formatting rules and recommendations also apply to other capable text editors (for example, Microsoft Word, OpenOffice Writer, Pages, etc.). When creating a fair copy from Your draft, ensure that Your chosen text editor includes all the necessary tools. For example, Google Docs is not suitable for that work as it is missing several required tools presented in this template.
+\section{Conclusion} \label{sec:conclusion}
+This thesis focuses on the modernization of the browser-based Linux command-line learning platform used at the University of Tartu.
+The previous two iterations of the system had already shown the feasibility of browser-based Linux teaching in educational use.
+However, they presented unresolved issues related to maintainability, reproducibility of deployments, portability across environments, and the cost-efficiency of the deployment model.
+Consequently, the aim of this thesis was to preserve the educational purpose of the platform while redesigning it into a more sustainable foundation for continued use and future development.
 
-When formatting Your thesis, look at Your thesis document both as a whole (structure, balance, visual style) as well as individual components separately (info page, content elements, references, metadata). The different parts of Your work need different approaches. For example, to format the main references effectively, an external tool like Zotero might be useful. Formatting means not only positioning and cross-referencing an element but also the formatting of the element itself. For example, the plots in Your thesis must be well-designed and neatly formatted, just like the thesis itself. It is crucial to allocate enough time to study the tools and techniques to format Your thesis thoroughly.
+To achieve this goal, the platform was redesigned at an architectural level rather than relying solely on incremental implementation updates.
+The revised solution introduced clearer modular boundaries, separated provider-specific container lifecycle management behind a provisioning abstraction, moved periodic maintenance tasks to dedicated scheduled jobs, and improved the maintainability of both the authentication mechanism and the multilingual content management system.
+In addition, deployment automation was enhanced using Helm and Terraform, making the system easier to reproduce across different target environments.
 
-Hopefully, this template helps You. To use this template, make a copy of it and delete or substitute all the content text. The pre-configured text styles should help You format Your draft to a fair copy. Certainly, look over Your document’s metadata and ensure they correspond to Your real thesis contents. Your supervisor can also be very helpful when it comes to thesis formatting. So, be active in asking them for help. Good luck with this last graded 25\% You do before submitting Your Thesis!
+The evaluation conducted in February and March 2026 showed that the revised platform preserved the intended educational workflow during real course use.
+Students were able to access the browser-based environment, open interactive Linux sessions, and complete the relevant course tasks in the deployed environments.
+Additionally, no significant operational incidents were reported over the course of the evaluation period.
+
+A comparative analysis with the previous Azure deployment indicated that the revised Azure architecture significantly lowered the baseline cost associated with keeping the platform available.
+Furthermore, the cross-environment deployment showed that the redesigned architecture could be deployed reliably across the University of Tartu HPC Kubernetes cluster, Microsoft Azure, and Amazon Web Services while preserving the core functionality of the application.
+
+Taken together, these results suggest that the modernization was successful both as a software redesign and as an improvement to the platform’s operational model.
+The work improved maintainability, portability, and deployment reproducibility, while reducing the costs associated with irregular course use.
+The evaluation results suggest that the University of Tartu HPC environment is the most suitable long-term deployment option when institutional support and integration are available.
+In contrast, Microsoft Azure appears to be the more suitable public-cloud option of the two.
+Amazon Web Services mainly demonstrates that the provider-agnostic design can be transferred to another major cloud provider, although its continuously running web layer makes it less attractive for this usage pattern.
+The evaluation also suggests that future work could strengthen observability, improve the flexibility of task-specific environments, and explore closer integration with existing educational platforms.
