@@ -117,7 +117,7 @@ It reduced direct infrastructure ownership and preserved Kubernetes compatibilit
 \subsection{Microsoft Azure} \label{subsec:microsoft-azure}
 This subchapter discusses the deployment of the revised platform on Microsoft Azure.
 Azure was kept as the target environment because the baseline implementation described in subchapter~\ref{subsubsec:cloud-deployment-on-azure} was already hosted there, making it the most direct platform for modernization and comparison.
-While the UT HPC deployment shows how the platform can be hosted in institutional Kubernetes infrastructure, the Azure deployment represents the public-cloud modernization path for the baseline system.
+While the UT HPC deployment shows how the platform can be hosted in institutional Kubernetes infrastructure, the Azure deployment represents the public cloud modernization path for the baseline system.
 
 \subsubsection{Azure as a Deployment Environment} \label{subsubsec:azure-as-a-deployment-environment}
 Microsoft Azure was selected as a deployment target because it provides the clearest continuation of the baseline system and therefore allows the revised design to be compared with the previous Azure-based deployment model.
@@ -127,7 +127,7 @@ Although this architecture was functional, it still retained some of the cost an
 For the revised implementation, Azure remained relevant, but the service choices were reconsidered.
 The main goal was to preserve the same educational workflow while reducing idle infrastructure overhead and simplifying the operational model.
 As a result, the revised Azure deployment replaces the cluster-centric execution model with a combination of managed and consumption-oriented services that better fit the platform's intermittent classroom usage pattern.
-This made Azure suitable not only for continuity with the baseline system, but also for evaluating whether a more lightweight Azure native architecture could address the cost and maintenance limitations identified in chapter~\ref{sec:background-and-previous-system}.
+This made Azure suitable not only for continuity with the baseline system, but also for evaluating whether a more lightweight Azure-native architecture could address the cost and maintenance limitations identified in chapter~\ref{sec:background-and-previous-system}.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-azure}
 The Azure environment was provisioned using Terraform configuration.
@@ -162,12 +162,12 @@ The main web application and the scheduled jobs remain deployable as managed con
 In addition, the ACA web application was configured with a minimum replica count of zero, which allows the web layer to scale to zero during idle periods~\cite{craigshoemaker_scaling_nodate}.
 This eliminates the need to stop and start a Kubernetes cluster to control idle costs and avoids the startup delay after inactivity.
 This design is better aligned with the irregular usage pattern of the learning platform, where demand is concentrated around course sessions rather than spread uniformly over time.
-Within the overall comparison, Azure therefore represents the public-cloud deployment with the lowest idle footprint while reducing the always-on infrastructure burden of the earlier Azure-based design.
+Within the overall comparison, Azure therefore represents the public cloud deployment with the lowest idle footprint while reducing the always-on infrastructure burden of the earlier Azure-based design.
 
 \subsection{Amazon Web Services} \label{subsec:amazon-web-services}
 This subchapter describes the deployment of the revised platform on Amazon Web Services (AWS).
 AWS was included as an additional public cloud platform to complement the Azure-based baseline and to evaluate how the redesigned system can be deployed in a second major cloud environment with a different service ecosystem.
-The AWS deployment broadens the comparison by adding a second public-cloud reference point for infrastructure automation, operational overhead, and cost drivers.
+The AWS deployment broadens the comparison by adding a second public cloud reference point for infrastructure automation, operational overhead, and cost drivers.
 
 \subsubsection{AWS as a Deployment Environment} \label{subsubsec:aws-as-a-deployment-environment}
 Amazon Web Services was selected as an additional public cloud deployment target to broaden the evaluation beyond a single cloud provider.
@@ -208,6 +208,6 @@ Overall, the AWS deployment shows that the revised architecture can be transferr
 
 Taken together, the three deployment environments represent distinct operational models.
 UT HPC represents institutionally managed Kubernetes hosting.
-Azure represents a public-cloud deployment with the lowest idle footprint.
+Azure represents a public cloud deployment with the lowest idle footprint.
 AWS represents a service-based design that avoids Kubernetes for session execution but retains a continuously running web layer.
 The next chapter builds on these deployment cases by comparing their cost and operational consequences more directly.

@@ -1,7 +1,7 @@
 \section{Conclusion} \label{sec:conclusion}
 This thesis focuses on the modernization of the browser-based Linux command-line learning platform used at the University of Tartu.
 The previous two iterations of the system had already shown the feasibility of browser-based Linux teaching in educational use.
-However, they presented unresolved issues related to maintainability, reproducibility of deployments, portability across environments, and the cost-efficiency of the deployment model.
+However, they presented unresolved issues related to maintainability, reproducibility of deployments, portability across environments, and the cost efficiency of the deployment model.
 Consequently, the aim of this thesis was to preserve the educational purpose of the platform while redesigning it into a more sustainable foundation for continued use and future development.
 
 To achieve this goal, the platform was redesigned at an architectural level rather than relying solely on incremental implementation updates.
@@ -15,9 +15,9 @@ Additionally, no significant operational incidents were reported over the course
 A comparative analysis with the previous Azure deployment indicated that the revised Azure architecture significantly lowered the baseline cost associated with keeping the platform available.
 Furthermore, the cross-environment deployment showed that the redesigned architecture could be deployed reliably across the University of Tartu HPC Kubernetes cluster, Microsoft Azure, and Amazon Web Services while preserving the core functionality of the application.
 
-Taken together, these results suggest that the modernization was successful both as a software redesign and as an improvement to the platform’s operational model.
+Taken together, these results suggest that the modernization was successful both as a software redesign and as an improvement to the platform's operational model.
 The work improved maintainability, portability, and deployment reproducibility, while reducing the costs associated with irregular course use.
 The evaluation results suggest that the University of Tartu HPC environment is the most suitable long-term deployment option when institutional support and integration are available.
-In contrast, Microsoft Azure appears to be the more suitable public-cloud option of the two.
+In contrast, Microsoft Azure appears to be the more suitable public cloud option of the two.
 Amazon Web Services mainly demonstrates that the provider-agnostic design can be transferred to another major cloud provider, although its continuously running web layer makes it less attractive for this usage pattern.
 The evaluation also suggests that future work could strengthen observability, improve the flexibility of task-specific environments, and explore closer integration with existing educational platforms.

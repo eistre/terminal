@@ -39,7 +39,7 @@ It was tested in the context of the ``Computer Security'' course with over one h
 At the same time, the deployment model and overall implementation left important concerns related to stability, security, and maintainability unresolved.
 These limitations were consistent with an early feasibility-focused implementation and helped define the need for a more production-oriented successor.
 
-\subsubsection{Cloud Hosted Implementation} \label{subsubsec:cloud-hosted-implementation}
+\subsubsection{Cloud-Hosted Implementation} \label{subsubsec:cloud-hosted-implementation}
 After the initial proof-of-concept had been used in the supervisor's courses for two years, Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} transformed the environment into a cloud-hosted platform intended for sustained course use.
 This second iteration addressed limitations observed during earlier use and introduced goals such as improved stability and maintainability, bilingual support in Estonian and English, and deployment in a more robust cloud environment.
 
@@ -137,7 +137,7 @@ A significant limitation of the baseline system was its cost structure in the cl
 Figure~\ref{fig:azure-cost-july-2025} illustrates the Azure cost breakdown for July 2025, a period of minimal usage.
 In July 2025, the deployment incurred a total monthly expense of €52.88.
 The majority of these costs were attributed to fixed, always-on resources, such as the Azure Database for MySQL (€26.90), the AKS load balancer (€13.62), and Azure Container Apps hosting the application (€8.92).
-Consequently, maintaining the platform’s readiness for use resulted in a baseline expenditure exceeding €50 per month, even with minimal or no user activity.
+Consequently, maintaining the platform's readiness for use resulted in a baseline expenditure exceeding €50 per month, even with minimal or no user activity.
 
 \begin{figure}[ht]
   \centering
@@ -168,7 +168,7 @@ According to the Lucia maintainer, the project would be deprecated by March 2025
 By March 2025, Lucia had been repositioned primarily as an educational resource for learning about authentication implementation rather than as a long-term dependency for production systems~\cite{noauthor_fresh_nodate}.
 This shift indicates a dependency lifecycle risk in the platform's authentication layer.
 
-This deprecation poses a significant risk to the platform’s maintainability.
+This deprecation poses a significant risk to the platform's maintainability.
 Continued dependence on an unsupported library may result in delayed or nonexistent security updates, increased friction when upgrading adjacent frameworks, and elevated long-term maintenance costs.
 In the context of this thesis, the issue is therefore not merely one library replacement but the need to modernize a critical subsystem while preserving the baseline requirements for user verification and session management.
 This subchapter thus exposes a maintainability and modernization problem rather than an isolated dependency change.

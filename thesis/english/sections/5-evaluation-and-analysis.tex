@@ -83,7 +83,7 @@ It first explains the cost comparison basis and estimation method used and then 
 \subsubsection{Cost Comparison Basis and Estimation Method} \label{subsubsec:cost-comparison-basis-and-estimation-method}
 The cost data for Azure are presented in figures~\ref{fig:azure-cost-february-2026} and~\ref{fig:azure-cost-march-2026}, while the supporting screenshots used to compile the cost data for AWS and UT HPC can be found in Appendix~\ref{app:aws-cost-evidence} and Appendix~\ref{app:uthpc-monitoring-evidence} respectively.
 The costs for Azure were available directly in euros, whereas the cost data for AWS were reported in USD\@.
-To ensure easier comparability, the AWS costs were converted to euros using the European Central Bank’s month end exchange rates for the corresponding months, specifically 1 EUR = 1.1805 USD for February 2026 and 1 EUR = 1.1498 USD for March 2026\footnote{\url{https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html}, accessed 04/15/2026.}.
+To ensure easier comparability, the AWS costs were converted to euros using the European Central Bank's month-end exchange rates for the corresponding months, specifically 1 EUR = 1.1805 USD for February 2026 and 1 EUR = 1.1498 USD for March 2026\footnote{\url{https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html}, accessed 04/15/2026.}.
 For AWS, the comparison also includes the standard monthly price of the Lightsail database Micro bundle, even though this amount was not found in the AWS cost data during the evaluation period.
 This adjustment was made because the database bundle was covered by a temporary three-month free-tier offer for new accounts~\cite{noauthor_select_nodate,noauthor_amazon_nodate}.
 Also, including the standard bundle price provides a more accurate representation of the recurring cost after the temporary offer ends.
@@ -167,13 +167,13 @@ This indicates that the redesign successfully addressed the main baseline proble
 The cross-environment comparison further shows that the revised architecture is adaptable across three different operational models.
 The UT HPC deployment appears to be the strongest fit for long-term institutional use, as it combines the lowest observed cost with university-managed hosting and integration with institutional access management.
 However, this conclusion should be approached with some caution, as the UT HPC cost estimate is based on pricing rules and monitoring observations rather than a direct provider billing report.
-Azure appears to be the strongest public-cloud option because it shows the lowest idle footprint among the public-cloud deployments while remaining within a single provider ecosystem.
+Azure appears to be the strongest public cloud option because it shows the lowest idle footprint among the public cloud deployments while remaining within a single provider ecosystem.
 AWS demonstrates that the provider-agnostic design can be transferred beyond Azure.
 However, its continuously running web layer results in a higher baseline cost, making it less attractive for this type of irregular usage pattern.
 
-Taken together, these results indicate that the redesign was successful not only as code level modernization, but also as an architectural correction of the baseline system's operational model.
+Taken together, these results indicate that the redesign was successful not only as code-level modernization, but also as an architectural correction of the baseline system's operational model.
 The work improved portability, maintainability, and deployment reproducibility while reducing the cost burden required for keeping the platform ready for use.
-From the perspective of future teaching use, the most suitable long-term deployment appears to be the UT HPC environment when institutional support and integration are available, whereas Azure represents the most suitable self-contained public-cloud deployment.
+From the perspective of future teaching use, the most suitable long-term deployment appears to be the UT HPC environment when institutional support and integration are available, whereas Azure represents the most suitable self-contained public cloud deployment.
 
 \subsection{Future Work} \label{subsec:future-work}
 Although the revised platform functioned successfully in course use, the evaluation also reveals several directions for further improvement.

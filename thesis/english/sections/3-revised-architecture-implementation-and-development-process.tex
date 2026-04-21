@@ -196,10 +196,10 @@ This helps ensure the platform is used only by the intended audience.
 Compared to Lucia, Better Auth reduces the amount of custom authentication code by providing standardized handlers and integrations for the required workflows.
 This decreases the likelihood of implementation errors, makes the authentication layer easier to evolve alongside the rest of the stack, and provides a standards-based basis for SSO onboarding.
 
-\subsubsection{OpenID Connect Based Single Sign On} \label{subsubsec:openid-connect-based-single-sign-on}
+\subsubsection{OpenID Connect-Based Single Sign-On} \label{subsubsec:openid-connect-based-single-sign-on}
 OpenID Connect (OIDC) is an authentication protocol built on top of the OAuth 2.0 framework.
 Fett et al.~\cite{fett_comprehensive_2016} describe OAuth 2.0 as a widely deployed authorization framework and as the foundation for OpenID Connect.
-Fett et al.~\cite{fett_web_2017} further explain that OIDC allows a relying party to delegate authentication to an identity provider and to verify the result using a cryptographically signed id token.
+Fett et al.~\cite{fett_web_2017} further explain that OIDC allows a relying party to delegate authentication to an identity provider and to verify the result using a cryptographically signed ID token.
 
 At a high level, the platform uses the OIDC authorization code flow.
 As described by Fett et al.~\cite{fett_web_2017}, the user is redirected from the application to the identity provider, authenticates there, and is then redirected back with an authorization code that is exchanged for tokens and used to establish a session.
