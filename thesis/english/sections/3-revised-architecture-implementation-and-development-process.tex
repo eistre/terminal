@@ -1,6 +1,5 @@
 %! suppress = MissingImport
 %! suppress = UnresolvedReference
-% TODO check footnotes
 
 
 \section{Revised Architecture and Implementation} \label{sec:revised-architecture-and-implementation}
@@ -105,7 +104,7 @@ This restructure also supports the architectural goal of decoupling maintenance 
 Both scheduled jobs in \path{apps/} reuse the same core modules in \path{packages/} as the main Nuxt application, but run as separate executables on a schedule.
 This avoids keeping the main application running indefinitely solely to perform cleanup and enables deployments where the interactive application can be scaled down during idle periods while maintenance continues to enforce lifecycle and retention policies.
 
-The modernization effort also included updating core frameworks and supporting dependencies to currently supported stable versions where feasible.
+The modernization effort also included updating core frameworks and supporting dependencies to currently supported stable versions where possible.
 One example was the migration of the main application from Nuxt 3 to Nuxt 4, which addressed the outdated dependency baseline identified in subchapter~\ref{subsubsec:outdated-dependencies}.
 In this way, dependency updates were treated as part of the broader codebase modernization effort rather than as isolated package-management tasks.
 
@@ -138,7 +137,7 @@ export interface Provisioner {
 
 The provisioning interface is implemented by classes specific to each provider, while shared operational concerns are centralized in a common base class, \texttt{AbstractProvisioner}.
 In this base class, each provisioning operation is wrapped with a concurrency limiter to cap simultaneous operations against provider APIs, a per-user lock to serialize operations per user, and retry logic to handle transient failures.
-For concurrency limiting and retry handling, the p-limit and p-retry packages are used.
+For concurrency limiting and retry handling, the p-limit\footnote{\url{https://github.com/sindresorhus/p-limit}} and p-retry\footnote{\url{https://github.com/sindresorhus/p-retry}} packages are used.
 The following code snippet demonstrates this wrapping for one of the interface functions, illustrating how the public method enforces shared guarantees while delegating provider-specific work to the underlying implementation method.
 
 \begin{minted}{typescript}
@@ -165,7 +164,7 @@ Likewise, \texttt{ensureContainerExists(userId)} guarantees that the system can 
 Provider implementations therefore encapsulate the relevant state transitions, such as creating a missing container, waiting while a container is starting, and refreshing expiration metadata when a container is already running.
 
 Currently, three execution backends are supported.
-These are Kubernetes, Azure Container Instances (ACI), and Amazon ECS on AWS Fargate.
+These are Kubernetes, Azure Container Instances (ACI)\footnote{\url{https://azure.microsoft.com/en-us/products/container-instances}}, and Amazon ECS\footnote{\url{https://aws.amazon.com/ecs/}} on AWS Fargate\footnote{\url{https://aws.amazon.com/fargate/}}.
 All implementations follow the same lifecycle model by attaching common metadata to managed resources, such as the user identifier and expiration time, enabling consistent enumeration and reclamation of inactive containers.
 The deployment setup and provider-specific configuration are described in chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
 
@@ -189,7 +188,7 @@ User accounts enable the system to associate and store task results for each stu
 This approach preserves progress across sessions and reduces the risk of misuse or excessive load by requiring authenticated access before provisioning cost-incurring resources.
 
 Given Lucia's deprecation, continuing to rely on it was not suitable for a production system.
-As an alternative, the updated system adopts Better Auth, an authentication library that provides built-in support for common authentication workflows and simplifies long-term maintenance~\cite{noauthor_better_nodate}.
+As an alternative, the updated system adopts Better Auth\footnote{\url{https://github.com/better-auth/better-auth}}, an authentication library that provides built-in support for common authentication workflows and simplifies long-term maintenance~\cite{noauthor_better_nodate}.
 In the revised system, the authentication layer supports email-based login, session management, and OIDC integration for SSO~\cite{noauthor_better_nodate}.
 In addition, the revised system implements an email domain allowlist to restrict registration and login to approved domains, for example, \texttt{ut.ee}.
 This helps ensure the platform is used only by the intended audience.
@@ -206,7 +205,7 @@ At a high level, the platform uses the OIDC authorization code flow.
 As described by Fett et al.~\cite{fett_web_2017}, the user is redirected from the application to the identity provider, authenticates there, and is then redirected back with an authorization code that is exchanged for tokens and used to establish a session.
 
 In the current implementation, this flow can also use PKCE (Proof Key for Code Exchange), which adds a verification step during token exchange and improves resistance to authorization code interception.
-The web application currently supports both Microsoft Entra ID, which was used during testing, and Keycloak, which is used for university integration, as OIDC providers through environment variable configuration.
+The web application currently supports both Microsoft Entra ID\footnote{\url{https://www.microsoft.com/en-us/security/business/identity-access/microsoft-entra-id}}, which was used during testing, and Keycloak\footnote{\url{https://www.keycloak.org/}}, which is used for university integration, as OIDC providers through environment variable configuration.
 After successful token validation, the authenticated external identity is mapped to the platform's internal user and session model, which is then used for progress tracking and authorization decisions.
 This gives the platform a direct path to university identity integration and reduces onboarding friction in deployments where institutional login is available.
 
@@ -217,7 +216,7 @@ In the context of this platform, OIDC therefore provides a suitable and extensib
 \subsection{Improved Localization and Task Editor} \label{subsec:improved-localization-and-task-editor}
 The revised system improves both the internal localization model and the administrative workflow for managing multilingual learning content.
 Although the baseline platform already supported multiple interface languages, the updated implementation extends this to the content model itself.
-This was achieved by redesigning topics and tasks so that language-independent structure is separated from language-specific text, and by introducing an editor that supports both single-language and dual-language authoring.
+This was achieved by redesigning topics and tasks so that language-independent structure is separated from language-specific text and by introducing an editor that supports both single-language and dual-language authoring.
 
 \subsubsection{Localization Model} \label{subsubsec:localization-model}
 A significant improvement in the revised implementation is the use of separate translation tables for topics and tasks.

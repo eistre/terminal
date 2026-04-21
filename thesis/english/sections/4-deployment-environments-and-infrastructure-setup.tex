@@ -53,7 +53,7 @@ This made it possible to keep reusable infrastructure definitions while supplyin
 \subsection{University Kubernetes Cluster} \label{subsec:university-kubernetes-cluster}
 This subchapter presents the deployment of the revised platform in the University of Tartu HPC Kubernetes environment.
 In addition to serving as one of the target platforms in the cross-environment comparison, this deployment is relevant as a concrete example of institutional hosting.
-The following subchapters first introduce the UT HPC Kubernetes environment and the namespace access process, and then describe the deployed components and their operational considerations.
+The following subchapters first introduce the UT HPC Kubernetes environment and explain the namespace access process, and then describe the deployed components and their operational considerations.
 
 \subsubsection{UT HPC as a Deployment Environment} \label{subsubsec:ut-hpc-as-a-deployment-environment}
 The University of Tartu HPC Centre provides multiple research- and teaching-oriented computing services, including a managed Kubernetes service for hosting containerized workloads.
@@ -74,14 +74,14 @@ After the request has been processed, the user is notified by email and access i
 As part of this thesis, the application was deployed into the namespace terminal-cs-ut-ee.
 After the namespace had been provisioned, cluster access was configured using the kubeconfig file-based access model described in the UT HPC documentation~\cite{noauthor_quick_nodate}.
 In addition to the namespace provisioning itself, several deployment-specific integrations were coordinated directly with UT HPC support by email.
-These included exposing the application under the public hostname terminal.cs.ut.ee through the UT HPC ingress infrastructure~\cite{noauthor_ingress_nodate}, configuring single sign-on through an HPC-managed Keycloak instance, and configuring SMTP settings required for sending platform validation emails.
+These included exposing the application under the public hostname terminal.cs.ut.ee through the UT HPC ingress infrastructure~\cite{noauthor_ingress_nodate}, configuring single sign-on through an HPC-managed Keycloak instance, and configuring Simple Mail Transfer Protocol (SMTP) settings required for sending platform validation emails.
 UT HPC support also provided a monitoring dashboard for standard workload metrics, including pod CPU usage, memory usage, and the number of active student containers\footnote{Based on private communication with UT HPC support during the deployment process.}.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-helm}
 The application was installed in the terminal-cs-ut-ee namespace and made accessible to users via the public hostname terminal.cs.ut.ee.
 Deployment into the namespace was performed using the project's Helm chart with environment-specific values for UT HPC, including ingress-related options and database configuration.
 The Helm release deployed the main web application together with the Kubernetes resources required to operate the platform in this environment.
-These included the application Deployment, the public-facing Service and Ingress, the database layer configured using the MariaDB operator, cleanup CronJobs, and namespace-level resources such as service accounts, role bindings, and network policies.
+These included the application Deployment, the public-facing Service and Ingress, the database layer configured using the MariaDB\footnote{\url{https://mariadb.org/}} operator, cleanup CronJobs, and namespace-level resources such as service accounts, role bindings, and network policies.
 The deployment remained fully contained within the designated namespace, while public access was provided through the UT HPC ingress infrastructure~\cite{noauthor_ingress_nodate}.
 Figure~\ref{fig:ut-hpc-deployment-overview} presents the UT HPC Kubernetes deployment of the platform, showing the namespace-scoped application components, ingress path, database layer, and per-user containers.
 
@@ -151,7 +151,7 @@ Compared with the baseline AKS model, this reduces infrastructure as well as ope
 In this model, the runtime cost of the session containers is determined by the requested vCPU and memory resources together with the duration of the session~\cite{noauthor_pricing_nodate}.
 
 The database layer is implemented using the same Azure Database for MySQL Flexible Server deployment model as in the baseline system, using the cheapest available configuration to minimize costs (B1ms burstable tier with 1 vCPU and 2 GB of memory)~\cite{noauthor_flexible_nodate,eistre_veebipohise_nodate}.
-Unlike the baseline implementation, which relied on Azure Files to store per-session SSH keys, the revised deployment uses Azure Key Vault for secret storage~\cite{msmbaldwin_azure_nodate,eistre_veebipohise_nodate}.
+Unlike the baseline implementation, which relied on Azure Files\footnote{\url{https://azure.microsoft.com/en-us/products/storage/files}} to store per-session SSH keys, the revised deployment uses Azure Key Vault\footnote{\url{https://azure.microsoft.com/en-us/products/key-vault}} for secret storage~\cite{msmbaldwin_azure_nodate,eistre_veebipohise_nodate}.
 Similar to the baseline system, email delivery for account verification is handled through Azure Communication Services using an Azure-managed email domain~\cite{sroons_azure_nodate,bashan-git_overview_nodate,eistre_veebipohise_nodate}.
 Regarding authentication, the Azure deployment does not integrate with the university-managed Keycloak service, as that setup is specific to the UT HPC environment.
 Accordingly, it follows the same pattern as the baseline Azure system, where users register within the application and validate their accounts via email.
@@ -178,8 +178,8 @@ This makes AWS a suitable comparison platform for evaluating whether the provide
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-aws}
 Similarly to Azure, the AWS environment was also provisioned using Terraform configuration.
 The AWS deployment combines an always-on web hosting layer with on-demand and scheduled container workloads.
-The main Nuxt web application is deployed to Amazon Lightsail container services using the Nano plan, corresponding to 0.25 shared vCPU and 512~MB of RAM, while the database cleanup and provisioner cleanup workloads run as scheduled ECS tasks on AWS Fargate~\cite{noauthor_deploy_nodate,noauthor_architect_nodate,noauthor_amazon_nodate}.
-An alternative considered for the main web application was an ECS service behind an Application Load Balancer~\cite{noauthor_use_nodate-1}.
+The main Nuxt web application is deployed to Amazon Lightsail\footnote{\url{https://aws.amazon.com/lightsail/}} container services using the Nano plan, corresponding to 0.25 shared vCPU and 512~MB of RAM, while the database cleanup and provisioner cleanup workloads run as scheduled ECS tasks on AWS Fargate~\cite{noauthor_deploy_nodate,noauthor_architect_nodate,noauthor_amazon_nodate}.
+An alternative considered for the main web application was an ECS service behind an Application Load Balancer\footnote{\url{https://aws.amazon.com/elasticloadbalancing/application-load-balancer/}}~\cite{noauthor_use_nodate-1}.
 Compared with the selected Lightsail container service setup, that design would add separate load balancing infrastructure and a higher always-on cost baseline, so Lightsail container services were chosen as the simpler and more cost-effective option for the continuously running web layer~\cite{noauthor_elastic_nodate,noauthor_amazon_nodate}.
 
 \begin{figure}[ht]
@@ -195,8 +195,8 @@ When an interactive terminal session is requested, the application launches a ne
 Each session task was configured with 0.25 CPU and 512~MiB of memory.
 In this design, session environments are created on demand as isolated tasks rather than kept running continuously.
 
-For secret storage, the AWS deployment uses AWS Secrets Manager to store the per-session SSH keys~\cite{noauthor_what_nodate-2}.
-To support this workflow, the deployment also defines AWS IAM roles and credentials that allow the web application to launch and manage ECS tasks and access the session secrets required for terminal provisioning.
+For secret storage, the AWS deployment uses AWS Secrets Manager\footnote{\url{https://aws.amazon.com/secrets-manager/}} to store the per-session SSH keys~\cite{noauthor_what_nodate-2}.
+To support this workflow, the deployment also defines AWS IAM\footnote{\url{https://aws.amazon.com/iam/}} roles and credentials that allow the web application to launch and manage ECS tasks and access the session secrets required for terminal provisioning.
 For the database layer, data is stored in a managed MySQL database provided by Amazon Lightsail using the Micro plan, which provides 1~GB of memory, 1 core processor, and 40~GB of SSD storage~\cite{noauthor_select_nodate,noauthor_create_nodate-1}.
 Regarding authentication, the AWS deployment did not integrate with the university-managed Keycloak service, as that setup is specific to the UT HPC environment.
 

@@ -1,3 +1,4 @@
+%! suppress = MissingImport
 %! suppress = UnresolvedReference
 
 
@@ -17,7 +18,7 @@ In addition, parts of the technical stack and operational model had become outda
 The aim of this thesis is to modernize that cloud-hosted learning platform while preserving the educational purpose and core workflow of the environment.
 The redesign seeks to deliver a system that is more maintainable, portable, and operationally sustainable.
 To achieve this, the thesis introduces clearer architectural modularization, a provider-agnostic provisioning layer for user-specific Linux environments, dedicated scheduled jobs for periodic maintenance, a modernized authentication layer with support for single sign-on, and improved multilingual content management.
-Furthermore, the work adopts a reproducible deployment approach based on Helm and Terraform, and it evaluates the revised platform across the University of Tartu HPC Kubernetes environment, Microsoft Azure, and Amazon Web Services.
+Furthermore, the work adopts a reproducible deployment approach based on Helm\footnote{\url{https://helm.sh/}} and Terraform\footnote{\url{https://developer.hashicorp.com/terraform}}, and it evaluates the revised platform across the University of Tartu HPC\footnote{\url{https://hpc.ut.ee/}} Kubernetes environment, Microsoft Azure\footnote{\url{https://azure.microsoft.com/}}, and Amazon Web Services\footnote{\url{https://aws.amazon.com/}}.
 
 The thesis is structured as follows.
 Chapter~\ref{sec:background-and-previous-system} presents the educational and technical background, describes the two earlier iterations of the learning environment, and identifies the main limitations that motivated the thesis work.

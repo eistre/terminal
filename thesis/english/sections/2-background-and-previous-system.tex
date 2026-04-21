@@ -1,6 +1,5 @@
 %! suppress = MissingImport
 %! suppress = UnresolvedReference
-% TODO check footnotes
 
 
 \section{Background and Previous System} \label{sec:background-and-previous-system}
@@ -50,7 +49,7 @@ The reported outcome was successful overall, although minor issues were still ob
 Eistre's implementation therefore serves as the direct technical starting point for this thesis.
 
 Taken together, the two earlier theses define a clear development sequence.
-Halapuu established that browser-based Linux command-line learning was feasible in a real course setting, whereas Eistre established a cloud-hosted baseline suitable for sustained operational use.
+Halapuu established that browser-based Linux command-line learning was possible in a real course setting, whereas Eistre established a cloud-hosted baseline suitable for sustained operational use.
 This thesis builds on that baseline by addressing unresolved issues in cost efficiency, maintainability, modernization, and deployment reproducibility.
 
 \subsection{Architecture and Deployment of the Previous System} \label{subsec:architecture-and-deployment-of-the-previous-system}
@@ -59,7 +58,7 @@ The focus is on the application's internal architecture and Azure-based deployme
 
 \subsubsection{System Architecture} \label{subsubsec:system-architecture}
 The previous system was designed as a production-oriented web-based Linux command-line learning environment for cloud deployment and sustained course use~\cite{eistre_veebipohise_nodate}.
-Its implementation was largely rewritten in TypeScript using Node.js and the Nuxt 3 framework, which provided a structured basis for both the user interface and the server-side logic.
+Its implementation was largely rewritten in TypeScript\footnote{\url{https://www.typescriptlang.org/}} using Node.js\footnote{\url{https://nodejs.org/}} and the Nuxt 3 framework\footnote{\url{https://nuxt.com/}}, which provided a structured basis for both the user interface and the server-side logic.
 Figure~\ref{fig:baseline-system-architecture} illustrates the system's main components and the runtime interactions between them.
 
 \begin{figure}[ht]
@@ -70,9 +69,9 @@ Figure~\ref{fig:baseline-system-architecture} illustrates the system's main comp
 \end{figure}
 
 The architecture is organized around four main components.
-These are a client-side user interface, a server-side backend API (application programming interface), a MySQL database, and a Kubernetes cluster that provisions isolated Linux environments~\cite{eistre_veebipohise_nodate}.
+These are a client-side user interface, a server-side backend API (application programming interface), a MySQL\footnote{\url{https://www.mysql.com/}} database, and a Kubernetes\footnote{\url{https://kubernetes.io/}} cluster that provisions isolated Linux environments~\cite{eistre_veebipohise_nodate}.
 At runtime, the browser-based terminal communicates with the API layer, which brokers interaction with a user-specific Linux container in Kubernetes and records user progress and task state in MySQL\@.
-The client-side interface is developed using Vue.js with Nuxt and supports user registration and authentication, topic navigation, task solving, administrative views for managing topics and tasks, and both English and Estonian.
+The client-side interface is developed using Vue.js\footnote{\url{https://vuejs.org/}} with Nuxt and supports user registration and authentication, topic navigation, task solving, administrative views for managing topics and tasks, and both English and Estonian.
 
 The server-side application acts as the central coordination layer of the platform.
 It manages authentication and sessions, exposes API endpoints consumed by the user interface, and orchestrates operations that require persistence or interaction with the Linux execution environment.
@@ -87,7 +86,7 @@ The database access layer is implemented using an Object-Relational Mapping (ORM
 The learning environment uses containerization to provide isolated Linux execution environments and employs Kubernetes to manage the lifecycle of per-user containers (pods)~\cite{eistre_veebipohise_nodate}.
 When a user initiates a terminal session, the system allocates a dedicated Kubernetes namespace and provisions an isolated Linux environment for that user, enabling repeatable task execution while preventing cross-user interference.
 Since these environments consume compute resources, the architecture incorporates automated cleanup procedures that terminate inactive user environments after a configured idle period, reclaiming resources and keeping the cluster load manageable during course usage.
-The backend interacts with the cluster programmatically through the Kubernetes JavaScript Client library~\cite{eistre_veebipohise_nodate}.
+The backend interacts with the cluster programmatically through the Kubernetes JavaScript Client library\footnote{\url{https://github.com/kubernetes-client/javascript}}~\cite{eistre_veebipohise_nodate}.
 
 At an architectural level, the previous system already satisfied the core functional requirements of the learning environment.
 For that reason, this thesis treats it as a system to be modernized and refined rather than replaced in its entirety.
@@ -95,7 +94,7 @@ For that reason, this thesis treats it as a system to be modernized and refined 
 \subsubsection{Cloud Deployment on Azure} \label{subsubsec:cloud-deployment-on-azure}
 The previous system was deployed on Microsoft Azure~\cite{eistre_veebipohise_nodate}.
 Azure was chosen in part because it offers educational credits to students, which made it a practical option for an academic project.
-The application was containerized and deployed using Azure's managed container and Kubernetes offerings, specifically Azure Container Apps (ACA) and Azure Kubernetes Service (AKS)~\cite{eistre_veebipohise_nodate}.
+The application was containerized and deployed using Azure's managed container and Kubernetes offerings, specifically Azure Container Apps (ACA)\footnote{\url{https://azure.microsoft.com/en-us/products/container-apps}} and Azure Kubernetes Service (AKS)\footnote{\url{https://azure.microsoft.com/en-us/products/kubernetes-service}}~\cite{eistre_veebipohise_nodate}.
 Figure~\ref{fig:azure-deployment-overview} provides a deployment-level overview of the baseline environment and the Azure services created for it.
 
 \begin{figure}[ht]
@@ -122,8 +121,8 @@ When a user initiates a session while the cluster is stopped, the platform trigg
 When the system is idle for a configured period, the cluster can be stopped to avoid paying for unused compute capacity~\cite{eistre_veebipohise_nodate}.
 
 In addition to compute and container orchestration, the deployment relied on several supporting Azure services~\cite{eistre_veebipohise_nodate}.
-These included Azure Communication Services for email delivery and account verification, a storage account for persisting private key pairs across restarts, and a MySQL-backed database for persisting users, topics, tasks, and progress.
-The database was initially hosted on PlanetScale and later migrated to Azure's managed MySQL offering after PlanetScale discontinued its free tier~\cite{eistre_veebipohise_nodate}.
+These included Azure Communication Services\footnote{\url{https://azure.microsoft.com/en-us/products/communication-services}} for email delivery and account verification, a storage account for persisting private key pairs across restarts, and a MySQL-backed database for persisting users, topics, tasks, and progress~\cite{eistre_veebipohise_nodate}.
+The database was initially hosted on PlanetScale\footnote{\url{https://planetscale.com/}} and later migrated to Azure's managed MySQL offering after PlanetScale discontinued its free tier~\cite{eistre_veebipohise_nodate}.
 Figure~\ref{fig:azure-deployment-overview} summarizes the high-level dependencies between these services and the end-to-end flow from the client to the provisioned environment.
 
 This deployment model established a functional cloud-based operating environment, but it also introduced a distinct cost and operational profile that is central to the modernization and cost-optimization goals of this thesis.
@@ -164,7 +163,7 @@ This cost profile therefore defines the central optimization problem addressed i
 The task is to reduce the always-on footprint of the platform while preserving per-user interactive Linux environments for irregular classroom usage.
 
 \subsubsection{Deprecated Authentication Library} \label{subsubsec:deprecated-authentication-library}
-The previous version of the learning environment relied on the Lucia authentication library to implement core authentication functionality, including user registration, login, and session management~\cite{eistre_veebipohise_nodate}.
+The previous version of the learning environment relied on the Lucia\footnote{\url{https://github.com/lucia-auth/lucia}} authentication library to implement core authentication functionality, including user registration, login, and session management~\cite{eistre_veebipohise_nodate}.
 According to the Lucia maintainer, the project would be deprecated by March 2025 and would transition away from being a maintained, general-purpose authentication library~\cite{noauthor_fresh_nodate}.
 By March 2025, Lucia had been repositioned primarily as an educational resource for learning about authentication implementation rather than as a long-term dependency for production systems~\cite{noauthor_fresh_nodate}.
 This shift indicates a dependency lifecycle risk in the platform's authentication layer.
