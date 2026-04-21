@@ -10,8 +10,8 @@ These changes are the modularization of the codebase, the introduction of a prov
 Together, these changes improved maintainability, portability, and operational efficiency while preserving the core learning workflow of the platform.
 
 \subsection{Development Process and AI-Assisted Refactoring} \label{subsec:development-process-and-ai-assisted-refactoring}
-The implementation work in this thesis required coordinated refactoring across multiple layers of the baseline system while keeping the codebase operational throughout the change.
-To support this process, the author used coding assistants based on large language models as interactive tools for refactor planning, scaffolding, and iterative debugging.
+The implementation work in this thesis required coordinated refactoring across multiple layers of the baseline system while keeping the codebase operational throughout the process.
+To support this work, the author used coding assistants based on large language models as interactive tools for refactoring planning, scaffolding, and iterative debugging.
 However, final responsibility for design decisions, integration, and verification remained with the author.
 
 \subsubsection{AI-Assisted Programming} \label{subsubsec:ai-assisted-programming}
@@ -20,7 +20,7 @@ Prior studies also suggest that these tools can both speed up well-understood su
 In this thesis, AI assistance was used as a supporting approach for planning, scaffolding, boilerplate generation, and debugging.
 
 \subsubsection{Refactoring Workflow} \label{subsubsec:refactoring-workflow}
-AI assistance was used primarily via OpenCode\footnote{\url{https://opencode.ai/}}, a command-line AI coding tool.
+AI assistance was used primarily through OpenCode\footnote{\url{https://opencode.ai/}}, a command-line AI coding tool.
 Access to the underlying models was provided through GitHub Copilot via the GitHub Education student benefit~\cite{noauthor_supported_nodate,noauthor_students_2026}.
 The primary models used were Claude Sonnet 4.5~\cite{anthropic_claude_sonnet_4_5_2025} and GPT-5.2-Codex~\cite{openai_gpt_5_2_codex_2025}, selected based on their availability and suitability for coding and debugging tasks.
 
@@ -54,7 +54,7 @@ Focus on the following:
 \end{minted}
 
 Given the risk of integrating incorrect or overly complex generated changes, explicit validation steps were applied throughout the process.
-Large refactorings were divided into smaller, reversible steps, and changes were accepted only after passing type checks, linting, and manual verification.
+Large refactorings were divided into smaller, reversible steps, and changes were accepted only after they had passed type checks, linting, and manual verification.
 Additionally, security- and cost-sensitive areas received stricter review.
 
 \subsection{Architecture Overview} \label{subsec:architecture-overview}
