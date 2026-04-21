@@ -164,7 +164,7 @@ Likewise, \texttt{ensureContainerExists(userId)} guarantees that the system can 
 Provider implementations therefore encapsulate the relevant state transitions, such as creating a missing container, waiting while a container is starting, and refreshing expiration metadata when a container is already running.
 
 Currently, three execution backends are supported.
-These are Kubernetes, Azure Container Instances (ACI)\footnote{\url{https://azure.microsoft.com/en-us/products/container-instances}}, and Amazon ECS\footnote{\url{https://aws.amazon.com/ecs/}} on AWS Fargate\footnote{\url{https://aws.amazon.com/fargate/}}.
+These are Kubernetes, Azure Container Instances\footnote{\url{https://azure.microsoft.com/en-us/products/container-instances}} (ACI), and Amazon Elastic Container Service\footnote{\url{https://aws.amazon.com/ecs/}} (ECS) on AWS Fargate\footnote{\url{https://aws.amazon.com/fargate/}}.
 All implementations follow the same lifecycle model by attaching common metadata to managed resources, such as the user identifier and expiration time, enabling consistent enumeration and reclamation of inactive containers.
 The deployment setup and provider-specific configuration are described in chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
 
