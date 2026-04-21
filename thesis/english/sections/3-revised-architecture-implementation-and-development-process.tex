@@ -11,18 +11,19 @@ Together, these changes improved maintainability, portability, and operational e
 
 \subsection{Development Process and AI Assisted Refactoring} \label{subsec:development-process-and-ai-assisted-refactoring}
 The implementation work in this thesis required coordinated refactoring across multiple layers of the baseline system while keeping the codebase operational throughout the change.
-To speed up this process, the author used large language model (LLM) based coding assistants as interactive tools for refactor planning, scaffolding, and iterative debugging.
+To speed up this process, the author used coding assistants based on large language models (LLMs) as interactive tools for refactor planning, scaffolding, and iterative debugging.
 However, final responsibility for design decisions, integration, and verification remained with the author.
 
 \subsubsection{AI Assisted Development} \label{subsubsec:ai-assisted-development}
-Recent software engineering research describes LLM assisted development as a conversational or pair-programming style workflow, where developers use natural-language interaction to accelerate well-understood subtasks and explore unfamiliar implementation options~\cite{ross_programmers_2023,barke_grounded_2023}.
+Recent software engineering research describes LLM-assisted development as a conversational workflow resembling pair programming, where developers use natural language to speed up well-understood subtasks and explore implementation options~\cite{ross_programmers_2023,barke_grounded_2023}.
 Studies of professional use similarly report that these tools are often valued for reducing repetitive effort, such as typing, syntax recall, and online searching, but that their output still depends heavily on the surrounding context and requires critical human review before integration~\cite{davila_industry_2024,barke_grounded_2023}.
 
 In this thesis, AI-assisted coding was used as a support method for planning, scaffolding, boilerplate generation, and debugging.
 Architectural decisions, integration, and final acceptance of changes remained the responsibility of the author.
 
 \subsubsection{Refactoring Workflow} \label{subsubsec:refactoring-workflow}
-AI assistance was primarily used through OpenCode\footnote{\url{https://opencode.ai/}}, a command-line AI coding tool, whereas access to the underlying models was obtained through GitHub Copilot using the GitHub Education student benefit~\cite{noauthor_supported_nodate,noauthor_students_2026}.
+AI assistance was primarily used through OpenCode\footnote{\url{https://opencode.ai/}}, a command-line AI coding tool.
+Access to the underlying models was obtained through GitHub Copilot using the GitHub Education student benefit~\cite{noauthor_supported_nodate,noauthor_students_2026}.
 The primary models used were Claude Sonnet 4.5~\cite{anthropic_claude_sonnet_4_5_2025} and GPT-5.2-Codex~\cite{openai_gpt_5_2_codex_2025}, selected based on availability and suitability for coding and debugging tasks.
 
 Most of the significant changes, such as the container provisioning abstraction and the localization redesign, followed a consistent workflow:
@@ -58,7 +59,7 @@ Given the risk of integrating incorrect or overly complex generated changes, exp
 Large refactors were divided into smaller, reversible steps.
 Changes were accepted only after passing type checks, linting, and manual verification.
 Additionally, security- and cost-sensitive areas received stricter review.
-These measures align with prior work on AI programming assistants, which emphasizes treating generated code as draft material that still requires contextualization, review, and validation before it is accepted into a production codebase~\cite{barke_grounded_2023,davila_industry_2024}.
+These measures align with prior work on AI programming assistants, which emphasizes treating generated code as draft material that still requires contextualization, review, and validation before it is integrated into the codebase~\cite{barke_grounded_2023,davila_industry_2024}.
 
 \subsection{Architecture Overview} \label{subsec:architecture-overview}
 The revised system architecture separates the interactive learning workflow from infrastructure-specific concerns and periodic maintenance.
