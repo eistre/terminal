@@ -15,9 +15,8 @@ To speed up this process, the author used large language model (LLM) based codin
 However, final responsibility for design decisions, integration, and verification remained with the author.
 
 \subsubsection{AI Assisted Development} \label{subsubsec:ai-assisted-development}
-% TODO perhaps use some other citations about AI-assisted coding, not papers about vibe coding
-Recent software engineering literature describes large language model (LLM) assisted development as a more conversational workflow, where developers describe goals in natural language and use AI tools to draft implementation artifacts~\cite{beaulieu_vibe_2025,de_silva_generative_2025}.
-The same literature also emphasizes that effective use of these tools depends on human review, because generated code may remain incorrect or poorly structured and may introduce maintainability, security, or performance problems if accepted uncritically~\cite{de_silva_generative_2025,malamas_toward_2025}.
+Recent software engineering research describes LLM assisted development as a conversational or pair-programming style workflow, where developers use natural-language interaction to accelerate well-understood subtasks and explore unfamiliar implementation options~\cite{ross_programmers_2023,barke_grounded_2023}.
+Studies of professional use similarly report that these tools are often valued for reducing repetitive effort, such as typing, syntax recall, and online searching, but that their output still depends heavily on the surrounding context and requires critical human review before integration~\cite{davila_industry_2024,barke_grounded_2023}.
 
 In this thesis, AI-assisted coding was used as a support method for planning, scaffolding, boilerplate generation, and debugging.
 Architectural decisions, integration, and final acceptance of changes remained the responsibility of the author.
@@ -59,7 +58,7 @@ Given the risk of integrating incorrect or overly complex generated changes, exp
 Large refactors were divided into smaller, reversible steps.
 Changes were accepted only after passing type checks, linting, and manual verification.
 Additionally, security- and cost-sensitive areas received stricter review.
-These measures align with De Silva et al.~\cite{de_silva_generative_2025} and Malamas et al.~\cite{malamas_toward_2025}, who emphasize that LLM-driven iteration still requires conventional engineering rigor to prevent issues related to correctness and maintainability.
+These measures align with prior work on AI programming assistants, which emphasizes treating generated code as draft material that still requires contextualization, review, and validation before it is accepted into a production codebase~\cite{barke_grounded_2023,davila_industry_2024}.
 
 \subsection{Architecture Overview} \label{subsec:architecture-overview}
 The revised system architecture separates the interactive learning workflow from infrastructure-specific concerns and periodic maintenance.
