@@ -9,7 +9,7 @@ Building upon the baseline system described in chapter~\ref{sec:background-and-p
 These changes are the modularization of the codebase, the introduction of a provider-agnostic provisioning layer, the separation of cleanup jobs from the main application, the redesign of authentication and single sign-on support, and the redesign of multilingual content management.
 Together, these changes improved maintainability, portability, and operational efficiency while preserving the core learning workflow of the platform.
 
-\subsection{Development Process and AI Assisted Refactoring} \label{subsec:development-process-and-ai-assisted-refactoring}
+\subsection{Development Process and AI-Assisted Refactoring} \label{subsec:development-process-and-ai-assisted-refactoring}
 The implementation work in this thesis required coordinated refactoring across multiple layers of the baseline system while keeping the codebase operational throughout the change.
 To speed up this process, the author used coding assistants based on large language models (LLMs) as interactive tools for refactor planning, scaffolding, and iterative debugging.
 However, final responsibility for design decisions, integration, and verification remained with the author.
@@ -18,21 +18,21 @@ However, final responsibility for design decisions, integration, and verificatio
 Recent software engineering research describes LLM-assisted development as an interactive workflow in which developers use natural language to speed up well-understood subtasks and explore implementation options~\cite{ross_programmers_2023,barke_grounded_2023}.
 Studies of professional use also report that these tools are valued for reducing typing effort, syntax recall, and online searching, but that their output depends strongly on context and requires careful human review and validation before integration~\cite{davila_industry_2024,barke_grounded_2023}.
 
-In this thesis, AI-assisted coding was used as a support method for planning, scaffolding, boilerplate generation, and debugging.
-Architectural decisions, integration, and final acceptance of changes remained the responsibility of the author.
+In this thesis, AI-assisted development was used as a supporting method for planning, scaffolding, boilerplate generation, and debugging.
+Architectural decisions, integration, and the final acceptance of changes remained the responsibility of the author.
 
 \subsubsection{Refactoring Workflow} \label{subsubsec:refactoring-workflow}
-AI assistance was primarily used through OpenCode\footnote{\url{https://opencode.ai/}}, a command-line AI coding tool.
-Access to the underlying models was obtained through GitHub Copilot using the GitHub Education student benefit~\cite{noauthor_supported_nodate,noauthor_students_2026}.
-The primary models used were Claude Sonnet 4.5~\cite{anthropic_claude_sonnet_4_5_2025} and GPT-5.2-Codex~\cite{openai_gpt_5_2_codex_2025}, selected based on availability and suitability for coding and debugging tasks.
+AI assistance was used primarily through OpenCode\footnote{\url{https://opencode.ai/}}, a command-line AI coding tool.
+Access to the underlying models was provided through GitHub Copilot via the GitHub Education student benefit~\cite{noauthor_supported_nodate,noauthor_students_2026}.
+The primary models used were Claude Sonnet 4.5~\cite{anthropic_claude_sonnet_4_5_2025} and GPT-5.2-Codex~\cite{openai_gpt_5_2_codex_2025}, selected based on their availability and suitability for coding and debugging tasks.
 
-Most of the significant changes, such as the container provisioning abstraction and the localization redesign, followed a consistent workflow:
+Several major changes, such as the container provisioning abstraction and the localization redesign, followed a consistent workflow:
 
 \begin{enumerate}
-  \item Scope and constraint definition: define a concrete implementation goal together with technical constraints and acceptance conditions;
+  \item Scope and constraint definition: define a concrete implementation goal together with technical constraints and acceptance criteria;
   \item Prompt-driven planning and design exploration: ask the assistant to analyze the existing code and propose a development plan;
-  \item Plan iteration: refine the proposed approach through discussion until the intended change scope is clear;
-  \item Scaffold and draft code changes: generate boilerplate and first-pass implementations to reduce repetitive manual work;
+  \item Plan iteration: refine the proposed approach through discussion until the intended scope of the change is clear;
+  \item Scaffolding and draft code generation: generate boilerplate and first-pass implementations to reduce repetitive manual work;
   \item Review and integration: inspect, simplify, and adapt the generated output before integrating it into the codebase;
   \item Verification and iteration: validate the result through type checking, linting, and manual testing, then use concrete failures as input for follow-up fixes.
 \end{enumerate}
@@ -42,11 +42,11 @@ One example prompt used for refactoring is shown below:
 \begin{minted}{text}
 Analyze the existing Kubernetes-specific runtime administration
 and provisioning logic in this codebase and propose a refactoring plan
-for restructuring it into a modular provisioner layer.
+to restructure it into a modular provisioner layer.
 
 Focus on the following:
 - extract an abstract container provisioning interface from the current
-  Kubernetes specific pod and environment administration logic;
+  Kubernetes-specific pod and environment administration logic;
 - define a Kubernetes implementation behind that interface;
 - follow the new modular structure used in the repository,
   placing the provisioner package inside the `packages/` directory;
@@ -56,7 +56,7 @@ Focus on the following:
 \end{minted}
 
 Given the risk of integrating incorrect or overly complex generated changes, explicit validation steps were applied.
-Large refactors were divided into smaller, reversible steps.
+Large refactorings were divided into smaller, reversible steps.
 Changes were accepted only after passing type checks, linting, and manual verification.
 Additionally, security- and cost-sensitive areas received stricter review.
 These measures align with prior work on AI programming assistants, which emphasizes treating generated code as draft material that still requires contextualization, review, and validation before it is integrated into the codebase~\cite{barke_grounded_2023,davila_industry_2024}.
