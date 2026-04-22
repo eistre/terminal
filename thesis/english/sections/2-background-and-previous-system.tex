@@ -139,7 +139,7 @@ In July 2025, the deployment incurred a total monthly expense of €52.88.
 The majority of these costs were attributed to fixed, always-on resources, such as the Azure Database for MySQL (€26.90), the AKS load balancer (€13.62), and Azure Container Apps hosting the application (€8.92).
 Consequently, maintaining the platform's readiness for use resulted in a baseline expenditure exceeding €50 per month, even with minimal or no user activity.
 
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure3-jul2025}
   \caption{Azure cost breakdown of the baseline deployment for July 2025.}
@@ -150,7 +150,7 @@ Figure~\ref{fig:azure-cost-september-2025} presents the cost breakdown for Septe
 In addition to the fixed components, such as the database, load balancer, and container app hosting, a significant portion of the cost came from AKS-related virtual machine compute (€18.45), increased storage (€14.26), and other supporting services.
 This suggests that classroom-scale usage results in additional variable costs beyond the baseline, potentially elevating the overall monthly expense to €100 or more when the cluster is frequently activated and supports concurrent users.
 
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure4-sep2025}
   \caption{Azure cost breakdown of the baseline deployment for September 2025.}
@@ -183,7 +183,7 @@ These risks are particularly relevant for framework-level dependencies that form
 The baseline system was developed using Nuxt 3~\cite{eistre_veebipohise_nodate}.
 At the time of writing, the Nuxt roadmap also includes a newer major release line, Nuxt 4~\cite{noauthor_roadmap_nodate}.
 In addition to lifecycle considerations, older framework versions may contain publicly disclosed vulnerabilities.
-For instance, CVE-2025-27415 identifies a cache-poisoning issue affecting Nuxt versions prior to 3.16.0 in specific CDN (content delivery network) configurations, which was fixed in Nuxt 3.16.0~\cite{noauthor_nvd_nodate}.
+For instance, CVE-2025-27415 identifies a cache-poisoning issue affecting Nuxt versions prior to 3.16.0 in specific CDN (content delivery network) configurations~\cite{noauthor_nvd_nodate}.
 This example illustrates that dependency versions can directly influence the security and reliability of the system.
 
 Taken together, these findings indicate that dependency modernization is a necessary part of maintaining the system's security posture and long-term compatibility.

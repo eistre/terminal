@@ -81,7 +81,7 @@ These included the application Deployment, the public-facing Service and Ingress
 The deployment remained fully contained within the designated namespace, while public access was provided through the UT HPC ingress infrastructure~\cite{noauthor_ingress_nodate}.
 Figure~\ref{fig:ut-hpc-deployment-overview} presents the deployment of the learning environment in UT HPC, showing the namespace-scoped application components, ingress path, database layer, and per-user containers.
 
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure8-university-deployment}
   \caption{Deployment architecture of the learning environment in UT HPC.}
@@ -131,7 +131,7 @@ In the resulting deployment, the revised Azure setup was centered around Azure C
 In this environment, the main Nuxt application ran as a containerized web workload configured with 0.5 CPU and 1~GiB of memory, while the database cleanup and provisioner cleanup functions ran as separate scheduled jobs, each configured with 0.25 CPU and 0.5~GiB of memory.
 This matches the architectural separation described in subchapter~\ref{subsec:architecture-overview}, where periodic maintenance was moved out of the main application process.
 
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure9-azure-deployment}
   \caption{Deployment architecture of the learning environment in Microsoft Azure.}
@@ -178,7 +178,7 @@ The main Nuxt web application was deployed to the Amazon Lightsail\footnote{\url
 An alternative considered for the main web application was an ECS service behind an Application Load Balancer\footnote{\url{https://aws.amazon.com/elasticloadbalancing/application-load-balancer/}}~\cite{noauthor_use_nodate-1}.
 Compared with the selected Lightsail container service setup, that design would introduce separate load-balancing infrastructure and a higher always-on cost baseline, so Lightsail container services were chosen as the simpler and more cost-effective option for the continuously running web layer~\cite{noauthor_elastic_nodate,noauthor_amazon_nodate}.
 
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure10-aws-deployment}
   \caption{Deployment architecture of the learning environment in Amazon Web Services.}
