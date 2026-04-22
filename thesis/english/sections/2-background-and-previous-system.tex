@@ -4,13 +4,13 @@
 
 \section{Background and Previous System} \label{sec:background-and-previous-system}
 This chapter establishes the educational and technical baseline for the thesis.
-It first motivates the educational relevance of browser-based Linux command-line practice and situates the work within two earlier iterations of the learning environment developed at the University of Tartu.
+It first motivates the educational relevance of web-based Linux command-line practice and situates the work within two earlier iterations of the learning environment developed at the University of Tartu.
 It then outlines the architecture and Azure deployment model of the previous system and identifies the main unresolved limitations that define the modernization context for this work.
 
 \subsection{Motivation and Prior Work} \label{subsec:motivation-and-prior-work}
 Linux command-line knowledge remains important in many computing roles, particularly in system administration, software development, and automation.
 For that reason, hands-on command-line practice remains a relevant educational objective.
-At the University of Tartu, earlier development work examined how such practice could be supported through a browser-based environment, first by establishing feasibility and later by turning the same idea into a more robust cloud-hosted system for sustained course use.
+At the University of Tartu, earlier development work examined how such practice could be supported through a web-based environment, first by establishing feasibility and later by turning the same idea into a more robust cloud-hosted system for sustained course use.
 
 \subsubsection{The Importance of the Linux Command Line} \label{subsubsec:the-importance-of-the-linux-command-line}
 Proficiency in command-line operations remains valuable because Linux-based systems are widely used in modern computing infrastructure and are often administered through terminal-centric workflows rather than graphical interfaces.
@@ -25,17 +25,17 @@ Likewise, Bailey and Zilles~\cite{bailey_uassign_2019} treat terminal skills as 
 
 At the University of Tartu, Linux and its command line are treated as core topics in systems-oriented teaching.
 For example, Linux command-line work plays a central role in the ``Operating Systems'' and ``Computer Security'' courses.
-This instructional need motivated the development of a browser-based learning environment in two main iterations.
+This instructional need motivated the development of a web-based learning environment in two main iterations.
 The first was an initial proof-of-concept implementation described by Halapuu~\cite{halapuu_eestikeelse_nodate}, and the second was a cloud-hosted implementation presented in Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate}.
 Together, these iterations establish both the educational relevance of the environment and the direct technical lineage on which the present thesis builds.
 
 \subsubsection{Initial Proof of Concept} \label{subsubsec:initial-proof-of-concept}
-Halapuu's thesis~\cite{halapuu_eestikeelse_nodate} introduced the first browser-based iteration of the Linux command-line learning environment as a proof of concept.
+Halapuu's thesis~\cite{halapuu_eestikeelse_nodate} introduced the first web-based iteration of the Linux command-line learning environment as a proof of concept.
 The prototype provided students with a web terminal connected to an isolated Linux environment, enabling interactive command execution and task-based learning directly in the browser.
 It also included an automatic task-checking approach based on observable outcomes such as command output and filesystem changes, allowing students to receive immediate feedback and progress through tasks without waiting for manual review.
 
 The prototype was deployed inside the University's internal network and run on the supervisor's university laptop~\cite{halapuu_eestikeelse_nodate}.
-It was tested in the context of the ``Computer Security'' course with over one hundred participants, demonstrating that a browser-based command-line environment was possible in real course use~\cite{halapuu_eestikeelse_nodate}.
+It was tested in the context of the ``Computer Security'' course with over one hundred participants, demonstrating that a web-based command-line environment was possible in real course use~\cite{halapuu_eestikeelse_nodate}.
 At the same time, the deployment model and overall implementation left important concerns related to stability, security, and maintainability unresolved.
 These limitations were consistent with an early feasibility-focused implementation and helped define the need for a more production-oriented successor.
 
@@ -49,7 +49,7 @@ The reported outcome was successful overall, although minor issues were still ob
 Eistre's implementation therefore serves as the direct technical starting point for this thesis.
 
 Taken together, the two earlier theses define a clear development sequence.
-Halapuu established that browser-based Linux command-line learning was possible in a real course setting, whereas Eistre established a cloud-hosted baseline suitable for sustained operational use.
+Halapuu established that web-based Linux command-line learning was possible in a real course setting, whereas Eistre established a cloud-hosted baseline suitable for sustained operational use.
 This thesis builds on that baseline by addressing unresolved issues in maintainability, modernization, deployment reproducibility, and cost efficiency.
 
 \subsection{Architecture and Deployment of the Previous System} \label{subsec:architecture-and-deployment-of-the-previous-system}
@@ -217,6 +217,6 @@ Additionally, Bali and Walia~\cite{bali_enhancing_2023} note that IaC emerged to
 Together, these perspectives indicate that deployment automation is relevant here not as a generic best practice but as a direct response to reproducibility and transferability problems in the baseline system.
 In this thesis, Infrastructure as Code therefore functions as a modernization concern in deployment practice as well as in software implementation.
 
-Taken together, the previous system established a technically functional and educationally validated foundation for browser-based Linux command-line learning.
+Taken together, the previous system established a technically functional and educationally validated foundation for web-based Linux command-line learning.
 However, the evidence presented in this chapter also indicates that its cloud deployment model remained suboptimal in cost profile, maintainability, deployment reproducibility, and some aspects of operational robustness.
 These limitations define the modernization context of this thesis and provide the rationale for the redesign and implementation choices discussed in the following chapters.
