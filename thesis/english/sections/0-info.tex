@@ -4,12 +4,24 @@
 % English information
 \begin{info}
 \begin{abstract}
-Write here the abstract of your work. The abstract could provide a brief introduction to the topic but should, in the majority, cover Your thesis work. When reading the abstract, it should become clear what can be read about in the rest of Your thesis. Write about the purpose of the thesis, method(s), results, and findings of Your work. For a bachelor’s thesis, both the Estonian and English abstracts should fit into a single page. For a master’s thesis or when necessary, the Estonian and English sections of this page could be on separate pages. Come up with good keywords for Your work and find your CERCS code(s).
+Linux and its command line remain important in University of Tartu courses such as ``Operating Systems'' and ``Computer Security''.
+To support hands-on practice in these courses, earlier thesis work established a browser-based Linux command-line learning environment and later extended it into a cloud-hosted platform for continuous course use.
+These earlier iterations demonstrated the educational value of browser-based Linux practice, but they also revealed shortcomings in maintainability, deployment reproducibility, portability across environments, and cost efficiency.
+The aim of this thesis is to redesign the platform into a more sustainable and portable system while preserving its educational purpose and core workflow.
+
+The work introduces a revised architecture with clearer modular boundaries, a provider-agnostic provisioning layer for user-specific Linux environments, dedicated scheduled jobs for periodic maintenance, a modernized authentication layer with support for single sign-on, and improved multilingual content management.
+Deployment automation is implemented using Helm and Terraform in order to support reproducible deployments across different environments.
+The redesigned platform is deployed and evaluated in the University of Tartu HPC Kubernetes environment, Microsoft Azure, and Amazon Web Services.
+
+The evaluation conducted during real course use in February and March 2026 showed that the revised platform preserved the intended educational workflow, and students were able to access the environment, open interactive Linux sessions, and complete the relevant tasks without notable operational incidents.
+The results also show that the modernization improved the platform's maintainability, portability, and deployment reproducibility.
+Compared with the previous Azure deployment, the revised Azure architecture significantly reduced the baseline cost of keeping the platform available.
+Among the evaluated environments, the University of Tartu HPC deployment appears to be the most suitable long-term option when institutional support and integration are available, while Azure is the strongest public cloud alternative.
 \end{abstract}
 
-\keywords{}
+\keywords{Linux command line, web-based learning environment, software modernization, cost optimization, Kubernetes, Microsoft Azure, Amazon Web Services}
 
-\cercs{CODE Code name}
+\cercs{P175 Informatics, systems theory}
 % Codes can be found at: https://www.etis.ee/Portal/Classifiers/Index/26
 % Example: P170 Computer science, numerical analysis, systems, control
 % Example: P175 Informatics, systems theory
@@ -17,12 +29,24 @@ Write here the abstract of your work. The abstract could provide a brief introdu
 
 
 % Estonian information
-\begin{otherInfo}{estonian}{Lõputöö pealkiri eesti keeles}
+\begin{otherInfo}{estonian}{Veebipõhise Linuxi käsurea õppekeskkonna kaasajastamine ja kulude optimeerimine}
 \begin{abstract}
-Siia kirjutage oma lõputöö lühikokkuvõte. See võib lühidalt teemasse sisse juhatada, kuid peaks enamikus katma ära Teie lõputöö sisu. Seda lugedes peaks olema üheselt selge, millest Teie lõputöös lugeda võib. Kirjutage eesmärgi, meetodi, tulemuste ja järelduste kohta. Bakalaureusetöö korral võiksid nii eesti kui inglise keeles olevad lühikokkuvõtted mahtuda ühele leheküljele. Magistritöö või vajaduse korral võib eesti ja inglise keeles olevad osad kirjutada eraldi lehekülgedele. Mõelge oma tööd kirjeldavad võtmesõnad ning leidke CERCS kood(id).
+Tartu Ülikooli õppeainetes nagu ``Operatsioonisüsteemid'' ja ``Andmeturve'' on Linux ning selle käsurida jätkuvalt olulisel kohal.
+Nendes ainetes praktilise harjutamise toetamiseks loodi varasema lõputöö raames veebipõhine Linuxi käsurea õppekeskkond ning järgmises töös arendati see edasi pilves majutatavaks platvormiks pidevaks õppetööks.
+Need varasemad versioonid näitasid veebipõhise Linuxi harjutuskeskkonna õppeväärtust, kuid tõid esile ka puudusi hooldatavuse, juurutuste reprodutseeritavuse, eri keskkondade vahelise ülekantavuse ning kulutõhususe osas.
+Töö eesmärk on kujundada platvorm ümber jätkusuutlikumaks ja paremini ülekantavaks süsteemiks, säilitades selle õppeotstarbe ja põhilise töövoo.
+
+Töös luuakse uuendatud arhitektuur, milles on selgemad moodulipiirid, kasutajapõhiste Linuxi keskkondade jaoks teenusepakkujast sõltumatu provisioneerimiskiht, perioodiliste hooldustoimingute jaoks eraldatud ajastatud tööd, ühekordset sisselogimist toetav ajakohastatud autentimislahendus ning täiustatud mitmekeelse sisu haldus.
+Erinevates keskkondades reprodutseeritavate juurutuste toetamiseks kasutatakse juurutusautomaatikas Helmi ja Terraformi.
+Uuendatud platvorm juurutatakse ja hinnatakse Tartu Ülikooli HPC Kubernetes'e keskkonnas, Microsoft Azure'is ning Amazon Web Servicesis.
+
+2026. aasta veebruaris ja märtsis reaalses õppetöös läbi viidud hindamine näitas, et uuendatud platvorm säilitas kavandatud õppetöövoo ning tudengid said keskkonda sisse logida, avada interaktiivseid Linuxi sessioone ja lahendada ettenähtud ülesandeid ilma märkimisväärsete töökindlusprobleemideta.
+Tulemused näitavad ühtlasi, et kaasajastamine parandas platvormi hooldatavust, ülekantavust ja juurutuste reprodutseeritavust.
+Võrreldes varasema Azure'i juurutusega vähendas uuendatud Azure'i arhitektuur oluliselt platvormi pideva käigushoidmise baaskulu.
+Hinnatud keskkondadest näib Tartu Ülikooli HPC juurutus olevat sobivaim pikaajaliseks kasutuseks juhul, kui olemas on institutsionaalne tugi ja lõiming, samas kui Azure on tugevaim avaliku pilve alternatiiv.
 \end{abstract}
 
-\keywords{Kujundus, paigutus, mall}
+\keywords{Linuxi käsurida, veebipõhine õppekeskkond, tarkvara kaasajastamine, kulude optimeerimine, Kubernetes, Microsoft Azure, Amazon Web Services}
 
-\cercs{KOOD Koodi nimi eesti keeles}
+\cercs{P175 Informaatika, süsteemiteooria}
 \end{otherInfo}
