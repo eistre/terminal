@@ -1,73 +1,152 @@
 %! suppress = MissingImport
 
+
 \section*{Appendices} \label{sec:appendices} \addcontentsline{toc}{section}{Appendices}
 
 \appendix
 \refstepcounter{section}
+
+
+\section*{\thesection. Deployment Instructions} \label{app:deployment-instructions}
+\addcontentsline{toc}{subsection}{\protect\numberline{\thesection.}Deployment Instructions}
+This appendix provides brief deployment instructions for the application in the three target platforms discussed in chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
+Begin by cloning the repository and ensuring that the required deployment tool is installed, namely Helm\footnote{\url{https://helm.sh/docs/intro/install}} for Kubernetes and Terraform\footnote{\url{https://developer.hashicorp.com/terraform/install}} for Azure and AWS\@.
+
+\begin{minted}{bash}
+# Clone the repository
+git clone https://github.com/eistre/terminal.git
+
+# Change to the project directory
+cd terminal
+\end{minted}
+
+Environment-specific credentials, domains, secrets, and provider-side prerequisites must be prepared separately.
+The following sections provide instructions for each deployment target.
+
+\subsection*{1. UT HPC / Kubernetes}
+To deploy the application in Kubernetes, change to the \path{deploy/kubernetes/} directory.
+Fill in either \path{values-hpc.example.yaml} or \path{values-local.example.yaml}, based on whether the deployment is targeting the UT HPC cluster or another Kubernetes environment with the required values.
+This deployment target assumes that the Kubernetes namespace and UT HPC-related integrations have already been prepared as described in chapter~\ref{subsec:university-of-tartu-hpc}.
+
+\begin{minted}{bash}
+# Change to the Kubernetes deployment directory
+cd deploy/kubernetes
+
+# Apply the Helm chart using the appropriate values file
+helm upgrade --install --namespace <NAMESPACE_NAME> -f <VALUES_FILE> terminal .
+\end{minted}
+
+This command sequence installs the chart or updates an existing release using the environment-specific values file to the specified Kubernetes namespace.
+
+\subsection*{2. Microsoft Azure}
+To deploy the application in Microsoft Azure, change to the \path{deploy/azure/} directory.
+Copy \path{terraform.prod.tfvars.example} to \path{terraform.tfvars}, then fill in the required values.
+
+\begin{minted}{bash}
+# Change to the Azure deployment directory
+cd deploy/azure
+
+# Copy the example Terraform variables file to a new file
+cp terraform.prod.tfvars.example terraform.tfvars
+
+# Initialize the Terraform working directory
+terraform init
+
+# Apply the Terraform configuration using the variables file
+terraform apply -var-file=terraform.tfvars
+\end{minted}
+
+This command sequence initializes the Terraform working directory and applies the configuration for Azure.
+
+\subsection*{3. Amazon Web Services}
+To deploy the application in Amazon Web Services, change to the \path{deploy/aws/} directory.
+Copy \path{terraform.prod.tfvars.example} to \path{terraform.tfvars}, then fill in the required values.
+
+\begin{minted}{bash}
+# Change to the AWS deployment directory
+cd deploy/aws
+
+# Copy the example Terraform variables file to a new file
+cp terraform.prod.tfvars.example terraform.tfvars
+
+# Initialize the Terraform working directory
+terraform init
+
+# Apply the Terraform configuration using the variables file
+terraform apply -var-file=terraform.tfvars
+\end{minted}
+
+This command sequence initializes the Terraform working directory and applies the production configuration for AWS\@.
+
+\clearpage
+\refstepcounter{section}
+
+
 \section*{\thesection. AWS Cost Evidence} \label{app:aws-cost-evidence}
 \addcontentsline{toc}{subsection}{\protect\numberline{\thesection.}AWS Cost Evidence}
 This appendix contains the AWS Cost Explorer screenshots used to compile the AWS cost data discussed in subchapter~\ref{subsec:cost-comparison-of-the-three-deployment-environments}.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{figures/appendiceA-aws-feb2026}
-    \caption{AWS Cost Explorer breakdown for February 2026.}
-    \label{fig:appendix-aws-cost-february-2026}
+  \centering
+  \includegraphics[width=0.95\textwidth]{figures/appendiceA-aws-feb2026}
+  \caption{AWS Cost Explorer breakdown for February 2026.}
+  \label{fig:appendix-aws-cost-february-2026}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{figures/appendiceA-aws-mar2026}
-    \caption{AWS Cost Explorer breakdown for March 2026.}
-    \label{fig:appendix-aws-cost-march-2026}
+  \centering
+  \includegraphics[width=0.95\textwidth]{figures/appendiceA-aws-mar2026}
+  \caption{AWS Cost Explorer breakdown for March 2026.}
+  \label{fig:appendix-aws-cost-march-2026}
 \end{figure}
 
 \clearpage
-
 \refstepcounter{section}
+
+
 \section*{\thesection. UT HPC Monitoring Evidence} \label{app:uthpc-monitoring-evidence}
 \addcontentsline{toc}{subsection}{\protect\numberline{\thesection.}UT HPC Monitoring Evidence}
 This appendix contains the UT HPC monitoring screenshots used to compile the UT HPC cost estimate discussed in subchapter~\ref{subsec:cost-comparison-of-the-three-deployment-environments}.
 The material includes the pod CPU and memory views used to assess the persistent workloads and session containers during February 2026 and March 2026.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-web-feb2026}
-    \caption{UT HPC monitoring dashboard for the web deployment in February 2026.}
-    \label{fig:appendix-uthpc-web-february-2026}
+  \centering
+  \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-web-feb2026}
+  \caption{UT HPC monitoring dashboard for the web deployment in February 2026.}
+  \label{fig:appendix-uthpc-web-february-2026}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-mariadb-feb2026}
-    \caption{UT HPC monitoring dashboard for the MariaDB deployment in February 2026.}
-    \label{fig:appendix-uthpc-mariadb-february-2026}
+  \centering
+  \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-mariadb-feb2026}
+  \caption{UT HPC monitoring dashboard for the MariaDB deployment in February 2026.}
+  \label{fig:appendix-uthpc-mariadb-february-2026}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-session-feb2026}
-    \caption{UT HPC monitoring dashboard for session containers in February 2026.}
-    \label{fig:appendix-uthpc-session-february-2026}
+  \centering
+  \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-session-feb2026}
+  \caption{UT HPC monitoring dashboard for session containers in February 2026.}
+  \label{fig:appendix-uthpc-session-february-2026}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-web-mar2026}
-    \caption{UT HPC monitoring dashboard for the web deployment in March 2026.}
-    \label{fig:appendix-uthpc-web-march-2026}
+  \centering
+  \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-web-mar2026}
+  \caption{UT HPC monitoring dashboard for the web deployment in March 2026.}
+  \label{fig:appendix-uthpc-web-march-2026}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-mariadb-mar2026}
-    \caption{UT HPC monitoring dashboard for the MariaDB deployment in March 2026.}
-    \label{fig:appendix-uthpc-mariadb-march-2026}
+  \centering
+  \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-mariadb-mar2026}
+  \caption{UT HPC monitoring dashboard for the MariaDB deployment in March 2026.}
+  \label{fig:appendix-uthpc-mariadb-march-2026}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-session-mar2026}
-    \caption{UT HPC monitoring dashboard for session containers in March 2026.}
-    \label{fig:appendix-uthpc-session-march-2026}
+  \centering
+  \includegraphics[width=\textwidth]{figures/appendiceB-uthpc-session-mar2026}
+  \caption{UT HPC monitoring dashboard for session containers in March 2026.}
+  \label{fig:appendix-uthpc-session-march-2026}
 \end{figure}

@@ -16,7 +16,7 @@ However, final responsibility for design decisions, integration, and verificatio
 \subsubsection{AI-Assisted Programming} \label{subsubsec:ai-assisted-programming}
 Recent software engineering literature describes AI-assisted programming as an interactive process in which developers use natural-language prompts and follow-up interaction to obtain code-related assistance and refine responses over multiple iterations~\cite{ross_programmers_2023,barke_grounded_2023}.
 Prior studies also suggest that these tools can both speed up well-understood subtasks and support exploration of alternative solutions, but that their output still requires careful human review and validation before adoption~\cite{barke_grounded_2023}.
-In this thesis, AI assistance was used as a supporting approach for planning, scaffolding, boilerplate generation, and debugging.
+In this thesis, AI assistance was used as a supporting tool for planning, scaffolding, boilerplate generation, and debugging.
 
 \subsubsection{Refactoring Workflow} \label{subsubsec:refactoring-workflow}
 AI assistance was used primarily through OpenCode\footnote{\url{https://opencode.ai/}}, a command-line AI coding tool.
@@ -69,8 +69,8 @@ This design preserves the user-facing workflow while allowing the execution back
 
 Figure~\ref{fig:revised-architecture-overview} groups the system into four conceptual components.
 The first is the browser, responsible for rendering the web interface and hosting the interactive terminal.
-The second is the main application environment.
-It contains the primary Nuxt server and the scheduled maintenance jobs.
+The second is the application layer.
+It contains the primary Nuxt server together with the scheduled maintenance jobs.
 In this context, the Nuxt server provides both the Vue.js user interface and the API surface used by the frontend.
 The third component is the database, which retains the persistent application state required for continuity and administration, including user data, progress, and educational content.
 The fourth component is the container execution environment, which provides isolated Linux sessions for users during terminal-based exercises.
@@ -100,7 +100,7 @@ The \path{apps/} directory contains the runnable units that are deployed indepen
 The \path{packages/} directory contains reusable modules such as the provisioner, session, evaluator, database, mailer, and environment configuration packages.
 These modules encapsulate specific functionality behind stable interfaces, which allows the runnable applications to remain comparatively thin orchestration layers.
 
-This restructure also supports the architectural goal of decoupling maintenance from the main interactive learning workflow.
+This restructuring also supports the architectural goal of decoupling maintenance from the main interactive learning workflow.
 Both scheduled jobs in \path{apps/} reuse the same core modules in \path{packages/} as the main Nuxt application, but run as separate executables on a schedule.
 This avoids keeping the main application running indefinitely solely to perform cleanup and enables deployments where the interactive application can be scaled down during idle periods while maintenance continues to enforce lifecycle and retention policies.
 
@@ -233,8 +233,7 @@ Additionally, the uniqueness constraints on entity and locale combinations guara
 
 An additional benefit of this structure is that user progress is maintained independently of language.
 Task completion is recorded using stable task and topic identifiers rather than specific translation entries.
-Consequently, users can switch between supported interface locales without disrupting continuity, while still seeing the same logical exercise sequence in their chosen language.
-This enhances the robustness of the localization model compared to a duplication-based approach, where each language version would function as a separate exercise set.
+Consequently, users can switch between supported interface locales without disrupting continuity while still seeing the same logical exercise sequence in their chosen language.
 
 \subsubsection{Task Editor} \label{subsubsec:task-editor}
 To support the revised localization model, the administrative task editor was redesigned to manage both single-language and dual-language content entries.
@@ -243,6 +242,8 @@ If only one locale contains content, the editor functions in single-language mod
 If both Estonian and English titles are available, the editor transitions to dual-language mode.
 If neither locale is yet populated, the editor falls back to a default locale, allowing content creation to begin in a predictable way.
 Figure~\ref{fig:task-editor-single-language} presents the editor in single-language mode, where content is entered for only one locale.
+When bilingual content is required, the same editor supports both language variants within the same interface for the same underlying topic or task entity.
+This dual-language mode is shown in Figure~\ref{fig:task-editor-dual-language}.
 
 \begin{figure}[ht]
   \centering
@@ -251,9 +252,10 @@ Figure~\ref{fig:task-editor-single-language} presents the editor in single-langu
   \label{fig:task-editor-single-language}
 \end{figure}
 
-In the simpler case, the editor can be used to create or modify a topic or task in only one language.
-When bilingual content is required, the same editor supports both language variants within the same interface for the same underlying topic or task entity.
-Figure~\ref{fig:task-editor-dual-language} shows the dual-language mode, where both English and Estonian translations are edited within the same interface.
+The editor also provides lightweight completeness feedback through status indicators in the outline and action area.
+Tasks or topics with all required values present are marked with the indicator ``OK'', whereas entries with missing mandatory fields are marked as ``MISSING''.
+This allows administrators to identify incomplete translations or task definitions without opening every item individually, which is particularly useful when editing larger bilingual exercise sets.
+As a result, the redesign improves the editorial workflow by making it easier to maintain parity between language variants while also reducing duplication in content management.
 
 \begin{figure}[ht]
   \centering
@@ -261,11 +263,6 @@ Figure~\ref{fig:task-editor-dual-language} shows the dual-language mode, where b
   \caption{Task editor in dual-language mode with completeness indicators.}
   \label{fig:task-editor-dual-language}
 \end{figure}
-
-The editor also provides lightweight completeness feedback through status indicators in the outline and action area.
-Tasks or topics with all required values present are marked with the indicator ``OK'', whereas entries with missing mandatory fields are marked as ``MISSING''.
-This allows administrators to identify incomplete translations or task definitions without opening every item individually, which is particularly useful when editing larger bilingual exercise sets.
-As a result, the redesign improves the editorial workflow by making it easier to maintain parity between language variants while also reducing duplication in content management.
 
 Together, the improvements described in this chapter establish the revised implementation of the environment.
 The following chapter builds on this by describing the concrete deployment setups and infrastructure choices used to run the system across different environments.

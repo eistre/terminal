@@ -71,7 +71,7 @@ Figure~\ref{fig:baseline-system-architecture} illustrates the system's main comp
 The architecture is organized around four main components.
 These are a client-side user interface, a server-side backend API (application programming interface), a MySQL\footnote{\url{https://www.mysql.com/}} database, and a Kubernetes\footnote{\url{https://kubernetes.io/}} cluster that provisions isolated Linux environments~\cite{eistre_veebipohise_nodate}.
 At runtime, the browser-based terminal communicates with the API layer, which brokers interaction with a user-specific Linux container in Kubernetes and records user progress and task state in MySQL\@.
-The client-side interface is developed using Vue.js\footnote{\url{https://vuejs.org/}} with Nuxt and supports user registration and authentication, topic navigation, task solving, administrative views for managing topics and tasks, and usage in both English and Estonian.
+The client-side interface was developed using Vue.js\footnote{\url{https://vuejs.org/}} with Nuxt and supports user registration and authentication, topic navigation, task solving, administrative views for managing topics and tasks, and usage in both English and Estonian.
 
 The server-side application acts as the central coordination layer of the environment.
 It manages authentication and sessions, exposes API endpoints consumed by the user interface, and orchestrates operations that require persistence or interaction with the Linux execution environment.
@@ -81,9 +81,9 @@ This positions the backend as the primary integration point among the user inter
 
 Persistent state is maintained in a MySQL database, including user accounts, topics and their underlying tasks, and user progress~\cite{eistre_veebipohise_nodate}.
 Persisting these elements supports continuity across sessions and enables centralized management of task content without redeployment.
-The database access layer is implemented using an Object-Relational Mapping (ORM) layer, providing typed access to relational entities and simplifying the handling of relationships between users, topics, and tasks.
+The database access layer was implemented using an Object-Relational Mapping (ORM) layer, providing typed access to relational entities and simplifying the handling of relationships between users, topics, and tasks.
 
-The learning environment uses containerization to provide isolated Linux execution environments and employs Kubernetes to manage the lifecycle of per-user containers (pods)~\cite{eistre_veebipohise_nodate}.
+The learning environment used containerization to provide isolated Linux execution environments and employed Kubernetes to manage the lifecycle of per-user containers (pods)~\cite{eistre_veebipohise_nodate}.
 When a user initiates a terminal session, the system allocates a dedicated Kubernetes namespace and provisions an isolated Linux environment for that user, enabling repeatable task execution while preventing cross-user interference.
 Since these environments consume compute resources, the architecture incorporates automated cleanup procedures that terminate inactive user environments after a configured idle period, reclaiming resources and keeping the cluster load manageable during course usage.
 The backend interacts with the cluster programmatically through the Kubernetes JavaScript Client library\footnote{\url{https://github.com/kubernetes-client/javascript}}~\cite{eistre_veebipohise_nodate}.
@@ -174,7 +174,7 @@ In the context of this thesis, the issue is therefore not merely one library rep
 This subchapter thus exposes a maintainability and modernization problem rather than an isolated dependency change.
 
 \subsubsection{Outdated Dependencies} \label{subsubsec:outdated-dependencies}
-A further limitation of the baseline system is its reliance on dependencies that inevitably become outdated over time, creating both maintainability and security risks.
+A further limitation of the baseline system was its reliance on dependencies that inevitably become outdated over time, creating both maintainability and security risks.
 Prior research indicates that delayed library updates are common in web ecosystems and are linked to exposure to known vulnerabilities.
 Lauinger et al.~\cite{lauinger_thou_2017} discovered that a significant proportion of websites contain at least one JavaScript library version with a known vulnerability, with the time lag behind the latest release often measured in years.
 Furthermore, Pashchenko et al.~\cite{pashchenko_qualitative_2020} report that decisions regarding dependency updates frequently involve trade-offs between security, compatibility, and engineering effort, which can result in postponed updates even when the associated risks are recognized.
@@ -218,5 +218,5 @@ Together, these perspectives indicate that deployment automation is relevant her
 In this thesis, Infrastructure as Code therefore functions as a modernization concern in deployment practice as well as in software implementation.
 
 Taken together, the previous system established a technically functional and educationally validated foundation for web-based Linux command-line learning.
-However, the evidence presented in this chapter also indicates that its cloud deployment model remained suboptimal in cost profile, maintainability, deployment reproducibility, and some aspects of operational robustness.
+However, the evidence presented in this chapter also indicates that its cloud deployment model remained suboptimal with respect to its cost profile, maintainability, deployment reproducibility, and some aspects of operational robustness.
 These limitations define the modernization context of this thesis and provide the rationale for the redesign and implementation choices discussed in the following chapters.
