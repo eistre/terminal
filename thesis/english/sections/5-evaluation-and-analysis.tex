@@ -5,7 +5,7 @@
 
 \section{Evaluation and Discussion} \label{sec:evaluation-and-discussion}
 This chapter evaluates the revised Linux command-line learning environment in real course use and analyzes the results from two perspectives.
-The first is a cross-environment comparison among the University of Tartu HPC deployment, Microsoft Azure, and Amazon Web Services.
+The first is a cross-environment comparison among UT HPC, Microsoft Azure, and Amazon Web Services.
 The second is a comparison between the previous Azure deployment described in chapter~\ref{sec:background-and-previous-system} and the revised Azure deployment described in chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
 
 \subsection{Evaluation Setting} \label{subsec:evaluation-setting}
@@ -16,12 +16,12 @@ The observation period covered February 2026 and March 2026.
 
 February 2026 was the more intensive phase of the evaluation, as practical session 1 took place during that month and most of the activity related to it also occurred then.
 March 2026 served as a calmer follow-up period.
-At the start of the evaluation period, the practical session materials linked students to the University of Tartu HPC deployment and the Azure deployment.
+At the start of the evaluation period, the practical session materials linked students to the UT HPC and Azure deployments.
 After approximately one week, the Azure link was replaced with the AWS deployment so that the later part of the observation period covered the UT HPC and AWS variants instead.
 This arrangement ensured that at least some practical-session traffic reached all three deployment environments.
 
-The UT HPC deployment functioned as the primary environment throughout the evaluation period, whereas the Azure and AWS deployments served as secondary environments for comparison.
-This was mainly because the UT HPC variant was the university-hosted deployment and already supported the institutional access model used in the course.
+UT HPC functioned as the primary environment throughout the evaluation period, whereas the Azure and AWS deployments served as secondary environments for comparison.
+This was mainly because UT HPC was the university-hosted deployment and already supported the institutional access model used in the course.
 
 \subsection{Course Use} \label{subsec:results-of-course-use}
 During the evaluation period, the revised system supported the intended practical session workflow.
@@ -29,7 +29,7 @@ Students were able to access the browser-based learning environment, open intera
 No notable operational incidents were observed during the evaluation period\footnote{Based on private communication with thesis supervisor Alo Peets.}.
 
 Based on registered accounts, the UT HPC, Azure, and AWS deployments were used by 176, 25, and 12 users respectively during the evaluation period.
-These figures showed that the UT HPC deployment was the most widely used environment.
+These figures showed that UT HPC was the most widely used environment.
 That was consistent with its role as the primary environment linked in the course materials and with its support for the institutional access model.
 The more relevant differences between the deployment environments concerned their operational model and cost structure, which are analyzed in the following subchapters.
 
@@ -88,7 +88,7 @@ For AWS, the comparison also includes the standard monthly price of the Lightsai
 This adjustment was made because the database bundle was covered by a temporary three-month free-tier offer for new accounts~\cite{noauthor_select_nodate,noauthor_amazon_nodate}.
 Also, including the standard bundle price provides a more accurate representation of the recurring cost after the temporary offer ends.
 
-At the time of this thesis, the UT HPC environment did not yet provide a per-namespace Kubernetes cost reporting tool\footnote{Based on private communication with UT HPC support.}
+At the time of this thesis, UT HPC did not yet provide a per-namespace Kubernetes cost reporting tool\footnote{Based on private communication with UT HPC support.}
 For that reason, the UT HPC cost data had to be estimated manually using the UT HPC pricing calculator~\cite{center_calculate_nodate} together with the monitoring dashboard described in chapter~\ref{subsubsec:access-and-namespace-provisioning}.
 According to the UT HPC pricing model, Kubernetes resources are billed based on the greater of actual usage or requested resources, with costs calculated per minute~\cite{center_calculate_nodate}.
 The rates applied in this thesis were €0.003 for each CPU core hour, €0.0013 for each GB hour of memory, and €0.138 for each TB hour of SSD storage~\cite{center_calculate_nodate}.
@@ -145,7 +145,7 @@ It also highlights the main cost drivers identified for each environment.
     \end{tblr}
 \end{table}
 
-Table~\ref{tab:environment-cost-comparison} shows that the UT HPC deployment had the lowest direct monthly cost in this evaluation.
+Table~\ref{tab:environment-cost-comparison} shows that UT HPC had the lowest direct monthly cost in this evaluation.
 However, it is important to note that the UT HPC cost estimate is less direct than the Azure and AWS cost data because it is derived from calculator rates, monitoring dashboard observations, and an approximate session-duration assumption rather than from a provider billing dashboard.
 Among the two public cloud options, Azure was the cheaper deployment in both months, maintaining a cost close to €13.50, with Azure Database for MySQL as the primary cost component.
 The adjusted total cost for AWS remained close to €20, reflecting the combined expenses of the continuously operating Lightsail web layer, the database bundle, and Elastic Container Service.
@@ -165,7 +165,7 @@ In contrast, the revised Azure deployment remained close to €13.50 in both obs
 This indicates that the redesign successfully addressed the main baseline problem identified in chapter~\ref{sec:background-and-previous-system}, which was the mismatch between the platform's uneven usage pattern and the fixed cost structure of the previous cloud deployment.
 
 The cross-environment comparison further suggests that the revised architecture is adaptable across three different operational models.
-The UT HPC deployment appears to be the strongest fit for long-term institutional use in this evaluation, as it combines the lowest observed cost with university-managed hosting and integration with institutional access management.
+UT HPC appears to be the strongest fit for long-term institutional use in this evaluation, as it combines the lowest observed cost with university-managed hosting and integration with institutional access management.
 However, this conclusion should be approached with some caution, as the UT HPC cost estimate is based on pricing rules and monitoring observations rather than a direct provider billing report.
 Azure appears to be the strongest public cloud option in this evaluation because it shows the lowest idle footprint among the public cloud deployments while remaining within a single provider ecosystem.
 AWS demonstrates that the provider-agnostic design can be transferred beyond Azure.
@@ -173,7 +173,7 @@ However, its continuously running web layer results in a higher baseline cost, m
 
 Taken together, these results indicate that the redesign was successful not only as code-level modernization but also as an architectural correction of the baseline system's operational model.
 The work improved portability, maintainability, and deployment reproducibility while reducing the cost burden required for keeping the environment ready for use.
-From the perspective of future teaching use, the most suitable long-term deployment appears to be the UT HPC environment when institutional support and integration are available, whereas Azure represents the most suitable self-contained public cloud deployment.
+From the perspective of future teaching use, UT HPC appears to be the most suitable long-term deployment when institutional support and integration are available, whereas Azure represents the most suitable self-contained public cloud deployment.
 
 \subsection{Future Work} \label{subsec:future-work}
 Although the revised environment functioned successfully in course use, the evaluation also reveals several directions for further improvement.
