@@ -9,8 +9,9 @@ To support hands-on practice in these courses, earlier thesis work created a bro
 These earlier iterations showed the educational value of browser-based Linux practice, but they also revealed shortcomings in maintainability, deployment reproducibility, portability across environments, and cost efficiency.
 The aim of this thesis was to redesign the platform into a more sustainable and portable system while preserving its educational purpose and core workflow.
 
-The work introduced a revised architecture with clearer modular boundaries, a provider-agnostic provisioning layer for user-specific Linux environments, improved authentication and multilingual content management, and automated environment setup using Helm and Terraform.
-The redesigned platform was deployed and evaluated in the University of Tartu HPC Kubernetes environment, Microsoft Azure, and Amazon Web Services.
+The work introduced a revised architecture with clearer modular boundaries, a provider-agnostic provisioning layer for user-specific Linux environments, and improved authentication and multilingual content management.
+Automated environment setup was implemented using Helm and Terraform.
+The redesigned platform was deployed and evaluated in the University of Tartu HPC Kubernetes cluster, Microsoft Azure, and Amazon Web Services.
 
 The evaluation carried out during real course use in February and March 2026 showed that the revised platform preserved the intended educational workflow, and students were able to access the environment, start interactive Linux sessions, and complete the relevant tasks without notable operational incidents.
 Compared with the previous Azure deployment, the revised Azure architecture significantly reduced the baseline cost of keeping the platform available.
@@ -29,18 +30,17 @@ Among the environments tested, the University of Tartu HPC deployment appeared t
 % Estonian information
 \begin{otherInfo}{estonian}{Veebipõhise Linuxi käsurea õppekeskkonna kaasajastamine ja kulude optimeerimine}
 \begin{abstract}
-Linux ja selle käsurida mängivad olulist rolli Tartu Ülikooli kursustel ``Operatsioonisüsteemid'' ja ``Arvutiturvalisus''.
+Linux ja selle käsurida mängivad olulist rolli Tartu Ülikooli kursustel ``Operatsioonisüsteemid'' ja ``Andmeturve''.
 Nende kursuste praktiliste harjutuste toetamiseks loodi varasemate lõputööde raames veebipõhine Linuxi käsurea õppekeskkond, mida hiljem laiendati pilvepõhiseks platvormiks.
 Käesoleva lõputöö eesmärk oli kujundada olemasolev platvorm ümber jätkusuutlikumaks ja paremini ülekantavaks süsteemiks, säilitades samal ajal selle haridusliku eesmärgi ja põhilise töövoo.
 
-Antud töö raames võeti kasutusele uus arhitektuur, millel on selgemad moodulipiirid.
-See hõlmab teenusepakkujast sõltumatut kasutajapõhiste Linuxi keskkondade haldamiskihti, perioodiliseks hoolduseks mõeldud spetsiaalseid plaanitud töid, uuendatud autentimiskihti, mis toetab ühekordset sisselogimist, ning täiustatud mitmekeelset sisu haldamist.
-Et toetada korratavaid kasutuselevõtte mitmes keskkonnas, rakendati keskkonna ülespanemise automatiseerimine, kasutades selleks tehnoloogiaid nagu Helm ja Terraform.
-Uuendatud platvorm võeti kasutusele ja testiti mitmes pilvekeskkonnas, nagu Tartu Ülikooli HPC Kubernetese klaster, Microsoft Azure ja Amazon Web Services.
+Töös võeti kasutusele uus arhitektuur, millel olid selgemad moodulipiirid, teenusepakkujast sõltumatu kasutajapõhiste Linuxi keskkondade haldamiskiht ning täiustatud autentimine ja mitmekeelse sisu haldus.
+Keskkondade automatiseeritud ülesseadmiseks kasutati tehnoloogiaid Helm ja Terraform.
+Uuendatud platvorm võeti kasutusele ja hinnati Tartu Ülikooli HPC Kubernetese klastris ning keskkondades Microsoft Azure ja Amazon Web Services.
 
 Testimine, mis viidi läbi 2026. aasta veebruaris ja märtsis, näitas, et uuendatud platvorm säilitas esialgse haridusliku töövoo ning tudengid said keskkonda sisse logida, alustada interaktiivseid Linuxi sessioone ja lahendada ettenähtud ülesandeid ilma märkimisväärsete probleemideta.
-Võrreldes varasema Azure keskkonnaga, vähendas uuendatud Azure arhitektuur oluliselt platvormiga seotud pidevate kulude baasi.
-Testitud keskkondade hulgast näis Tartu Ülikooli HPC keskkond olevat kõige sobivam pikaajaliseks kasutamiseks, kui on olemas ülikooli poolne tugi ja ühenduvus, ning Azure paitis tugevaima avaliku pilve alternatiivina.
+Võrreldes varasema Azure'i keskkonnaga vähendas uuendatud Azure'i arhitektuur oluliselt platvormi pideva käigushoidmise baaskulu.
+Testitud keskkondade hulgast näis Tartu Ülikooli HPC keskkond olevat pikemaajaliseks kasutuseks sobivaim, ning avalikest pilveteenustest paistis Azure tugevaima alternatiivina.
 \end{abstract}
 
 \keywords{Linuxi käsurida, veebipõhine õppekeskkond, tarkvara kaasajastamine, kulude optimeerimine, Kubernetes, Microsoft Azure, Amazon Web Services}
