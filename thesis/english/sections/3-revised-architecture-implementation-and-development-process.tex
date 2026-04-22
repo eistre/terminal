@@ -6,7 +6,7 @@
 This chapter outlines the modernized architecture and implementation of the Linux command-line learning environment.
 Building upon the baseline system described in chapter~\ref{sec:background-and-previous-system}, it focuses on five main implementation changes that addressed the baseline limitations.
 These changes are the modularization of the codebase, the introduction of a provider-agnostic provisioning layer, the separation of cleanup jobs from the main application, the redesign of authentication and single sign-on support, and the redesign of multilingual content management.
-Together, these changes improved maintainability, portability, and operational efficiency while preserving the core learning workflow of the platform.
+Together, these changes improved maintainability, portability, and operational efficiency while preserving the core learning workflow of the environment.
 
 \subsection{Development Process and AI-Assisted Refactoring} \label{subsec:development-process-and-ai-assisted-refactoring}
 The implementation work in this thesis required coordinated refactoring across multiple layers of the baseline system while keeping the codebase operational throughout the process.
@@ -109,7 +109,7 @@ One example was the migration of the main application from Nuxt 3 to Nuxt 4, whi
 In this way, dependency updates were treated as part of the broader codebase modernization effort rather than as isolated package-management tasks.
 
 Clearer modular boundaries also improve validation, readability, and maintainability by enabling more localized reasoning and testing.
-Structuring the codebase into reusable packages and independently runnable applications makes it easier to extend the system without destabilizing the overall workflow of the platform.
+Structuring the codebase into reusable packages and independently runnable applications makes it easier to extend the system without destabilizing the overall workflow of the environment.
 The next subchapter builds on this structure by describing the provisioning abstraction and the lifecycle management approach implemented behind the provisioning interface.
 
 \subsection{Container Provisioning and Lifecycle Management} \label{subsec:container-provisioning-and-lifecycle-management}
@@ -184,7 +184,7 @@ In the authentication layer, the revised system replaces the Lucia package with 
 This change removes the dependency on the deprecated library discussed in subchapter~\ref{subsubsec:deprecated-authentication-library} and provides a more maintainable basis for secure access control.
 
 \subsubsection{Authentication Design and Implementation} \label{subsubsec:authentication-design-and-implementation}
-Authentication is essential for this learning platform to identify users and ensure continuity of sessions for individual Linux container environments.
+Authentication is essential for this learning environment to identify users and ensure continuity of sessions for individual Linux container environments.
 User accounts enable the system to associate and store task results for each student and to limit access to authorized users.
 This approach preserves progress across sessions and reduces the risk of misuse or excessive load by requiring authenticated access before provisioning cost-incurring resources.
 
@@ -192,7 +192,7 @@ Given Lucia's deprecation, continuing to rely on it was not suitable for a produ
 As an alternative, the updated system adopts Better Auth\footnote{\url{https://github.com/better-auth/better-auth}}, an authentication library that provides built-in support for common authentication workflows and simplifies long-term maintenance~\cite{noauthor_better_nodate}.
 In the revised system, the authentication layer supports email-based login, session management, and OIDC integration for SSO~\cite{noauthor_better_nodate}.
 In addition, the revised system implements an email domain allowlist to restrict registration and login to approved domains, for example, \texttt{ut.ee}.
-This helps ensure the platform is used only by the intended audience.
+This helps ensure the environment is used only by the intended audience.
 
 Compared to Lucia, Better Auth reduces the amount of custom authentication code by providing standardized handlers and integrations for the required workflows.
 This decreases the likelihood of implementation errors, makes the authentication layer easier to evolve alongside the rest of the stack, and provides a standards-based basis for SSO onboarding.
@@ -202,22 +202,22 @@ OpenID Connect (OIDC) is an authentication protocol built on top of the OAuth 2.
 Fett et al.~\cite{fett_comprehensive_2016} describe OAuth 2.0 as a widely deployed authorization framework and as the foundation for OpenID Connect.
 Fett et al.~\cite{fett_web_2017} further explain that OIDC allows a relying party to delegate authentication to an identity provider and to verify the result using a cryptographically signed ID token.
 
-At a high level, the platform uses the OIDC authorization code flow.
+At a high level, the environment uses the OIDC authorization code flow.
 As described by Fett et al.~\cite{fett_web_2017}, the user is redirected from the application to the identity provider, authenticates there, and is then redirected back with an authorization code that is exchanged for tokens and used to establish a session.
 
 The current implementation can also use PKCE (Proof Key for Code Exchange), which adds a verification step during token exchange and improves resistance to authorization code interception.
 The web application currently supports both Microsoft Entra ID\footnote{\url{https://www.microsoft.com/en-us/security/business/identity-access/microsoft-entra-id}} and Keycloak\footnote{\url{https://www.keycloak.org/}} as OIDC providers through environment variable configuration.
 Microsoft Entra ID was used for local testing, whereas Keycloak was used for university integration.
-After successful token validation, the authenticated external identity is mapped to the platform's internal user and session model for progress tracking and authorization decisions.
+After successful token validation, the authenticated external identity is mapped to the environment's internal user and session model for progress tracking and authorization decisions.
 This provides a direct path to university identity integration and reduces onboarding friction in deployments where institutional login is available.
 
 A standards-based OIDC integration improves interoperability and maintainability compared with provider-specific or custom authentication logic.
 Fett et al.~\cite{fett_comprehensive_2016} show that secure OAuth-based systems depend on correct flow handling and validation under recommended best practices, while Fett et al.~\cite{fett_web_2017} provide the corresponding OIDC-specific analysis.
-In the context of this platform, OIDC therefore provides a suitable and extensible basis for single sign-on support.
+In the context of this learning environment, OIDC therefore provides a suitable and extensible basis for single sign-on support.
 
 \subsection{Improved Localization and Task Editor} \label{subsec:improved-localization-and-task-editor}
 The revised system improves both the internal localization model and the administrative workflow for managing multilingual learning content.
-Although the baseline platform already supported multiple interface languages, the updated implementation extends this to the content model itself.
+Although the baseline environment already supported multiple interface languages, the updated implementation extends this to the content model itself.
 This was achieved by redesigning topics and tasks so that language-independent structure is separated from language-specific text and by introducing an editor that supports both single-language and dual-language authoring.
 
 \subsubsection{Localization Model} \label{subsubsec:localization-model}
@@ -267,5 +267,5 @@ Tasks or topics with all required values present are marked with the indicator `
 This allows administrators to identify incomplete translations or task definitions without opening every item individually, which is particularly useful when editing larger bilingual exercise sets.
 As a result, the redesign improves the editorial workflow by making it easier to maintain parity between language variants while also reducing duplication in content management.
 
-Together, the improvements described in this chapter establish the revised implementation of the platform.
+Together, the improvements described in this chapter establish the revised implementation of the environment.
 The following chapter builds on this by describing the concrete deployment setups and infrastructure choices used to run the system across different environments.

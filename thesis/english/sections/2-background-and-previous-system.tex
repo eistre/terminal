@@ -10,7 +10,7 @@ It then outlines the architecture and Azure deployment model of the previous sys
 \subsection{Motivation and Prior Work} \label{subsec:motivation-and-prior-work}
 Linux command-line knowledge remains important in many computing roles, particularly in system administration, software development, and automation.
 For that reason, hands-on command-line practice remains a relevant educational objective.
-At the University of Tartu, earlier development work examined how such practice could be supported through a browser-based platform, first by establishing feasibility and later by turning the same idea into a more robust cloud-hosted system for sustained course use.
+At the University of Tartu, earlier development work examined how such practice could be supported through a browser-based environment, first by establishing feasibility and later by turning the same idea into a more robust cloud-hosted system for sustained course use.
 
 \subsubsection{The Importance of the Linux Command Line} \label{subsubsec:the-importance-of-the-linux-command-line}
 Proficiency in command-line operations remains valuable because Linux-based systems are widely used in modern computing infrastructure and are often administered through terminal-centric workflows rather than graphical interfaces.
@@ -40,7 +40,7 @@ At the same time, the deployment model and overall implementation left important
 These limitations were consistent with an early feasibility-focused implementation and helped define the need for a more production-oriented successor.
 
 \subsubsection{Cloud-Hosted Implementation} \label{subsubsec:cloud-hosted-implementation}
-After the initial proof-of-concept had been used in the supervisor's courses for two years, Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} transformed the environment into a cloud-hosted platform intended for sustained course use.
+After the initial proof-of-concept had been used in the supervisor's courses for two years, Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} transformed the environment into a cloud-hosted learning environment intended for sustained course use.
 This second iteration addressed limitations observed during earlier use and introduced goals such as improved stability and maintainability, bilingual support in Estonian and English, and deployment in a more robust cloud environment.
 
 Where the first iteration established feasibility, the second established an operational baseline.
@@ -50,7 +50,7 @@ Eistre's implementation therefore serves as the direct technical starting point 
 
 Taken together, the two earlier theses define a clear development sequence.
 Halapuu established that browser-based Linux command-line learning was possible in a real course setting, whereas Eistre established a cloud-hosted baseline suitable for sustained operational use.
-This thesis builds on that baseline by addressing unresolved issues in cost efficiency, maintainability, modernization, and deployment reproducibility.
+This thesis builds on that baseline by addressing unresolved issues in maintainability, modernization, deployment reproducibility, and cost efficiency.
 
 \subsection{Architecture and Deployment of the Previous System} \label{subsec:architecture-and-deployment-of-the-previous-system}
 This section outlines the system developed in Eistre's thesis~\cite{eistre_veebipohise_nodate}, which serves as the technical starting point for this master's thesis.
@@ -73,7 +73,7 @@ These are a client-side user interface, a server-side backend API (application p
 At runtime, the browser-based terminal communicates with the API layer, which brokers interaction with a user-specific Linux container in Kubernetes and records user progress and task state in MySQL\@.
 The client-side interface is developed using Vue.js\footnote{\url{https://vuejs.org/}} with Nuxt and supports user registration and authentication, topic navigation, task solving, administrative views for managing topics and tasks, and usage in both English and Estonian.
 
-The server-side application acts as the central coordination layer of the platform.
+The server-side application acts as the central coordination layer of the environment.
 It manages authentication and sessions, exposes API endpoints consumed by the user interface, and orchestrates operations that require persistence or interaction with the Linux execution environment.
 In particular, the backend provides user-specific Linux environments, manages their lifecycle, and brokers terminal interaction between the browser and the container runtime.
 It also determines task completion based on predefined criteria and records progress updates when completion conditions are satisfied.
@@ -117,7 +117,7 @@ Although the application ran in Sweden Central, the cluster was deployed in Norw
 A central motivation for the Azure-based deployment was cost-aware operation.
 Continuously running a Kubernetes cluster can incur significant baseline cost even when there is no active classroom usage~\cite{eistre_veebipohise_nodate}.
 To reduce that baseline cost, the system implemented an AKS control mechanism through which the application could start and stop the cluster based on demand.
-When a user initiates a session while the cluster is stopped, the platform triggers cluster startup and presents a waiting state until the cluster becomes available.
+When a user initiates a session while the cluster is stopped, the environment triggers cluster startup and presents a waiting state until the cluster becomes available.
 When the system is idle for a configured period, the cluster can be stopped to avoid paying for unused compute capacity~\cite{eistre_veebipohise_nodate}.
 
 In addition to compute and container orchestration, the deployment relied on several supporting Azure services~\cite{eistre_veebipohise_nodate}.
@@ -129,7 +129,7 @@ This deployment model established a functional cloud-based operating environment
 
 \subsection{Limitations and Improvement Opportunities} \label{subsec:limitations-and-improvement-opportunities}
 
-While the cloud-enabled platform developed in Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} represented a significant advance over the initial prototype, it also exposed several limitations and challenges.
+While the cloud-enabled learning platform developed in Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} represented a significant advance over the initial prototype, it also exposed several limitations and challenges.
 This section summarizes the key issues in the baseline system and clarifies why they matter for the modernization and cost-optimization work described in later chapters.
 
 \subsubsection{Cost Structure} \label{subsubsec:cost-structure}
@@ -166,9 +166,9 @@ The task is to reduce the platform's always-on footprint while preserving per-us
 The previous version of the learning environment relied on the Lucia\footnote{\url{https://github.com/lucia-auth/lucia}} authentication library to implement core authentication functionality, including user registration, login, and session management~\cite{eistre_veebipohise_nodate}.
 According to the Lucia maintainer, the project would be deprecated by March 2025 and would transition away from being a maintained, general-purpose authentication library~\cite{noauthor_fresh_nodate}.
 By March 2025, Lucia had been repositioned primarily as an educational resource for learning about authentication implementation rather than as a long-term dependency for production systems~\cite{noauthor_fresh_nodate}.
-This shift indicates a dependency lifecycle risk in the platform's authentication layer.
+This shift indicates a dependency lifecycle risk in the environment's authentication layer.
 
-This deprecation poses a significant risk to the platform's maintainability.
+This deprecation poses a significant risk to the environment's maintainability.
 Continued dependence on an unsupported library may result in delayed or nonexistent security updates, increased friction when upgrading adjacent frameworks, and elevated long-term maintenance costs.
 In the context of this thesis, the issue is therefore not merely one library replacement but the need to modernize a critical subsystem while preserving the baseline requirements for user verification and session management.
 This subchapter thus exposes a maintainability and modernization problem rather than an isolated dependency change.
@@ -191,7 +191,7 @@ In the context of this thesis, the literature on dependency risk points to a con
 
 \subsubsection{Additional Improvement Opportunities} \label{subsubsec:additional-improvement-opportunities}
 In addition to the previously described cost and maintainability issues, the previous system exposed several further operational and usability limitations that are relevant to the later redesign.
-First, the platform showed a scalability concern under classroom-scale load.
+First, the environment showed a scalability concern under classroom-scale load.
 According to observations reported by the thesis supervisor, some students were at times unable to access an interactive shell session because the AKS node pool could not scale due to Azure quota constraints\footnote{Based on private communication with thesis supervisor Alo Peets.}.
 This suggests that functional correctness alone was insufficient in practice and that the deployment also had to support classroom demand more reliably.
 The issue therefore points to a reliability and scalability limitation relevant to the redesign.
@@ -208,7 +208,7 @@ Taken together, these observations identify additional redesign pressures relate
 
 \subsubsection{Infrastructure as Code} \label{subsubsec:infrastructure-as-code}
 An additional limitation of the baseline system was the high setup overhead needed to replicate the environment.
-Deploying the platform required cloud knowledge and coordination of several prerequisites, such as managed database provisioning, container hosting configuration, and Kubernetes cluster setup.
+Deploying the environment required cloud knowledge and coordination of several prerequisites, such as managed database provisioning, container hosting configuration, and Kubernetes cluster setup.
 In practice, reproducing the environment required manual setup across several cloud services and a comprehensive step-by-step deployment procedure that was difficult to reproduce consistently across environments.
 This type of manual, interactive infrastructure configuration is widely recognized as slow and error-prone, especially as system complexity grows~\cite{guerriero_adoption_2019}.
 

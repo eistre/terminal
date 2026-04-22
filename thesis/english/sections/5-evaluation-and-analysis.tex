@@ -4,7 +4,7 @@
 
 
 \section{Evaluation and Discussion} \label{sec:evaluation-and-discussion}
-This chapter evaluates the revised Linux command-line learning platform in real course use and analyzes the results from two perspectives.
+This chapter evaluates the revised Linux command-line learning environment in real course use and analyzes the results from two perspectives.
 The first is a cross-environment comparison among the University of Tartu HPC deployment, Microsoft Azure, and Amazon Web Services.
 The second is a comparison between the previous Azure deployment described in chapter~\ref{sec:background-and-previous-system} and the revised Azure deployment described in chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
 
@@ -154,9 +154,9 @@ The UT HPC estimate was driven primarily by the reserved baseline of the web app
 Azure was dominated by the managed database service, whereas AWS was influenced by the combination of a continuously running web layer and database bundle, with smaller contributions from ECS and VPC costs.
 
 \subsection{Discussion} \label{subsec:discussion}
-Overall, the evaluation suggests that the redesigned platform preserved the core educational workflow of the previous system while improving its operational profile.
-The platform was used in real course activity across all three deployment environments with no notable operational incidents observed during the evaluation period.
-This, together with the architectural continuity described in chapter~\ref{sec:revised-architecture-and-implementation}, suggests that the modernization effort did not interfere with the platform's primary purpose of providing isolated browser-based Linux environments for interactive course use.
+Overall, the evaluation suggests that the redesigned environment preserved the core educational workflow of the previous system while improving the platform's operational profile.
+The learning environment was used in real course activity across all three deployment environments with no notable operational incidents observed during the evaluation period.
+This, together with the architectural continuity described in chapter~\ref{sec:revised-architecture-and-implementation}, suggests that the modernization effort did not interfere with the environment's primary purpose of providing isolated browser-based Linux environments for interactive course use.
 
 The clearest evidence of improvement appears in the comparison with the previous Azure deployment.
 As discussed in chapter~\ref{sec:background-and-previous-system}, the central limitation of the baseline system was not solely the incurred costs of cloud hosting, but also that the deployment model was poorly aligned with the uneven usage pattern.
@@ -165,19 +165,19 @@ In contrast, the revised Azure deployment remained close to €13.50 in both obs
 This indicates that the redesign successfully addressed the main baseline problem identified in chapter~\ref{sec:background-and-previous-system}, which was the mismatch between the platform's uneven usage pattern and the fixed cost structure of the previous cloud deployment.
 
 The cross-environment comparison further suggests that the revised architecture is adaptable across three different operational models.
-The UT HPC deployment appears to be the strongest fit for long-term institutional use, as it combines the lowest observed cost with university-managed hosting and integration with institutional access management.
+The UT HPC deployment appears to be the strongest fit for long-term institutional use in this evaluation, as it combines the lowest observed cost with university-managed hosting and integration with institutional access management.
 However, this conclusion should be approached with some caution, as the UT HPC cost estimate is based on pricing rules and monitoring observations rather than a direct provider billing report.
-Azure appears to be the strongest public cloud option because it shows the lowest idle footprint among the public cloud deployments while remaining within a single provider ecosystem.
+Azure appears to be the strongest public cloud option in this evaluation because it shows the lowest idle footprint among the public cloud deployments while remaining within a single provider ecosystem.
 AWS demonstrates that the provider-agnostic design can be transferred beyond Azure.
 However, its continuously running web layer results in a higher baseline cost, making it less attractive for this type of irregular usage pattern.
 
 Taken together, these results indicate that the redesign was successful not only as code-level modernization but also as an architectural correction of the baseline system's operational model.
-The work improved portability, maintainability, and deployment reproducibility while reducing the cost burden required for keeping the platform ready for use.
+The work improved portability, maintainability, and deployment reproducibility while reducing the cost burden required for keeping the environment ready for use.
 From the perspective of future teaching use, the most suitable long-term deployment appears to be the UT HPC environment when institutional support and integration are available, whereas Azure represents the most suitable self-contained public cloud deployment.
 
 \subsection{Future Work} \label{subsec:future-work}
-Although the revised platform functioned successfully in course use, the evaluation also reveals several directions for further improvement.
-These directions concern both the platform itself and the methodology with which future evaluations could be carried out.
+Although the revised environment functioned successfully in course use, the evaluation also reveals several directions for further improvement.
+These directions concern both the environment itself and the methodology with which future evaluations could be carried out.
 
 One important future improvement would be stronger observability.
 The current evaluation is centered primarily on cost and practical course use.
@@ -185,13 +185,13 @@ However, future work could benefit from a more systematic collection of operatio
 Additionally, the evaluation partially depended on provider-specific platform metrics, suggesting that instrumentation integrated directly into the platform would support more consistent cross-environment measurement.
 This would allow for more detailed comparisons in later studies and simplify the analysis of the system under larger or more diverse usage patterns.
 
-A second improvement would be the expansion of the learning content supported by the platform.
+A second improvement would be the expansion of the learning content supported by the environment.
 The course use described in this thesis focused on a limited set of Linux command-line tasks.
-Future development could extend the platform with exercises covering additional command-line topics, different levels of difficulty, and a broader range of task formats.
+Future development could extend the environment with exercises covering additional command-line topics, different levels of difficulty, and a broader range of task formats.
 At the same time, the current environment preparation is constrained by a relatively fixed Dockerfile-based configuration that creates task-specific files and folders in a predefined way.
 A useful improvement would therefore be a more flexible task-dependent setup model in which each exercise can specify its own preparation steps before a session starts.
 This approach would support a wider variety of learning scenarios and reduce dependence on a single hard-coded environment structure.
 
 Finally, future work could focus on integration with different educational platforms.
 For example, integrating with a learning management system such as Moodle could support automated grading and more consistent management of course activities around the terminal exercises.
-Such integration would make the platform easier to incorporate into routine teaching practices and would extend its role from a standalone exercise environment toward a more complete component of the course workflow.
+Such integration would make the environment easier to incorporate into routine teaching practices and would extend its role from a standalone exercise environment toward a more complete component of the course workflow.

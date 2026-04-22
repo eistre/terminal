@@ -1,14 +1,14 @@
 \section{Conclusion} \label{sec:conclusion}
-This thesis focused on the modernization of the browser-based Linux command-line learning platform used at the University of Tartu.
-The previous two iterations of the system had already shown the feasibility of browser-based Linux teaching in educational use.
-However, they also left unresolved issues related to maintainability, reproducibility of deployments, portability across environments, and the cost efficiency of the deployment model.
-Consequently, the aim of this thesis was to preserve the educational purpose of the platform while redesigning it into a more sustainable foundation for continued use and future development.
+This thesis focused on the modernization of the browser-based Linux command-line learning environment used at the University of Tartu.
+The previous two iterations of the system had already shown the feasibility of browser-based Linux command-line learning in educational use.
+However, they also left unresolved issues related to maintainability, deployment reproducibility, portability across environments, and the cost efficiency of the deployment model.
+Consequently, the aim of this thesis was to preserve the educational purpose of the environment while redesigning it into a more sustainable platform for continued use and future development.
 
 To achieve this goal, the platform was redesigned at an architectural level rather than relying solely on incremental implementation updates.
 The revised solution introduced clearer modular boundaries, separated provider-specific container lifecycle management behind a provisioning abstraction, moved periodic maintenance tasks to dedicated scheduled jobs, and improved the maintainability of both the authentication mechanism and the multilingual content management system.
 In addition, deployment automation was enhanced using Helm and Terraform, making the system easier to reproduce across different target environments.
 
-The evaluation conducted in February and March 2026 showed that the revised platform preserved the intended educational workflow during real course use.
+The evaluation conducted in February and March 2026 showed that the revised environment preserved the intended educational workflow during real course use.
 Students were able to access the browser-based environment, open interactive Linux sessions, and complete the relevant course tasks in the deployed environments.
 Additionally, no significant operational incidents were reported over the course of the evaluation period.
 
@@ -17,7 +17,7 @@ Furthermore, the cross-environment deployment showed that the redesigned archite
 
 Taken together, these results suggest that the modernization was successful both as a software redesign and as an improvement to the platform's operational model.
 The work improved maintainability, portability, and deployment reproducibility, while reducing the costs associated with irregular course use.
-The evaluation results suggest that the University of Tartu HPC environment is the most suitable long-term deployment option when institutional support and integration are available.
-Among the two public cloud options, Microsoft Azure appeared to be the stronger option.
+The evaluation suggests that, when institutional support and integration are available, the University of Tartu HPC environment appeared to be the most suitable long-term deployment option among the environments evaluated.
+Among the two public cloud options evaluated, Microsoft Azure appeared to be the stronger option.
 Amazon Web Services mainly demonstrates that the provider-agnostic design can be transferred to another major cloud provider, although its continuously running web layer makes it less attractive for this usage pattern.
 The evaluation also suggests that future work could strengthen observability, improve the flexibility of task-specific environments, and explore closer integration with existing educational platforms.
