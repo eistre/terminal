@@ -31,19 +31,18 @@ Among the environments tested, the University of Tartu HPC deployment appeared t
 % Estonian information
 \begin{otherInfo}{estonian}{Veebipõhise Linuxi käsurea õppekeskkonna kaasajastamine ja kulude optimeerimine}
 \begin{abstract}
-Tartu Ülikooli õppeainetes nagu ``Operatsioonisüsteemid'' ja ``Andmeturve'' on Linux ning selle käsurida jätkuvalt olulisel kohal.
-Nendes ainetes praktilise harjutamise toetamiseks loodi varasema lõputöö raames veebipõhine Linuxi käsurea õppekeskkond ning järgmises töös arendati see edasi pilves majutatavaks platvormiks pidevaks õppetööks.
-Need varasemad versioonid näitasid veebipõhise Linuxi harjutuskeskkonna õppeväärtust, kuid tõid esile ka puudusi hooldatavuse, juurutuste reprodutseeritavuse, eri keskkondade vahelise ülekantavuse ning kulutõhususe osas.
-Töö eesmärk on kujundada platvorm ümber jätkusuutlikumaks ja paremini ülekantavaks süsteemiks, säilitades selle õppeotstarbe ja põhilise töövoo.
+Linux ja selle käsurida mängivad olulist rolli Tartu Ülikooli kursustel ``Operatsioonisüsteemid'' ja ``Arvutiturvalisus''.
+Nende kursuste praktiliste harjutuste toetamiseks loodi varasemate lõputööde raames veebipõhine Linuxi käsurea õppekeskkond, mida hiljem laiendati pilvepõhiseks platvormiks.
+Käesoleva lõputöö eesmärk oli olemasolev platvorm ümber kujundada jätkusuutlikumaks ja universaalsemaks süsteemiks, säilitades samal ajal selle hariduslikku eesmärki ja põhilist töövoogu.
 
-Töös luuakse uuendatud arhitektuur, milles on selgemad moodulipiirid, kasutajapõhiste Linuxi keskkondade jaoks teenusepakkujast sõltumatu provisioneerimiskiht, perioodiliste hooldustoimingute jaoks eraldatud ajastatud tööd, ühekordset sisselogimist toetav ajakohastatud autentimislahendus ning täiustatud mitmekeelse sisu haldus.
-Erinevates keskkondades reprodutseeritavate juurutuste toetamiseks kasutatakse juurutusautomaatikas Helmi ja Terraformi.
-Uuendatud platvorm juurutatakse ja hinnatakse Tartu Ülikooli HPC Kubernetes'e keskkonnas, Microsoft Azure'is ning Amazon Web Servicesis.
+Antud töö raames võeti kasutusele uus arhitektuur, millel on selgemad moodulipiirid.
+See hõlmab teenusepakkujast sõltumatut kasutajapõhiste Linuxi keskkondade haldamiskihti, perioodiliseks hoolduseks mõeldud spetsiaalseid plaanitud töid, uuendatud autentimiskihti, mis toetab ühekordset sisselogimist, ning täiustatud mitmekeelset sisu haldamist.
+Et toetada korratavaid kasutuselevõtte mitmes keskkonnas, rakendati keskkonna ülespanemise automatiseerimine, kasutades selleks tehnoloogiaid nagu Helm ja Terraform.
+Uuendatud platvorm võeti kasutusele ja testiti mitmes pilvekeskkonnas, nagu Tartu Ülikooli HPC Kubernetese klaster, Microsoft Azure ja Amazon Web Services.
 
-2026. aasta veebruaris ja märtsis reaalses õppetöös läbi viidud hindamine näitas, et uuendatud platvorm säilitas kavandatud õppetöövoo ning tudengid said keskkonda sisse logida, avada interaktiivseid Linuxi sessioone ja lahendada ettenähtud ülesandeid ilma märkimisväärsete töökindlusprobleemideta.
-Tulemused näitavad ühtlasi, et kaasajastamine parandas platvormi hooldatavust, ülekantavust ja juurutuste reprodutseeritavust.
-Võrreldes varasema Azure'i juurutusega vähendas uuendatud Azure'i arhitektuur oluliselt platvormi pideva käigushoidmise baaskulu.
-Hinnatud keskkondadest näib Tartu Ülikooli HPC juurutus olevat sobivaim pikaajaliseks kasutuseks juhul, kui olemas on institutsionaalne tugi ja lõiming, samas kui Azure on tugevaim avaliku pilve alternatiiv.
+Testimine, mis viidi läbi 2026. aasta veebruaris ja märtsis, näitas, et uuendatud platvorm säilitas esialgse haridusliku töövoo ning tudengid said keskkonda sisse logida, alustada interaktiivseid Linuxi sessioone ja lahendada ettenähtud ülesandeid ilma märkimisväärsete probleemideta.
+Võrreldes varasema Azure keskkonnaga, vähendas uuendatud Azure arhitektuur oluliselt platvormiga seotud pidevate kulude baasi.
+Testitud keskkondade hulgast näis Tartu Ülikooli HPC keskkond olevat kõige sobivam pikaajaliseks kasutamiseks, kui on olemas ülikooli poolne tugi ja ühenduvus, ning Azure paitis tugevaima avaliku pilve alternatiivina.
 \end{abstract}
 
 \keywords{Linuxi käsurida, veebipõhine õppekeskkond, tarkvara kaasajastamine, kulude optimeerimine, Kubernetes, Microsoft Azure, Amazon Web Services}
