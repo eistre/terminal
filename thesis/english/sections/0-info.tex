@@ -4,18 +4,18 @@
 % English information
 \begin{info}
 \begin{abstract}
-Linux and its command line play an important role in courses at the University of Tartu, such as ``Operating Systems'' and ``Computer Security’’.
+Linux and its command line play an important role in courses at the University of Tartu, such as ``Operating Systems'' and ``Computer Security''.
 To support hands-on practice in these courses, earlier thesis work created a browser-based Linux command-line learning environment and later extended it into a cloud-hosted platform for continuous course use.
-These earlier iterations showed the educational value of browser-based Linux practice, but they also revealed shortcomings with maintainability, consistent deployment, portability between different environments, and cost efficiency.
+These earlier iterations showed the educational value of browser-based Linux practice, but they also revealed shortcomings in maintainability, deployment reproducibility, portability across environments, and cost efficiency.
 The aim of this thesis was to redesign the platform into a more sustainable and portable system while preserving its educational purpose and core workflow.
 
-The work introduces a revised architecture with clearer modular boundaries.
+The work introduced a revised architecture with clearer modular boundaries.
 It includes a provider-agnostic provisioning layer for user-specific Linux environments, dedicated scheduled jobs for periodic maintenance, an updated authentication layer with single sign-on support, and improved multilingual content management.
 Deployment automation was also implemented using Helm and Terraform to support reproducible deployments across multiple environments.
 The redesigned platform was deployed and evaluated in the University of Tartu HPC Kubernetes environment, Microsoft Azure, and Amazon Web Services.
 
 The evaluation carried out during real course use in February and March 2026 showed that the revised platform preserved the intended educational workflow, and students were able to access the environment, start interactive Linux sessions, and complete the relevant tasks without notable operational incidents.
-Compared to the previous Azure setup, the revised Azure deployment along with its architecture significantly reduced the baseline cost of keeping the platform available.
+Compared with the previous Azure deployment, the revised Azure architecture significantly reduced the baseline cost of keeping the platform available.
 Among the environments tested, the University of Tartu HPC deployment appeared to be the most suitable long-term option when institutional support and integration were available, while Azure was the strongest public cloud alternative.
 \end{abstract}
 
