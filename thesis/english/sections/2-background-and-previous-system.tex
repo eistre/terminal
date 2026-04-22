@@ -44,7 +44,7 @@ After the initial proof-of-concept had been used in the supervisor's courses for
 This second iteration addressed limitations observed during earlier use and introduced goals such as improved stability and maintainability, bilingual support in Estonian and English, and deployment in a more robust cloud environment.
 
 Where the first iteration established feasibility, the second established an operational baseline.
-The resulting environment was evaluated in the ``Computer Security'' course in February 2024 and used by 382 participants~\cite{eistre_veebipohise_nodate}.
+The resulting environment was evaluated in the ``Computer Security'' course in February 2024 and was used by 382 participants~\cite{eistre_veebipohise_nodate}.
 The reported outcome was successful overall, although minor issues were still observed during the session and later informed further improvements for continued production use~\cite{eistre_veebipohise_nodate}.
 Eistre's implementation therefore serves as the direct technical starting point for this thesis.
 
@@ -71,7 +71,7 @@ Figure~\ref{fig:baseline-system-architecture} illustrates the system's main comp
 The architecture is organized around four main components.
 These are a client-side user interface, a server-side backend API (application programming interface), a MySQL\footnote{\url{https://www.mysql.com/}} database, and a Kubernetes\footnote{\url{https://kubernetes.io/}} cluster that provisions isolated Linux environments~\cite{eistre_veebipohise_nodate}.
 At runtime, the browser-based terminal communicates with the API layer, which brokers interaction with a user-specific Linux container in Kubernetes and records user progress and task state in MySQL\@.
-The client-side interface is developed using Vue.js\footnote{\url{https://vuejs.org/}} with Nuxt and supports user registration and authentication, topic navigation, task solving, administrative views for managing topics and tasks, and both English and Estonian.
+The client-side interface is developed using Vue.js\footnote{\url{https://vuejs.org/}} with Nuxt and supports user registration and authentication, topic navigation, task solving, administrative views for managing topics and tasks, and usage in both English and Estonian.
 
 The server-side application acts as the central coordination layer of the platform.
 It manages authentication and sessions, exposes API endpoints consumed by the user interface, and orchestrates operations that require persistence or interaction with the Linux execution environment.
@@ -160,7 +160,7 @@ This suggests that classroom-scale usage results in additional variable costs be
 Taken together, these observations show that the main issue was not simply that cloud infrastructure incurred costs, but that the operational model of the previous deployment remained poorly matched to intermittent educational workloads.
 Although the system already implemented demand-based cluster start and stop mechanisms, idle costs remained significant and active periods still generated significant compute and supporting service charges.
 This cost profile therefore defines the central optimization problem addressed in this thesis.
-The task is to reduce the always-on footprint of the platform while preserving per-user interactive Linux environments for irregular classroom usage.
+The task is to reduce the platform's always-on footprint while preserving per-user interactive Linux environments for irregular classroom usage.
 
 \subsubsection{Deprecated Authentication Library} \label{subsubsec:deprecated-authentication-library}
 The previous version of the learning environment relied on the Lucia\footnote{\url{https://github.com/lucia-auth/lucia}} authentication library to implement core authentication functionality, including user registration, login, and session management~\cite{eistre_veebipohise_nodate}.

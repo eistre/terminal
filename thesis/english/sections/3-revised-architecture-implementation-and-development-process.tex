@@ -79,7 +79,7 @@ A significant architectural change compared to the baseline system is the separa
 As illustrated in Figure~\ref{fig:revised-architecture-overview}, these are represented by the provisioner cleanup job and the database cleanup job.
 The provisioner cleanup job enforces lifecycle policies for user container environments, while the database cleanup job removes expired verification tokens and inactive user records in accordance with retention policies.
 This separation means that the main application does not need to run indefinitely only to perform periodic maintenance.
-It also allows deployments where the main application can be scaled down during idle periods while maintenance continues to preserve system consistency.
+It also allows deployments in which the main application can be scaled down during idle periods while maintenance continues in the background.
 
 During an active terminal session, the browser establishes a persistent connection to the backend API to support interactive input and output.
 The backend then bridges this traffic to the user's Linux session in the container execution environment.
@@ -122,7 +122,7 @@ Upon application startup, a factory function evaluates the environment configura
 This approach ensures that the application relies solely on a stable API, while provider-specific logic is contained within the implementation classes.
 
 At a high level, the provisioner supports four operations.
-It can list currently active user containers, ensure a user container exists and create one if it is not present, update the container expiration time while the user remains active, and delete the container once it is no longer required.
+It can list currently active user containers, ensure that a user container exists by creating one when necessary, update the container expiration time while the user remains active, and delete the container once it is no longer required.
 Together, these four operations cover the full container lifecycle required by the application while leaving provider-specific startup, polling, metadata handling, and secret management inside the implementation classes.
 The provisioner interface is shown in the code snippet below.
 
@@ -155,7 +155,8 @@ protected abstract ensureContainerExistsImpl(userId: string):
 In practice, these wrappers are important under classroom-scale usage patterns and bursty traffic, such as page refreshes and repeated session starts.
 Per-user serialization prevents race conditions where concurrent requests attempt to create or delete the same user's container.
 Concurrency limiting reduces the likelihood of overwhelming provider APIs during spikes, and retry logic improves robustness against temporary network failures or throttling.
-Additionally, the base class provides shared utilities for lifecycle management, including computing expiration timestamps, applying consistent metadata tags or labels, and generating fresh SSH key pairs for new containers, ensuring consistent behavior across providers.
+Additionally, the base class provides shared lifecycle-management utilities, including computing expiration timestamps, applying consistent metadata tags or labels, and generating fresh SSH key pairs for new containers.
+This helps ensure consistent behavior across providers.
 
 \subsubsection{Lifecycle Management and Provider Implementations} \label{subsubsec:lifecycle-management-and-provider-implementations}
 The provisioner abstraction presents a provider-agnostic API\@.
@@ -204,10 +205,11 @@ Fett et al.~\cite{fett_web_2017} further explain that OIDC allows a relying part
 At a high level, the platform uses the OIDC authorization code flow.
 As described by Fett et al.~\cite{fett_web_2017}, the user is redirected from the application to the identity provider, authenticates there, and is then redirected back with an authorization code that is exchanged for tokens and used to establish a session.
 
-In the current implementation, this flow can also use PKCE (Proof Key for Code Exchange), which adds a verification step during token exchange and improves resistance to authorization code interception.
-The web application currently supports both Microsoft Entra ID\footnote{\url{https://www.microsoft.com/en-us/security/business/identity-access/microsoft-entra-id}}, which was used during testing, and Keycloak\footnote{\url{https://www.keycloak.org/}}, which is used for university integration, as OIDC providers through environment variable configuration.
-After successful token validation, the authenticated external identity is mapped to the platform's internal user and session model, which is then used for progress tracking and authorization decisions.
-This gives the platform a direct path to university identity integration and reduces onboarding friction in deployments where institutional login is available.
+The current implementation can also use PKCE (Proof Key for Code Exchange), which adds a verification step during token exchange and improves resistance to authorization code interception.
+The web application currently supports both Microsoft Entra ID\footnote{\url{https://www.microsoft.com/en-us/security/business/identity-access/microsoft-entra-id}} and Keycloak\footnote{\url{https://www.keycloak.org/}} as OIDC providers through environment variable configuration.
+Microsoft Entra ID was used for local testing, whereas Keycloak was used for university integration.
+After successful token validation, the authenticated external identity is mapped to the platform's internal user and session model for progress tracking and authorization decisions.
+This provides a direct path to university identity integration and reduces onboarding friction in deployments where institutional login is available.
 
 A standards-based OIDC integration improves interoperability and maintainability compared with provider-specific or custom authentication logic.
 Fett et al.~\cite{fett_comprehensive_2016} show that secure OAuth-based systems depend on correct flow handling and validation under recommended best practices, while Fett et al.~\cite{fett_web_2017} provide the corresponding OIDC-specific analysis.
@@ -260,7 +262,7 @@ Figure~\ref{fig:task-editor-dual-language} shows the dual-language mode, where b
   \label{fig:task-editor-dual-language}
 \end{figure}
 
-The editor also provides lightweight completeness feedback through status indicators shown in the outline and action area.
+The editor also provides lightweight completeness feedback through status indicators in the outline and action area.
 Tasks or topics with all required values present are marked with the indicator ``OK'', whereas entries with missing mandatory fields are marked as ``MISSING''.
 This allows administrators to identify incomplete translations or task definitions without opening every item individually, which is particularly useful when editing larger bilingual exercise sets.
 As a result, the redesign improves the editorial workflow by making it easier to maintain parity between language variants while also reducing duplication in content management.

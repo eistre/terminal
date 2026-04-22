@@ -12,8 +12,8 @@ Together, these deployments provide the practical basis for the cross-platform e
 \subsection{Deployment Goals and Platform Selection} \label{subsec:deployment-goals-and-platform-selection}
 The revised Linux command-line learning platform was designed to run across multiple deployment environments while preserving the same core application functionality.
 The goal of this multi-platform approach was not portability alone, but also to enable a structured comparison between different hosting models and to identify the most suitable long-term deployment environment for continued use.
-For this reason, deployment is discussed separately from the application architecture.
-In chapter~\ref{sec:revised-architecture-and-implementation}, the focus was on the internal design and implementation of the system, whereas this chapter examines how that design was deployed in different environments and what tradeoffs those environments introduced.
+For that reason, this chapter discusses deployment separately from the application architecture.
+Chapter~\ref{sec:revised-architecture-and-implementation} focused on the internal design and implementation of the system, whereas this chapter focuses on how that design was deployed in different environments and what tradeoffs those environments introduced.
 
 Across all target environments, the deployment design was guided by several shared goals.
 First, the platform had to support isolated Linux-based execution environments for individual users, as this is central to the teaching model of the system.
@@ -131,7 +131,7 @@ This made Azure suitable not only for continuity with the baseline system, but a
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-azure}
 The Azure environment was provisioned using Terraform configuration.
-Similarly to the baseline Azure deployment, the revised Azure deployment is centered around Azure Container Apps (ACA), which hosts the main web application, while the scheduled maintenance workloads are deployed as Azure Container Apps Jobs, which execute containerized tasks for a finite duration and then stop~\cite{noauthor_azure_nodate,craigshoemaker_jobs_nodate}.
+In the resulting deployment, the revised Azure setup is centered around Azure Container Apps (ACA), which hosts the main web application, while the scheduled maintenance workloads are deployed as Azure Container Apps Jobs, which execute containerized tasks for a finite duration and then stop~\cite{noauthor_azure_nodate,craigshoemaker_jobs_nodate}.
 In this environment, the main Nuxt application runs as a containerized web workload configured with 0.5 CPU and 1~GiB of memory, while the database cleanup and provisioner cleanup functions run as separate scheduled jobs, each configured with 0.25 CPU and 0.5~GiB of memory.
 This matches the architectural separation described in subchapter~\ref{subsec:architecture-overview}, where periodic maintenance was moved out of the main application process.
 
@@ -155,13 +155,13 @@ Unlike the baseline implementation, which relied on Azure Files\footnote{\url{ht
 Similar to the baseline system, email delivery for account verification is handled through Azure Communication Services using an Azure-managed email domain~\cite{sroons_azure_nodate,bashan-git_overview_nodate,eistre_veebipohise_nodate}.
 Regarding authentication, the Azure deployment does not integrate with the university-managed Keycloak service, as that setup is specific to the UT HPC environment.
 Accordingly, it follows the same pattern as the baseline Azure system, where users register within the application and validate their accounts via email.
-This keeps the Azure deployment self-contained within the cloud environment.
+This approach keeps the Azure deployment self-contained within the cloud environment.
 
 From an operational perspective, the revised Azure deployment differs from the baseline primarily in its reduced dependence on cluster-based infrastructure.
 The main web application and the scheduled jobs remain deployable as managed container workloads, while session containers are provisioned on demand through ACI\@.
 In addition, the ACA web application was configured with a minimum replica count of zero, which allows the web layer to scale to zero during idle periods~\cite{craigshoemaker_scaling_nodate}.
 This eliminates the need to stop and start a Kubernetes cluster to control idle costs and avoids the startup delay after inactivity.
-This design is better aligned with the irregular usage pattern of the learning platform, where demand is concentrated around course sessions rather than spread uniformly over time.
+This design is better aligned with the platform's irregular usage pattern, where demand is concentrated around course sessions rather than spread uniformly over time.
 Within the overall comparison, Azure therefore represents the public cloud deployment with the lowest idle footprint while reducing the always-on infrastructure burden of the earlier Azure-based design.
 
 \subsection{Amazon Web Services} \label{subsec:amazon-web-services}
@@ -176,11 +176,11 @@ Unlike the University of Tartu HPC deployment, which represents institutional Ku
 This makes AWS a suitable comparison platform for evaluating whether the provider-agnostic architecture described in chapter~\ref{sec:revised-architecture-and-implementation} generalizes cleanly beyond Azure while keeping the core application requirements unchanged.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-aws}
-Similarly to Azure, the AWS environment was also provisioned using Terraform configuration.
-The AWS deployment combines an always-on web hosting layer with on-demand and scheduled container workloads.
+Like the Azure environment, the AWS environment was provisioned using Terraform configuration.
+In the resulting deployment, the AWS setup combines an always-on web hosting layer with on-demand and scheduled container workloads.
 The main Nuxt web application is deployed to Amazon Lightsail\footnote{\url{https://aws.amazon.com/lightsail/}} container services using the Nano plan, corresponding to 0.25 shared vCPU and 512~MB of RAM, while the database cleanup and provisioner cleanup workloads run as scheduled ECS tasks on AWS Fargate~\cite{noauthor_deploy_nodate,noauthor_architect_nodate,noauthor_amazon_nodate}.
 An alternative considered for the main web application was an ECS service behind an Application Load Balancer\footnote{\url{https://aws.amazon.com/elasticloadbalancing/application-load-balancer/}}~\cite{noauthor_use_nodate-1}.
-Compared with the selected Lightsail container service setup, that design would add separate load balancing infrastructure and a higher always-on cost baseline, so Lightsail container services were chosen as the simpler and more cost-effective option for the continuously running web layer~\cite{noauthor_elastic_nodate,noauthor_amazon_nodate}.
+Compared with the selected Lightsail container service setup, that design would introduce separate load-balancing infrastructure and a higher always-on cost baseline, so Lightsail container services were chosen as the simpler and more cost-effective option for the continuously running web layer~\cite{noauthor_elastic_nodate,noauthor_amazon_nodate}.
 
 \begin{figure}[ht]
   \centering
@@ -204,7 +204,7 @@ From an operational perspective, the AWS deployment uses a Lightsail container s
 The scheduled cleanup tasks used the same ECS task sizing as the session containers, namely 0.25 CPU and 512~MiB of memory.
 Similarly to the Azure deployment, the cost of terminal sessions depends on the requested resources and the runtime of the Fargate tasks~\cite{noauthor_aws_nodate}.
 However, unlike the Azure ACA deployment, the Lightsail container service does not provide a comparable scale-to-zero configuration for the web layer.
-Overall, the AWS deployment shows that the revised architecture can be transferred to another major cloud provider without requiring Kubernetes for session execution, but it does so with a continuously running web layer and a higher idle baseline than Azure.
+Overall, the AWS deployment shows that the revised architecture can be transferred to another major cloud provider without requiring Kubernetes for session execution, although it does so with a continuously running web layer and a higher idle baseline than Azure.
 
 Taken together, the three deployment environments represent distinct operational models.
 UT HPC represents institutionally managed Kubernetes hosting.
