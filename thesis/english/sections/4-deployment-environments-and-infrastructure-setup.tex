@@ -107,11 +107,11 @@ Each per-user terminal container requested 100~mCPU and 64~MiB of memory, with l
 From an operational perspective, the deployment in UT HPC reduced the amount of infrastructure that had to be managed directly within the scope of the project.
 The Kubernetes cluster and ingress infrastructure were provided by UT HPC, while the responsibility for the application deployment remained focused on namespace-scoped resources such as the Helm release, database setup, and supporting workloads.
 At the same time, some parts of the deployment, including public exposure, single sign-on, and SMTP integration, depended on coordination with UT HPC support.
-This made UT HPC a realistic university-hosted option for long-term course use.
+This made UT HPC a realistic university-hosted option for long-term use.
 It reduced direct infrastructure ownership and preserved Kubernetes compatibility, but it also introduced a stronger dependency on institutional support for parts of the operational setup.
 
 \subsection{Microsoft Azure} \label{subsec:microsoft-azure}
-This subchapter discusses the deployment of the revised environment on Microsoft Azure.
+This subchapter discusses the deployment of the revised platform on Microsoft Azure.
 Azure was retained as a target environment because the baseline implementation described in subchapter~\ref{subsubsec:cloud-deployment-on-azure} was already hosted there, making it the most direct platform for modernization and comparison.
 While the deployment in UT HPC shows how the environment can be hosted in institutional Kubernetes infrastructure, the Azure deployment represents the public cloud modernization path for the baseline system.
 
@@ -161,13 +161,13 @@ This design is better aligned with the environment's irregular usage pattern, wh
 Within the overall comparison, Azure therefore represents the public cloud deployment with the lowest idle footprint while reducing the always-on infrastructure burden of the earlier Azure-based design.
 
 \subsection{Amazon Web Services} \label{subsec:amazon-web-services}
-This subchapter describes the deployment of the revised environment on Amazon Web Services (AWS).
+This subchapter describes the deployment of the revised platform on Amazon Web Services (AWS).
 AWS was included as an additional public cloud platform to complement the Azure-based baseline and to evaluate how the redesigned system can be deployed in a second major cloud environment with a different service ecosystem.
 The AWS deployment broadens the comparison by adding a second public cloud reference point for infrastructure automation, operational overhead, and cost drivers.
 
 \subsubsection{AWS as a Deployment Environment} \label{subsubsec:aws-as-a-deployment-environment}
 Amazon Web Services was selected as an additional public cloud deployment target to broaden the evaluation beyond a single cloud provider.
-Similar to Azure, AWS provides a realistic environment for assessing how the redesigned environment can be deployed using managed cloud services rather than Kubernetes resources.
+Similar to Azure, AWS provides a realistic environment for assessing how the redesigned platform can be deployed using managed cloud services rather than Kubernetes resources.
 Unlike UT HPC, which represents institutional Kubernetes hosting, the AWS deployment reflects an alternative public cloud model based on managed services and on-demand resource usage.
 This makes AWS a suitable comparison platform for evaluating whether the provider-agnostic architecture described in chapter~\ref{sec:revised-architecture-and-implementation} generalizes cleanly beyond Azure while keeping the core application requirements unchanged.
 

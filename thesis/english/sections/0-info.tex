@@ -1,22 +1,31 @@
 \newpage
 \pdfbookmark[1]{\infoname}{info} % Adding the info page among the PDF bookmarks
 
+% TODO - overall supervisor feedback.
+% I read through the thesis partly. The abstract was a bit hard to read and the english seemed a bit weak. Half way through the thesis I realized that the reader might want to see an example picture of the environment. Otherwise they would have a hard time understanding what the thesis is actually talking about. As such, I would suggest adding a screenshot of your current environment in the starting / analyzing chapter (chapter 2 - author interpretation). Titled something like, "Illustrative picture about Linux command line environment after updating" or something similar.
+
+% I read the first 30 pages of the thesis in depth, but the time and procrastination got the better of me and I skimmed through the rest. On a high level, the thesis is defensible for sure. At the minimum, grade B.
+
+% It was a little long, one place, where I would try to shorten maybe something into the appendices would be the analysis of the previous version. Perhaps try to give a more concise summary with some bulletpoints or something like that, and then refer to the appendices for a more detailed analysis. I would still like to read through the implementation and results analysis chapters more in depth.
+
+% I also added some comments around wording in line.
+
 % English information
 \begin{info}
 \begin{abstract}
-Linux and its command line play an important role in courses at the University of Tartu, such as ``Operating Systems'' and ``Computer Security''.
-To support hands-on practice in these courses, earlier thesis work created a web-based Linux command-line learning environment and later extended it into a cloud-hosted learning environment for continuous course use.
-These earlier iterations showed the educational value of Linux practice in a web-based environment, but they also revealed shortcomings in maintainability, deployment reproducibility, portability across environments, and cost efficiency.
-The aim of this thesis was to redesign the environment into a more sustainable and portable platform while preserving its educational purpose and core workflow.
+Linux command-line skills are an important part of systems-oriented courses at the University of Tartu Institute of Computer Science, including ``Operating Systems'' and ``Computer Security''.
+Earlier thesis work supported these courses by introducing a web-based Linux command-line learning environment and later extending it into a cloud-hosted platform.
+These versions demonstrated the educational value of browser-based Linux practice, but they also revealed shortcomings in maintainability, deployment reproducibility, portability, and cost efficiency.
+The aim of this thesis was to modernize the environment while preserving its educational purpose and core workflow.
 
-The work introduced a revised architecture with clearer modular boundaries, a provider-agnostic provisioning layer for user-specific Linux environments, and improved authentication and multilingual content management.
-Automated environment setup was implemented using Helm and Terraform.
-The redesigned environment was deployed and evaluated in UT HPC, Microsoft Azure, and Amazon Web Services.
+The redesigned platform introduced clearer modular boundaries, a provider-agnostic provisioning layer for user-specific Linux environments, an improved authentication layer, and enhanced multilingual content management.
+Deployment automation was supported with Helm and Terraform.
+The revised platform was deployed and evaluated in UT HPC, Microsoft Azure, and Amazon Web Services.
 
-The evaluation carried out during real course use in February and March 2026 showed that the revised environment preserved the intended educational workflow.
+The evaluation, conducted during the Computer Security course in February and March 2026, showed that the revised environment preserved the intended educational workflow.
 Students were able to access the environment, start interactive Linux sessions, and complete the relevant tasks without notable issues.
 Compared with the previous Azure deployment, the revised Azure architecture significantly reduced the observed baseline cost of keeping the environment available.
-Among the environments tested in this evaluation, UT HPC appeared to be the strongest option for institutional use, while Azure appeared to be the strongest public cloud alternative.
+Among the environments evaluated, UT HPC was the most suitable option for institutional use, while Microsoft Azure had the lowest observed cost among the public cloud deployments.
 \end{abstract}
 
 \keywords{Linux command line, web-based learning environment, software modernization, cloud computing, cost reduction, Kubernetes}
@@ -42,7 +51,7 @@ Uuendatud platvorm võeti kasutusele ja testiti keskkondades UT HPC, Microsoft A
 Testimine, mis viidi läbi 2026. aasta veebruaris ja märtsis, näitas, et uuendatud platvorm säilitas esialgse kasutusloogika.
 Tudengid said keskkonda sisse logida, alustada interaktiivseid Linuxi sessioone ja lahendada ettenähtud ülesandeid ilma märkimisväärsete probleemideta.
 Võrreldes varasema Azure'i keskkonnaga vähendas uuendatud Azure'i arhitektuur oluliselt platvormi pideva käigushoidmise baaskulu.
-Testitud keskkondade hulgast näis Tartu Ülikooli HPC keskkond olevat pikemaajaliseks kasutamiseks sobivaim ning avalikest pilveteenustest paistis Azure tugevaima alternatiivina.
+Testitud keskkondade hulgast osutus UT HPC keskkond sobivaimaks ülikoolipõhiseks kasutuseks ning avalikest pilvekeskkondadest oli madalaima vaadeldud kuluga Microsoft Azure.
 \end{abstract}
 
 \keywords{Linuxi käsurida, veebipõhine õppekeskkond, tarkvara kaasajastamine, pilveteenused, kulude vähendamine, Kubernetes}

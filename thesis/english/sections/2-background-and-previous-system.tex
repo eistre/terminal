@@ -7,10 +7,19 @@ This chapter establishes the educational and technical baseline for the thesis.
 It first motivates the educational relevance of Linux command-line practice in a web-based environment and situates the work within two earlier iterations of the learning environment developed at the University of Tartu.
 It then outlines the architecture and Azure deployment model of the previous system and identifies the main unresolved limitations that define the modernization context for this work.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/figure0-environment}
+  \caption{User-facing view of the revised web-based Linux command-line learning environment.}
+  \label{fig:updated-learning-environment}
+\end{figure}
+
+For orientation, Figure~\ref{fig:updated-learning-environment} shows the revised learning environment with its task list, task status indicators, and browser-based Linux terminal.
+
 \subsection{Motivation and Prior Work} \label{subsec:motivation-and-prior-work}
 Linux command-line knowledge remains important in many computing roles, particularly in system administration, software development, and automation.
 For that reason, hands-on command-line practice remains a relevant educational objective.
-At the University of Tartu, earlier development work examined how such practice could be supported through a web-based environment, first by establishing feasibility and later by turning the same idea into a more robust cloud-hosted system for sustained course use.
+At the University of Tartu, earlier development work examined how such practice could be supported through a web-based environment, first by establishing feasibility and later by turning the same idea into a more robust cloud-hosted system for sustained use.
 
 \subsubsection{The Importance of the Linux Command Line} \label{subsubsec:the-importance-of-the-linux-command-line}
 Proficiency in command-line operations remains valuable because Linux-based systems are widely used in modern computing infrastructure and are often administered through terminal-centric workflows rather than graphical interfaces.
@@ -24,7 +33,7 @@ They also advocate for studying command-line interactions to enhance comprehensi
 Likewise, Bailey and Zilles~\cite{bailey_uassign_2019} treat terminal skills as a topic worth teaching and assessing through authentic terminal actions, and they present an approach for interactive, auto-graded terminal assignments.
 
 At the University of Tartu, Linux and its command line are treated as core topics in systems-oriented teaching.
-For example, Linux command-line work plays a central role in the ``Operating Systems'' and ``Computer Security'' courses.
+For example, Linux command-line work plays a central role in the ``Operating Systems'' (LTAT.06.001) and ``Computer Security'' (LTAT.06.002) courses.
 This instructional need motivated the development of a web-based learning environment in two main iterations.
 The first was an initial proof-of-concept implementation described by Halapuu~\cite{halapuu_eestikeelse_nodate}, and the second was a cloud-hosted implementation presented in Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate}.
 Together, these iterations establish both the educational relevance of the environment and the direct technical lineage on which the present thesis builds.
@@ -35,12 +44,12 @@ The prototype provided students with a web terminal connected to an isolated Lin
 It also included an automatic task-checking approach based on observable outcomes such as command output and filesystem changes, allowing students to receive immediate feedback and progress through tasks without waiting for manual review.
 
 The prototype was deployed inside the University's internal network and run on the supervisor's university laptop~\cite{halapuu_eestikeelse_nodate}.
-It was tested in the context of the ``Computer Security'' course with over one hundred participants, demonstrating that a web-based command-line environment was possible in real course use~\cite{halapuu_eestikeelse_nodate}.
+It was tested in the context of the ``Computer Security'' course with over one hundred participants, demonstrating that a web-based command-line environment was viable in a practical course setting~\cite{halapuu_eestikeelse_nodate}.
 At the same time, the deployment model and overall implementation left important concerns related to stability, security, and maintainability unresolved.
 These limitations were consistent with an early feasibility-focused implementation and helped define the need for a more production-oriented successor.
 
 \subsubsection{Cloud-Hosted Implementation} \label{subsubsec:cloud-hosted-implementation}
-After the initial proof-of-concept had been used in the supervisor's courses for two years, Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} transformed the environment into a cloud-hosted learning environment intended for sustained course use.
+After the initial proof-of-concept had been used in the supervisor's courses for two years, Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} transformed the environment into a cloud-hosted learning environment intended for sustained use.
 This second iteration addressed limitations observed during earlier use and introduced goals such as improved stability and maintainability, bilingual support in Estonian and English, and deployment in a more robust cloud environment.
 
 Where the first iteration established feasibility, the second established an operational baseline.
@@ -57,11 +66,11 @@ This section outlines the system developed in Eistre's thesis~\cite{eistre_veebi
 The focus is on the application's internal architecture and Azure-based deployment model because both directly shape the cost, maintainability, and operational constraints that later chapters address.
 
 \subsubsection{System Architecture} \label{subsubsec:system-architecture}
-The previous system was designed as a production-oriented web-based Linux command-line learning environment for cloud deployment and sustained course use~\cite{eistre_veebipohise_nodate}.
+The previous system was designed as a production-oriented web-based Linux command-line learning environment for cloud deployment and sustained use~\cite{eistre_veebipohise_nodate}.
 Its implementation was largely rewritten in TypeScript\footnote{\url{https://www.typescriptlang.org/}} using Node.js\footnote{\url{https://nodejs.org/}} and the Nuxt 3 framework\footnote{\url{https://nuxt.com/}}, which provided a structured basis for both the user interface and the server-side logic.
 Figure~\ref{fig:baseline-system-architecture} illustrates the system's main components and the runtime interactions between them.
 
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure1-baseline-architecture}
   \caption{Baseline system architecture of Eistre's implementation, adapted from~\cite{eistre_veebipohise_nodate}.}
@@ -97,7 +106,7 @@ Azure was chosen in part because it offers educational credits to students, whic
 The application was containerized and deployed using Azure's managed container and Kubernetes offerings, specifically Azure Container Apps\footnote{\url{https://azure.microsoft.com/en-us/products/container-apps}} (ACA) and Azure Kubernetes Service\footnote{\url{https://azure.microsoft.com/en-us/products/kubernetes-service}} (AKS)~\cite{eistre_veebipohise_nodate}.
 Figure~\ref{fig:azure-deployment-overview} provides a deployment-level overview of the baseline environment and the Azure services created for it.
 
-\begin{figure}[ht]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure2-baseline-azure}
   \caption{Azure deployment overview of Eistre's baseline system, adapted from~\cite{eistre_veebipohise_nodate}.}
