@@ -24,7 +24,7 @@ At the University of Tartu, earlier development work examined how such practice 
 \subsubsection{The Importance of the Linux Command Line} \label{subsubsec:the-importance-of-the-linux-command-line}
 Proficiency in command-line operations remains valuable because Linux-based systems are widely used in modern computing infrastructure and are often administered through terminal-centric workflows rather than graphical interfaces.
 One indicator of Linux's prevalence in production computing is high-performance computing.
-According to TOP500 statistics, Linux is the operating system family used by all TOP500-ranked supercomputers~\cite{noauthor_operating_nodate}.
+According to TOP500 statistics, Linux is the operating system family used by all TOP500-ranked supercomputers~\cite{top500_linux}.
 In such environments, administration, troubleshooting, automation, and reproducible system management typically depend on command-line tools and remote terminal access instead of graphical interfaces.
 
 This view aligns with academic perspectives on skills and learning.
@@ -35,26 +35,26 @@ Likewise, Bailey and Zilles~\cite{bailey_uassign_2019} treat terminal skills as 
 At the University of Tartu, Linux and its command line are treated as core topics in systems-oriented teaching.
 For example, Linux command-line work plays a central role in the ``Operating Systems'' (LTAT.06.001) and ``Computer Security'' (LTAT.06.002) courses.
 This instructional need motivated the development of a web-based learning environment in two main iterations.
-The first was an initial proof-of-concept implementation described by Halapuu~\cite{halapuu_eestikeelse_nodate}, and the second was a cloud-hosted implementation presented in Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate}.
+The first was an initial proof-of-concept implementation described by Halapuu~\cite{halapuu_2022}, and the second was a cloud-hosted implementation presented in Eistre's bachelor's thesis~\cite{eistre_2024}.
 Together, these iterations establish both the educational relevance of the environment and the direct technical lineage on which the present thesis builds.
 
 \subsubsection{Initial Proof of Concept} \label{subsubsec:initial-proof-of-concept}
-Halapuu's thesis~\cite{halapuu_eestikeelse_nodate} introduced the first web-based iteration of the Linux command-line learning environment as a proof of concept.
+Halapuu's thesis~\cite{halapuu_2022} introduced the first web-based iteration of the Linux command-line learning environment as a proof of concept.
 The prototype provided students with a web terminal connected to an isolated Linux environment, enabling interactive command execution and task-based learning directly in the browser.
 It also included an automatic task-checking approach based on observable outcomes such as command output and filesystem changes, allowing students to receive immediate feedback and progress through tasks without waiting for manual review.
 
-The prototype was deployed inside the University's internal network and run on the supervisor's university laptop~\cite{halapuu_eestikeelse_nodate}.
-It was tested in the context of the ``Computer Security'' course with over one hundred participants, demonstrating that a web-based command-line environment was viable in a practical course setting~\cite{halapuu_eestikeelse_nodate}.
+The prototype was deployed inside the University's internal network and run on the supervisor's university laptop~\cite{halapuu_2022}.
+It was tested in the context of the ``Computer Security'' course with over one hundred participants, demonstrating that a web-based command-line environment was viable in a practical course setting~\cite{halapuu_2022}.
 At the same time, the deployment model and overall implementation left important concerns related to stability, security, and maintainability unresolved.
 These limitations were consistent with an early feasibility-focused implementation and helped define the need for a more production-oriented successor.
 
 \subsubsection{Cloud-Hosted Implementation} \label{subsubsec:cloud-hosted-implementation}
-After the initial proof-of-concept had been used in the supervisor's courses for two years, Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} transformed the environment into a cloud-hosted learning environment intended for sustained use.
+After the initial proof-of-concept had been used in the supervisor's courses for two years, Eistre's bachelor's thesis~\cite{eistre_2024} transformed the environment into a cloud-hosted learning environment intended for sustained use.
 This second iteration addressed limitations observed during earlier use and introduced goals such as improved stability and maintainability, bilingual support in Estonian and English, and deployment in a more robust cloud environment.
 
 Where the first iteration established feasibility, the second established an operational baseline.
-The resulting environment was evaluated in the ``Computer Security'' course in February 2024 and was used by 382 participants~\cite{eistre_veebipohise_nodate}.
-The reported outcome was successful overall, although minor issues were still observed during the session and later informed further improvements for continued production use~\cite{eistre_veebipohise_nodate}.
+The resulting environment was evaluated in the ``Computer Security'' course in February 2024 and was used by 382 participants~\cite{eistre_2024}.
+The reported outcome was successful overall, although minor issues were still observed during the session and later informed further improvements for continued production use~\cite{eistre_2024}.
 Eistre's implementation therefore serves as the direct technical starting point for this thesis.
 
 Taken together, the two earlier theses define a clear development sequence.
@@ -62,23 +62,23 @@ Halapuu established that web-based Linux command-line learning was possible in a
 This thesis builds on that baseline by addressing unresolved issues in maintainability, modernization, deployment reproducibility, and cost efficiency.
 
 \subsection{Architecture and Deployment of the Previous System} \label{subsec:architecture-and-deployment-of-the-previous-system}
-This section outlines the system developed in Eistre's thesis~\cite{eistre_veebipohise_nodate}, which serves as the technical starting point for this master's thesis.
+This section outlines the system developed in Eistre's thesis~\cite{eistre_2024}, which serves as the technical starting point for this master's thesis.
 The focus is on the application's internal architecture and Azure-based deployment model because both directly shape the cost, maintainability, and operational constraints that later chapters address.
 
 \subsubsection{System Architecture} \label{subsubsec:system-architecture}
-The previous system was designed as a production-oriented web-based Linux command-line learning environment for cloud deployment and sustained use~\cite{eistre_veebipohise_nodate}.
+The previous system was designed as a production-oriented web-based Linux command-line learning environment for cloud deployment and sustained use~\cite{eistre_2024}.
 Its implementation was largely rewritten in TypeScript\footnote{\url{https://www.typescriptlang.org/}} using Node.js\footnote{\url{https://nodejs.org/}} and the Nuxt 3 framework\footnote{\url{https://nuxt.com/}}, which provided a structured basis for both the user interface and the server-side logic.
 Figure~\ref{fig:baseline-system-architecture} illustrates the system's main components and the runtime interactions between them.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure1-baseline-architecture}
-  \caption{Baseline system architecture of Eistre's implementation, adapted from~\cite{eistre_veebipohise_nodate}.}
+  \caption{Baseline system architecture of Eistre's implementation, adapted from~\cite{eistre_2024}.}
   \label{fig:baseline-system-architecture}
 \end{figure}
 
 The architecture is organized around four main components.
-These are a client-side user interface, a server-side backend API (application programming interface), a MySQL\footnote{\url{https://www.mysql.com/}} database, and a Kubernetes\footnote{\url{https://kubernetes.io/}} cluster that provisions isolated Linux environments~\cite{eistre_veebipohise_nodate}.
+These are a client-side user interface, a server-side backend API (application programming interface), a MySQL\footnote{\url{https://www.mysql.com/}} database, and a Kubernetes\footnote{\url{https://kubernetes.io/}} cluster that provisions isolated Linux environments~\cite{eistre_2024}.
 At runtime, the browser-based terminal communicates with the API layer, which brokers interaction with a user-specific Linux container in Kubernetes and records user progress and task state in MySQL\@.
 The client-side interface was developed using Vue.js\footnote{\url{https://vuejs.org/}} with Nuxt and supports user registration and authentication, topic navigation, task solving, administrative views for managing topics and tasks, and usage in both English and Estonian.
 
@@ -88,57 +88,57 @@ In particular, the backend provides user-specific Linux environments, manages th
 It also determines task completion based on predefined criteria and records progress updates when completion conditions are satisfied.
 This positions the backend as the primary integration point among the user interface, the database, and the container runtime.
 
-Persistent state is maintained in a MySQL database, including user accounts, topics and their underlying tasks, and user progress~\cite{eistre_veebipohise_nodate}.
+Persistent state is maintained in a MySQL database, including user accounts, topics and their underlying tasks, and user progress~\cite{eistre_2024}.
 Persisting these elements supports continuity across sessions and enables centralized management of task content without redeployment.
 The database access layer was implemented using an Object-Relational Mapping (ORM) layer, providing typed access to relational entities and simplifying the handling of relationships between users, topics, and tasks.
 
-The learning environment used containerization to provide isolated Linux execution environments and employed Kubernetes to manage the lifecycle of per-user containers (pods)~\cite{eistre_veebipohise_nodate}.
+The learning environment used containerization to provide isolated Linux execution environments and employed Kubernetes to manage the lifecycle of per-user containers (pods)~\cite{eistre_2024}.
 When a user initiates a terminal session, the system allocates a dedicated Kubernetes namespace and provisions an isolated Linux environment for that user, enabling repeatable task execution while preventing cross-user interference.
 Since these environments consume compute resources, the architecture incorporates automated cleanup procedures that terminate inactive user environments after a configured idle period, reclaiming resources and keeping the cluster load manageable during course usage.
-The backend interacts with the cluster programmatically through the Kubernetes JavaScript Client library\footnote{\url{https://github.com/kubernetes-client/javascript}}~\cite{eistre_veebipohise_nodate}.
+The backend interacts with the cluster programmatically through the Kubernetes JavaScript Client library\footnote{\url{https://github.com/kubernetes-client/javascript}}~\cite{eistre_2024}.
 
 At an architectural level, the previous system already satisfied the core functional requirements of the learning environment.
 For that reason, this thesis treats it as a system to be modernized and refined rather than replaced in its entirety.
 
 \subsubsection{Cloud Deployment on Azure} \label{subsubsec:cloud-deployment-on-azure}
-The previous system was deployed on Microsoft Azure~\cite{eistre_veebipohise_nodate}.
+The previous system was deployed on Microsoft Azure~\cite{eistre_2024}.
 Azure was chosen in part because it offers educational credits to students, which made it a practical option for an academic project.
-The application was containerized and deployed using Azure's managed container and Kubernetes offerings, specifically Azure Container Apps\footnote{\url{https://azure.microsoft.com/en-us/products/container-apps}} (ACA) and Azure Kubernetes Service\footnote{\url{https://azure.microsoft.com/en-us/products/kubernetes-service}} (AKS)~\cite{eistre_veebipohise_nodate}.
+The application was containerized and deployed using Azure's managed container and Kubernetes offerings, specifically Azure Container Apps\footnote{\url{https://azure.microsoft.com/en-us/products/container-apps}} (ACA) and Azure Kubernetes Service\footnote{\url{https://azure.microsoft.com/en-us/products/kubernetes-service}} (AKS)~\cite{eistre_2024}.
 Figure~\ref{fig:azure-deployment-overview} provides a deployment-level overview of the baseline environment and the Azure services created for it.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure2-baseline-azure}
-  \caption{Azure deployment overview of Eistre's baseline system, adapted from~\cite{eistre_veebipohise_nodate}.}
+  \caption{Azure deployment overview of Eistre's baseline system, adapted from~\cite{eistre_2024}.}
   \label{fig:azure-deployment-overview}
 \end{figure}
 
-In this design, the Nuxt application was packaged into a container image and run as a single Azure Container App instance, with fixed resource reservations, including 0.5 vCPU and 1 GB of memory, in the Sweden Central region~\cite{eistre_veebipohise_nodate}.
-According to Microsoft's documentation, Azure Container Apps is a serverless container hosting service that allows containerized applications to run without direct infrastructure management~\cite{noauthor_azure_nodate}.
+In this design, the Nuxt application was packaged into a container image and run as a single Azure Container App instance, with fixed resource reservations, including 0.5 vCPU and 1 GB of memory, in the Sweden Central region~\cite{eistre_2024}.
+According to Microsoft's documentation, Azure Container Apps is a serverless container hosting service that allows containerized applications to run without direct infrastructure management~\cite{microsoft_azure_container_apps_overview_2026}.
 In the baseline deployment, ACA provided the managed environment in which the web application ran and exposed the user interface and backend API endpoints.
 
-While Azure Container Apps hosts the web application itself, Eistre~\cite{eistre_veebipohise_nodate} notes that the interactive Linux environments required for the terminal tasks are provisioned separately on Azure Kubernetes Service (AKS).
-According to Microsoft's documentation, AKS is a managed Kubernetes service that simplifies cluster operations by offloading control-plane management~\cite{noauthor_what_nodate}.
+While Azure Container Apps hosts the web application itself, Eistre~\cite{eistre_2024} notes that the interactive Linux environments required for the terminal tasks are provisioned separately on Azure Kubernetes Service (AKS).
+According to Microsoft's documentation, AKS is a managed Kubernetes service that simplifies cluster operations by offloading control-plane management~\cite{microsoft_azure_kubernetes_service_overview_2025}.
 In the baseline deployment, AKS provided the managed Kubernetes environment for provisioning the per-user Linux containers required for the terminal sessions.
 The cluster was configured using B2s virtual machines (2 vCPU, 4 GB memory, 128 GB storage).
-Although the application ran in Sweden Central, the cluster was deployed in Norway East because the Azure student subscription imposed regional limitations on the available services~\cite{eistre_veebipohise_nodate}.
+Although the application ran in Sweden Central, the cluster was deployed in Norway East because the Azure student subscription imposed regional limitations on the available services~\cite{eistre_2024}.
 
 A central motivation for the Azure-based deployment was cost-aware operation.
-Continuously running a Kubernetes cluster can incur significant baseline cost even when there is no active classroom usage~\cite{eistre_veebipohise_nodate}.
+Continuously running a Kubernetes cluster can incur significant baseline cost even when there is no active classroom usage~\cite{eistre_2024}.
 To reduce that baseline cost, the system implemented an AKS control mechanism through which the application could start and stop the cluster based on demand.
 When a user initiates a session while the cluster is stopped, the environment triggers cluster startup and presents a waiting state until the cluster becomes available.
-When the system is idle for a configured period, the cluster can be stopped to avoid paying for unused compute capacity~\cite{eistre_veebipohise_nodate}.
+When the system is idle for a configured period, the cluster can be stopped to avoid paying for unused compute capacity~\cite{eistre_2024}.
 
-In addition to compute and container orchestration, the deployment relied on several supporting Azure services~\cite{eistre_veebipohise_nodate}.
-These included Azure Communication Services\footnote{\url{https://azure.microsoft.com/en-us/products/communication-services}} for email delivery and account verification, a storage account for persisting private key pairs across restarts, and a MySQL-backed database for persisting users, topics, tasks, and progress~\cite{eistre_veebipohise_nodate}.
-The database was initially hosted on PlanetScale\footnote{\url{https://planetscale.com/}} and later migrated to Azure's managed MySQL offering after PlanetScale discontinued its free tier~\cite{eistre_veebipohise_nodate}.
+In addition to compute and container orchestration, the deployment relied on several supporting Azure services~\cite{eistre_2024}.
+These included Azure Communication Services\footnote{\url{https://azure.microsoft.com/en-us/products/communication-services}} for email delivery and account verification, a storage account for persisting private key pairs across restarts, and a MySQL-backed database for persisting users, topics, tasks, and progress~\cite{eistre_2024}.
+The database was initially hosted on PlanetScale\footnote{\url{https://planetscale.com/}} and later migrated to Azure's managed MySQL offering after PlanetScale discontinued its free tier~\cite{eistre_2024}.
 Figure~\ref{fig:azure-deployment-overview} summarizes the high-level dependencies between these services and the end-to-end flow from the client to the provisioned environment.
 
 This deployment model established a functional cloud-based operating environment, but it also introduced a distinct cost and operational profile that is central to the modernization and cost-optimization goals of this thesis.
 
 \subsection{Limitations and Improvement Opportunities} \label{subsec:limitations-and-improvement-opportunities}
 
-While the cloud-enabled learning platform developed in Eistre's bachelor's thesis~\cite{eistre_veebipohise_nodate} represented a significant advance over the initial prototype, it also exposed several limitations and challenges.
+While the cloud-enabled learning platform developed in Eistre's bachelor's thesis~\cite{eistre_2024} represented a significant advance over the initial prototype, it also exposed several limitations and challenges.
 This section summarizes the key issues in the baseline system and clarifies why they matter for the modernization and cost-optimization work described in later chapters.
 
 \subsubsection{Cost Structure} \label{subsubsec:cost-structure}
@@ -172,9 +172,9 @@ This cost profile therefore defines the central optimization problem addressed i
 The task is to reduce the platform's always-on footprint while preserving per-user interactive Linux environments for irregular classroom usage.
 
 \subsubsection{Deprecated Authentication Library} \label{subsubsec:deprecated-authentication-library}
-The previous version of the learning environment relied on the Lucia\footnote{\url{https://github.com/lucia-auth/lucia}} authentication library to implement core authentication functionality, including user registration, login, and session management~\cite{eistre_veebipohise_nodate}.
-According to the Lucia maintainer, the project would be deprecated by March 2025 and would transition away from being a maintained, general-purpose authentication library~\cite{noauthor_fresh_nodate}.
-By March 2025, Lucia had been repositioned primarily as an educational resource for learning about authentication implementation rather than as a long-term dependency for production systems~\cite{noauthor_fresh_nodate}.
+The previous version of the learning environment relied on the Lucia\footnote{\url{https://github.com/lucia-auth/lucia}} authentication library to implement core authentication functionality, including user registration, login, and session management~\cite{eistre_2024}.
+According to the Lucia maintainer, the project would be deprecated by March 2025 and would transition away from being a maintained, general-purpose authentication library~\cite{pilcrowonpaper_fresh_start_2024}.
+By March 2025, Lucia had been repositioned primarily as an educational resource for learning about authentication implementation rather than as a long-term dependency for production systems~\cite{pilcrowonpaper_fresh_start_2024}.
 This shift indicates a dependency lifecycle risk in the environment's authentication layer.
 
 This deprecation poses a significant risk to the environment's maintainability.
@@ -189,10 +189,10 @@ Lauinger et al.~\cite{lauinger_thou_2017} discovered that a significant proporti
 Furthermore, Pashchenko et al.~\cite{pashchenko_qualitative_2020} report that decisions regarding dependency updates frequently involve trade-offs between security, compatibility, and engineering effort, which can result in postponed updates even when the associated risks are recognized.
 
 These risks are particularly relevant for framework-level dependencies that form the core of the application stack.
-The baseline system was developed using Nuxt 3~\cite{eistre_veebipohise_nodate}.
-At the time of writing, the Nuxt roadmap also includes a newer major release line, Nuxt 4~\cite{noauthor_roadmap_nodate}.
+The baseline system was developed using Nuxt 3~\cite{eistre_2024}.
+At the time of writing, the Nuxt roadmap also includes a newer major release line, Nuxt 4~\cite{nuxt_roadmap}.
 In addition to lifecycle considerations, older framework versions may contain publicly disclosed vulnerabilities.
-For instance, CVE-2025-27415 identifies a cache-poisoning issue affecting Nuxt versions prior to 3.16.0 in specific CDN (content delivery network) configurations~\cite{noauthor_nvd_nodate}.
+For instance, CVE-2025-27415 identifies a cache-poisoning issue affecting Nuxt versions prior to 3.16.0 in specific CDN (content delivery network) configurations~\cite{nvd_cve_2025_27415}.
 This example illustrates that dependency versions can directly influence the security and reliability of the system.
 
 Taken together, these findings indicate that dependency modernization is a necessary part of maintaining the system's security posture and long-term compatibility.

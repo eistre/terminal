@@ -20,7 +20,7 @@ In this thesis, AI assistance was used as a supporting tool for planning, scaffo
 
 \subsubsection{Refactoring Workflow} \label{subsubsec:refactoring-workflow}
 AI assistance was used primarily through OpenCode\footnote{\url{https://opencode.ai/}}, a command-line AI coding tool.
-Access to the underlying models was provided through GitHub Copilot via the GitHub Education student benefit~\cite{noauthor_supported_nodate,noauthor_students_2026}.
+Access to the underlying models was provided through GitHub Copilot, which was available through the GitHub Education student benefit~\cite{github_copilot_supported_models,github_education_students}.
 The primary models used were Claude Sonnet 4.5~\cite{anthropic_claude_sonnet_4_5_2025} and GPT-5.2-Codex~\cite{openai_gpt_5_2_codex_2025}, selected based on their availability and suitability for coding and debugging tasks.
 
 Several major changes, such as the container provisioning abstraction and the localization redesign, followed a consistent workflow:
@@ -189,8 +189,8 @@ User accounts enable the system to associate and store task results for each stu
 This approach preserves progress across sessions and reduces the risk of misuse or excessive load by requiring authenticated access before provisioning cost-incurring resources.
 
 Given Lucia's deprecation, continuing to rely on it was not suitable for a production system.
-As an alternative, the updated system adopts Better Auth\footnote{\url{https://github.com/better-auth/better-auth}}, an authentication library that provides built-in support for common authentication workflows and simplifies long-term maintenance~\cite{noauthor_better_nodate}.
-In the revised system, the authentication layer supports email-based login, session management, and OIDC integration for SSO~\cite{noauthor_better_nodate}.
+As an alternative, the updated system adopts Better Auth\footnote{\url{https://github.com/better-auth/better-auth}}, a framework-agnostic authentication and authorization framework that provides built-in support for common authentication workflows~\cite{better_auth_introduction}.
+In the revised system, the authentication layer supports email-based login, session management, and SSO~\cite{better_auth_introduction}.
 In addition, the revised system implements an email domain allowlist to restrict registration and login to approved domains, for example, \texttt{ut.ee}.
 This helps ensure the environment is used only by the intended audience.
 

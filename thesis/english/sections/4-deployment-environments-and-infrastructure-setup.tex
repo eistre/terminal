@@ -38,15 +38,15 @@ By contrast, the Azure and AWS deployments also required provisioning the surrou
 For that reason, different automation approaches were used.
 
 For UT HPC, the application was deployed using Helm.
-Helm is described by its maintainers as a package manager for Kubernetes that simplifies the deployment and lifecycle management of applications through charts~\cite{noauthor_helm_nodate}.
-In Helm terminology, a chart is a structured package containing the files needed to describe an application's Kubernetes resources, including templates that are rendered into manifests using supplied configuration values~\cite{noauthor_charts_nodate}.
+Helm is described by its maintainers as a tool for managing Kubernetes applications through deployable packages called charts~\cite{helm_using_helm}.
+In Helm terminology, a chart is a structured package containing the files needed to describe an application's Kubernetes resources, including templates that are rendered into manifests using supplied configuration values~\cite{helm_charts}.
 In this project, the Helm chart bundled the learning environment's Kubernetes resource templates while separating reusable defaults from environment-specific settings.
-Helm supports this by allowing the baseline configuration from \path{values.yaml} to be overridden through user-provided values files or command-line parameters~\cite{noauthor_values_nodate}.
+Helm supports this by allowing the baseline configuration from \path{values.yaml} to be overridden through user-provided values files or command-line parameters~\cite{helm_values_files}.
 This made Helm suitable for the UT HPC deployment, where the main task was to install and configure namespace-scoped Kubernetes resources inside an already available managed cluster.
 
 For Azure and AWS, the infrastructure was provisioned using Terraform.
-According to the Terraform documentation, Terraform is an infrastructure-as-code (IaC) tool that allows infrastructure to be specified in configuration files and managed through a repeatable workflow~\cite{noauthor_what_nodate-1}.
-Terraform supports this by providing input variables, which make it possible to supply configuration values separately from the core infrastructure code~\cite{noauthor_use_nodate}.
+According to the Terraform documentation, Terraform is an infrastructure-as-code (IaC) tool that allows infrastructure to be specified in configuration files and managed through a repeatable workflow~\cite{hashicorp_terraform_intro}.
+Terraform supports this by providing input variables, which make it possible to supply configuration values separately from the core infrastructure code~\cite{hashicorp_terraform_input_variables}.
 This made it possible to keep reusable infrastructure definitions while supplying deployment-specific values for each cloud environment, which improved deployment reproducibility.
 Brief deployment instructions for these environments are provided in Appendix~\ref{app:deployment-instructions}.
 
@@ -57,20 +57,20 @@ The following subchapters first introduce UT HPC and explain the namespace acces
 
 \subsubsection{UT HPC as a Deployment Environment} \label{subsubsec:ut-hpc-as-a-deployment-environment}
 The University of Tartu HPC Centre provides multiple research- and teaching-oriented computing services, including a managed Kubernetes service for hosting containerized workloads.
-According to the UT HPC service description, the Kubernetes cluster is deployed on bare-metal nodes within the University of Tartu network in a high-availability configuration, while users are granted managed, namespace-level access rather than responsibility for administering the underlying cluster infrastructure~\cite{center_kubernetes_nodate}.
-In this model, projects are assigned dedicated namespaces, enabling application deployment and management within a namespace-scoped environment, while broader cluster administration remains outside the scope of ordinary user access~\cite{noauthor_quick_nodate}.
+According to the UT HPC service description, the Kubernetes cluster is deployed on bare-metal nodes within the University of Tartu network in a high-availability configuration, while users are granted managed, namespace-level access rather than responsibility for administering the underlying cluster infrastructure~\cite{ut_hpc_kubernetes}.
+In this model, projects are assigned dedicated namespaces, enabling application deployment and management within a namespace-scoped environment, while broader cluster administration remains outside the scope of ordinary user access~\cite{ut_hpc_kubernetes_quick_start_2026}.
 This made UT HPC relevant in this thesis both as a technically compatible deployment target for the Kubernetes-based platform and as a practical example of deployment in university-managed infrastructure.
 
 \subsubsection{Access and Namespace Provisioning} \label{subsubsec:access-and-namespace-provisioning}
 Access to the UT HPC Kubernetes cluster was obtained through the namespace request process described in the UT HPC documentation.
-According to the UT HPC Kubernetes quick start guide, access can be requested either by submitting a Kubernetes namespace request or by contacting HPC support directly~\cite{noauthor_quick_nodate}.
-As part of the request, the applicant can specify details such as the domain name, deployment lifetime, project repository, and whether the application requires a database~\cite{center_container_nodate}.
-After the request has been processed, the user is notified by email and access is granted at the namespace level~\cite{noauthor_quick_nodate}.
+According to the UT HPC Kubernetes quick start guide, access can be requested either by submitting a Kubernetes namespace request or by contacting HPC support directly~\cite{ut_hpc_kubernetes_quick_start_2026}.
+As part of the request, the applicant can specify details such as the domain name, deployment lifetime, project repository, and whether the application requires a database~\cite{ut_hpc_container_hosting_form}.
+After the request has been processed, the user is notified by email and access is granted at the namespace level~\cite{ut_hpc_kubernetes_quick_start_2026}.
 
 As part of this thesis, the application was deployed into the namespace terminal-cs-ut-ee.
-After the namespace had been provisioned, cluster access was configured using the kubeconfig file-based access model described in the UT HPC documentation~\cite{noauthor_quick_nodate}.
+After the namespace had been provisioned, cluster access was configured using the kubeconfig file-based access model described in the UT HPC documentation~\cite{ut_hpc_kubernetes_quick_start_2026}.
 In addition to the namespace provisioning itself, several deployment-specific integrations were coordinated directly with UT HPC support by email.
-These included exposing the application under the public hostname terminal.cs.ut.ee through the UT HPC ingress infrastructure~\cite{noauthor_ingress_nodate}, configuring single sign-on through an HPC-managed Keycloak instance, and configuring Simple Mail Transfer Protocol (SMTP) settings required for sending account verification emails.
+These included exposing the application under the public hostname terminal.cs.ut.ee through the UT HPC ingress infrastructure, configuring single sign-on through an HPC-managed Keycloak instance, and configuring Simple Mail Transfer Protocol (SMTP) settings required for sending account verification emails.
 UT HPC support also provided a monitoring dashboard for standard workload metrics, including pod CPU usage, memory usage, and the number of active student containers\footnote{Based on private communication with UT HPC support during the deployment process.}.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-helm}
@@ -78,7 +78,7 @@ The application was installed in the terminal-cs-ut-ee namespace and made access
 Deployment into the namespace was performed using the project's Helm chart with environment-specific values for UT HPC, including ingress-related options and database configuration.
 The Helm release deployed the main web application together with the Kubernetes resources required to run the platform in this target environment.
 These included the application Deployment, the public-facing Service and Ingress, the database layer configured using the MariaDB\footnote{\url{https://mariadb.org/}} operator, cleanup CronJobs, and namespace-level resources such as service accounts, role bindings, and network policies.
-The deployment remained fully contained within the designated namespace, while public access was provided through the UT HPC ingress infrastructure~\cite{noauthor_ingress_nodate}.
+The deployment remained fully contained within the designated namespace, while public access was provided through the UT HPC ingress infrastructure~\cite{ut_hpc_kubernetes_ingress_2026}.
 Figure~\ref{fig:ut-hpc-deployment-overview} presents the deployment of the learning environment in UT HPC, showing the namespace-scoped application components, ingress path, database layer, and per-user containers.
 
 \begin{figure}[H]
@@ -89,15 +89,15 @@ Figure~\ref{fig:ut-hpc-deployment-overview} presents the deployment of the learn
 \end{figure}
 
 Public access was implemented through a Kubernetes Ingress resource.
-UT HPC documentation identifies ingress as a supported method for publishing HTTP applications to the public internet through its managed proxy infrastructure, while routing, DNS records, and TLS certificates were coordinated with HPC support~\cite{noauthor_ingress_nodate}.
+UT HPC documentation identifies ingress as a supported method for publishing HTTP applications to the public internet through its managed proxy infrastructure, while routing, DNS records, and TLS certificates were coordinated with HPC support~\cite{ut_hpc_kubernetes_ingress_2026}.
 Within the namespace, the web application was deployed as a standard Kubernetes Deployment behind a Service, with optional autoscaling available through chart configuration\@.
 Additionally, the web application was given explicit resource requests of 250~mCPU and 512~MiB of memory, with limits of 500~mCPU and 1~GiB\@.
 Configuration was kept separate from the application code by storing non-sensitive settings in ConfigMaps and providing sensitive values as Secrets.
 Service accounts and access control resources were used to define the permissions required by the application and its supporting workloads.
 Network policies were additionally used to restrict communication paths between the main application, the database, and the per-user execution environments.
 
-The database layer was deployed using MariaDB, one of the supported database options in UT HPC~\cite{noauthor_databases_nodate}.
-This was also appropriate for the project because MariaDB documentation describes it as having historically functioned as a drop-in replacement for equivalent MySQL versions, making it a compatible continuation of the earlier MySQL-based setup~\cite{noauthor_mariadb_2026}.
+The database layer was deployed using MariaDB, one of the supported database options in UT HPC~\cite{ut_hpc_kubernetes_databases_2025}.
+This was also appropriate for the project because MariaDB documentation describes it as having historically functioned largely as a drop-in replacement for equivalent MySQL versions~\cite{mariadb_mysql_compatibility}.
 The operator-managed database workload requested 300~mCPU and 256~MiB of memory, had a memory limit of 1~GiB, and used 1~GiB of persistent storage.
 In addition to the main web application and database components, the chart deployed periodic cleanup jobs to remove expired session resources and other stale state.
 These cleanup CronJobs requested 50~mCPU and 128~MiB of memory, with limits of 100~mCPU and 256~MiB, which kept their baseline footprint small while reserving enough capacity for scheduled maintenance tasks.
@@ -117,8 +117,8 @@ While the deployment in UT HPC shows how the environment can be hosted in instit
 
 \subsubsection{Azure as a Deployment Environment} \label{subsubsec:azure-as-a-deployment-environment}
 Microsoft Azure was selected as a deployment target because it provides the clearest continuation of the baseline system and therefore allows the revised design to be compared with the previous Azure-based deployment model.
-As described in subchapter~\ref{subsubsec:cloud-deployment-on-azure}, the earlier implementation used Azure Container Apps (ACA) for the main web application and Azure Kubernetes Service (AKS) for the Linux execution environments~\cite{eistre_veebipohise_nodate}.
-Although this architecture was functional, it still retained some of the cost and operational characteristics of cluster-based orchestration, since the execution environments relied on AKS worker nodes and related infrastructure even when user activity was low~\cite{eistre_veebipohise_nodate}.
+As described in subchapter~\ref{subsubsec:cloud-deployment-on-azure}, the earlier implementation used Azure Container Apps (ACA) for the main web application and Azure Kubernetes Service (AKS) for the Linux execution environments~\cite{eistre_2024}.
+Although this architecture was functional, it still retained some of the cost and operational characteristics of cluster-based orchestration, since the execution environments relied on AKS worker nodes and related infrastructure even when user activity was low~\cite{eistre_2024}.
 
 For the revised implementation, Azure remained relevant, but the service choices were reconsidered.
 The main goal was to preserve the same educational workflow while reducing idle infrastructure overhead and simplifying the operational model.
@@ -127,7 +127,7 @@ This made Azure suitable not only for continuity with the baseline system but al
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-azure}
 The Azure environment was provisioned using Terraform configuration files.
-In the resulting deployment, the revised Azure setup was centered around Azure Container Apps (ACA), which hosted the main web application, while the scheduled maintenance workloads were deployed as Azure Container Apps Jobs, which executed containerized tasks for a finite duration and then stopped~\cite{noauthor_azure_nodate,craigshoemaker_jobs_nodate}.
+In the resulting deployment, the revised Azure setup was centered around Azure Container Apps (ACA), which hosted the main web application, while the scheduled maintenance workloads were deployed as Azure Container Apps Jobs, which executed containerized tasks for a finite duration and then stopped~\cite{microsoft_azure_container_apps_overview_2026,microsoft_azure_container_apps_jobs_2026}.
 In this environment, the main Nuxt application ran as a containerized web workload configured with 0.5 CPU and 1~GiB of memory, while the database cleanup and provisioner cleanup functions ran as separate scheduled jobs, each configured with 0.25 CPU and 0.5~GiB of memory.
 This matches the architectural separation described in subchapter~\ref{subsec:architecture-overview}, where periodic maintenance was moved out of the main application process.
 
@@ -140,22 +140,22 @@ This matches the architectural separation described in subchapter~\ref{subsec:ar
 
 Figure~\ref{fig:azure-deployment-overview-revised} illustrates the revised Azure deployment.
 Users access the environment through the public endpoint provisioned for the application by ACA, which then routes traffic to the main web application container.
-When an interactive terminal session is requested, the application provisions a new user-specific Linux container through Azure Container Instances (ACI)~\cite{tomvcassidy_serverless_nodate}.
+When an interactive terminal session is requested, the application provisions a new user-specific Linux container through Azure Container Instances (ACI)~\cite{microsoft_azure_container_instances_overview_2025}.
 Each ACI session container was configured with 0.1~vCPU and 0.1~GB of memory.
-ACI allows the environment to provide isolated containers for each user without the need to maintain virtual machines or cluster infrastructure~\cite{tomvcassidy_serverless_nodate}.
+ACI allows the environment to provide isolated containers for each user without the need to maintain virtual machines or cluster infrastructure~\cite{microsoft_azure_container_instances_overview_2025}.
 Compared with the baseline AKS model, this reduces both infrastructure and operational overhead because the application no longer needs to manage cluster runtime to reduce idle costs.
-In this model, the runtime cost of the session containers is determined by the requested vCPU and memory resources together with the duration of the session~\cite{noauthor_pricing_nodate}.
+In this model, the runtime cost of the session containers is determined by the requested vCPU and memory resources together with the duration of the session~\cite{microsoft_azure_container_instances_pricing}.
 
-The database layer was implemented using the same Azure Database for MySQL Flexible Server deployment model as in the baseline system, using the cheapest available configuration to minimize costs (B1ms burstable tier with 1 vCPU and 2 GB of memory)~\cite{noauthor_flexible_nodate,eistre_veebipohise_nodate}.
-Unlike the baseline implementation, which relied on Azure Files\footnote{\url{https://azure.microsoft.com/en-us/products/storage/files}} to store per-session SSH keys, the revised deployment used Azure Key Vault\footnote{\url{https://azure.microsoft.com/en-us/products/key-vault}} for secret storage~\cite{msmbaldwin_azure_nodate,eistre_veebipohise_nodate}.
-Similar to the baseline system, email delivery for account verification was handled through Azure Communication Services using an Azure-managed email domain~\cite{sroons_azure_nodate,bashan-git_overview_nodate,eistre_veebipohise_nodate}.
+The database layer was implemented using the same Azure Database for MySQL Flexible Server deployment model as in the baseline system, using the cheapest available configuration to minimize costs (B1ms burstable tier with 1 vCPU and 2 GB of memory)~\cite{microsoft_azure_mysql_pricing,eistre_2024}.
+Unlike the baseline implementation, which relied on Azure Files\footnote{\url{https://azure.microsoft.com/en-us/products/storage/files}} to store per-session SSH keys, the revised deployment used Azure Key Vault\footnote{\url{https://azure.microsoft.com/en-us/products/key-vault}} for secret storage~\cite{eistre_2024}.
+Similar to the baseline system, email delivery for account verification was handled through Azure Communication Services using an Azure-managed email domain~\cite{microsoft_azure_communication_services_email_2025,eistre_2024}.
 Regarding authentication, the Azure deployment did not integrate with the university-managed Keycloak service, as that setup was specific to UT HPC\@.
 Accordingly, it followed the same pattern as the baseline Azure system, where users registered within the application and validated their accounts via email.
 This approach kept the Azure deployment self-contained within the cloud environment.
 
 From an operational perspective, the revised Azure deployment differs from the baseline primarily in its reduced dependence on cluster-based infrastructure.
 The main web application and the scheduled jobs were deployed as managed container workloads, while session containers were provisioned on demand through ACI\@.
-In addition, the ACA web application was configured with a minimum replica count of zero, which allowed the web layer to scale to zero during idle periods~\cite{craigshoemaker_scaling_nodate}.
+In addition, the ACA web application was configured with a minimum replica count of zero, which allowed the web layer to scale to zero during idle periods~\cite{microsoft_azure_container_apps_scaling_2025}.
 This eliminated the need to stop and start a Kubernetes cluster to control idle costs and reduced startup-related operational overhead after periods of inactivity.
 This design is better aligned with the environment's irregular usage pattern, where demand is concentrated around course sessions rather than spread uniformly over time.
 Within the overall comparison, Azure therefore represents the public cloud deployment with the lowest idle footprint while reducing the always-on infrastructure burden of the earlier Azure-based design.
@@ -174,9 +174,10 @@ This makes AWS a suitable comparison platform for evaluating whether the provide
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-aws}
 Like the Azure environment, the AWS environment was provisioned using Terraform configuration files.
 In the resulting deployment, the AWS setup combined an always-on web hosting layer with on-demand and scheduled container workloads.
-The main Nuxt web application was deployed to the Amazon Lightsail\footnote{\url{https://aws.amazon.com/lightsail/}} container service using the Nano plan, corresponding to 0.25 shared vCPU and 512~MB of RAM, while the database cleanup and provisioner cleanup workloads ran as scheduled ECS tasks on AWS Fargate~\cite{noauthor_deploy_nodate,noauthor_architect_nodate,noauthor_amazon_nodate}.
-An alternative considered for the main web application was an ECS service behind an Application Load Balancer\footnote{\url{https://aws.amazon.com/elasticloadbalancing/application-load-balancer/}}~\cite{noauthor_use_nodate-1}.
-Compared with the selected Lightsail container service setup, that design would introduce separate load-balancing infrastructure and a higher always-on cost baseline, so Lightsail container services were chosen as the simpler and more cost-effective option for the continuously running web layer~\cite{noauthor_elastic_nodate,noauthor_amazon_nodate}.
+The main Nuxt web application was deployed to the Amazon Lightsail\footnote{\url{https://aws.amazon.com/lightsail/}} container service using the Nano plan, corresponding to 0.25 shared vCPU and 512~MB of RAM~\cite{aws_lightsail_pricing}.
+The database cleanup and provisioner cleanup workloads ran as scheduled ECS tasks on AWS Fargate~\cite{aws_ecs_scheduling_tasks}.
+An alternative considered for the main web application was an ECS service behind an Application Load Balancer\footnote{\url{https://aws.amazon.com/elasticloadbalancing/application-load-balancer/}}~\cite{aws_ecs_load_balancing}.
+Compared with the selected Lightsail container service setup, that design would introduce separate load-balancing infrastructure and a higher always-on cost baseline, so Lightsail container services were chosen as the simpler and more cost-effective option for the continuously running web layer~\cite{aws_elastic_load_balancing_pricing,aws_lightsail_pricing}.
 
 \begin{figure}[H]
   \centering
@@ -186,19 +187,20 @@ Compared with the selected Lightsail container service setup, that design would 
 \end{figure}
 
 Figure~\ref{fig:aws-deployment-overview-revised} illustrates the AWS deployment.
-Users access the environment through the HTTPS endpoint of the Lightsail container service deployment, which routes requests to the main web application container~\cite{noauthor_create_nodate}.
+Users access the environment through the HTTPS endpoint of the Lightsail container service deployment, which routes requests to the main web application container~\cite{aws_lightsail_container_service_deployments}.
 When an interactive terminal session is requested, the application launches a new Linux container for the user on ECS using AWS Fargate.
 Each session task was configured with 0.25 CPU and 512~MiB of memory.
+AWS Fargate allows these ECS tasks to run without managing the underlying container instances~\cite{aws_fargate_ecs}.
 In this design, session environments are created on demand as isolated tasks rather than kept running continuously.
 
-For secret storage, the AWS deployment used AWS Secrets Manager\footnote{\url{https://aws.amazon.com/secrets-manager/}} to store the per-session SSH keys~\cite{noauthor_what_nodate-2}.
+For secret storage, the AWS deployment used AWS Secrets Manager\footnote{\url{https://aws.amazon.com/secrets-manager/}}.
 To support this workflow, the deployment also defined AWS IAM\footnote{\url{https://aws.amazon.com/iam/}} roles and credentials that allowed the web application to launch and manage ECS tasks and access the session secrets required for terminal provisioning.
-For the database layer, data was stored in a managed MySQL database provided by Amazon Lightsail using the Micro plan, which provided 1~GB of memory, 1 core processor, and 40~GB of SSD storage~\cite{noauthor_select_nodate,noauthor_create_nodate-1}.
+For the database layer, data was stored in a managed MySQL database on Amazon Lightsail using the Micro plan, which included 1~GB of memory, 1 core processor, and 40~GB of SSD storage~\cite{aws_lightsail_database_engine_selection,aws_lightsail_pricing}.
 Regarding authentication, the AWS deployment did not integrate with the university-managed Keycloak service, as that setup was specific to UT HPC\@.
 
-From an operational perspective, the AWS deployment used a Lightsail container service with the Nano plan for the always-on web layer~\cite{noauthor_amazon_nodate}.
+From an operational perspective, the AWS deployment used a Lightsail container service with the Nano plan for the always-on web layer~\cite{aws_lightsail_pricing}.
 The scheduled cleanup tasks used the same ECS task sizing as the session containers, namely 0.25 CPU and 512~MiB of memory.
-As in the Azure deployment, the cost of terminal sessions depends on the requested resources and the runtime of the Fargate tasks~\cite{noauthor_aws_nodate}.
+As in the Azure deployment, the cost of terminal sessions depends on the requested resources and the runtime of the Fargate tasks~\cite{aws_fargate_pricing}.
 However, unlike the Azure ACA deployment, the Lightsail container service does not provide a comparable scale-to-zero configuration for the web layer.
 Overall, the AWS deployment shows that the revised architecture can be transferred to another major cloud provider without requiring Kubernetes for session execution, although it does so with a continuously running web layer and a higher idle baseline than Azure.
 

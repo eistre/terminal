@@ -74,7 +74,7 @@ Most of the cost came from the managed database, while the cost of Azure Contain
 No visible Azure Container Apps cost component appeared in these monthly breakdowns.
 
 These observations are consistent with the architectural redesign of the Azure deployment.
-The absence of a visible Azure Container Apps cost component was most likely due to the free monthly grant in Azure Container Apps pricing (180{,}000 vCPU-seconds, 360{,}000 GiB-seconds, and 2 million requests) and the application's ability to scale to zero~\cite{noauthor_azure_nodate-2}.
+The absence of a visible Azure Container Apps cost component was most likely due to the free monthly grant in Azure Container Apps pricing (180{,}000 vCPU-seconds, 360{,}000 GiB-seconds, and 2 million requests) and the application's ability to scale to zero~\cite{microsoft_azure_container_apps_pricing}.
 The revised deployment no longer depends on AKS worker nodes, load balancer costs, or other cluster-related infrastructure that previously contributed to the Azure baseline cost.
 This suggests that the revised Azure deployment is better aligned with the course's irregular usage pattern than the earlier Azure-based baseline.
 
@@ -88,13 +88,13 @@ The cost data for Azure are presented in figures~\ref{fig:azure-cost-february-20
 The costs for Azure were available directly in euros, whereas the cost data for AWS were reported in USD\@.
 To ensure better comparability, the AWS costs were converted to euros using the European Central Bank's month-end exchange rates for the corresponding months, specifically 1 EUR = 1.1805 USD for February 2026 and 1 EUR = 1.1498 USD for March 2026\footnote{\url{https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html}, accessed 04/15/2026.}.
 For AWS, the comparison also includes the standard monthly price of the Lightsail database Micro bundle, even though this amount was not found in the AWS cost data during the evaluation period.
-This adjustment was made because the database bundle was covered by a temporary three-month free-tier offer for new accounts~\cite{noauthor_select_nodate,noauthor_amazon_nodate}.
+This adjustment was made because the database bundle was covered by a temporary three-month free-tier offer for new accounts~\cite{aws_lightsail_pricing}.
 Including the standard bundle price provides a more accurate representation of the recurring cost after the temporary offer ends.
 
 At the time of writing, UT HPC did not yet provide a per-namespace Kubernetes cost reporting tool\footnote{Based on private communication with UT HPC support.}.
-For that reason, the UT HPC cost data had to be estimated manually using the UT HPC pricing calculator~\cite{center_calculate_nodate} together with the monitoring dashboard described in subchapter~\ref{subsubsec:access-and-namespace-provisioning}.
-According to the UT HPC pricing model, Kubernetes resources are billed based on the greater of actual usage or requested resources, with costs calculated per minute~\cite{center_calculate_nodate}.
-The rates applied in this thesis were €0.003 for each CPU core hour, €0.0013 for each GB hour of memory, and €0.138 for each TB hour of SSD storage~\cite{center_calculate_nodate}.
+For that reason, the UT HPC cost data had to be estimated manually using the UT HPC pricing calculator~\cite{ut_hpc_calculate_your_cost} together with the monitoring dashboard described in subchapter~\ref{subsubsec:access-and-namespace-provisioning}.
+According to the UT HPC pricing model, Kubernetes resources are billed based on the greater of actual usage or requested resources, with costs calculated per minute~\cite{ut_hpc_calculate_your_cost}.
+The rates applied in this thesis were €0.003 for each CPU core hour, €0.0013 for each GB hour of memory, and €0.138 for each TB hour of SSD storage~\cite{ut_hpc_calculate_your_cost}.
 For the persistent workloads observed during February and March 2026, the dashboard screenshots collected for this thesis did not indicate any sustained usage exceeding the configured requests.
 Consequently, the UT HPC estimate below was based on the requested resources of the continuously running web application and MariaDB components.
 
