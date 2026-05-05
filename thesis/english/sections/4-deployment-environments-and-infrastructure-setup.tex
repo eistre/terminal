@@ -83,7 +83,7 @@ Figure~\ref{fig:ut-hpc-deployment-overview} presents the deployment of the learn
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/figure8-university-deployment}
+  \includegraphics[width=\textwidth]{figures/figure7-university-deployment}
   \caption{Deployment architecture of the learning environment in UT HPC.}
   \label{fig:ut-hpc-deployment-overview}
 \end{figure}
@@ -133,7 +133,7 @@ This matches the architectural separation described in subchapter~\ref{subsec:ar
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/figure9-azure-deployment}
+  \includegraphics[width=\textwidth]{figures/figure8-azure-deployment}
   \caption{Deployment architecture of the learning environment in Microsoft Azure.}
   \label{fig:azure-deployment-overview-revised}
 \end{figure}
@@ -147,7 +147,7 @@ Compared with the baseline AKS model, this reduces both infrastructure and opera
 In this model, the runtime cost of the session containers is determined by the requested vCPU and memory resources together with the duration of the session~\cite{microsoft_azure_container_instances_pricing}.
 
 The database layer was implemented using the same Azure Database for MySQL Flexible Server deployment model as in the baseline system, using the cheapest available configuration to minimize costs (B1ms burstable tier with 1 vCPU and 2 GB of memory)~\cite{microsoft_azure_mysql_pricing,eistre_2024}.
-Unlike the baseline implementation, which relied on Azure Files\footnote{\url{https://azure.microsoft.com/en-us/products/storage/files}} to store per-session SSH keys, the revised deployment used Azure Key Vault\footnote{\url{https://azure.microsoft.com/en-us/products/key-vault}} for secret storage~\cite{eistre_2024}.
+Unlike the baseline implementation, which relied on Azure Files to store per-session SSH keys, the revised deployment used Azure Key Vault\footnote{\url{https://azure.microsoft.com/en-us/products/key-vault}} for secret storage~\cite{eistre_2024}.
 Similar to the baseline system, email delivery for account verification was handled through Azure Communication Services using an Azure-managed email domain~\cite{microsoft_azure_communication_services_email_2025,eistre_2024}.
 Regarding authentication, the Azure deployment did not integrate with the university-managed Keycloak service, as that setup was specific to UT HPC\@.
 Accordingly, it followed the same pattern as the baseline Azure system, where users registered within the application and validated their accounts via email.
@@ -181,7 +181,7 @@ Compared with the selected Lightsail container service setup, that design would 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/figure10-aws-deployment}
+  \includegraphics[width=\textwidth]{figures/figure9-aws-deployment}
   \caption{Deployment architecture of the learning environment in Amazon Web Services.}
   \label{fig:aws-deployment-overview-revised}
 \end{figure}
