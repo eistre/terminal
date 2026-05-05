@@ -59,9 +59,9 @@ The corresponding billing screenshots are provided in Appendix~\ref{app:azure-co
     colspec = {Q[l,font=\bfseries] Q[c] X[l]},
     row{1} = {font=\bfseries},
   }
-  Period & Total cost & Main cost drivers \\
-  February 2026 & €13.43 & Azure Database for MySQL (€12.25), Azure Container Instances (€1.18), remaining services under €0.01 each \\
-  March 2026 & €13.52 & Azure Database for MySQL (€13.49), Azure Container Instances (€0.03), remaining services under €0.01 each \\
+    Period & Total cost & Main cost drivers \\
+    February 2026 & €13.43 & Azure Database for MySQL (€12.25), Azure Container Instances (€1.18), remaining services under €0.01 each \\
+    March 2026 & €13.52 & Azure Database for MySQL (€13.49), Azure Container Instances (€0.03), remaining services under €0.01 each \\
   \end{tblr}
 \end{table}
 
@@ -128,21 +128,21 @@ Table~\ref{tab:environment-cost-comparison} summarizes the monthly cost comparis
 It also highlights the main cost drivers identified for each environment.
 
 \begin{table}[H]
-    \centering
-    \caption{Cost comparison of the deployment environments in February 2026 and March 2026.}
-    \label{tab:environment-cost-comparison}
-    \begin{tblr}{
-        width=1.0\textwidth,
-        hlines,
-        vlines,
-        colspec = {Q[l,font=\bfseries] Q[c] Q[c] X[l]},
-        row{1} = {font=\bfseries},
-    }
+  \centering
+  \caption{Cost comparison of the deployment environments in February 2026 and March 2026.}
+  \label{tab:environment-cost-comparison}
+  \begin{tblr}{
+    width=1.0\textwidth,
+    hlines,
+    vlines,
+    colspec = {Q[l,font=\bfseries] Q[c] Q[c] X[l]},
+    row{1} = {font=\bfseries},
+  }
     Environment & February 2026 & March 2026 & Main cost drivers \\
     UT HPC (estimate) & ~€1.97 & ~€2.12 & Web deployment, MariaDB, session containers \\
     Azure (actual) & €13.43 & €13.52 & Azure Database for MySQL, Azure Container Instances \\
     AWS (adjusted) & €19.10 & €19.99 & Lightsail Container, Lightsail database, Elastic Container Service \\
-    \end{tblr}
+  \end{tblr}
 \end{table}
 
 Table~\ref{tab:environment-cost-comparison} shows that UT HPC had the lowest direct monthly cost in this evaluation.
