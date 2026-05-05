@@ -3,7 +3,7 @@
 
 
 \section{Background and Previous System} \label{sec:background-and-previous-system}
-This chapter establishes the educational and technical baseline for the thesis.
+This chapter establishes the educational and technical background for the thesis.
 It first motivates the educational relevance of Linux command-line practice in a web-based environment and situates the work within two earlier iterations of the learning environment developed at the University of Tartu.
 It then outlines the architecture and Azure deployment model of the previous system and identifies the main unresolved limitations that define the modernization context for this work.
 
@@ -14,7 +14,7 @@ It then outlines the architecture and Azure deployment model of the previous sys
   \label{fig:updated-learning-environment}
 \end{figure}
 
-For orientation, Figure~\ref{fig:updated-learning-environment} shows the revised learning environment with its task list, completed tasks highlighted in green, and a browser-based Linux terminal.
+Figure~\ref{fig:updated-learning-environment} shows the revised learning environment with its task list, completed tasks highlighted in green, and a browser-based Linux terminal.
 
 \subsection{Motivation and Prior Work} \label{subsec:motivation-and-prior-work}
 Linux command-line knowledge remains important in many systems-oriented computing roles, including system administration, software development, and automation.
@@ -105,7 +105,7 @@ The corresponding billing screenshots are provided in Appendix~\ref{app:azure-co
   }
     Period & Total cost & Main cost drivers \\
     July 2025 & €52.88 & Azure Database for MySQL (€26.90), Load Balancer (€13.62), Azure Container Apps (€8.92) \\
-    September 2025 & €93.12 & Same components as for July, AKS virtual machine compute (€18.45) and its supporting services \\
+    September 2025 & €93.12 & Same components as in July, AKS virtual machine compute (€18.45) and its supporting services \\
   \end{tblr}
 \end{table}
 
@@ -116,7 +116,7 @@ The task is to reduce the platform's always-on footprint while preserving per-us
 
 \subsubsection{Deprecated Authentication Library} \label{subsubsec:deprecated-authentication-library}
 The previous version of the learning environment relied on the Lucia\footnote{\url{https://github.com/lucia-auth/lucia}} authentication library to implement core authentication functionality, including user registration, login, and session management~\cite{eistre_2024}.
-According to the Lucia maintainer, the project would be deprecated by March 2025 and would transition away from being a maintained, general-purpose authentication library~\cite{pilcrowonpaper_fresh_start_2024}.
+According to the Lucia maintainer, the project was expected to be deprecated by March 2025 and would transition away from being a maintained, general-purpose authentication library~\cite{pilcrowonpaper_fresh_start_2024}.
 By March 2025, Lucia had been repositioned primarily as an educational resource for learning about authentication implementation rather than as a long-term dependency for production systems~\cite{pilcrowonpaper_fresh_start_2024}.
 Continued dependence on an unsupported authentication library would therefore increase authentication-related maintenance and security risk.
 As a result, the authentication layer became a necessary modernization target, although the baseline requirements for user verification and session management remained unchanged.
@@ -132,8 +132,8 @@ Together, these points indicate that dependency modernization was a necessary pa
 
 \subsubsection{Additional Improvement Opportunities} \label{subsubsec:additional-improvement-opportunities}
 In addition to the previously described cost and maintainability issues, the previous system exposed several further operational and usability limitations that are relevant to the later redesign.
-First, the environment showed a scalability concern under classroom-scale load.
-According to observations reported by the thesis supervisor, some students were at times unable to access an interactive shell session because the AKS node pool could not scale due to Azure quota constraints\footnote{Based on private communication with thesis supervisor Alo Peets.}.
+First, the environment showed scalability limitations under classroom-scale load.
+According to observations reported by the thesis supervisor, some students were occasionally unable to access an interactive shell session because the AKS node pool could not scale due to Azure quota constraints\footnote{Based on private communication with thesis supervisor Alo Peets.}.
 This suggests that functional correctness alone was insufficient in practice and that the deployment also had to support classroom demand more reliably.
 The issue therefore points to a reliability and scalability limitation relevant to the redesign.
 

@@ -123,7 +123,7 @@ Although this architecture was functional, it still retained some of the cost an
 For the revised implementation, Azure remained relevant, but the service choices were reconsidered.
 The main goal was to preserve the same educational workflow while reducing idle infrastructure overhead and simplifying the operational model.
 As a result, the revised Azure deployment replaces the cluster-centric execution model with a combination of managed and consumption-oriented services that better fit the environment's intermittent classroom usage pattern.
-This made Azure suitable not only for continuity with the baseline system but also for evaluating whether a more lightweight Azure-native architecture could address the cost and maintenance limitations identified in chapter~\ref{sec:background-and-previous-system}.
+This made Azure suitable not only for continuity with the baseline system but also for evaluating whether a more lightweight Azure-native architecture could address the cost and maintenance limitations identified in Chapter~\ref{sec:background-and-previous-system}.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-azure}
 The Azure environment was provisioned using Terraform configuration files.
@@ -169,7 +169,7 @@ The AWS deployment broadens the comparison by adding a second public cloud refer
 Amazon Web Services was selected as an additional public cloud deployment target to broaden the evaluation beyond a single cloud provider.
 Similar to Azure, AWS provides a realistic environment for assessing how the redesigned platform can be deployed using managed cloud services rather than Kubernetes resources.
 Unlike UT HPC, which represents institutional Kubernetes hosting, the AWS deployment reflects an alternative public cloud model based on managed services and on-demand resource usage.
-This makes AWS a suitable comparison platform for evaluating whether the provider-agnostic architecture described in chapter~\ref{sec:revised-architecture-and-implementation} generalizes cleanly beyond Azure while keeping the core application requirements unchanged.
+This makes AWS a suitable comparison platform for evaluating whether the provider-agnostic architecture described in Chapter~\ref{sec:revised-architecture-and-implementation} generalizes cleanly beyond Azure while keeping the core application requirements unchanged.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-aws}
 Like the Azure environment, the AWS environment was provisioned using Terraform configuration files.

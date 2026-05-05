@@ -4,19 +4,19 @@
 
 \section{Revised Architecture and Implementation} \label{sec:revised-architecture-and-implementation}
 This chapter outlines the modernized architecture and implementation of the Linux command-line learning environment.
-Building upon the baseline system described in chapter~\ref{sec:background-and-previous-system}, it focuses on five main implementation changes that addressed the baseline limitations.
-These changes are the modularization of the codebase, the introduction of a provider-agnostic provisioning layer, the separation of cleanup jobs from the main application, the redesign of authentication and single sign-on support, and the redesign of multilingual content management.
+Building on the baseline system described in Chapter~\ref{sec:background-and-previous-system}, it focuses on five main implementation changes that addressed the baseline limitations.
+These changes include the modularization of the codebase, the introduction of a provider-agnostic provisioning layer, the separation of cleanup jobs from the main application, the redesign of authentication and single sign-on support, and the redesign of multilingual content management.
 Together, these changes improved maintainability, portability, and operational efficiency while preserving the core learning workflow of the environment.
 
 \subsection{Development Process and AI-Assisted Refactoring} \label{subsec:development-process-and-ai-assisted-refactoring}
 The implementation work in this thesis required coordinated refactoring across multiple layers of the baseline system while keeping the codebase operational throughout the process.
-To support this work, the author used coding assistants based on large language models as interactive tools for refactoring planning, scaffolding, and iterative debugging.
-However, final responsibility for design decisions, integration, and verification remained with the author.
+To support this work, the author used coding assistants based on large language models as interactive tools for refactoring planning, code generation, testing, and iterative debugging.
+However, the substantive decisions, integration work, validation, and final responsibility for the implementation remained with the author.
 
 \subsubsection{AI-Assisted Programming} \label{subsubsec:ai-assisted-programming}
 Recent software engineering literature describes AI-assisted programming as an interactive process in which developers use natural-language prompts and follow-up interaction to obtain code-related assistance and refine responses over multiple iterations~\cite{ross_programmers_2023,barke_grounded_2023}.
 Prior studies also suggest that these tools can both speed up well-understood subtasks and support exploration of alternative solutions, but that their output still requires careful human review and validation before adoption~\cite{barke_grounded_2023}.
-In this thesis, AI assistance was used as a supporting tool for planning, scaffolding, boilerplate generation, and debugging.
+In this thesis, AI assistance was used as a supporting tool for planning, code generation, testing, and debugging.
 
 \subsubsection{Refactoring Workflow} \label{subsubsec:refactoring-workflow}
 AI assistance was used primarily through OpenCode\footnote{\url{https://opencode.ai/}}, a command-line AI coding tool.
@@ -160,14 +160,14 @@ This helps ensure consistent behavior across providers.
 
 \subsubsection{Lifecycle Management and Provider Implementations} \label{subsubsec:lifecycle-management-and-provider-implementations}
 The provisioner abstraction presents a provider-agnostic API\@.
-For example, \texttt{listContainers()} returns a list of user identifiers and expiration timestamps for all managed containers regardless of the underlying runtime.
-Likewise, \texttt{ensureContainerExists(userId)} guarantees that the system can obtain connection information for a ready interactive container even though the internal handling differs per provider.
+For example, \texttt{listContainers()} returns a list of user identifiers and expiration timestamps for all managed containers, regardless of the underlying runtime.
+Likewise, \texttt{ensureContainerExists(userId)} guarantees that the system can obtain connection information for a ready interactive container, even though the internal handling differs per provider.
 Provider implementations therefore encapsulate the relevant state transitions, such as creating a missing container, waiting while a container is starting, and refreshing expiration metadata when a container is already running.
 
-Currently, three execution backends are supported.
-These are Kubernetes, Azure Container Instances\footnote{\url{https://azure.microsoft.com/en-us/products/container-instances}} (ACI), and Amazon Elastic Container Service\footnote{\url{https://aws.amazon.com/ecs/}} (ECS) on AWS Fargate\footnote{\url{https://aws.amazon.com/fargate/}}.
+The implementation currently supports three execution backends.
+These are Kubernetes, Azure Container Instances (ACI)\footnote{\url{https://azure.microsoft.com/en-us/products/container-instances}}, and Amazon Elastic Container Service (ECS)\footnote{\url{https://aws.amazon.com/ecs/}} on AWS Fargate\footnote{\url{https://aws.amazon.com/fargate/}}.
 All implementations follow the same lifecycle model by attaching common metadata to managed resources, such as the user identifier and expiration time, enabling consistent enumeration and reclamation of inactive containers.
-The deployment setup and provider-specific configuration are described in chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
+The deployment setup and provider-specific configuration are described in Chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
 
 Lifecycle management is treated as a first-class operational concern to prevent resource leakage and control costs.
 User containers are intentionally time-bound and carry an inactivity-based expiration timestamp that is extended during activity via \texttt{updateContainerExpiration()}.
