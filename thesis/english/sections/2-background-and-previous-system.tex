@@ -10,11 +10,11 @@ It then outlines the architecture and Azure deployment model of the previous sys
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure1-environment}
-  \caption{User-facing view of the revised web-based Linux command-line learning environment.}
+  \caption{User-facing view of the revised web-based Linux command-line learning environment, showing the task list and browser-based Linux terminal.}
   \label{fig:updated-learning-environment}
 \end{figure}
 
-For orientation, Figure~\ref{fig:updated-learning-environment} shows the revised learning environment with its task list, task status indicators, and browser-based Linux terminal.
+For orientation, Figure~\ref{fig:updated-learning-environment} shows the revised learning environment with its task list, completed tasks highlighted in green, and a browser-based Linux terminal.
 
 \subsection{Motivation and Prior Work} \label{subsec:motivation-and-prior-work}
 Linux command-line knowledge remains important in many systems-oriented computing roles, including system administration, software development, and automation.
@@ -36,7 +36,7 @@ The system was successful overall, but later use exposed limitations in maintain
 This thesis builds on that baseline by addressing these limitations while preserving the established educational workflow.
 
 \subsection{Architecture and Deployment of the Previous System} \label{subsec:architecture-and-deployment-of-the-previous-system}
-This section outlines the system developed in Eistre's thesis~\cite{eistre_2024}, which serves as the technical starting point for this master's thesis.
+This subchapter outlines the system developed in Eistre's thesis~\cite{eistre_2024}, which serves as the technical starting point for this master's thesis.
 The focus is on the application's internal architecture and Azure-based deployment model because both directly shape the cost, maintainability, and operational constraints that later chapters address.
 
 \subsubsection{System Architecture} \label{subsubsec:system-architecture}
@@ -84,9 +84,8 @@ These included Azure Communication Services\footnote{\url{https://azure.microsof
 This model established a functional cloud-based operating environment, but it also introduced the cost and operational profile that became central to the modernization and cost-optimization goals of this thesis.
 
 \subsection{Limitations and Improvement Opportunities} \label{subsec:limitations-and-improvement-opportunities}
-
 While the cloud-enabled learning platform developed in Eistre's bachelor's thesis~\cite{eistre_2024} represented a significant advance over the initial prototype, it also exposed several limitations and challenges.
-This section summarizes the key issues in the baseline system and clarifies why they matter for the modernization and cost-optimization work described in later chapters.
+This subchapter summarizes the key issues in the baseline system and clarifies why they matter for the modernization and cost-optimization work described in later chapters.
 
 \subsubsection{Cost Structure} \label{subsubsec:cost-structure}
 A significant limitation of the baseline system was its cost structure in the cloud-hosted environment.

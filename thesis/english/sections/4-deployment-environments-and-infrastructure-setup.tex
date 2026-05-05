@@ -51,7 +51,7 @@ This made it possible to keep reusable infrastructure definitions while supplyin
 Brief deployment instructions for these environments are provided in Appendix~\ref{app:deployment-instructions}.
 
 \subsection{University of Tartu HPC} \label{subsec:university-of-tartu-hpc}
-This subchapter presents the deployment of the revised platform in UT HPC\@.
+This subchapter presents the deployment of the revised platform on UT HPC\@.
 In addition to serving as one of the target platforms in the cross-environment comparison, this deployment is relevant as a concrete example of institutional hosting.
 The following subchapters first introduce UT HPC and explain the namespace access process, and then describe the deployed components and their operational considerations.
 
@@ -79,12 +79,12 @@ Deployment into the namespace was performed using the project's Helm chart with 
 The Helm release deployed the main web application together with the Kubernetes resources required to run the platform in this target environment.
 These included the application Deployment, the public-facing Service and Ingress, the database layer configured using the MariaDB\footnote{\url{https://mariadb.org/}} operator, cleanup CronJobs, and namespace-level resources such as service accounts, role bindings, and network policies.
 The deployment remained fully contained within the designated namespace, while public access was provided through the UT HPC ingress infrastructure~\cite{ut_hpc_kubernetes_ingress_2026}.
-Figure~\ref{fig:ut-hpc-deployment-overview} presents the deployment of the learning environment in UT HPC, showing the namespace-scoped application components, ingress path, database layer, and per-user containers.
+Figure~\ref{fig:ut-hpc-deployment-overview} presents the deployment of the learning environment on UT HPC, showing the namespace-scoped application components, ingress path, database layer, and per-user containers.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/figure7-university-deployment}
-  \caption{Deployment architecture of the learning environment in UT HPC.}
+  \caption{Deployment architecture of the learning environment on UT HPC.}
   \label{fig:ut-hpc-deployment-overview}
 \end{figure}
 
@@ -96,7 +96,7 @@ Configuration was kept separate from the application code by storing non-sensiti
 Service accounts and access control resources were used to define the permissions required by the application and its supporting workloads.
 Network policies were additionally used to restrict communication paths between the main application, the database, and the per-user execution environments.
 
-The database layer was deployed using MariaDB, one of the supported database options in UT HPC~\cite{ut_hpc_kubernetes_databases_2025}.
+The database layer was deployed using MariaDB, one of the database options supported by UT HPC~\cite{ut_hpc_kubernetes_databases_2025}.
 This was also appropriate for the project because MariaDB documentation describes it as having historically functioned largely as a drop-in replacement for equivalent MySQL versions~\cite{mariadb_mysql_compatibility}.
 The operator-managed database workload requested 300~mCPU and 256~MiB of memory, had a memory limit of 1~GiB, and used 1~GiB of persistent storage.
 In addition to the main web application and database components, the chart deployed periodic cleanup jobs to remove expired session resources and other stale state.
@@ -104,7 +104,7 @@ These cleanup CronJobs requested 50~mCPU and 128~MiB of memory, with limits of 1
 Per-user execution environments were integrated into the same namespace-scoped deployment model, allowing interactive student containers to be created and managed alongside the main environment while remaining within the security and networking boundaries defined for the namespace.
 Each per-user terminal container requested 100~mCPU and 64~MiB of memory, with limits of 250~mCPU and 128~MiB\@.
 
-From an operational perspective, the deployment in UT HPC reduced the amount of infrastructure that had to be managed directly within the scope of the project.
+From an operational perspective, the deployment on UT HPC reduced the amount of infrastructure that had to be managed directly within the scope of the project.
 The Kubernetes cluster and ingress infrastructure were provided by UT HPC, while the responsibility for the application deployment remained focused on namespace-scoped resources such as the Helm release, database setup, and supporting workloads.
 At the same time, some parts of the deployment, including public exposure, single sign-on, and SMTP integration, depended on coordination with UT HPC support.
 This made UT HPC a realistic university-hosted option for long-term use.
@@ -113,7 +113,7 @@ It reduced direct infrastructure ownership and preserved Kubernetes compatibilit
 \subsection{Microsoft Azure} \label{subsec:microsoft-azure}
 This subchapter discusses the deployment of the revised platform on Microsoft Azure.
 Azure was retained as a target environment because the baseline implementation described in subchapter~\ref{subsubsec:cloud-deployment-on-azure} was already hosted there, making it the most direct platform for modernization and comparison.
-While the deployment in UT HPC shows how the environment can be hosted in institutional Kubernetes infrastructure, the Azure deployment represents the public cloud modernization path for the baseline system.
+While the deployment on UT HPC shows how the environment can be hosted in institutional Kubernetes infrastructure, the Azure deployment represents the public cloud modernization path for the baseline system.
 
 \subsubsection{Azure as a Deployment Environment} \label{subsubsec:azure-as-a-deployment-environment}
 Microsoft Azure was selected as a deployment target because it provides the clearest continuation of the baseline system and therefore allows the revised design to be compared with the previous Azure-based deployment model.

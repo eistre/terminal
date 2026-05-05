@@ -6,22 +6,22 @@
 This chapter evaluates the revised Linux command-line learning environment during the observed course period and analyzes the results from two perspectives.
 The first is a cross-environment comparison among UT HPC, Microsoft Azure, and Amazon Web Services.
 The second is a comparison between the previous Azure deployment described in chapter~\ref{sec:background-and-previous-system} and the revised Azure deployment described in chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
-The evaluation focuses on whether the redesign preserved the intended course workflow, lowered the observed Azure baseline cost compared to the earlier deployment, could be deployed across the three target environments, and cleaned up inactive user environments as intended.
+The evaluation focuses on whether the revised system preserved the intended course workflow, lowered the observed Azure baseline cost compared to the earlier deployment, could be deployed across the three target environments, and cleaned up inactive user environments as intended.
 
 \subsection{Evaluation Setting} \label{subsec:evaluation-setting}
 The evaluation was carried out in the context of the University of Tartu course ``Computer Security''.
-The deployments were used in practical session 1\footnote{\url{https://courses.cs.ut.ee/2026/turve/spring/Main/Praktikum1}} of the course.
+The deployments were used during practical session 1\footnote{\url{https://courses.cs.ut.ee/2026/turve/spring/Main/Praktikum1}} of the course.
 A key goal of the session was for students to complete the tasks in the ``Operating Systems and Computer Security'' topic of the learning environment.
 The observation period covered February 2026 and March 2026.
 
-February 2026 was the more intensive phase of the evaluation, as practical session 1 took place during that month and most of the activity related to it also occurred then.
+February 2026 was the more intensive phase of the evaluation, as practical session 1 and most related activity took place during that month.
 March 2026 served as a lower-activity follow-up period.
 At the start of the evaluation period, the practical session materials linked students to the UT HPC and Azure deployments.
 After approximately one week, the Azure link was replaced with the AWS deployment so that the later part of the observation period covered the UT HPC and AWS variants instead.
-This arrangement ensured that at least some practical-session traffic reached all three deployment environments.
+This arrangement ensured that course traffic reached all three deployment environments.
 
 UT HPC functioned as the primary environment throughout the evaluation period, whereas the Azure and AWS deployments served as secondary environments for comparison.
-This was mainly because UT HPC was the university-hosted deployment and already supported the institutional access model used in the course.
+This reflected the fact that UT HPC was the university-hosted deployment and already supported the institutional access model used in the course.
 The cross-environment comparison should therefore be interpreted as an operational comparison under observed course usage rather than as a controlled experiment with identical workloads.
 
 \subsection{Observed Course Usage} \label{subsec:results-of-course-use}
@@ -30,8 +30,8 @@ Students were able to access the web-based learning environment, open interactiv
 During the observed period, no major issues affecting the intended workflow were identified.
 
 Based on registered accounts, the UT HPC, Azure, and AWS deployments were used by 176, 25, and 12 users, respectively, during the evaluation period.
-These figures showed that UT HPC was the most widely used environment.
-That was consistent with its role as the primary environment linked in the course materials and with its support for the institutional access model.
+These figures indicate that UT HPC was the most widely used environment.
+This distribution was consistent with its role as the primary environment linked in the course materials and with its support for the institutional access model.
 The UT HPC monitoring data also showed a peak of 17 concurrent session pods during the observation period.
 Furthermore, no expired session containers remained in any of the three environments at the end of the evaluation period.
 This supports the conclusion that the cleanup mechanisms functioned as intended.
@@ -166,15 +166,15 @@ In contrast, the revised Azure deployment remained close to €13.50 in both obs
 This indicates that the redesign addressed the main baseline problem identified in chapter~\ref{sec:background-and-previous-system}, which was the mismatch between the platform's uneven usage pattern and the fixed cost structure of the previous cloud deployment.
 
 The cross-environment comparison further suggests that the revised architecture is adaptable across three different operational models.
-Within this evaluation, UT HPC appeared to be the strongest fit for long-term institutional use, as it combined the lowest observed cost with university-managed hosting and integration with institutional access management.
+Within this evaluation, UT HPC was the most suitable option for long-term institutional use, as it combined the lowest observed cost with university-managed hosting and integration with institutional access management.
 However, this conclusion should be approached with caution, as the UT HPC cost observation is based on estimates derived from pricing rules and monitoring observations rather than a direct provider billing report.
-Within this evaluation, Azure appeared to be the strongest public cloud option because it showed the lowest idle footprint among the public cloud deployments while remaining within a single provider ecosystem.
+Within this evaluation, Azure was the most suitable public cloud option because it showed the lowest idle footprint among the public cloud deployments while remaining within a single provider ecosystem.
 AWS demonstrates that the provider-agnostic design can be transferred beyond Azure.
 However, its continuously running web layer results in a higher baseline cost, making it less attractive for this type of irregular usage pattern.
 
 Taken together, these results indicate that the redesign was successful not only as code-level modernization but also as an architectural correction of the baseline system's operational model.
 The work improved portability, maintainability, and deployment reproducibility while reducing the cost burden required for keeping the environment ready for use.
-From the perspective of future use, the results of this evaluation suggest that UT HPC is the strongest long-term deployment option when institutional support and integration are available, whereas Azure is the strongest self-contained public cloud deployment option among the environments evaluated.
+From the perspective of future use, the results of this evaluation indicate that UT HPC is the most suitable long-term deployment option when institutional support and integration are available, whereas Azure is the most suitable self-contained public cloud deployment option among the environments evaluated.
 
 \subsection{Future Work} \label{subsec:future-work}
 Although the revised environment functioned successfully during the observed period, the evaluation also reveals several directions for further improvement.

@@ -7,7 +7,7 @@ Consequently, the aim of this thesis was to preserve the educational purpose of 
 To achieve this goal, the platform was redesigned at an architectural level rather than relying solely on incremental implementation updates.
 The revised solution introduced clearer modular boundaries, separated provider-specific container lifecycle management behind a provisioning abstraction, moved periodic maintenance tasks to dedicated scheduled jobs, and improved the maintainability of both the authentication mechanism and the multilingual content management system.
 In addition, deployment automation was enhanced using Helm and Terraform, making the system easier to reproduce across different target environments.
-As a result, the thesis produced a redesigned implementation of the platform and evaluated it across UT HPC, Microsoft Azure, and Amazon Web Services.
+As a result, the thesis produced a redesigned implementation of the platform and evaluated it on UT HPC, Microsoft Azure, and Amazon Web Services.
 
 The evaluation conducted in February and March 2026 showed that the revised environment preserved the intended educational workflow throughout the observed course period.
 Students were able to access the web-based environment, open interactive Linux sessions, and complete the relevant course tasks in the available deployments.
@@ -15,12 +15,12 @@ Throughout the observed period, no major issues were identified.
 The available monitoring data also indicated a peak of 17 concurrent session pods and no expired session containers remaining at the end of the evaluation period.
 
 A comparative analysis with the previous Azure deployment indicated that the revised Azure architecture significantly lowered the observed baseline cost associated with keeping the platform available, reducing the observed monthly cost from €52.88--€93.12 in the baseline deployment to approximately €13.50 in the revised deployment.
-Furthermore, the cross-environment deployment showed that the redesigned architecture could be deployed across UT HPC, Microsoft Azure, and Amazon Web Services while preserving the core functionality of the application.
+Furthermore, the cross-environment deployment showed that the redesigned architecture could be deployed on UT HPC, Microsoft Azure, and Amazon Web Services while preserving the core functionality of the application.
 
 Taken together, these results suggest that the modernization was successful both as a software redesign and as an improvement to the platform's operational model.
 The work improved maintainability, portability, and deployment reproducibility while reducing the costs associated with irregular course usage.
-The evaluation suggests that, when institutional support and integration are available, UT HPC appeared to be the strongest long-term deployment option among the environments evaluated.
-Among the two public cloud options evaluated, Microsoft Azure appeared to be the stronger option.
+The evaluation indicates that, when institutional support and integration are available, UT HPC is the most suitable long-term deployment option among the environments evaluated.
+Among the two public cloud options evaluated, Microsoft Azure is the more suitable option.
 Amazon Web Services mainly demonstrates that the provider-agnostic design can be transferred to another major cloud provider, although its continuously running web layer makes it less attractive for this usage pattern.
 Because the evaluation was based on observed course usage and deployment testing, unequal traffic across environments, and an estimated UT HPC cost model rather than on a controlled experiment, these conclusions should be interpreted as limited to the observed deployment period.
 The evaluation also suggests that future work could strengthen observability, improve the flexibility of task-specific environments, and explore closer integration with existing educational platforms.
