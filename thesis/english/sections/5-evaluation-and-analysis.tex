@@ -68,6 +68,8 @@ The corresponding billing screenshots are provided in Appendix~\ref{app:azure-co
 Compared with the previous Azure deployment discussed in Chapter~\ref{sec:background-and-previous-system}, these values indicate a significant reduction in the observed always-on cost footprint of the Azure-based hosting model.
 The baseline deployment incurred €52.88 in July 2025 under minimal usage and €93.12 in September 2025 during an active semester, whereas the revised Azure deployment remained close to €13.50 in both February and March 2026.
 Most of the cost came from the managed database, while the cost of Azure Container Instances remained small in both months.
+This remaining database cost reflects the decision to keep one MySQL-compatible database path across all evaluated environments rather than introduce an Azure-specific SQL Server-based option.
+An Azure-only design could therefore likely reduce this remaining baseline further.
 No visible Azure Container Apps cost component appeared in these monthly breakdowns.
 
 These observations are consistent with the architectural redesign of the Azure deployment.
@@ -163,7 +165,8 @@ The clearest evidence of improvement appears in the comparison with the previous
 As discussed in Chapter~\ref{sec:background-and-previous-system}, the central limitation of the baseline system was not solely the incurred costs of cloud hosting, but also that the deployment model was poorly aligned with the uneven usage pattern.
 Even with the start and stop logic for the Kubernetes cluster, the earlier Azure deployment continued to incur significant always-on cost.
 In contrast, the revised Azure deployment remained close to €13.50 in both observed months, with most of the cost attributed to the managed database rather than to continuously running execution infrastructure.
-This indicates that the redesign addressed the main baseline problem identified in Chapter~\ref{sec:background-and-previous-system}, which was the mismatch between the platform's uneven usage pattern and the fixed cost structure of the previous cloud deployment.
+This indicates that the redesign substantially reduced the main baseline problem identified in Chapter~\ref{sec:background-and-previous-system}, which was the mismatch between the platform's uneven usage pattern and the fixed cost structure of the previous cloud deployment.
+However, the managed database remained a baseline cost component in the Azure deployment.
 
 The cross-environment comparison further suggests that the revised architecture is adaptable across three different operational models.
 Within this evaluation, UT HPC was the most suitable option for long-term institutional use, as it combined the lowest observed cost with university-managed hosting and integration with institutional access management.

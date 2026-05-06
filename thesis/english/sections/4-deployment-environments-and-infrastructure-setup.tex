@@ -147,6 +147,10 @@ Compared with the baseline AKS model, this reduces both infrastructure and opera
 In this model, the runtime cost of the session containers is determined by the requested vCPU and memory resources together with the duration of the session~\cite{microsoft_azure_container_instances_pricing}.
 
 The database layer was implemented using the same Azure Database for MySQL Flexible Server deployment model as in the baseline system, using the cheapest available configuration to minimize costs (B1ms burstable tier with 1 vCPU and 2 GB of memory)~\cite{microsoft_azure_mysql_pricing,eistre_2024}.
+An Azure-specific alternative would have been Azure SQL Database\footnote{\url{https://azure.microsoft.com/en-us/products/azure-sql/database}}, which is based on the SQL Server\footnote{\url{https://www.microsoft.com/en-us/sql-server}} database engine~\cite{microsoft_azure_sql_database_overview}.
+Its serverless compute tier can automatically pause during inactive periods, which can reduce idle database costs~\cite{microsoft_azure_sql_serverless}.
+However, this option was not selected because it would have introduced a separate SQL Server-based database path alongside the MySQL-compatible implementation, including separate schema definitions, migrations, and database-specific behavior.
+
 Unlike the baseline implementation, which relied on Azure Files to store per-session SSH keys, the revised deployment used Azure Key Vault\footnote{\url{https://azure.microsoft.com/en-us/products/key-vault}} for secret storage~\cite{eistre_2024}.
 Similar to the baseline system, email delivery for account verification was handled through Azure Communication Services using an Azure-managed email domain~\cite{microsoft_azure_communication_services_email_2025,eistre_2024}.
 Regarding authentication, the Azure deployment did not integrate with the university-managed Keycloak service, as that setup was specific to UT HPC\@.
@@ -177,7 +181,7 @@ In the resulting deployment, the AWS setup combined an always-on web hosting lay
 The main Nuxt web application was deployed to the Amazon Lightsail\footnote{\url{https://aws.amazon.com/lightsail/}} container service using the Nano plan, corresponding to 0.25 shared vCPU and 512~MB of RAM~\cite{aws_lightsail_pricing}.
 The database cleanup and provisioner cleanup workloads ran as scheduled ECS tasks on AWS Fargate~\cite{aws_ecs_scheduling_tasks}.
 An alternative considered for the main web application was an ECS service behind an Application Load Balancer\footnote{\url{https://aws.amazon.com/elasticloadbalancing/application-load-balancer/}}~\cite{aws_ecs_load_balancing}.
-Compared with the selected Lightsail container service setup, that design would introduce separate load-balancing infrastructure and a higher always-on cost baseline, so Lightsail container services were chosen as the simpler and more cost-effective option for the continuously running web layer~\cite{aws_elastic_load_balancing_pricing,aws_lightsail_pricing}.
+Compared with the selected Lightsail container service setup, that design would have introduced separate load-balancing infrastructure and a higher always-on cost baseline, so the Lightsail container service was chosen as the simpler and more cost-effective option for the continuously running web layer~\cite{aws_elastic_load_balancing_pricing,aws_lightsail_pricing}.
 
 \begin{figure}[H]
   \centering
