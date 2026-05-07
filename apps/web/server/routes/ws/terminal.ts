@@ -1,7 +1,6 @@
-import type { ErrorCode, Status } from '#shared/protocol';
 import type { Evaluator } from '@terminal/evaluator';
 import type { Session } from '@terminal/session';
-import { decode, encode } from '#shared/protocol';
+import type { ErrorCode, Status } from '#shared/protocol';
 import { TopicNotFoundError } from '@terminal/database';
 import { createEvaluator } from '@terminal/evaluator';
 import { createSession } from '@terminal/session';
@@ -9,6 +8,7 @@ import { useAuth } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useLogger } from '~~/server/lib/logger';
 import { useProvisioner } from '~~/server/lib/provisioner';
+import { decode, encode } from '#shared/protocol';
 
 interface TerminalContext {
   userId: string;

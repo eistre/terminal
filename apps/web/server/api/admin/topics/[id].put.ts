@@ -1,9 +1,9 @@
-import { upsertTopicPayloadSchema } from '#shared/topics-validation';
 import { TopicSlugConflictError } from '@terminal/database';
 import { z } from 'zod';
 import { requireAdmin } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useLogger } from '~~/server/lib/logger';
+import { upsertTopicPayloadSchema } from '#shared/topics-validation';
 
 const routeSchema = z.object({
   id: z.coerce.number().int().positive(),

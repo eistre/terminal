@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "clean": "git clean -xdf .cache .turbo node_modules .nuxt .output",
+    "clean": "git clean -xdf .cache .turbo .nuxt .output",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "lint": "eslint . --cache --cache-location .cache/.eslintcache",

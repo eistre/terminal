@@ -1,5 +1,5 @@
-import type { Locale } from '#shared/locale';
 import type { FormError } from '@nuxt/ui';
+import type { Locale } from '#shared/locale';
 import type { DraftTopic } from './model';
 import { upsertTopicPayloadSchema } from '#shared/topics-validation';
 import { getSaveLocales, toUpsertPayload } from './payload';

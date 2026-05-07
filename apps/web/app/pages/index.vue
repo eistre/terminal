@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Terminal } from '#components';
 import type { ButtonProps } from '@nuxt/ui';
+import type { Terminal } from '#components';
 
 const session = authClient.useSession();
 const { t } = useI18n();

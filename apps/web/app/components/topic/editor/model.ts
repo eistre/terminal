@@ -1,5 +1,5 @@
-import type { Locale } from '#shared/locale';
 import type { EditableTopic } from '@terminal/database';
+import type { Locale } from '#shared/locale';
 import slugify from '@sindresorhus/slugify';
 
 export type EntitySelection = { kind: 'topic' } | { kind: 'task'; clientId: number };

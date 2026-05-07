@@ -1,8 +1,8 @@
-import { upsertTopicPayloadSchema } from '#shared/topics-validation';
 import { TopicSlugConflictError } from '@terminal/database';
 import { requireAdmin } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useLogger } from '~~/server/lib/logger';
+import { upsertTopicPayloadSchema } from '#shared/topics-validation';
 
 export default defineEventHandler(async (event) => {
   const database = useDatabase();

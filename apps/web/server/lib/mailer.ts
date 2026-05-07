@@ -1,6 +1,6 @@
-import type { Locale } from '#shared/locale';
 import type { MailerSchema } from '@terminal/env/schemas';
 import type { Mailer } from '@terminal/mailer';
+import type { Locale } from '#shared/locale';
 import { createMailer } from '@terminal/mailer';
 import en from '~~/i18n/locales/en.json';
 import et from '~~/i18n/locales/et.json';
