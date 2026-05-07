@@ -129,9 +129,9 @@ variable "mysql_admin_username" {
 }
 
 variable "mysql_publicly_accessible" {
-  description = "Whether the Lightsail DB is publicly accessible (public endpoint)"
+  description = "Whether the Lightsail database is publicly accessible"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "session_task_cpu" {
