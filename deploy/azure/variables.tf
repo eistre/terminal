@@ -42,14 +42,14 @@ variable "mysql_admin_password" {
   }
 }
 
-variable "ghcr_username" {
-  description = "GitHub username for pulling container images from ghcr.io"
+variable "image_registry_username" {
+  description = "Username for pulling private container images"
   type        = string
   default     = ""
 }
 
-variable "ghcr_token" {
-  description = "GitHub Personal Access Token with read:packages scope"
+variable "image_registry_password" {
+  description = "Password or token for pulling private container images"
   type        = string
   sensitive   = true
   default     = ""
@@ -67,28 +67,28 @@ variable "resource_prefix" {
   }
 }
 
-variable "container_image_registry" {
+variable "image_registry" {
   description = "Container image registry"
   type        = string
   default     = "ghcr.io"
 }
 
-variable "container_image_owner" {
+variable "image_owner" {
   description = "Container image owner/organization"
   type        = string
   default     = "eistre"
+}
+
+variable "image_tag" {
+  description = "Tag for container images"
+  type        = string
+  default     = "latest"
 }
 
 variable "communication_data_location" {
   description = "Data residency for Azure Communication Services (e.g., United States, Europe)"
   type        = string
   default     = "Europe"
-}
-
-variable "container_image_tag" {
-  description = "Tag for container images"
-  type        = string
-  default     = "latest"
 }
 
 variable "mysql_sku" {

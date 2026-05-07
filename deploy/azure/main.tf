@@ -101,11 +101,11 @@ module "container_apps" {
   managed_identity_client_id = azurerm_user_assigned_identity.main.client_id
 
   # Container images
-  image_registry = var.container_image_registry
-  image_owner    = var.container_image_owner
-  image_tag      = var.container_image_tag
-  ghcr_username  = var.ghcr_username
-  ghcr_token     = var.ghcr_token
+  image_registry          = var.image_registry
+  image_owner             = var.image_owner
+  image_tag               = var.image_tag
+  image_registry_username = var.image_registry_username
+  image_registry_password = var.image_registry_password
 
   # Database connection
   database_url = module.database.connection_string

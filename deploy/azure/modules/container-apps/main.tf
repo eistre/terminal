@@ -28,19 +28,19 @@ resource "azurerm_container_app" "web" {
   }
 
   dynamic "registry" {
-    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    for_each = var.image_registry_username == "" || var.image_registry_password == "" ? [] : [1]
     content {
       server               = var.image_registry
-      username             = var.ghcr_username
-      password_secret_name = "ghcr-token"
+      username             = var.image_registry_username
+      password_secret_name = "image-registry-password"
     }
   }
 
   dynamic "secret" {
-    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    for_each = var.image_registry_username == "" || var.image_registry_password == "" ? [] : [1]
     content {
-      name  = "ghcr-token"
-      value = var.ghcr_token
+      name  = "image-registry-password"
+      value = var.image_registry_password
     }
   }
 
@@ -230,19 +230,19 @@ resource "azurerm_container_app_job" "database_cleanup" {
   }
 
   dynamic "registry" {
-    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    for_each = var.image_registry_username == "" || var.image_registry_password == "" ? [] : [1]
     content {
       server               = var.image_registry
-      username             = var.ghcr_username
-      password_secret_name = "ghcr-token"
+      username             = var.image_registry_username
+      password_secret_name = "image-registry-password"
     }
   }
 
   dynamic "secret" {
-    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    for_each = var.image_registry_username == "" || var.image_registry_password == "" ? [] : [1]
     content {
-      name  = "ghcr-token"
-      value = var.ghcr_token
+      name  = "image-registry-password"
+      value = var.image_registry_password
     }
   }
 
@@ -308,19 +308,19 @@ resource "azurerm_container_app_job" "provisioner_cleanup" {
   }
 
   dynamic "registry" {
-    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    for_each = var.image_registry_username == "" || var.image_registry_password == "" ? [] : [1]
     content {
       server               = var.image_registry
-      username             = var.ghcr_username
-      password_secret_name = "ghcr-token"
+      username             = var.image_registry_username
+      password_secret_name = "image-registry-password"
     }
   }
 
   dynamic "secret" {
-    for_each = var.ghcr_username == "" || var.ghcr_token == "" ? [] : [1]
+    for_each = var.image_registry_username == "" || var.image_registry_password == "" ? [] : [1]
     content {
-      name  = "ghcr-token"
-      value = var.ghcr_token
+      name  = "image-registry-password"
+      value = var.image_registry_password
     }
   }
 

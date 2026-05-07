@@ -5,19 +5,19 @@
 #     terraform apply -var-file=terraform.dev.tfvars
 # Rotate all secrets before any non-throwaway use.
 
-# Required secrets
-admin_email    = "admin@admin.sec"
-admin_password = "terminal_password"
-auth_secret    = "cloud-test-secret-must-be-at-least-32-chars!"
-mailer_sender  = "no-reply@example.com" # Leave blank to disable email
-
-# Lightsail DB credentials
+# Required values
+admin_email          = "admin@admin.sec"
+admin_password       = "terminal_password"
+auth_secret          = "cloud-test-secret-must-be-at-least-32-chars!"
+mailer_sender        = "no-reply@example.com" # Leave blank to disable email
 mysql_admin_password = "Cloud-Test-Root-123-Password"
-mysql_publicly_accessible = true
 
-# Optional overrides
+# Optional overrides (defaults used when left commented)
 # resource_prefix                      = "terminal"
+# app_registry_description             = "Terminal application"
 # aws_region                           = "eu-north-1"
+# logger_level                         = "info"
+# user_expiry_days                     = 90
 # mailer_ses_region                    = "eu-north-1"
 # image_registry                       = "ghcr.io"
 # image_owner                          = "eistre"
@@ -28,10 +28,8 @@ mysql_publicly_accessible = true
 # mysql_bundle_id                      = "micro_2_0"
 # mysql_database_name                  = "terminal"
 # mysql_admin_username                 = "terminal"
-# mysql_publicly_accessible            = false
+# mysql_publicly_accessible            = true
 # session_task_cpu                     = "256"
 # session_task_memory                  = "512"
 # session_cpu_architecture             = "X86_64"
 # provisioner_container_expiry_minutes = 30
-# logger_level                         = "info"
-# user_expiry_days                     = 90

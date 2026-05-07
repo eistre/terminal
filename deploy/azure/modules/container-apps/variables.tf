@@ -45,14 +45,14 @@ variable "image_tag" {
   type        = string
 }
 
-variable "ghcr_username" {
-  description = "GitHub username for pulling images"
+variable "image_registry_username" {
+  description = "Username for pulling private container images"
   type        = string
   default     = ""
 }
 
-variable "ghcr_token" {
-  description = "GitHub token for pulling images"
+variable "image_registry_password" {
+  description = "Password or token for pulling private container images"
   type        = string
   sensitive   = true
   default     = ""
