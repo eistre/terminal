@@ -7,8 +7,8 @@
     "clean": "git clean -xdf .cache .turbo .nuxt .output",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "lint": "eslint . --cache --cache-location .cache/.eslintcache",
-    "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
+    "lint": "nuxt prepare && eslint . --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "nuxt prepare && eslint . --fix --cache --cache-location .cache/.eslintcache",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "typecheck": "nuxt typecheck"
