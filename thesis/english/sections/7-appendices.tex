@@ -7,9 +7,9 @@
 \refstepcounter{section}
 
 
-\section*{\thesection. Deployment Instructions} \label{app:deployment-instructions}
-\addcontentsline{toc}{subsection}{\protect\numberline{\thesection.}Deployment Instructions}
-This appendix provides brief deployment instructions for the application in the three deployment targets discussed in Chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
+\section*{\thesection. Deployment and Maintenance Instructions} \label{app:deployment-and-maintenance-instructions}
+\addcontentsline{toc}{subsection}{\protect\numberline{\thesection.}Deployment and Maintenance Instructions}
+This appendix provides brief deployment and post-deployment maintenance instructions for the application in the three deployment targets discussed in Chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
 Begin by cloning the repository and ensuring that the required deployment tool is installed, namely Helm\footnote{\url{https://helm.sh/docs/intro/install}} for Kubernetes and Terraform\footnote{\url{https://developer.hashicorp.com/terraform/install}} for Azure and AWS\@.
 
 \begin{minted}{bash}
@@ -37,6 +37,12 @@ helm upgrade --install --namespace <NAMESPACE_NAME> -f <VALUES_FILE> terminal .
 \end{minted}
 
 This command sequence installs the chart or updates an existing release using the environment-specific values file to the specified Kubernetes namespace.
+After deployment, the environment administrator should periodically verify that the application is reachable and that terminal sessions can be started.
+If this check fails, the Kubernetes resources created by the Helm release should be inspected.
+In the UT HPC deployment, cluster-level infrastructure is operated by UT HPC, so routine work remains mainly namespace-scoped.
+The chart uses \texttt{latest} image tags by default and sets \texttt{imagePullPolicy} to \texttt{Always} for such images, meaning that newly started pods pull the current image.
+If updated images are published under the same tag and an immediate refresh is needed, the deployment should be restarted.
+When needed, the repository maintainer updates dependencies, rebuilds images, and publishes them to the container registry.
 
 \subsection*{2. Microsoft Azure}
 To deploy the application in Microsoft Azure, change to the \path{deploy/azure/} directory.
@@ -57,6 +63,11 @@ terraform apply -var-file=terraform.tfvars
 \end{minted}
 
 This command sequence initializes the Terraform working directory and applies the configuration for Azure.
+After deployment, Azure operates the underlying managed services, while the environment administrator should periodically check service health, monthly cost, and scheduled cleanup execution.
+Application images are controlled through the Terraform variable \texttt{image\_tag}, which defaults to \texttt{latest}.
+When the image tag is changed, the deployment can be updated through Terraform.
+If updated images are published under the same tag, an immediate refresh requires restarting or redeploying the Container Apps workload.
+When needed, the repository maintainer updates dependencies, rebuilds images, and publishes them to the container registry.
 
 \subsection*{3. Amazon Web Services}
 To deploy the application in Amazon Web Services, change to the \path{deploy/aws/} directory.
@@ -77,6 +88,11 @@ terraform apply -var-file=terraform.tfvars
 \end{minted}
 
 This command sequence initializes the Terraform working directory and applies the production configuration for AWS\@.
+After deployment, AWS operates the managed services used by the environment, while the environment administrator should periodically check service health, monthly cost, and scheduled cleanup execution.
+Application images are controlled through the Terraform variable \texttt{image\_tag}, which defaults to \texttt{latest}.
+When the image tag is changed, the deployment can be updated through Terraform.
+If updated images are published under the same tag, restarting or redeploying the Lightsail container service and ECS workloads is required.
+When needed, the repository maintainer updates dependencies, rebuilds images, and publishes them to the container registry.
 
 \clearpage
 \refstepcounter{section}
