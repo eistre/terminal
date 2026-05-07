@@ -2,7 +2,6 @@ import type { Database } from '@terminal/database';
 import type { Logger } from '@terminal/logger';
 import type {
   AuthContext,
-  BetterAuthOptions,
   BetterAuthPlugin,
   GenericEndpointContext,
   MiddlewareContext,
@@ -28,7 +27,7 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const AUTH_PATHS = { SIGN_UP: '/sign-up/email', SIGN_IN: '/sign-in/email' };
 let _auth: Auth | undefined;
 
-type Context = MiddlewareContext<MiddlewareOptions, AuthContext<BetterAuthOptions> & {
+type Context = MiddlewareContext<MiddlewareOptions, AuthContext & {
   returned?: unknown | undefined;
   responseHeaders?: Headers | undefined;
 }>;
@@ -174,7 +173,7 @@ function handleUserCreate(user: User & { role?: string }): { data: User & { expi
   };
 }
 
-async function handleSessionCreate(session: Session, ctx: GenericEndpointContext<BetterAuthOptions> | null): Promise<void> {
+async function handleSessionCreate(session: Session, ctx: GenericEndpointContext | null): Promise<void> {
   const user = await ctx?.context.internalAdapter.findUserById(session.userId);
 
   if (!user || (user as { role?: string }).role === 'admin') {
