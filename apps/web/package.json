@@ -24,6 +24,7 @@
     "@terminal/mailer": "workspace:*",
     "@terminal/provisioner": "workspace:*",
     "@terminal/session": "workspace:*",
+    "@tiptap/y-tiptap": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "@xterm/addon-fit": "catalog:",
     "@xterm/addon-webgl": "catalog:",
