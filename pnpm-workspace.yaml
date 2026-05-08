@@ -1,5 +1,6 @@
 catalogMode: strict
 cleanupUnusedCatalogs: true
+minimumReleaseAge: 1440
 shellEmulator: true
 trustPolicy: no-downgrade
 trustPolicyExclude:
