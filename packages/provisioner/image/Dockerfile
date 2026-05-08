@@ -1,6 +1,7 @@
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 # Unminimize container
+RUN apt update && apt install -y unminimize
 RUN yes | unminimize
 
 # Update and install necessary packages
