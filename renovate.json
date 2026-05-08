@@ -3,7 +3,7 @@
   "extends": [
     "config:recommended"
   ],
-  "timezone": "UTC",
+  "timezone": "Europe/Tallinn",
   "schedule": [
     "* 0-11 * * 0"
   ],
@@ -11,6 +11,7 @@
     "dependencies",
     "renovate"
   ],
+  "minimumReleaseAge": "3 days",
   "rangeStrategy": "bump",
   "lockFileMaintenance": {
     "enabled": true,
@@ -43,12 +44,17 @@
     },
     {
       "matchManagers": [
-        "docker-compose",
-        "dockerfile",
-        "helm-values",
         "terraform"
       ],
-      "groupName": "Infrastructure updates"
+      "groupName": "Terraform updates"
+    },
+    {
+      "matchManagers": [
+        "docker-compose",
+        "dockerfile",
+        "helm-values"
+      ],
+      "groupName": "Container image updates"
     },
     {
       "matchManagers": [
@@ -57,9 +63,10 @@
         "nvm"
       ],
       "matchPackageNames": [
-        "node"
+        "node",
+        "pnpm"
       ],
-      "groupName": "Node.js version updates"
+      "groupName": "Runtime version updates"
     }
   ]
 }
