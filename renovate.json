@@ -1,0 +1,65 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "timezone": "UTC",
+  "schedule": [
+    "before 12:00 on sunday"
+  ],
+  "labels": [
+    "dependencies",
+    "renovate"
+  ],
+  "prConcurrentLimit": 3,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": [
+      "before 12:00 on the first sunday of the month"
+    ]
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchManagers": [
+        "npm",
+        "nvm"
+      ],
+      "matchPackageNames": [
+        "node"
+      ],
+      "groupName": "Node.js version updates"
+    },
+    {
+      "matchManagers": [
+        "npm",
+        "pnpm"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "npm minor and patch updates"
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "groupName": "GitHub Actions updates"
+    },
+    {
+      "matchManagers": [
+        "docker-compose",
+        "dockerfile",
+        "helm-values",
+        "terraform"
+      ],
+      "groupName": "Infrastructure updates"
+    }
+  ]
+}
