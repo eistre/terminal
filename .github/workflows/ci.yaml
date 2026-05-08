@@ -5,6 +5,13 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -42,17 +49,25 @@ jobs:
 
   helm:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: base
+            values: -f values.yaml
+          - name: local
+            values: -f values.yaml -f values-local.example.yaml
+          - name: hpc
+            values: -f values.yaml -f values-hpc.example.yaml
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
       - name: Setup Helm
         uses: azure/setup-helm@v4
+        with:
+          version: v4.1.4
       - name: Helm lint chart
-        run: |
-          helm lint deploy/kubernetes \
-            -f deploy/kubernetes/values.yaml \
-            -f deploy/kubernetes/values-local.example.yaml \
-            -f deploy/kubernetes/values-hpc.example.yaml
+        working-directory: deploy/kubernetes
+        run: helm lint . ${{ matrix.values }}
 
   terraform:
     runs-on: ubuntu-latest
@@ -60,22 +75,22 @@ jobs:
       matrix:
         include:
           - name: aws
-            dir: deploy/aws
           - name: azure
-            dir: deploy/azure
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.15.2
       - name: Terraform fmt
-        working-directory: ${{ matrix.dir }}
+        working-directory: deploy/${{ matrix.name }}
         run: terraform fmt -check -recursive
       - name: Terraform init
-        working-directory: ${{ matrix.dir }}
+        working-directory: deploy/${{ matrix.name }}
         run: terraform init -backend=false -input=false
       - name: Terraform validate
-        working-directory: ${{ matrix.dir }}
+        working-directory: deploy/${{ matrix.name }}
         run: terraform validate -no-color
 
   analyze:
@@ -100,7 +115,38 @@ jobs:
           category: /language:javascript-typescript
 
   build:
-    needs: [analyze]
+    needs: [lint, typecheck, helm, terraform]
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - name: web
+            dockerfile: apps/web
+          - name: provisioner-cleanup
+            dockerfile: apps/provisioner-cleanup
+          - name: database-cleanup
+            dockerfile: apps/database-cleanup
+          - name: container
+            dockerfile: packages/provisioner/image
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}/Dockerfile
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  publish:
+    needs: [lint, typecheck, helm, terraform, analyze]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     permissions:
@@ -110,17 +156,13 @@ jobs:
       matrix:
         include:
           - name: web
-            dockerfile: apps/web/Dockerfile
-            image: ghcr.io/eistre/terminal-web
+            dockerfile: apps/web
           - name: provisioner-cleanup
-            dockerfile: apps/provisioner-cleanup/Dockerfile
-            image: ghcr.io/eistre/terminal-provisioner-cleanup
+            dockerfile: apps/provisioner-cleanup
           - name: database-cleanup
-            dockerfile: apps/database-cleanup/Dockerfile
-            image: ghcr.io/eistre/terminal-database-cleanup
+            dockerfile: apps/database-cleanup
           - name: container
-            dockerfile: packages/provisioner/image/Dockerfile
-            image: ghcr.io/eistre/terminal-container
+            dockerfile: packages/provisioner/image
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -136,14 +178,15 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ matrix.image }}
+          images: ghcr.io/eistre/terminal-${{ matrix.name }}
           tags: |
+            type=sha,prefix=sha-
             type=raw,value=latest
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ${{ matrix.dockerfile }}
+          file: ${{ matrix.dockerfile }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -151,7 +194,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   cleanup:
-    needs: [build]
+    needs: [publish]
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -168,4 +211,4 @@ jobs:
         with:
           package-name: ${{ matrix.package }}
           package-type: container
-          min-versions-to-keep: 3
+          min-versions-to-keep: 5
