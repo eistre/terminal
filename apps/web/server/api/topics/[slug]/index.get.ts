@@ -1,9 +1,9 @@
-import { localeSchema } from '#shared/locale';
 import { TopicNotFoundError } from '@terminal/database';
 import { z } from 'zod';
 import { requireSession } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useLogger } from '~~/server/lib/logger';
+import { localeSchema } from '#shared/locale';
 
 const routeSchema = z.object({
   slug: z.string(),

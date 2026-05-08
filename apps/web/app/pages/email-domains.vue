@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UpsertEmailDomainPayload } from '#shared/email-domains-validation';
-import type { TableColumn } from '#ui/types';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { EmailDomain as DbEmailDomain } from '@terminal/database';
+import type { UpsertEmailDomainPayload } from '#shared/email-domains-validation';
+import type { TableColumn } from '#ui/types';
 import { upsertEmailDomainPayloadSchema } from '#shared/email-domains-validation';
 
 definePageMeta({ middleware: ['require-admin'] });

@@ -11,9 +11,6 @@
       "cache": false,
       "dependsOn": ["^clean"]
     },
-    "//#clean:root": {
-      "cache": false
-    },
     "db:generate": {
       "cache": false
     },

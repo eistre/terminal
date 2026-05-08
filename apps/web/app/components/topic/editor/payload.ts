@@ -1,5 +1,5 @@
-import type { Locale } from '#shared/locale';
 import type { UpsertTopicInput, UpsertTopicTask } from '@terminal/database';
+import type { Locale } from '#shared/locale';
 import type { DraftTopic } from './model';
 
 function isNonEmpty(value: string) {

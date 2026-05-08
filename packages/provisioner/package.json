@@ -12,7 +12,7 @@
   "files": ["dist"],
   "scripts": {
     "build": "tsc",
-    "clean": "git clean -xdf .cache .turbo node_modules dist",
+    "clean": "git clean -xdf .cache .turbo dist",
     "lint": "eslint . --cache --cache-location .cache/.eslintcache",
     "lint:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
     "typecheck": "tsc --noEmit"
@@ -35,6 +35,7 @@
     "@terminal/eslint": "workspace:*",
     "@terminal/logger": "workspace:*",
     "@terminal/typescript": "workspace:*",
+    "@types/node": "catalog:",
     "@types/sshpk": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:"

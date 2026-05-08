@@ -1,9 +1,9 @@
-import { upsertEmailDomainPayloadSchema } from '#shared/email-domains-validation';
 import { EmailDomainConflictError } from '@terminal/database';
 import { z } from 'zod';
 import { requireAdmin } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useLogger } from '~~/server/lib/logger';
+import { upsertEmailDomainPayloadSchema } from '#shared/email-domains-validation';
 
 const routeSchema = z.object({
   id: z.coerce.number().int().positive(),

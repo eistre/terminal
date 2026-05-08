@@ -1,5 +1,5 @@
-import type { PublicConfig } from '#shared/public-config';
 import type { LoggerSchema } from '@terminal/env/schemas';
+import type { PublicConfig } from '#shared/public-config';
 import process from 'node:process';
 import { createLogger } from '@terminal/logger';
 import { useEnv } from '~~/server/lib/env';

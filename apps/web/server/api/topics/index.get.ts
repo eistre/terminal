@@ -1,8 +1,8 @@
-import { localeSchema } from '#shared/locale';
 import { z } from 'zod';
 import { requireSession } from '~~/server/lib/auth';
 import { useDatabase } from '~~/server/lib/database';
 import { useLogger } from '~~/server/lib/logger';
+import { localeSchema } from '#shared/locale';
 
 const querySchema = z.object({
   locale: localeSchema.default('en'),

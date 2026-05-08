@@ -15,7 +15,7 @@ const schema = computed(() => z.object({
 type Schema = z.output<typeof schema.value>;
 
 const state = reactive<Schema>({
-  otp: Array.from({ length: otpLength }, () => ''),
+  otp: Array.from<string>({ length: otpLength }).fill(''),
 });
 
 const canSubmit = computed(() => schema.value.safeParse(state).success);
