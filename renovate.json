@@ -12,7 +12,6 @@
     "renovate"
   ],
   "rangeStrategy": "bump",
-  "prConcurrentLimit": 3,
   "lockFileMaintenance": {
     "enabled": true,
     "schedule": [
