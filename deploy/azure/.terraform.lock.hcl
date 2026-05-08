@@ -3,19 +3,9 @@
 
 provider "registry.terraform.io/hashicorp/azurerm" {
   version     = "4.72.0"
-  constraints = ">= 4.57.0"
+  constraints = "~> 4.72"
   hashes = [
-    "h1:+JY9fzASGRhi405X+J6JIc3qlO930S24LFGZOMMe6A4=",
-    "h1:AymDoYag6FI+U2Q89QXJM9oJlHr8c/0d4laM4A/nnk8=",
-    "h1:NtBksDHNAGzS3mFUiZDO4uk0qv2hf5UZ09g/17+ioZc=",
     "h1:QYnPAHT/PYheOOZz52ucHqw/ZO9PxWyPLtO7UD/jSMg=",
-    "h1:Tbk/3wMpjay1y03NkmuryBhn2oGwnMfdLj1vlf7m9UI=",
-    "h1:UGajAH+Widv37GVBc3uHCPpv/dhu//aV99fooqlvhG8=",
-    "h1:Ul/wFpoo1+X5sMCXIl+EAMPLtrBnkSFXYK+ugLEN5RA=",
-    "h1:e8H3411GjKGG98Md8cskglLhq6AfPklGmVHMoUI2J6g=",
-    "h1:feKcJBAKr31lJlkz6mb+MxH9fkj75n4qTcNceGpfTSk=",
-    "h1:sOIm1qvkjEbw0LUa9YhJYhxt0KPDTtVoAAtpR8KmhpM=",
-    "h1:wMG5mll7zno5x6MizV2bFQhzmLZD0amtgPmJFG2xznI=",
     "zh:073472587c3752e89738522814d2b4eb2fd69eb2cb19c5a5ead3c7d2eabdc279",
     "zh:1950effc0c315b6002c8cb6327b94fe59bda210e699367d9727bc66490d651d2",
     "zh:47c990db75658525de57c8955a05b4752b88f3a900fffac0e7661d4a749e94f2",
@@ -33,19 +23,9 @@ provider "registry.terraform.io/hashicorp/azurerm" {
 
 provider "registry.terraform.io/hashicorp/random" {
   version     = "3.8.1"
-  constraints = ">= 3.8.0"
+  constraints = "~> 3.8"
   hashes = [
-    "h1:Eexl06+6J+s75uD46+WnZtpJZYRVUMB0AiuPBifK6Jc=",
-    "h1:fPaZ+S6As5cOPbsB/cfBFKnUKlX/Qe/HwdFfZYO8Iao=",
-    "h1:fdfOl1HabDT42XLH8qjmfTbVZpgQZ5lyOyOa+GQhm0w=",
-    "h1:m2y2fw9SBQ6+e7pNhi3+qsh8bYNmqkL89BulzH7uK3U=",
-    "h1:nvy3PZJeuG7g0ltqrJB7LNugxPWhTLs1SZ+J0YDZ3h4=",
-    "h1:osH3aBqEARwOz3VBJKdpFKJJCNIdgRC6k8vPojkLmlY=",
-    "h1:shNrbtcKsavnQPkDwxosDSeyh+D9cPEs3FbQ5mq71Hk=",
-    "h1:sootvBMql2BEt2EGWrwKXSD8I2aXXAD5wuVZ9JcVEYw=",
-    "h1:u6B/wWlCTCsVWuDk/V7YFwPW9dcEoLU93kmnJdQdx/k=",
     "h1:u8AKlWVDTH5r9YLSeswoVEjiY72Rt4/ch7U+61ZDkiQ=",
-    "h1:upGnsdxcWL8c2KI95w4lZvn9S/6HTJI26zOoy6wNb6k=",
     "zh:08dd03b918c7b55713026037c5400c48af5b9f468f483463321bd18e17b907b4",
     "zh:0eee654a5542dc1d41920bbf2419032d6f0d5625b03bd81339e5b33394a3e0ae",
     "zh:229665ddf060aa0ed315597908483eee5b818a17d09b6417a0f52fd9405c4f57",
