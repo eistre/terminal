@@ -48,6 +48,7 @@ For Azure and AWS, the infrastructure was provisioned using Terraform.
 According to the Terraform documentation, Terraform is an infrastructure-as-code (IaC) tool that allows infrastructure to be specified in configuration files and managed through a repeatable workflow~\cite{hashicorp_terraform_intro}.
 Terraform supports this by providing input variables, which make it possible to supply configuration values separately from the core infrastructure code~\cite{hashicorp_terraform_input_variables}.
 This made it possible to keep reusable infrastructure definitions while supplying deployment-specific values for each cloud environment, which improved deployment reproducibility.
+The repository's automated validation workflow also covers both deployment approaches by linting the Helm chart with multiple values files and by running formatting and validation checks for the Azure and AWS Terraform configurations.
 The corresponding deployment and post-deployment maintenance instructions are provided in Appendix~\ref{app:deployment-and-maintenance-instructions}.
 
 \subsection{University of Tartu HPC} \label{subsec:university-of-tartu-hpc}

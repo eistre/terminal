@@ -42,7 +42,7 @@ If this check fails, the Kubernetes resources created by the Helm release should
 In the UT HPC deployment, cluster-level infrastructure is operated by UT HPC, so routine work remains mainly namespace-scoped.
 The chart uses \texttt{latest} image tags by default and sets \texttt{imagePullPolicy} to \texttt{Always} for such images, meaning that newly started pods pull the current image.
 If updated images are published under the same tag and an immediate refresh is needed, the deployment should be restarted.
-When needed, the repository maintainer updates dependencies, rebuilds images, and publishes them to the container registry.
+When needed, the repository maintainer reviews dependency update pull requests prepared by Renovate, merges approved changes, and relies on the repository's automated workflow to rebuild and publish updated container images.
 
 \subsection*{2. Microsoft Azure}
 To deploy the application in Microsoft Azure, change to the \path{deploy/azure/} directory.
@@ -67,7 +67,7 @@ After deployment, Azure operates the underlying managed services, while the envi
 Application images are controlled through the Terraform variable \texttt{image\_tag}, which defaults to \texttt{latest}.
 When the image tag is changed, the deployment can be updated through Terraform.
 If updated images are published under the same tag, an immediate refresh requires restarting or redeploying the Container Apps workload.
-When needed, the repository maintainer updates dependencies, rebuilds images, and publishes them to the container registry.
+When needed, the repository maintainer reviews dependency update pull requests prepared by Renovate, merges approved changes, and relies on the repository's automated workflow to rebuild and publish updated container images.
 
 \subsection*{3. Amazon Web Services}
 To deploy the application in Amazon Web Services, change to the \path{deploy/aws/} directory.
@@ -92,7 +92,7 @@ After deployment, AWS operates the managed services used by the environment, whi
 Application images are controlled through the Terraform variable \texttt{image\_tag}, which defaults to \texttt{latest}.
 When the image tag is changed, the deployment can be updated through Terraform.
 If updated images are published under the same tag, restarting or redeploying the Lightsail container service and ECS workloads is required.
-When needed, the repository maintainer updates dependencies, rebuilds images, and publishes them to the container registry.
+When needed, the repository maintainer reviews dependency update pull requests prepared by Renovate, merges approved changes, and relies on the repository's automated workflow to rebuild and publish updated container images.
 
 \clearpage
 \refstepcounter{section}

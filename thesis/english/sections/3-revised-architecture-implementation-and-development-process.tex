@@ -107,6 +107,9 @@ This avoids keeping the main application running indefinitely solely to perform 
 The modernization effort also included updating core frameworks and supporting dependencies to currently supported stable versions where possible.
 One example was the migration of the main application from Nuxt 3 to Nuxt 4, which addressed the outdated dependency baseline identified in subchapter~\ref{subsubsec:outdated-dependencies}.
 In this way, dependency updates were treated as part of the broader codebase modernization effort rather than as isolated package-management tasks.
+To support this maintenance work, automated dependency update and validation workflows were also added.
+Renovate\footnote{\url{https://docs.renovatebot.com/}} was configured to prepare pull requests for application, infrastructure, and container dependency updates, supporting a continuous update process.
+GitHub Actions\footnote{\url{https://docs.github.com/en/actions}} was configured to run automated validation checks for repository changes and before container images were published, including linting, type checking, deployment configuration validation, security analysis, and image builds.
 
 Clearer modular boundaries also improve validation, readability, and maintainability by enabling more localized reasoning and testing.
 Structuring the codebase into reusable packages and independently runnable applications makes it easier to extend the system without destabilizing the overall workflow of the environment.
@@ -191,7 +194,7 @@ This approach preserves progress across sessions and reduces the risk of misuse 
 Given Lucia's deprecation, continuing to rely on it was not suitable for a production system.
 As an alternative, the updated system adopts Better Auth\footnote{\url{https://github.com/better-auth/better-auth}}, a framework-agnostic authentication and authorization framework that provides built-in support for common authentication workflows~\cite{better_auth_introduction}.
 In the revised system, the authentication layer supports email-based login, session management, and SSO~\cite{better_auth_introduction}.
-In addition, the revised system implements an email domain allowlist to restrict registration and login to approved domains, for example, \texttt{ut.ee}.
+In addition, the revised system implements an email domain allowlist to restrict registration and login to approved domains, including both exact-domain rules, such as \texttt{ut.ee}, and suffix rules for subdomains, such as \texttt{.ut.ee}.
 This helps ensure the environment is used only by the intended audience.
 
 Compared to Lucia, Better Auth reduces the amount of custom authentication code by providing standardized handlers and integrations for the required workflows.
