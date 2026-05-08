@@ -1,8 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":dependencyDashboard"
+    "config:recommended"
   ],
   "timezone": "UTC",
   "schedule": [
@@ -27,12 +26,6 @@
       "dependencyDashboardApproval": true
     },
     {
-      "matchPackageNames": [
-        "pnpm"
-      ],
-      "groupName": "pnpm package manager updates"
-    },
-    {
       "matchManagers": [
         "npm",
         "nvm"
@@ -44,7 +37,8 @@
     },
     {
       "matchManagers": [
-        "npm"
+        "npm",
+        "pnpm"
       ],
       "matchUpdateTypes": [
         "minor",
@@ -62,15 +56,10 @@
       "matchManagers": [
         "docker-compose",
         "dockerfile",
-        "helm-values"
-      ],
-      "groupName": "container image updates"
-    },
-    {
-      "matchManagers": [
+        "helm-values",
         "terraform"
       ],
-      "groupName": "Terraform provider updates"
+      "groupName": "Infrastructure updates"
     }
   ]
 }
