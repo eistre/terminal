@@ -11,10 +11,6 @@
     "dependencies",
     "renovate"
   ],
-  "minimumReleaseAge": "3 days",
-  "prCreation": "not-pending",
-  "internalChecksFilter": "strict",
-  "dependencyDashboard": true,
   "rangeStrategy": "bump",
   "lockFileMaintenance": {
     "enabled": true,
