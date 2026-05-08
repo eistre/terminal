@@ -1,4 +1,4 @@
-FROM node:24-alpine AS build
+FROM node:24.15.0-alpine AS build
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 ENV CI="true"
@@ -10,7 +10,7 @@ WORKDIR /app
 RUN pnpm install --frozen-lockfile
 RUN pnpm build --filter web
 
-FROM node:24-alpine
+FROM node:24.15.0-alpine
 
 COPY --from=build /app/apps/web/.output /app
 WORKDIR /app
