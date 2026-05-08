@@ -20,12 +20,6 @@
   },
   "packageRules": [
     {
-      "matchDatasources": [
-        "npm"
-      ],
-      "minimumReleaseAge": "3 days"
-    },
-    {
       "matchUpdateTypes": [
         "major"
       ],
