@@ -28,16 +28,6 @@
     },
     {
       "matchManagers": [
-        "npm",
-        "nvm"
-      ],
-      "matchPackageNames": [
-        "node"
-      ],
-      "groupName": "Node.js version updates"
-    },
-    {
-      "matchManagers": [
         "npm"
       ],
       "matchUpdateTypes": [
@@ -60,6 +50,17 @@
         "terraform"
       ],
       "groupName": "Infrastructure updates"
+    },
+    {
+      "matchManagers": [
+        "dockerfile",
+        "npm",
+        "nvm"
+      ],
+      "matchPackageNames": [
+        "node"
+      ],
+      "groupName": "Node.js version updates"
     }
   ]
 }
