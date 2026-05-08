@@ -3,6 +3,7 @@ lockfileVersion: '9.0'
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
+  injectWorkspacePackages: true
 
 catalogs:
   default:
@@ -261,7 +262,7 @@ importers:
         version: 3.0.0
       '@terminal/database':
         specifier: workspace:*
-        version: link:../../packages/database
+        version: file:packages/database(@types/node@25.6.0)(kysely@0.28.17)
       '@terminal/env':
         specifier: workspace:*
         version: link:../../packages/env
@@ -3586,6 +3587,9 @@ packages:
     resolution: {integrity: sha512-A0k2qF0zFSUStXSZkGXABouXr2Tw2Ztl/cVIYG9qy84uR8W7UNjAcX3DvzBS3YnDcwvLxab8v7dbmYBZ39itDA==}
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
+
+  '@terminal/database@file:packages/database':
+    resolution: {directory: packages/database, type: directory}
 
   '@tiptap/core@3.22.5':
     resolution: {integrity: sha512-L1lhWz6ujGny8LduTJ7MBWYhzigwOvfUJUrJ7IzOJSuy3+OAzisdGDD1GV7LEO/hU0Hr2Mkm1wajRIHExvS9HQ==}
@@ -11462,6 +11466,41 @@ snapshots:
       '@tanstack/virtual-core': 3.14.0
       vue: 3.5.34(typescript@6.0.3)
 
+  '@terminal/database@file:packages/database(@types/node@25.6.0)(kysely@0.28.17)':
+    dependencies:
+      drizzle-orm: 0.45.2(kysely@0.28.17)(mysql2@3.22.3(@types/node@25.6.0))
+      mysql2: 3.22.3(@types/node@25.6.0)
+    transitivePeerDependencies:
+      - '@aws-sdk/client-rds-data'
+      - '@cloudflare/workers-types'
+      - '@electric-sql/pglite'
+      - '@libsql/client'
+      - '@libsql/client-wasm'
+      - '@neondatabase/serverless'
+      - '@op-engineering/op-sqlite'
+      - '@opentelemetry/api'
+      - '@planetscale/database'
+      - '@prisma/client'
+      - '@tidbcloud/serverless'
+      - '@types/better-sqlite3'
+      - '@types/node'
+      - '@types/pg'
+      - '@types/sql.js'
+      - '@upstash/redis'
+      - '@vercel/postgres'
+      - '@xata.io/client'
+      - better-sqlite3
+      - bun-types
+      - expo-sqlite
+      - gel
+      - knex
+      - kysely
+      - pg
+      - postgres
+      - prisma
+      - sql.js
+      - sqlite3
+
   '@tiptap/core@3.22.5(@tiptap/pm@3.22.5)':
     dependencies:
       '@tiptap/pm': 3.22.5
@@ -12808,7 +12847,6 @@ snapshots:
     optionalDependencies:
       kysely: 0.28.17
       mysql2: 3.22.3(@types/node@25.6.0)
-    optional: true
 
   dunder-proto@1.0.1:
     dependencies:
@@ -14614,7 +14652,6 @@ snapshots:
       lru.min: 1.1.4
       named-placeholders: 1.1.6
       sql-escaper: 1.3.3
-    optional: true
 
   named-placeholders@1.1.6:
     dependencies:
