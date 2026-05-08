@@ -13,6 +13,7 @@
   ],
   "rangeStrategy": "bump",
   "dependencyDashboard": true,
+  "osvVulnerabilityAlerts": true,
   "prConcurrentLimit": 5,
   "lockFileMaintenance": {
     "enabled": true,
