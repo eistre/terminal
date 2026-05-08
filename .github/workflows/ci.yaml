@@ -53,13 +53,10 @@ jobs:
       matrix:
         include:
           - name: base
-            dir: deploy/kubernetes
             values: -f values.yaml
           - name: local
-            dir: deploy/kubernetes
             values: -f values.yaml -f values-local.example.yaml
           - name: hpc
-            dir: deploy/kubernetes
             values: -f values.yaml -f values-hpc.example.yaml
     steps:
       - name: Checkout repository
@@ -69,7 +66,7 @@ jobs:
         with:
           version: v4.1.4
       - name: Helm lint chart
-        working-directory: ${{ matrix.dir }}
+        working-directory: deploy/kubernetes
         run: helm lint . ${{ matrix.values }}
 
   terraform:
@@ -78,9 +75,7 @@ jobs:
       matrix:
         include:
           - name: aws
-            dir: deploy/aws
           - name: azure
-            dir: deploy/azure
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -89,13 +84,13 @@ jobs:
         with:
           terraform_version: 1.15.2
       - name: Terraform fmt
-        working-directory: ${{ matrix.dir }}
+        working-directory: deploy/${{ matrix.name }}
         run: terraform fmt -check -recursive
       - name: Terraform init
-        working-directory: ${{ matrix.dir }}
+        working-directory: deploy/${{ matrix.name }}
         run: terraform init -backend=false -input=false
       - name: Terraform validate
-        working-directory: ${{ matrix.dir }}
+        working-directory: deploy/${{ matrix.name }}
         run: terraform validate -no-color
 
   analyze:
