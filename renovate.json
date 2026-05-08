@@ -37,8 +37,7 @@
     },
     {
       "matchManagers": [
-        "npm",
-        "pnpm"
+        "npm"
       ],
       "matchUpdateTypes": [
         "minor",
