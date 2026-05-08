@@ -333,6 +333,9 @@ importers:
       '@terminal/typescript':
         specifier: workspace:*
         version: link:../../packages/typescript
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.3
       '@types/sortablejs':
         specifier: 'catalog:'
         version: 1.15.9

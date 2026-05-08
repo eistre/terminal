@@ -43,6 +43,7 @@
     "@nuxt/eslint": "catalog:",
     "@terminal/eslint": "workspace:*",
     "@terminal/typescript": "workspace:*",
+    "@types/node": "catalog:",
     "@types/sortablejs": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:",
