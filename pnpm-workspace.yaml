@@ -16,10 +16,10 @@ packages:
 
 catalog:
   '@antfu/eslint-config': ^8.2.0
-  '@aws-sdk/client-ec2': ^3.1044.0
-  '@aws-sdk/client-ecs': ^3.1044.0
-  '@aws-sdk/client-secrets-manager': ^3.1044.0
-  '@aws-sdk/client-sesv2': ^3.1044.0
+  '@aws-sdk/client-ec2': ^3.1045.0
+  '@aws-sdk/client-ecs': ^3.1045.0
+  '@aws-sdk/client-secrets-manager': ^3.1045.0
+  '@aws-sdk/client-sesv2': ^3.1045.0
   '@azure/arm-containerinstance': ^9.1.0
   '@azure/communication-email': ^1.1.0
   '@azure/core-rest-pipeline': ^1.23.0
@@ -36,7 +36,7 @@ catalog:
   '@tsconfig/node-ts': ^23.6.4
   '@tsconfig/node24': ^24.0.4
   '@types/lodash-es': ^4.17.12
-  '@types/node': ^24.12.2
+  '@types/node': ^24.12.3
   '@types/nodemailer': ^8.0.0
   '@types/sortablejs': ^1.15.9
   '@types/ssh2': ^1.15.5
