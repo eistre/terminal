@@ -31,7 +31,8 @@ This deployment target assumes that the Kubernetes namespace and UT HPC-related 
 cd deploy/kubernetes
 
 # Apply the Helm chart using the appropriate values file
-helm upgrade --install --namespace <NAMESPACE_NAME> -f <VALUES_FILE> terminal .
+helm upgrade --install \
+  --namespace <NAMESPACE_NAME> -f <VALUES_FILE> terminal .
 \end{minted}
 
 This command sequence installs the chart or updates an existing release using the environment-specific values file to the specified Kubernetes namespace.

@@ -19,6 +19,7 @@
     "lint:root": "eslint . --cache --cache-location .cache/.eslintcache",
     "lint:root:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
     "prepare": "husky",
+    "thesis": "cd thesis && latexmk -g -pdf main.tex",
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
