@@ -7,6 +7,3 @@ $out_dir = '.output';
 
 # Prefer the local latexminted wrapper so minted runs with Python 3.13.
 ensure_path( 'PATH', '.' );
-
-ensure_path( 'TEXINPUTS', './estonian//' );
-ensure_path( 'TEXINPUTS', './english//' );
