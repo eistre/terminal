@@ -161,12 +161,14 @@
 \newcommand\keywords[1]{\renewcommand\@keywords{#1}}
 \newcommand\@keywords{\@latex@error{No \noexpand\keywords given}\@ehc}
 
+\newcommand*{\degree}[1]{, #1}
+
 % Tiitelleht
 \newcounter{@supervisori}
 \newcounter{@supervisors}
 
 \renewcommand*{\maketitle}{
-    \setbox0=\vbox{\setcounter{@supervisors}{1}\newcommand*{\degree}[1]{}\renewcommand*{\and}{\stepcounter{@supervisors}}\@supervisor}%
+    \setbox0=\vbox{\setcounter{@supervisors}{1}\let\degree\@gobble\renewcommand*{\and}{\stepcounter{@supervisors}}\@supervisor}%
     \thispagestyle{empty}
 
     \vspace*{-9.1 mm}
@@ -203,7 +205,6 @@
                 \large
 
                 \renewcommand*{\and}{\\ }
-                \newcommand*{\degree}[1]{, ##1}
 
                 \ifnum\value{@supervisors}>1\supervisorsname\else\supervisorname\fi: \\ \@supervisor
 
