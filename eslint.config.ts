@@ -5,6 +5,6 @@ export default config.prepend({
     'apps/**',
     'packages/**',
     'deploy/kubernetes/templates/**',
-    'thesis',
+    'thesis/',
   ],
 }) as typeof config;
