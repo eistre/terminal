@@ -68,14 +68,14 @@ According to the UT HPC Kubernetes quick start guide, access can be requested ei
 As part of the request, the applicant can specify details such as the domain name, deployment lifetime, project repository, and whether the application requires a database~\cite{ut_hpc_container_hosting_form}.
 After the request has been processed, the user is notified by email and access is granted at the namespace level~\cite{ut_hpc_kubernetes_quick_start_2026}.
 
-As part of this thesis, the application was deployed into the namespace terminal-cs-ut-ee.
-After the namespace had been provisioned, cluster access was configured using the kubeconfig file-based access model described in the UT HPC documentation~\cite{ut_hpc_kubernetes_quick_start_2026}.
+As part of this thesis, the application was deployed into the namespace \texttt{terminal-cs-ut-ee}.
+After the namespace had been provisioned, cluster access was set up using the configuration-file-based access model described in the UT HPC documentation~\cite{ut_hpc_kubernetes_quick_start_2026}.
 In addition to the namespace provisioning itself, several deployment-specific integrations were coordinated directly with UT HPC support by email.
-These included exposing the application under the public hostname terminal.cs.ut.ee through the UT HPC ingress infrastructure, configuring single sign-on through an HPC-managed Keycloak instance, and configuring Simple Mail Transfer Protocol (SMTP) settings required for sending account verification emails.
+These included exposing the application under the public hostname \texttt{terminal.cs.ut.ee} through the UT HPC ingress infrastructure, configuring single sign-on through an HPC-managed Keycloak instance, and configuring Simple Mail Transfer Protocol (SMTP) settings required for sending account verification emails.
 UT HPC support also provided a monitoring dashboard for standard workload metrics, including pod CPU usage, memory usage, and the number of active student containers\footnote{Based on private communication with UT HPC support during the deployment process.}.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-helm}
-The application was installed in the terminal-cs-ut-ee namespace and made accessible to users via the public hostname terminal.cs.ut.ee.
+The application was installed in the \texttt{terminal-cs-ut-ee} namespace and made accessible to users via the public hostname \texttt{terminal.cs.ut.ee}.
 Deployment into the namespace was performed using the project's Helm chart with environment-specific values for UT HPC, including ingress-related options and database configuration.
 The Helm release deployed the main web application together with the Kubernetes resources required to run the platform in this target environment.
 These included the application Deployment, the public-facing Service and Ingress, the database layer configured using the MariaDB\footnote{\url{https://mariadb.org/}} operator, cleanup CronJobs, and namespace-level resources such as service accounts, role bindings, and network policies.
