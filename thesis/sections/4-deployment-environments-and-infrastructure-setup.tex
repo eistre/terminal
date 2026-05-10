@@ -1,7 +1,3 @@
-%! suppress = MissingImport
-%! suppress = UnresolvedReference
-
-
 \section{Deployment Environments and Infrastructure Setup} \label{sec:deployment-environments-and-infrastructure-setup}
 This chapter describes how the revised Linux command-line learning environment was deployed in three target environments.
 It first outlines the deployment goals and the rationale for selecting University of Tartu HPC (UT HPC), Microsoft Azure, and Amazon Web Services as target platforms.
@@ -91,7 +87,7 @@ Figure~\ref{fig:ut-hpc-deployment-overview} presents the deployment of the learn
 
 Public access was implemented through a Kubernetes Ingress resource.
 UT HPC documentation identifies ingress as a supported method for publishing HTTP applications to the public internet through its managed proxy infrastructure, while routing, DNS records, and TLS certificates were coordinated with HPC support~\cite{ut_hpc_kubernetes_ingress_2026}.
-Within the namespace, the web application was deployed as a standard Kubernetes Deployment behind a Service, with optional autoscaling available through chart configuration\@.
+Within the namespace, the web application was deployed as a standard Kubernetes Deployment behind a Service, with optional autoscaling available through chart configuration.
 Additionally, the web application was given explicit resource requests of 250~mCPU and 512~MiB of memory, with limits of 500~mCPU and 1~GiB\@.
 Configuration was kept separate from the application code by storing non-sensitive settings in ConfigMaps and providing sensitive values as Secrets.
 Service accounts and access control resources were used to define the permissions required by the application and its supporting workloads.
