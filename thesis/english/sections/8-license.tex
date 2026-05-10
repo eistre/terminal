@@ -1,0 +1,50 @@
+\section*{License} \label{sec:license} \addcontentsline{toc}{section}{License}
+
+\makeatletter
+\newcommand{\licenseAuthor}{\@author}
+\newcommand{\licenseTitle}{\@title}
+\newcommand{\licenseSupervisor}{%
+  \begingroup
+  \def\degree##1{, ##1}%
+  \@supervisor
+  \endgroup
+}
+\makeatother
+\newcommand{\licenseTwoDigits}[1]{\ifnum#1<10 0\fi\number#1}
+\newcommand{\licenseDate}{\licenseTwoDigits{\day}/\licenseTwoDigits{\month}/\number\year}
+
+\begingroup
+\linespread{1.0}\selectfont
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+\vspace{12pt}
+
+\textbf{Non-exclusive licence to reproduce the thesis and make the thesis public}
+
+\vspace{12pt}
+
+I, \licenseAuthor,
+
+\vspace{12pt}
+
+\begin{enumerate}
+  \setlength{\itemsep}{12pt}
+  \setlength{\parsep}{0pt}
+  \setlength{\topsep}{0pt}
+
+  \item grant the University of Tartu a free permit (non-exclusive licence) to reproduce, for the purpose of preservation, including for adding to the digital archives of the University of Tartu until the expiry of the term of copyright, my thesis \textbf{\licenseTitle}, supervised by \textbf{\licenseSupervisor};
+
+  \item grant the University of Tartu a permit to make the thesis specified in point 1 available to the public via the web environment of the University of Tartu, including via the digital archives, under the Creative Commons licence CC BY NC ND 4.0, which allows, by giving appropriate credit to the author, to reproduce, distribute the work and communicate it to the public, and prohibits the creation of derivative works and any commercial use of the work until the expiry of the term of copyright;
+
+  \item am aware of the fact that the author retains the rights specified in points 1 and 2;
+
+  \item confirm that granting the non-exclusive licence does not infringe other persons' intellectual property rights or rights arising from the personal data protection legislation.
+\end{enumerate}
+
+\vspace{12pt}
+
+\licenseAuthor\\
+\textbf{\licenseDate}
+
+\endgroup

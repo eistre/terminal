@@ -1,0 +1,2 @@
+#!/bin/zsh
+exec /opt/homebrew/bin/python3.13 /Library/TeX/texbin/latexminted "$@"

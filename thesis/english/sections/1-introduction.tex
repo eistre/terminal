@@ -1,0 +1,34 @@
+%! suppress = MissingImport
+%! suppress = UnresolvedReference
+
+
+\section{Introduction} \label{sec:introduction}
+Linux and its command line remain important in computing education and professional practice.
+Practical command-line skills continue to be relevant for topics such as system administration, software development, and security.
+Prior research has shown that command-line interactions support hands-on learning and that terminal skills can be taught through interactive assignments~\cite{svabensky_toolset_2021,bailey_uassign_2019}.
+At the University of Tartu, Linux command-line skills play an important role in courses such as ``Operating Systems'' and ``Computer Security''.
+Consequently, a web-based Linux learning environment offers educational value by supporting hands-on practice with command-line skills.
+
+Students at the University of Tartu have previously explored this idea in two earlier theses.
+Halapuu~\cite{halapuu_2022} developed the initial proof-of-concept web-based Linux command-line learning environment, and Eistre~\cite{eistre_2024} extended it into a cloud-hosted learning platform designed for continuous use.
+These earlier iterations demonstrated the feasibility and educational value of the approach.
+However, they also showed issues related to maintainability, deployment reproducibility, portability across environments, and the cost efficiency of the deployment model.
+In addition, parts of the technical stack and operational model had become outdated, limiting the platform's suitability for long-term use.
+
+The aim of this thesis is to modernize the existing cloud-hosted learning environment while preserving its educational purpose and core workflow.
+To achieve this, the thesis introduces clearer architectural modularization, a provider-agnostic provisioning layer for user-specific Linux environments, dedicated scheduled jobs for periodic maintenance, a modernized authentication layer with support for single sign-on, and improved multilingual content management.
+The thesis also adopts a reproducible deployment approach based on Helm\footnote{\url{https://helm.sh/}} and Terraform\footnote{\url{https://developer.hashicorp.com/terraform}} and evaluates the revised platform on UT HPC\footnote{\url{https://hpc.ut.ee/}}, Microsoft Azure\footnote{\url{https://azure.microsoft.com/}}, and Amazon Web Services\footnote{\url{https://aws.amazon.com/}}.
+The thesis therefore presents a redesigned implementation of the learning environment together with a comparative deployment evaluation across these three target environments.
+
+The thesis is structured as follows.
+Chapter~\ref{sec:background-and-previous-system} presents the educational and technical background, describes the two earlier iterations of the learning environment, and identifies the main limitations that motivated the thesis work.
+Chapter~\ref{sec:revised-architecture-and-implementation} describes the revised architecture, the main implementation changes, and the development workflow followed during implementation.
+Chapter~\ref{sec:deployment-environments-and-infrastructure-setup} explains how the redesigned system was deployed on UT HPC, Microsoft Azure, and Amazon Web Services.
+Chapter~\ref{sec:evaluation-and-discussion} evaluates the deployed learning environment during the observed course period and discusses the resulting operational and cost trade-offs.
+Chapter~\ref{sec:conclusion} presents the conclusion.
+Appendix~\ref{app:deployment-and-maintenance-instructions} provides brief deployment and maintenance instructions.
+The remaining appendices provide the supporting evidence used in the cost comparison, including Azure and AWS billing screenshots and UT HPC monitoring material.
+
+For formatting and language refinement, OpenAI's GPT-5.4~\cite{openai_gpt_5_4_2026} was used to identify grammatical issues, point out formatting problems, and suggest clearer phrasing, as well as improvements to the structure and flow of existing text.
+AI-based coding assistants were also used during the implementation work described in Chapter~\ref{sec:revised-architecture-and-implementation}, where they supported refactoring planning, code generation, testing, and debugging.
+All generated suggestions and code were reviewed, adapted, tested, and integrated by the author.

@@ -121,3 +121,16 @@ For deploying to UTHPC, see `deploy/kubernetes/values-hpc.example.yaml` for conf
 | `pnpm clean` | Clean build artifacts and caches |
 | `pnpm db:generate` | Generate database migrations |
 | `pnpm db:studio` | Open Drizzle Studio for database inspection |
+
+## Thesis
+
+This repository also contains the thesis material under `thesis/`. Thesis dependencies are kept separate from the main application bootstrap.
+
+For local thesis setup on macOS:
+```bash
+brew bundle --file thesis/Brewfile
+cd thesis
+latexmk -pdf thesis.tex
+```
+
+For the full thesis workflow and platform-specific notes, see `thesis/README.md`.
