@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "turbo build",
-    "clean": "turbo clean && git clean -xdf .cache .turbo",
+    "clean": "turbo clean && git clean -xdf .cache .turbo thesis/.output",
     "clean:all": "pnpm clean && git clean -xdf apps/*/node_modules packages/*/node_modules node_modules",
     "db:generate": "turbo run db:generate --filter=@terminal/database",
     "db:studio": "turbo run db:studio --filter=@terminal/database",
@@ -19,6 +19,7 @@
     "lint:root": "eslint . --cache --cache-location .cache/.eslintcache",
     "lint:root:fix": "eslint . --fix --cache --cache-location .cache/.eslintcache",
     "prepare": "husky",
+    "thesis": "cd thesis && latexmk -g -pdf main.tex",
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {

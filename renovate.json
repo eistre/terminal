@@ -78,5 +78,8 @@
       ],
       "groupName": "Runtime version updates"
     }
-  ]
+  ],
+  "toolSettings": {
+    "nodeMaxMemory": 1536
+  }
 }

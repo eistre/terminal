@@ -1,7 +1,3 @@
-%! suppress = MissingImport
-%! suppress = UnresolvedReference
-
-
 \section{Deployment Environments and Infrastructure Setup} \label{sec:deployment-environments-and-infrastructure-setup}
 This chapter describes how the revised Linux command-line learning environment was deployed in three target environments.
 It first outlines the deployment goals and the rationale for selecting University of Tartu HPC (UT HPC), Microsoft Azure, and Amazon Web Services as target platforms.
@@ -91,7 +87,7 @@ Figure~\ref{fig:ut-hpc-deployment-overview} presents the deployment of the learn
 
 Public access was implemented through a Kubernetes Ingress resource.
 UT HPC documentation identifies ingress as a supported method for publishing HTTP applications to the public internet through its managed proxy infrastructure, while routing, DNS records, and TLS certificates were coordinated with HPC support~\cite{ut_hpc_kubernetes_ingress_2026}.
-Within the namespace, the web application was deployed as a standard Kubernetes Deployment behind a Service, with optional autoscaling available through chart configuration\@.
+Within the namespace, the web application was deployed as a standard Kubernetes Deployment behind a Service, with optional autoscaling available through chart configuration.
 Additionally, the web application was given explicit resource requests of 250~mCPU and 512~MiB of memory, with limits of 500~mCPU and 1~GiB\@.
 Configuration was kept separate from the application code by storing non-sensitive settings in ConfigMaps and providing sensitive values as Secrets.
 Service accounts and access control resources were used to define the permissions required by the application and its supporting workloads.
@@ -123,7 +119,7 @@ Although this architecture was functional, it still retained some of the cost an
 
 For the revised implementation, Azure remained relevant, but the service choices were reconsidered.
 The main goal was to preserve the same educational workflow while reducing idle infrastructure overhead and simplifying the operational model.
-As a result, the revised Azure deployment replaces the cluster-centric execution model with a combination of managed and consumption-oriented services that better fit the environment's intermittent classroom usage pattern.
+As a result, the revised Azure deployment replaces the cluster-centric execution model with a combination of managed and consumption-oriented services that better fit the environment's intermittent course usage pattern.
 This made Azure suitable not only for continuity with the baseline system but also for evaluating whether a more lightweight Azure-native architecture could address the cost and maintenance limitations identified in Chapter~\ref{sec:background-and-previous-system}.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-azure}
