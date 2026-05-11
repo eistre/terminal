@@ -41,7 +41,7 @@ catalogs:
       specifier: ^1.2.12
       version: 1.2.12
     '@iconify-json/lucide':
-      specifier: ^1.2.105
+      specifier: ^1.2.106
       version: 1.2.106
     '@kubernetes/client-node':
       specifier: ^1.4.0
@@ -98,7 +98,7 @@ catalogs:
       specifier: ^6.0.0
       version: 6.0.0
     better-auth:
-      specifier: ^1.6.9
+      specifier: ^1.6.10
       version: 1.6.10
     drizzle-kit:
       specifier: ^0.31.10
@@ -110,7 +110,7 @@ catalogs:
       specifier: ^9.39.4
       version: 9.39.4
     eslint-plugin-turbo:
-      specifier: ^2.9.10
+      specifier: ^2.9.12
       version: 2.9.12
     husky:
       specifier: ^9.1.7
@@ -149,10 +149,10 @@ catalogs:
       specifier: ^1.18.0
       version: 1.18.0
     tailwindcss:
-      specifier: ^4.2.4
+      specifier: ^4.3.0
       version: 4.3.0
     turbo:
-      specifier: ^2.9.10
+      specifier: ^2.9.12
       version: 2.9.12
     typescript:
       specifier: ^6.0.3
@@ -171,7 +171,7 @@ catalogs:
       version: 4.4.3
 
 overrides:
-  '@esbuild-kit/core-utils@3.3.2>esbuild': 0.27.7
+  '@esbuild-kit/core-utils@3.3.2>esbuild': 0.28.0
 
 importers:
 
@@ -9058,7 +9058,7 @@ snapshots:
 
   '@esbuild-kit/core-utils@3.3.2':
     dependencies:
-      esbuild: 0.27.7
+      esbuild: 0.28.0
       source-map-support: 0.5.21
 
   '@esbuild-kit/esm-loader@2.6.5':
