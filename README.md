@@ -56,8 +56,8 @@ multiple OAuth providers for university authentication. Email domain allowlists 
 
 ### Prerequisites
 
-- Node.js ^24.11.0
-- pnpm 10.28.1
+- Node.js 24
+- pnpm
 - Docker
 - Container platform: Kubernetes cluster, Azure subscription, or AWS account
 
@@ -121,6 +121,7 @@ For deploying to UTHPC, see `deploy/kubernetes/values-hpc.example.yaml` for conf
 | `pnpm clean` | Clean build artifacts and caches |
 | `pnpm db:generate` | Generate database migrations |
 | `pnpm db:studio` | Open Drizzle Studio for database inspection |
+| `pnpm thesis` | Build the thesis PDF |
 
 ## Thesis
 
@@ -129,8 +130,9 @@ This repository also contains the thesis material under `thesis/`. Thesis depend
 For local thesis setup on macOS:
 ```bash
 brew bundle --file thesis/Brewfile
-cd thesis
-latexmk -pdf thesis.tex
+pnpm thesis
 ```
 
-For the full thesis workflow and platform-specific notes, see `thesis/README.md`.
+The generated PDF is written to `thesis/.output/main.pdf`.
+
+For thesis-specific structure and build notes, see `thesis/README.md`.
