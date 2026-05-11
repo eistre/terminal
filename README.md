@@ -114,11 +114,13 @@ Email domain allowlists provide control over user registration.
 **Option 2: Full Kubernetes environment**
 
 Deploy the full environment using the Helm chart:
+
 ```bash
 helm install terminal ./deploy/kubernetes -n <namespace>
 ```
 
 For local development, copy and customize the local values file:
+
 ```bash
 cp ./deploy/kubernetes/values-local.example.yaml ./deploy/kubernetes/values-local.yaml
 helm install terminal ./deploy/kubernetes -f ./deploy/kubernetes/values-local.yaml
@@ -128,29 +130,36 @@ See `deploy/kubernetes/values.yaml` for configuration options.
 
 **Option 3: University of Tartu HPC Kubernetes**
 
-For deploying to UTHPC, see `deploy/kubernetes/values-hpc.example.yaml` for configuration example and instructions.
+For deploying to UT HPC, see `deploy/kubernetes/values-hpc.example.yaml` for configuration example and instructions.
 
-> **Note:** For production deployments, `apps/database-cleanup/` and `apps/provisioner-cleanup/` have their own `.env.example` files.
+> **Note:** For production deployments, `apps/database-cleanup/` and `apps/provisioner-cleanup/` have their own
+> `.env.example` files.
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start development server |
-| `pnpm build` | Build all packages and apps |
-| `pnpm lint` | Run ESLint across the monorepo |
-| `pnpm lint:fix` | Run ESLint and auto-fix issues |
-| `pnpm typecheck` | Run TypeScript type checking |
-| `pnpm clean` | Clean build artifacts and caches |
-| `pnpm db:generate` | Generate database migrations |
-| `pnpm db:studio` | Open Drizzle Studio for database inspection |
-| `pnpm thesis` | Build the thesis PDF |
+| Command              | Description                                                             |
+|----------------------|-------------------------------------------------------------------------|
+| `pnpm build`         | Build all packages and apps                                             |
+| `pnpm clean`         | Clean build artifacts and caches                                        |
+| `pnpm clean:all`     | Clean build artifacts, caches, and workspace `node_modules` directories |
+| `pnpm db:generate`   | Generate database migrations                                            |
+| `pnpm db:studio`     | Open Drizzle Studio for database inspection                             |
+| `pnpm dev`           | Start development server                                                |
+| `pnpm lint`          | Run ESLint across the monorepo                                          |
+| `pnpm lint:fix`      | Run ESLint and auto-fix issues                                          |
+| `pnpm lint:root`     | Run ESLint for root-level files                                         |
+| `pnpm lint:root:fix` | Run ESLint for root-level files and auto-fix issues                     |
+| `pnpm prepare`       | Install Husky Git hooks                                                 |
+| `pnpm thesis`        | Build the thesis PDF                                                    |
+| `pnpm typecheck`     | Run TypeScript type checking                                            |
 
 ## Thesis
 
-This repository also contains the thesis material under `thesis/`. Thesis dependencies are kept separate from the main application bootstrap.
+This repository also contains the thesis material under `thesis/`.
+Thesis dependencies are kept separate from the main application bootstrap.
 
 For local thesis setup on macOS:
+
 ```bash
 brew bundle --file thesis/Brewfile
 pnpm thesis
