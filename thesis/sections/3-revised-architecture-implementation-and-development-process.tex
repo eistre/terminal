@@ -151,7 +151,7 @@ protected abstract ensureContainerExistsImpl(userId: string):
   Promise<ConnectionInfo>;
 \end{minted}
 
-In practice, these wrappers are important under classroom-scale usage patterns and bursty traffic, such as page refreshes and repeated session starts.
+In practice, these wrappers are important under active usage patterns and bursty traffic, such as page refreshes and repeated session starts.
 Per-user serialization prevents race conditions where concurrent requests attempt to create or delete the same user's container.
 Concurrency limiting reduces the likelihood of overwhelming provider APIs during spikes, and retry logic improves robustness against temporary network failures or throttling.
 Additionally, the base class provides shared lifecycle-management utilities, including computing expiration timestamps, applying consistent metadata tags or labels, and generating fresh SSH key pairs for new containers.

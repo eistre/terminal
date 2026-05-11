@@ -1,7 +1,7 @@
 \section{Background and Previous System} \label{sec:background-and-previous-system}
 This chapter establishes the educational and technical background for the thesis.
 It first motivates the educational relevance of Linux command-line practice in a web-based environment and situates the work within two earlier iterations of the learning environment developed at the University of Tartu.
-It then outlines the architecture and Azure deployment model of the previous system and identifies the main unresolved limitations that define the modernization context for this work.
+The chapter then outlines the architecture and Azure deployment model of the previous system and identifies the unresolved limitations that define the modernization context for this work.
 
 \begin{figure}[H]
   \centering
@@ -58,7 +58,7 @@ For that reason, this thesis treats it as a system to be modernized and refined 
 
 \subsubsection{Cloud Deployment on Azure} \label{subsubsec:cloud-deployment-on-azure}
 The previous system was deployed on Microsoft Azure~\cite{eistre_2024}.
-Azure was chosen in part because it offers educational credits to students, which made it a practical option for an academic project.
+Azure was chosen partly because it offers educational credits to students, which made it a practical option for an academic project.
 The application was containerized and deployed using Azure Container Apps\footnote{\url{https://azure.microsoft.com/en-us/products/container-apps}} (ACA) for the web application and Azure Kubernetes Service\footnote{\url{https://azure.microsoft.com/en-us/products/kubernetes-service}} (AKS) for per-user Linux environments~\cite{eistre_2024}.
 Figure~\ref{fig:azure-deployment-overview} provides a deployment-level overview of the baseline environment and the Azure services created for it.
 
@@ -108,7 +108,7 @@ The corresponding billing screenshots are provided in Appendix~\ref{app:azure-co
 Taken together, these observations show that the main issue was not simply that cloud infrastructure incurred costs, but that the operational model of the previous deployment remained poorly matched to intermittent educational workloads.
 Although the system already implemented demand-based cluster start and stop mechanisms, idle costs remained significant and active periods still generated significant compute and supporting service charges.
 This cost profile therefore defines the central optimization problem addressed in this thesis.
-The task is to reduce the platform's always-on footprint while preserving per-user interactive Linux environments for irregular classroom usage.
+The task is to reduce the platform's always-on footprint while preserving per-user interactive Linux environments for irregular course usage.
 
 \subsubsection{Deprecated Authentication Library} \label{subsubsec:deprecated-authentication-library}
 The previous version of the learning environment relied on the Lucia\footnote{\url{https://github.com/lucia-auth/lucia}} authentication library to implement core authentication functionality, including user registration, login, and session management~\cite{eistre_2024}.
@@ -128,7 +128,7 @@ Together, these points indicate that dependency modernization was a necessary pa
 
 \subsubsection{Additional Improvement Opportunities} \label{subsubsec:additional-improvement-opportunities}
 In addition to the previously described cost and maintainability issues, the previous system exposed several further operational and usability limitations that are relevant to the later redesign.
-First, the environment showed scalability limitations under classroom-scale load.
+First, the environment showed scalability limitations during active course usage.
 According to observations reported by the thesis supervisor, some students were occasionally unable to access an interactive shell session because the AKS node pool could not scale due to Azure quota constraints\footnote{Based on private communication with thesis supervisor Alo Peets.}.
 This suggests that functional correctness alone was insufficient in practice and that the deployment also had to support classroom demand more reliably.
 The issue therefore points to a reliability and scalability limitation relevant to the redesign.
@@ -141,7 +141,7 @@ The issue therefore exposed a maintainability limitation in how localized learni
 Third, the authentication approach could be improved from a usability perspective by integrating the University's single sign-on capabilities.
 Institutional login would simplify onboarding and align access control with existing university identity management, thereby improving the overall user experience.
 In this case, the limitation concerns usability and institutional integration rather than core functionality.
-Taken together, these observations identify additional redesign pressures related to reliability under classroom load, maintainability of multilingual content, and practical access management.
+Taken together, these observations identify additional redesign pressures related to reliability during active usage, maintainability of multilingual content, and practical access management.
 
 \subsubsection{Infrastructure as Code} \label{subsubsec:infrastructure-as-code}
 An additional limitation of the baseline system was the high setup overhead needed to replicate the environment.
