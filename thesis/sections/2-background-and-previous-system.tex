@@ -80,7 +80,7 @@ These included Azure Communication Services\footnote{\url{https://azure.microsof
 This model established a functional cloud-based operating environment, but it also introduced the cost and operational profile that became central to the modernization and cost-optimization goals of this thesis.
 
 \subsection{Limitations and Improvement Opportunities} \label{subsec:limitations-and-improvement-opportunities}
-While the cloud-enabled learning platform developed in Eistre's bachelor's thesis~\cite{eistre_2024} represented a significant advance over the initial prototype, it also exposed several limitations and challenges.
+While the cloud-enabled learning platform developed in Eistre's bachelor's thesis~\cite{eistre_2024} represented a significant advance over the initial prototype, it also exposed limitations related to cost, maintainability, and operational reliability.
 This subchapter summarizes the key issues in the baseline system and clarifies why they matter for the modernization and cost-optimization work described in later chapters.
 
 \subsubsection{Cost Structure} \label{subsubsec:cost-structure}
@@ -130,7 +130,7 @@ Together, these points indicate that dependency modernization was a necessary pa
 In addition to the previously described cost and maintainability issues, the previous system exposed several further operational and usability limitations that are relevant to the later redesign.
 First, the environment showed scalability limitations during active course usage.
 According to observations reported by the thesis supervisor, some students were occasionally unable to access an interactive shell session because the AKS node pool could not scale due to Azure quota constraints\footnote{Based on private communication with thesis supervisor Alo Peets.}.
-This suggests that functional correctness alone was insufficient in practice and that the deployment also had to support classroom demand more reliably.
+This suggests that functional correctness alone did not guarantee reliable operation during active course usage.
 The issue therefore points to a reliability and scalability limitation relevant to the redesign.
 
 Second, the content model did not natively support localization for topics and tasks.
