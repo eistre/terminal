@@ -2,28 +2,39 @@
 
 ## Master's Thesis Project
 
-This project is a continuation of two Bachelor's thesis projects:
+This repository contains the implementation and thesis sources for the Master's thesis
+**"Modernization and Cost Reduction of a Web-Based Linux Command-Line Learning Environment"**.
+
+The thesis continues two earlier Bachelor's thesis projects:
 
 1. **Initial Proof of Concept (POC)** by Joonas Halapuu
-   ([Bachelor's thesis project](https://gitlab.com/JoonasHalapuu/ubuntuterminal)) - The foundational POC that
-   demonstrated the feasibility of the concept.
+   ([thesis](https://thesis.cs.ut.ee/57e3d58f-2bef-4fb4-bbe5-8577f75ced68),
+   [source](https://gitlab.com/JoonasHalapuu/ubuntuterminal)) - The foundational POC that demonstrated the feasibility
+   of the concept.
 
-2. **Working Application Development** - Building upon the POC, the second Bachelor's thesis transformed it into a fully
-   functional application that has been successfully deployed and used in university courses.
+2. **Cloud-hosted Learning Platform**
+   ([thesis](https://thesis.cs.ut.ee/481d5a25-276c-4a6e-87f5-80b2626446a3)) - The follow-up project that transformed the
+   POC into a deployed application used in university courses.
+
+The thesis focuses on modernizing the earlier platform through clearer module boundaries, provider-agnostic Linux
+environment provisioning, improved authentication and multilingual content management, scheduled maintenance jobs, and
+reproducible deployments on UT HPC, Microsoft Azure, and Amazon Web Services.
 
 ## About
 
-This project creates isolated Ubuntu sandboxes that allow users to practice Linux command line tasks in a safe
-environment. Admin users have the ability to modify, create, and delete tasks. The application features automatic
-task completion detection with file system monitoring, multi-language support (English/Estonian), and integrates with
-multiple OAuth providers for university authentication. Email domain allowlists provide control over user registration.
+This project creates isolated Linux environments that allow users to practice command-line tasks through a browser-based
+terminal.
+Admin users can modify, create, and delete topics and tasks.
+The application features automatic task completion detection based on shell output and file system events,
+multi-language support (English/Estonian), and authentication through email-based login and SSO/OAuth providers.
+Email domain allowlists provide control over user registration.
 
 ## Tech Stack
 
 - **Frontend**: Nuxt 4, Vue 3, Nuxt UI, Tailwind CSS, xterm.js
 - **Backend**: Nuxt server, Better Auth, Drizzle ORM
 - **Database**: MySQL/MariaDB
-- **Infrastructure**: Kubernetes, Docker, Azure Container Instances, AWS ECS
+- **Infrastructure**: Docker, Kubernetes/Helm, Terraform, Azure Container Apps/Instances, AWS Lightsail/ECS/Fargate
 - **Email**: Azure Communication Services, AWS SES, SMTP
 - **Secret Storage**: Kubernetes Secrets, Azure Key Vault, AWS Secrets Manager
 - **Monorepo**: pnpm workspaces, Turborepo
@@ -32,25 +43,35 @@ multiple OAuth providers for university authentication. Email domain allowlists 
 
 ### Apps
 
-| App | Description |
-|-----|-------------|
-| `web` | Main Nuxt web application with UI, authentication, and WebSocket terminal |
-| `database-cleanup` | CronJob for cleaning up expired users and verifications |
-| `provisioner-cleanup` | CronJob for cleaning up expired container pods |
+| App                   | Description                                                               |
+|-----------------------|---------------------------------------------------------------------------|
+| `web`                 | Main Nuxt web application with UI, authentication, and WebSocket terminal |
+| `database-cleanup`    | Scheduled job for cleaning up expired users and verifications             |
+| `provisioner-cleanup` | Scheduled job for cleaning up expired Linux session containers            |
 
 ### Packages
 
-| Package | Description |
-|---------|-------------|
-| `@terminal/database` | Database layer with Drizzle ORM (schema, migrations, queries) |
-| `@terminal/env` | Environment variable validation using Zod |
-| `@terminal/evaluator` | Task completion evaluator using regex pattern matching |
-| `@terminal/logger` | Logging utility using Pino |
-| `@terminal/mailer` | Email service abstraction (Azure Communication Services, AWS SES, SMTP) |
-| `@terminal/provisioner` | Container provisioner for Ubuntu sandbox pods (Kubernetes, Azure Container Instances, AWS ECS) |
-| `@terminal/session` | SSH session management for container connections |
-| `@terminal/eslint` | Shared ESLint configuration |
-| `@terminal/typescript` | Shared TypeScript configuration |
+| Package                 | Description                                                                                                   |
+|-------------------------|---------------------------------------------------------------------------------------------------------------|
+| `@terminal/database`    | Database layer with Drizzle ORM (schema, migrations, queries)                                                 |
+| `@terminal/env`         | Environment variable validation using Zod                                                                     |
+| `@terminal/evaluator`   | Task completion evaluator using regex pattern matching                                                        |
+| `@terminal/logger`      | Logging utility using Pino                                                                                    |
+| `@terminal/mailer`      | Email service abstraction (Azure Communication Services, AWS SES, SMTP)                                       |
+| `@terminal/provisioner` | Container provisioner for Linux session environments (Kubernetes, Azure Container Instances, AWS ECS/Fargate) |
+| `@terminal/session`     | SSH session management for container connections                                                              |
+| `@terminal/eslint`      | Shared ESLint configuration                                                                                   |
+| `@terminal/typescript`  | Shared TypeScript configuration                                                                               |
+
+### Other Directories
+
+| Directory           | Description                                                       |
+|---------------------|-------------------------------------------------------------------|
+| `deploy/kubernetes` | Helm chart for Kubernetes and UT HPC deployments                  |
+| `deploy/azure`      | Terraform configuration for the Azure deployment                  |
+| `deploy/aws`        | Terraform configuration for the AWS deployment                    |
+| `resources`         | Source material used by seeded exercise content                   |
+| `thesis`            | LaTeX thesis source, figures, references, and build configuration |
 
 ## Getting Started
 
@@ -86,7 +107,9 @@ multiple OAuth providers for university authentication. Email domain allowlists 
    pnpm dev
    ```
 
-> **Note:** Database migrations run automatically when the server starts. If the database is empty, it will be seeded with default topics and email domains. An admin user is created using the `AUTH_ADMIN_EMAIL` and `AUTH_ADMIN_PASSWORD` environment variables.
+> **Note:** Database migrations run automatically when the server starts.
+> If the database is empty, it will be seeded with default topics and email domains.
+> An admin user is created using the `AUTH_ADMIN_EMAIL` and `AUTH_ADMIN_PASSWORD` environment variables.
 
 **Option 2: Full Kubernetes environment**
 
