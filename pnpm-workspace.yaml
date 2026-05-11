@@ -17,7 +17,7 @@ packages:
 
 overrides:
   # TODO: Remove once drizzle-kit drops @esbuild-kit/esm-loader.
-  '@esbuild-kit/core-utils@3.3.2>esbuild': 0.27.7
+  '@esbuild-kit/core-utils@3.3.2>esbuild': 0.28.0
 
 catalog:
   '@antfu/eslint-config': ^8.2.0
@@ -31,7 +31,7 @@ catalog:
   '@azure/identity': ^4.13.1
   '@azure/keyvault-secrets': ^4.11.2
   '@iconify-json/flag': ^1.2.12
-  '@iconify-json/lucide': ^1.2.105
+  '@iconify-json/lucide': ^1.2.106
   '@kubernetes/client-node': ^1.4.0
   '@nuxt/eslint': ^1.15.2
   '@nuxt/ui': ^4.7.1
@@ -50,11 +50,11 @@ catalog:
   '@xterm/addon-fit': ^0.11.0
   '@xterm/addon-webgl': ^0.19.0
   '@xterm/xterm': ^6.0.0
-  better-auth: ^1.6.9
+  better-auth: ^1.6.10
   drizzle-kit: ^0.31.10
   drizzle-orm: ^0.45.2
   eslint: ^9.39.4
-  eslint-plugin-turbo: ^2.9.10
+  eslint-plugin-turbo: ^2.9.12
   husky: ^9.1.7
   lodash-es: ^4.18.1
   mysql2: ^3.22.3
@@ -67,8 +67,8 @@ catalog:
   sortablejs: ^1.15.7
   ssh2: ^1.17.0
   sshpk: ^1.18.0
-  tailwindcss: ^4.2.4
-  turbo: ^2.9.10
+  tailwindcss: ^4.3.0
+  turbo: ^2.9.12
   typescript: ^6.0.3
   vue: ^3.5.34
   vue-router: ^5.0.6
