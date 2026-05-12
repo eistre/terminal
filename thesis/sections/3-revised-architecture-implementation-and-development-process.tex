@@ -79,7 +79,7 @@ It also allows deployments in which the main application can be scaled down duri
 
 During an active terminal session, the browser establishes a persistent connection to the backend API to support interactive input and output.
 The backend then bridges this traffic to the user's Linux session in the container execution environment.
-The details of how the user session is provisioned and how lifecycle rules are implemented are covered in later subchapters. % TODO perhaps reference the specific subchapters
+The details of how the user session is provisioned and how lifecycle rules are implemented are covered in Subchapter~\ref{subsec:container-provisioning-and-lifecycle-management}.
 
 This overview remains provider-agnostic and focuses on the conceptual decomposition of the system.
 The following subchapters explain the implementation changes behind this decomposition and show how they improved portability and maintainability while reducing operational overhead across deployments.
@@ -101,15 +101,15 @@ Both scheduled jobs in \path{apps/} reuse the same core modules in \path{package
 This avoids keeping the main application running indefinitely solely to perform cleanup and enables deployments where the interactive application can be scaled down during idle periods while maintenance continues to enforce lifecycle and retention policies.
 
 The modernization effort also included updating core frameworks and supporting dependencies to currently supported stable versions where possible.
-One example was the migration of the main application from Nuxt 3 to Nuxt 4, which addressed the outdated dependency baseline identified in subchapter~\ref{subsubsec:outdated-dependencies}.
-In this way, dependency updates were treated as part of the broader codebase modernization effort rather than as isolated package-management tasks. % TODO "effort rather than as isolated package-management tasks" - I feel like something should go in between here, perhaps "rather than as an"?
+One example was the migration of the main application from Nuxt 3 to Nuxt 4, which addressed the outdated dependency baseline identified in Subchapter~\ref{subsubsec:outdated-dependencies}.
+In this way, dependency updates were treated as part of the broader codebase modernization effort rather than handled as separate package-management tasks.
 To support this maintenance work, automated dependency update and validation workflows were also added.
 Renovate\footnote{\url{https://docs.renovatebot.com/}} was configured to prepare pull requests for application, infrastructure, and container dependency updates, supporting a continuous update process.
 GitHub Actions\footnote{\url{https://docs.github.com/en/actions}} was configured to run automated validation checks for repository changes and before container images were published, including linting, type checking, deployment configuration validation, security analysis, and image builds.
 
 Clearer modular boundaries also improve validation, readability, and maintainability by enabling more localized reasoning and testing.
-Structuring the codebase into reusable packages and independently runnable applications makes it easier to extend the system without destabilizing the overall workflow of the environment. % TODO "makes it easier to" - Perhaps change it, "more convenient" for example
-The next subchapter builds on this structure by describing the provisioning abstraction and the lifecycle management approach implemented behind the provisioning interface. % TODO "the next subchapter builds on" - builds on isn't very formal, perhaps use something like "further explores" or something similar
+Structuring the codebase into reusable packages and independently runnable applications makes it easier to extend the system without destabilizing the overall workflow of the environment.
+The next subchapter describes the provisioning abstraction and the lifecycle management approach implemented behind the provisioning interface.
 
 \subsection{Container Provisioning and Lifecycle Management} \label{subsec:container-provisioning-and-lifecycle-management}
 The updated system introduces a provider-agnostic provisioning layer responsible for the creation, maintenance, and deletion of the user-specific Linux containers required for interactive terminal sessions.
@@ -151,36 +151,36 @@ protected abstract ensureContainerExistsImpl(userId: string):
   Promise<ConnectionInfo>;
 \end{minted}
 
-In practice, these wrappers are important under active usage patterns and bursty traffic, such as page refreshes and repeated session starts. % TODO "bursty traffic" - is "bursty traffic" formal enough here? "burst of traffic" perhaps better somehow?
+In practice, these wrappers are important during short traffic spikes, such as page refreshes and repeated session starts.
 Per-user serialization prevents race conditions where concurrent requests attempt to create or delete the same user's container.
-Concurrency limiting reduces the likelihood of overwhelming provider APIs during spikes, and retry logic improves robustness against temporary network failures or throttling. % TODO during traffic spikes perhaps
-Additionally, the base class provides shared lifecycle-management utilities, including computing expiration timestamps, applying consistent metadata tags or labels, and generating fresh SSH key pairs for new containers. % TODO perhaps "Secure Shell (SSH) key pairs"?
+Concurrency limiting reduces the likelihood of overwhelming provider APIs during traffic spikes, and retry logic improves robustness against temporary network failures or throttling.
+Additionally, the base class provides shared lifecycle-management utilities, including computing expiration timestamps, applying consistent metadata tags or labels, and generating fresh Secure Shell (SSH) key pairs for new containers.
 This helps ensure consistent behavior across providers.
 
 \subsubsection{Lifecycle Management and Provider Implementations} \label{subsubsec:lifecycle-management-and-provider-implementations}
 The provisioner abstraction presents a provider-agnostic API\@.
 For example, \texttt{listContainers()} returns a list of user identifiers and expiration timestamps for all managed containers, regardless of the underlying runtime.
 Likewise, \texttt{ensureContainerExists(userId)} guarantees that the system can obtain connection information for a ready interactive container, even though the internal handling differs per provider.
-Provider implementations therefore encapsulate the relevant state transitions, such as creating a missing container, waiting while a container is starting, and refreshing expiration metadata when a container is already running. % TODO "encapsulate" - should it be "encapsulates"?
+Provider implementations therefore encapsulate the relevant state transitions, such as creating a missing container, waiting while a container is starting, and refreshing expiration metadata when a container is already running.
 
 The implementation currently supports three execution backends.
 These are Kubernetes, Azure Container Instances (ACI)\footnote{\url{https://azure.microsoft.com/en-us/products/container-instances}}, and Amazon Elastic Container Service (ECS)\footnote{\url{https://aws.amazon.com/ecs/}} on AWS Fargate\footnote{\url{https://aws.amazon.com/fargate/}}.
-All implementations follow the same lifecycle model by attaching common metadata to managed resources, such as the user identifier and expiration time, enabling consistent enumeration and reclamation of inactive containers. % TODO what does "consitent enumeration" mean here?
+All implementations follow the same lifecycle model by attaching common metadata to managed resources, such as the user identifier and expiration time, enabling inactive containers to be identified and reclaimed consistently across providers.
 The deployment setup and provider-specific configuration are described in Chapter~\ref{sec:deployment-environments-and-infrastructure-setup}.
 
 Lifecycle management is treated as a first-class operational concern to prevent resource leakage and control costs.
 User containers are intentionally time-bound and carry an inactivity-based expiration timestamp that is extended during activity via \texttt{updateContainerExpiration()}.
-Enforcement of expiration is separated from the main web application via the scheduled provisioner cleanup job described in subchapter~\ref{subsec:architecture-overview}. % TODO in the prose, when referencing a chapter, we usually say "Chapter~\ref{}", should we follow the same pattern for subchapters? "Subchapter~\ref{}" perhaps?
+Enforcement of expiration is separated from the main web application via the scheduled provisioner cleanup job described in Subchapter~\ref{subsec:architecture-overview}.
 At a high level, the cleanup job periodically lists managed containers, identifies those whose expiration time is in the past, and deletes them through the same interface.
 This separation ensures that expired containers are reclaimed even if the main application is scaled down during idle periods, aligning the operational footprint more closely with actual usage.
 
 Although this subchapter focuses on the provisioner module because it is the most complex, the same interface-driven design pattern is applied across other internal packages.
 For example, the session module encapsulates the WebSocket and SSH bridging responsibilities behind a stable API, and the evaluator package isolates output buffering and regex-based validation logic.
-Even where only a single implementation exists today, these boundaries keep responsibilities explicit and reduce the likelihood that infrastructure or operational concerns leak into the user-facing application. % TODO "even where only" sounds a bit awkward
+Even when a package currently has only one implementation, these boundaries keep responsibilities explicit and reduce the likelihood that infrastructure or operational concerns leak into the user-facing application.
 
 \subsection{Authentication and Authorization} \label{subsec:authentication-and-authorization}
 In the authentication layer, the revised system replaces the Lucia package with an actively maintained solution that supports session management and single sign-on (SSO) based on OAuth 2.0 and OpenID Connect (OIDC).
-This change removes the dependency on the deprecated library discussed in subchapter~\ref{subsubsec:deprecated-authentication-library} and provides a more maintainable basis for secure access control.
+This change removes the dependency on the deprecated library discussed in Subchapter~\ref{subsubsec:deprecated-authentication-library} and provides a more maintainable basis for secure access control.
 
 \subsubsection{Authentication Design and Implementation} \label{subsubsec:authentication-design-and-implementation}
 Authentication is essential for this learning environment to identify users and ensure continuity of sessions for individual Linux container environments.
@@ -191,7 +191,7 @@ Given Lucia's deprecation, continuing to rely on it was not suitable for a produ
 As an alternative, the updated system adopts Better Auth\footnote{\url{https://github.com/better-auth/better-auth}}, a framework-agnostic authentication and authorization framework that provides built-in support for common authentication workflows~\cite{better_auth_introduction}.
 In the revised system, the authentication layer supports email-based login, session management, and SSO~\cite{better_auth_introduction}.
 In addition, the revised system implements an email domain allowlist to restrict registration and login to approved domains, including both exact-domain rules, such as \texttt{ut.ee}, and suffix rules for subdomains, such as \texttt{.ut.ee}.
-This helps ensure the environment is used only by the intended audience. % TODO perhaps "helps to ensure"?
+This helps ensure the environment is used only by the intended audience.
 
 Compared to Lucia, Better Auth reduces the amount of custom authentication code by providing standardized handlers and integrations for the required workflows.
 This decreases the likelihood of implementation errors, makes the authentication layer easier to evolve alongside the rest of the stack, and provides a standards-based basis for SSO onboarding.
@@ -202,7 +202,7 @@ Fett et al.~\cite{fett_comprehensive_2016} describe OAuth 2.0 as a widely deploy
 Fett et al.~\cite{fett_web_2017} further explain that OIDC allows a relying party to delegate authentication to an identity provider and to verify the result using a cryptographically signed ID token.
 
 At a high level, the environment uses the OIDC authorization code flow.
-As described by Fett et al.~\cite{fett_web_2017}, the user is redirected from the application to the identity provider, authenticates there, and is then redirected back with an authorization code that is exchanged for tokens and used to establish a session. % TODO "authenticates there" sounds a bit weird, perhaps "where they will be authenticated" or something similar?
+As described by Fett et al.~\cite{fett_web_2017}, the user is redirected from the application to the identity provider for authentication and is then redirected back with an authorization code that is exchanged for tokens and used to establish a session.
 
 The current implementation can also use PKCE (Proof Key for Code Exchange), which adds a verification step during token exchange and improves resistance to authorization code interception.
 The web application currently supports both Microsoft Entra ID\footnote{\url{https://www.microsoft.com/en-us/security/business/identity-access/microsoft-entra-id}} and Keycloak\footnote{\url{https://www.keycloak.org/}} as OIDC providers through environment variable configuration.
@@ -216,8 +216,8 @@ In the context of this learning environment, OIDC therefore provides a suitable 
 
 \subsection{Improved Localization and Task Editor} \label{subsec:improved-localization-and-task-editor}
 The revised system improves both the internal localization model and the administrative workflow for managing multilingual learning content.
-Although the baseline environment already supported multiple interface languages, the updated implementation extends this to the content model itself. % TODO perhaps "content model as well"?
-This was achieved by redesigning topics and tasks so that language-independent structure is separated from language-specific text and by introducing an editor that supports both single-language and dual-language authoring. % TODO does "language-independent structure is separated from language-specific text" make sense?
+Although the baseline environment already supported multiple interface languages, the updated implementation extends this to the content model as well.
+This was achieved by redesigning topics and tasks so that shared structural data is stored separately from locale-specific text and by introducing an editor that supports both single-language and dual-language authoring.
 
 \subsubsection{Localization Model} \label{subsubsec:localization-model}
 A significant improvement in the revised implementation is the use of separate translation tables for topics and tasks.
@@ -252,7 +252,7 @@ This dual-language mode is shown in Figure~\ref{fig:task-editor-dual-language}.
 \end{figure}
 
 The editor also provides lightweight completeness feedback through status indicators in the outline and action area.
-Tasks or topics with all required values present are marked with the indicator ``OK'', whereas entries with missing mandatory fields are marked as ``MISSING''. % TODO perhaps also note green and yellow here? "OK" is green and "MISSING" is yellow. And maybe reference the dual language figure here, since it has both variants visible?
+Tasks or topics with all required values present are marked with the green indicator ``OK'', whereas entries with missing mandatory fields are marked with the yellow indicator ``MISSING'', as shown in Figure~\ref{fig:task-editor-dual-language}.
 This allows administrators to identify incomplete translations or task definitions without opening every item individually, which is particularly useful when editing larger bilingual exercise sets.
 As a result, the redesign improves the editorial workflow by making it easier to maintain parity between language variants while also reducing duplication in content management.
 
@@ -264,4 +264,4 @@ As a result, the redesign improves the editorial workflow by making it easier to
 \end{figure}
 
 Together, the improvements described in this chapter establish the revised implementation of the environment.
-The following chapter builds on this by describing the concrete deployment setups and infrastructure choices used to run the system across different environments. % TODO I feel like "builds on" is used a lot and a bit informal, perhaps something like "The following chapter continues the previously mentioned idea by describing..." or something like that?
+The following chapter continues from this implementation overview by describing the concrete deployment setups and infrastructure choices used to run the system across different environments.

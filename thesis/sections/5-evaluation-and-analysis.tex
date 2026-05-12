@@ -8,7 +8,7 @@ The evaluation focuses on whether the revised system preserved the intended cour
 The evaluation was carried out in the context of the University of Tartu course ``Computer Security''.
 The deployments were used during practical session~1 of the course\footnote{\url{https://courses.cs.ut.ee/2026/turve/spring/Main/Praktikum1}}.
 A key goal of the session was for students to complete the tasks in the ``Operating Systems and Computer Security'' topic of the learning environment.
-The observation period covered February 2026 and March 2026.
+The observation period covered February and March 2026.
 
 February 2026 was the more intensive phase of the evaluation, as practical session~1 and most related activity took place during that month.
 March 2026 served as a less active follow-up period.
@@ -75,7 +75,7 @@ This suggests that the revised Azure deployment is better aligned with the cours
 
 \subsection{Cost Comparison of the Three Deployment Environments} \label{subsec:cost-comparison-of-the-three-deployment-environments}
 This subchapter compares the monthly cost structures of the three deployments used in the evaluation.
-The comparison covers February 2026 and March 2026, which represented the more active and less active parts of the observation period, respectively. % TODO "the more active and less active" sounds a bit funny, perhaps changes it with something
+The comparison covers February and March 2026, representing higher- and lower-activity months of the observation period, respectively.
 It first explains the basis for cost comparison and the estimation method used and then presents the comparison results.
 
 \subsubsection{Cost Comparison Basis and Estimation Method} \label{subsubsec:cost-comparison-basis-and-estimation-method}
@@ -86,8 +86,8 @@ For AWS, the comparison also includes the standard monthly price of the Lightsai
 This adjustment was made because the database bundle was covered by a temporary three-month free-tier offer for new accounts~\cite{aws_lightsail_pricing}.
 Including the standard bundle price provides a more accurate representation of the recurring cost after the temporary offer ends.
 
-For that reason, the UT HPC cost data had to be estimated manually using the UT HPC pricing calculator~\cite{ut_hpc_calculate_your_cost} together with the monitoring dashboard described in subchapter~\ref{subsubsec:access-and-namespace-provisioning}.
-At the time of writing, UT HPC did not yet provide a per-namespace Kubernetes cost reporting tool\footnote{Based on private communication with UT HPC support.}. % TODO is "at the time of writing" academically formal, or should we rephrase it?
+At the time of writing, UT HPC did not yet provide a per-namespace Kubernetes cost reporting tool\footnote{Based on private communication with UT HPC support.}.
+For that reason, the UT HPC cost data had to be estimated manually using the UT HPC pricing calculator~\cite{ut_hpc_calculate_your_cost} together with the monitoring dashboard described in Subchapter~\ref{subsubsec:access-and-namespace-provisioning}.
 According to the UT HPC pricing model, Kubernetes resources are billed based on the greater of actual usage or requested resources, with costs calculated per minute~\cite{ut_hpc_calculate_your_cost}.
 The rates applied in this thesis were €0.003 for each CPU core hour, €0.0013 for each GB hour of memory, and €0.138 for each TB hour of SSD storage~\cite{ut_hpc_calculate_your_cost}.
 For the persistent workloads observed during February and March 2026, the dashboard screenshots collected for this thesis did not indicate any sustained usage exceeding the configured requests.
@@ -122,12 +122,12 @@ Using these calculations, a monthly cost estimate was derived for UT HPC and the
 The resulting comparison is presented in the following subchapter.
 
 \subsubsection{Comparison Results} \label{subsubsec:comparison-results}
-Table~\ref{tab:environment-cost-comparison} summarizes the monthly cost comparison across the three deployment environments for February 2026 and March 2026.
+Table~\ref{tab:environment-cost-comparison} summarizes the monthly cost comparison across the three deployment environments for February and March 2026.
 It also highlights the main cost drivers identified for each environment.
 
 \begin{table}[H]
   \centering
-  \caption{Cost comparison of the deployment environments in February 2026 and March 2026.}
+  \caption{Cost comparison of the deployment environments in February and March 2026.}
   \label{tab:environment-cost-comparison}
   \begin{tblr}{
     width=1.0\textwidth,

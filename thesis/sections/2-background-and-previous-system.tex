@@ -13,7 +13,7 @@ The chapter then outlines the architecture and Azure deployment model of the pre
 Figure~\ref{fig:updated-learning-environment} shows the revised learning environment with its task list, completed tasks highlighted in green, and a browser-based Linux terminal.
 
 \subsection{Motivation and Prior Work} \label{subsec:motivation-and-prior-work}
-Linux command-line knowledge remains important in many systems-oriented computing roles, including system administration, software development, and automation. % TODO do we want to keep these three examples in line with the 1-introduction chapter? I feel like we should use the same 3 examples here and in the intro
+Linux command-line knowledge remains important in many systems-oriented computing roles, including system administration, software development, and computer security.
 Because Linux environments are often administered through terminal-centric workflows, hands-on command-line practice remains a relevant educational objective.
 This view is also reflected in prior academic literature.
 Švábenský et al.~\cite{svabensky_toolset_2021} characterize the Linux command-line interface as common in higher education and software development contexts and argue that studying command-line interactions can support hands-on learning.
@@ -29,7 +29,7 @@ Eistre's bachelor's thesis~\cite{eistre_2024} transformed the prototype into a c
 That version improved the system architecture, added bilingual support, and replaced the earlier local deployment model with a cloud-hosted one.
 It was evaluated in the ``Computer Security'' course in February 2024 with 382 participants~\cite{eistre_2024}.
 The system was successful overall, but later use exposed limitations in maintainability, deployment reproducibility, portability, and cost efficiency.
-This thesis builds on that baseline by addressing these limitations while preserving the established educational workflow. % TODO swap "builds on" with something more formal
+This thesis extends that baseline by addressing these limitations while preserving the established educational workflow.
 
 \subsection{Architecture and Deployment of the Previous System} \label{subsec:architecture-and-deployment-of-the-previous-system}
 This subchapter outlines the system developed in Eistre's thesis~\cite{eistre_2024}, which serves as the technical starting point for this master's thesis.
@@ -127,7 +127,7 @@ For instance, CVE-2025-27415 identifies a cache-poisoning issue affecting Nuxt v
 Together, these points indicate that dependency modernization was a necessary part of maintaining the system's security posture and long-term compatibility.
 
 \subsubsection{Additional Improvement Opportunities} \label{subsubsec:additional-improvement-opportunities}
-In addition to the previously described cost and maintainability issues, the previous system exposed several further operational and usability limitations that are relevant to the later redesign. % TODO perhaps swap one "previously" with something else?
+In addition to the cost and maintainability issues described above, the previous system exposed several further operational and usability limitations that are relevant to the later redesign.
 First, the environment showed scalability limitations during active course usage.
 According to observations reported by the thesis supervisor, some students were occasionally unable to access an interactive shell session because the AKS node pool could not scale due to Azure quota constraints\footnote{Based on private communication with thesis supervisor Alo Peets.}.
 This suggests that functional correctness alone did not guarantee reliable operation during active course usage.
@@ -138,7 +138,7 @@ Although the user interface supported multiple languages, equivalent learning co
 This arrangement indicates that the baseline content model was not well aligned with multilingual maintenance.
 The issue therefore exposed a maintainability limitation in how localized learning content was represented.
 
-Third, the authentication approach could be improved from a usability perspective by integrating the University's single sign-on capabilities. % TODO should University be lowercased?
+Third, the authentication approach could be improved from a usability perspective by integrating the university's single sign-on capabilities.
 Institutional login would simplify onboarding and align access control with existing university identity management, thereby improving the overall user experience.
 In this case, the limitation concerns usability and institutional integration rather than core functionality.
 Taken together, these observations identify additional redesign pressures related to reliability during active usage, maintainability of multilingual content, and practical access management.

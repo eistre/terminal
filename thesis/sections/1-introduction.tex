@@ -1,9 +1,9 @@
 \section{Introduction} \label{sec:introduction}
 Linux and its command line remain important in computing education and professional practice.
-Practical command-line skills continue to be relevant for topics such as system administration, software development, and security. % TODO I feel like something might be missing here for "security"? cyber security? systems security?
+Practical command-line skills continue to be relevant for topics such as system administration, software development, and computer security.
 Prior research has shown that command-line interactions support hands-on learning and that terminal skills can be taught through interactive assignments~\cite{svabensky_toolset_2021,bailey_uassign_2019}.
 At the University of Tartu, Linux command-line skills play an important role in courses such as ``Operating Systems'' and ``Computer Security''.
-Consequently, a web-based Linux learning environment offers educational value by supporting hands-on practice with command-line skills. % TODO maybe this is just me, or would it make sense to have "by supporting command-line skills with hands-on practice" instead? I feel like the current phrasing is a bit awkward, but maybe it's just me
+Consequently, a web-based Linux learning environment offers educational value by supporting hands-on command-line practice.
 
 Students at the University of Tartu have previously explored this idea in two earlier theses.
 Halapuu~\cite{halapuu_2022} developed the initial proof-of-concept web-based Linux command-line learning environment, and Eistre~\cite{eistre_2024} extended it into a cloud-hosted learning platform designed for continuous use.
@@ -13,7 +13,8 @@ In addition, parts of the technical stack and operational model had become outda
 
 The aim of this thesis is to modernize the existing cloud-hosted learning environment while preserving its educational purpose and core workflow.
 To achieve this, the thesis introduces clearer architectural modularization, a provider-agnostic provisioning layer for user-specific Linux environments, dedicated scheduled jobs for periodic maintenance, a modernized authentication layer with support for single sign-on, and improved multilingual content management.
-The thesis also adopts a reproducible deployment approach based on Helm\footnote{\url{https://helm.sh/}} and Terraform\footnote{\url{https://developer.hashicorp.com/terraform}} and evaluates the revised platform on UT HPC\footnote{\url{https://hpc.ut.ee/}}, Microsoft Azure\footnote{\url{https://azure.microsoft.com/}}, and Amazon Web Services\footnote{\url{https://aws.amazon.com/}}. % TODO helm and terraform and evaluates feels a bit weird?
+The thesis also adopts a reproducible deployment approach using Helm\footnote{\url{https://helm.sh/}} and Terraform\footnote{\url{https://developer.hashicorp.com/terraform}}.
+The revised platform is then deployed and evaluated on UT HPC\footnote{\url{https://hpc.ut.ee/}}, Microsoft Azure\footnote{\url{https://azure.microsoft.com/}}, and Amazon Web Services\footnote{\url{https://aws.amazon.com/}}.
 The thesis therefore presents a redesigned implementation of the learning environment together with a comparative deployment evaluation across these three target environments.
 
 The thesis is structured as follows.
