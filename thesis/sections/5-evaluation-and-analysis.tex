@@ -75,7 +75,7 @@ This suggests that the revised Azure deployment is better aligned with the cours
 
 \subsection{Cost Comparison of the Three Deployment Environments} \label{subsec:cost-comparison-of-the-three-deployment-environments}
 This subchapter compares the monthly cost structures of the three deployments used in the evaluation.
-The comparison covers February 2026 and March 2026, which represented the more active and less active parts of the observation period, respectively.
+The comparison covers February 2026 and March 2026, which represented the more active and less active parts of the observation period, respectively. % TODO "the more active and less active" sounds a bit funny, perhaps changes it with something
 It first explains the basis for cost comparison and the estimation method used and then presents the comparison results.
 
 \subsubsection{Cost Comparison Basis and Estimation Method} \label{subsubsec:cost-comparison-basis-and-estimation-method}
@@ -86,8 +86,8 @@ For AWS, the comparison also includes the standard monthly price of the Lightsai
 This adjustment was made because the database bundle was covered by a temporary three-month free-tier offer for new accounts~\cite{aws_lightsail_pricing}.
 Including the standard bundle price provides a more accurate representation of the recurring cost after the temporary offer ends.
 
-At the time of writing, UT HPC did not yet provide a per-namespace Kubernetes cost reporting tool\footnote{Based on private communication with UT HPC support.}.
 For that reason, the UT HPC cost data had to be estimated manually using the UT HPC pricing calculator~\cite{ut_hpc_calculate_your_cost} together with the monitoring dashboard described in subchapter~\ref{subsubsec:access-and-namespace-provisioning}.
+At the time of writing, UT HPC did not yet provide a per-namespace Kubernetes cost reporting tool\footnote{Based on private communication with UT HPC support.}. % TODO is "at the time of writing" academically formal, or should we rephrase it?
 According to the UT HPC pricing model, Kubernetes resources are billed based on the greater of actual usage or requested resources, with costs calculated per minute~\cite{ut_hpc_calculate_your_cost}.
 The rates applied in this thesis were €0.003 for each CPU core hour, €0.0013 for each GB hour of memory, and €0.138 for each TB hour of SSD storage~\cite{ut_hpc_calculate_your_cost}.
 For the persistent workloads observed during February and March 2026, the dashboard screenshots collected for this thesis did not indicate any sustained usage exceeding the configured requests.
