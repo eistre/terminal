@@ -1,7 +1,7 @@
 \section{Deployment Environments and Infrastructure Setup} \label{sec:deployment-environments-and-infrastructure-setup}
 This chapter describes how the revised Linux command-line learning environment was deployed in three target environments.
-It first outlines the deployment goals and the rationale for selecting University of Tartu HPC (UT HPC), Microsoft Azure, and Amazon Web Services as target platforms.
-It then describes the reasoning behind each deployment together with the main infrastructure components, deployment approach, and operational trade-offs.
+It first outlines the deployment goals and the rationale for selecting University of Tartu HPC (UT HPC), Microsoft Azure, and Amazon Web Services (AWS) as target platforms.
+It then describes the reasoning behind each deployment together with the main infrastructure components, deployment approach, and operational trade-offs. % TODO "It then describes" - again a bit too informal, perhaps something like "futhermore, the reasoning…. Operational trade-offs are discussed"
 Together, these deployments provide the practical basis for the cross-platform evaluation presented in the next chapter.
 
 \subsection{Deployment Goals and Platform Selection} \label{subsec:deployment-goals-and-platform-selection}
@@ -14,7 +14,7 @@ Across all target environments, the deployment design was guided by several shar
 First, the environment had to support isolated Linux-based execution environments for individual users, as this is central to the teaching model of the system.
 Second, the deployment process needed to become reproducible and maintainable, replacing the more manual setup process of the earlier implementation with a clearer and more structured approach.
 Third, the system needed reliable persistence and integration between the application, database, and supporting services.
-Finally, because one of the main goals of this thesis is cost reduction, deployment choices also had to account for operational overhead and cost efficiency.
+Finally, because one of the main goals of this thesis is cost reduction, deployment choices also had to account for operational overhead and cost efficiency. % TODO "Finally, because one of the main goals of this thesis" - e.g., "in order to fulfil the set goal of cost reduction, …."
 
 Based on these goals, University of Tartu HPC (UT HPC) was selected as one of the deployment targets.
 This platform was particularly relevant because the original application model was already based on containers and Kubernetes, making the university-managed Kubernetes service a natural continuation of that design.
@@ -28,7 +28,7 @@ Together, these three platforms provide a basis for comparing institutional host
 
 \subsection{Deployment Automation and Infrastructure as Code} \label{subsec:deployment-automation-and-infrastructure-as-code}
 Reproducible deployment was a shared design goal across all target environments.
-However, the environments differed in what had to be automated.
+However, the environments differed in what had to be automated. % TODO a bit illogical, perhaps something like "differed in terms of what had to be automated"
 In UT HPC, the cluster infrastructure already existed and was managed externally.
 By contrast, the Azure and AWS deployments also required provisioning the surrounding cloud services needed to run the environment.
 For that reason, different automation approaches were used.
@@ -50,13 +50,13 @@ The corresponding deployment and post-deployment maintenance instructions are pr
 \subsection{University of Tartu HPC} \label{subsec:university-of-tartu-hpc}
 This subchapter presents the deployment of the revised platform on UT HPC\@.
 In addition to serving as one of the target platforms in the cross-environment comparison, this deployment is relevant as a concrete example of institutional hosting.
-The following subchapters first introduce UT HPC and explain the namespace access process, and then describe the deployed components and their operational considerations.
+The following subchapters first introduce UT HPC and explain the namespace access process, and then describe the deployed components and their operational considerations. % TODO "UT HPC and explain the namespace access process, and then" - perhaps swap one and with something else? E.g., as well as
 
 \subsubsection{UT HPC as a Deployment Environment} \label{subsubsec:ut-hpc-as-a-deployment-environment}
 The University of Tartu HPC Centre provides multiple research- and teaching-oriented computing services, including a managed Kubernetes service for hosting containerized workloads.
 According to the UT HPC service description, the Kubernetes cluster is deployed on bare-metal nodes within the University of Tartu network in a high-availability configuration, while users are granted managed, namespace-level access rather than responsibility for administering the underlying cluster infrastructure~\cite{ut_hpc_kubernetes}.
 In this model, projects are assigned dedicated namespaces, enabling application deployment and management within a namespace-scoped environment, while broader cluster administration remains outside the scope of ordinary user access~\cite{ut_hpc_kubernetes_quick_start_2026}.
-This made UT HPC relevant in this thesis both as a technically compatible deployment target for the Kubernetes-based platform and as a practical example of deployment in university-managed infrastructure.
+This made UT HPC relevant in this thesis both as a technically compatible deployment target for the Kubernetes-based platform and as a practical example of deployment in university-managed infrastructure. % TODO "this made X relevant in this thesis" sounds a bit weird IMO, perhaps something like "this made X relevant in the thesis"?
 
 \subsubsection{Access and Namespace Provisioning} \label{subsubsec:access-and-namespace-provisioning}
 Access to the UT HPC Kubernetes cluster was obtained through the namespace request process described in the UT HPC documentation.
@@ -67,7 +67,7 @@ After the request has been processed, the user is notified by email and access i
 As part of this thesis, the application was deployed into the namespace \texttt{terminal-cs-ut-ee}.
 After the namespace had been provisioned, cluster access was set up using the configuration-file-based access model described in the UT HPC documentation~\cite{ut_hpc_kubernetes_quick_start_2026}.
 In addition to the namespace provisioning itself, several deployment-specific integrations were coordinated directly with UT HPC support by email.
-These included exposing the application under the public hostname \texttt{terminal.cs.ut.ee} through the UT HPC ingress infrastructure, configuring single sign-on through an HPC-managed Keycloak instance, and configuring Simple Mail Transfer Protocol (SMTP) settings required for sending account verification emails.
+These included exposing the application under the public hostname \texttt{terminal.cs.ut.ee} through the UT HPC ingress infrastructure, configuring single sign-on through an HPC-managed Keycloak instance, and configuring Simple Mail Transfer Protocol (SMTP) settings required for sending account verification emails. % TODO we already implied UT HPC in the previous sentence + ingress, so perhaps drop the "HPC-managed"?
 UT HPC support also provided a monitoring dashboard for standard workload metrics, including pod CPU usage, memory usage, and the number of active student containers\footnote{Based on private communication with UT HPC support during the deployment process.}.
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-helm}
@@ -101,7 +101,7 @@ These cleanup CronJobs requested 50~mCPU and 128~MiB of memory, with limits of 1
 Per-user execution environments were integrated into the same namespace-scoped deployment model, allowing interactive student containers to be created and managed alongside the main environment while remaining within the security and networking boundaries defined for the namespace.
 Each per-user terminal container requested 100~mCPU and 64~MiB of memory, with limits of 250~mCPU and 128~MiB\@.
 
-From an operational perspective, the deployment on UT HPC reduced the amount of infrastructure that had to be managed directly within the scope of the project.
+From an operational perspective, the deployment on UT HPC reduced the amount of infrastructure that had to be managed directly within the scope of the project. % TODO is "within the scope of the project" here even necessary?
 The Kubernetes cluster and ingress infrastructure were provided by UT HPC, while the responsibility for the application deployment remained focused on namespace-scoped resources such as the Helm release, database setup, and supporting workloads.
 At the same time, some parts of the deployment, including public exposure, single sign-on, and SMTP integration, depended on coordination with UT HPC support.
 This made UT HPC a realistic university-hosted option for long-term use.
@@ -124,7 +124,7 @@ This made Azure suitable not only for continuity with the baseline system but al
 
 \subsubsection{Deployed Components and Operational Considerations} \label{subsubsec:deployed-components-and-operational-considerations-azure}
 The Azure environment was provisioned using Terraform configuration files.
-In the resulting deployment, the revised Azure setup was centered around Azure Container Apps (ACA), which hosted the main web application, while the scheduled maintenance workloads were deployed as Azure Container Apps Jobs, which executed containerized tasks for a finite duration and then stopped~\cite{microsoft_azure_container_apps_overview_2026,microsoft_azure_container_apps_jobs_2026}.
+In the resulting deployment, the revised Azure setup was centered around Azure Container Apps (ACA), which hosted the main web application, while the scheduled maintenance workloads were deployed as Azure Container Apps Jobs, which executed containerized tasks for a finite duration and then stopped~\cite{microsoft_azure_container_apps_overview_2026,microsoft_azure_container_apps_jobs_2026}. % TODO is microsoft_azure_container_apps_overview_2026 relevant here?
 In this environment, the main Nuxt application ran as a containerized web workload configured with 0.5 CPU and 1~GiB of memory, while the database cleanup and provisioner cleanup functions ran as separate scheduled jobs, each configured with 0.25 CPU and 0.5~GiB of memory.
 This matches the architectural separation described in subchapter~\ref{subsec:architecture-overview}, where periodic maintenance was moved out of the main application process.
 
@@ -137,7 +137,7 @@ This matches the architectural separation described in subchapter~\ref{subsec:ar
 
 Figure~\ref{fig:azure-deployment-overview-revised} illustrates the revised Azure deployment.
 Users access the environment through the public endpoint provisioned for the application by ACA, which then routes traffic to the main web application container.
-When an interactive terminal session is requested, the application provisions a new user-specific Linux container through Azure Container Instances (ACI)~\cite{microsoft_azure_container_instances_overview_2025}.
+When an interactive terminal session is requested, the application provisions a new user-specific Linux container through Azure Container Instances (ACI)~\cite{microsoft_azure_container_instances_overview_2025}. % TODO is the citation warranted here? Are we relying on the overview page for this sentence?
 Each ACI session container was configured with 0.1~vCPU and 0.1~GB of memory.
 ACI allows the environment to provide isolated containers for each user without the need to maintain virtual machines or cluster infrastructure~\cite{microsoft_azure_container_instances_overview_2025}.
 Compared with the baseline AKS model, this reduces both infrastructure and operational overhead because the application no longer needs to manage cluster runtime to reduce idle costs.
@@ -196,7 +196,7 @@ In this design, session environments are created on demand as isolated tasks rat
 
 For secret storage, the AWS deployment used AWS Secrets Manager\footnote{\url{https://aws.amazon.com/secrets-manager/}}.
 To support this workflow, the deployment also defined AWS IAM\footnote{\url{https://aws.amazon.com/iam/}} roles and credentials that allowed the web application to launch and manage ECS tasks and access the session secrets required for terminal provisioning.
-For the database layer, data was stored in a managed MySQL database on Amazon Lightsail using the Micro plan, which included 1~GB of memory, 1 core processor, and 40~GB of SSD storage~\cite{aws_lightsail_database_engine_selection,aws_lightsail_pricing}.
+For the database layer, data was stored in a managed MySQL database on Amazon Lightsail using the Micro plan, which included 1~GB of memory, 1 core processor, and 40~GB of SSD storage~\cite{aws_lightsail_database_engine_selection,aws_lightsail_pricing}. % TODO perhaps instead of "data was stored" we use "persistant state was stored"?
 Regarding authentication, the AWS deployment did not integrate with the university-managed Keycloak service, as that setup was specific to UT HPC\@.
 
 From an operational perspective, the AWS deployment used a Lightsail container service with the Nano plan for the always-on web layer~\cite{aws_lightsail_pricing}.
@@ -209,4 +209,4 @@ Taken together, the three deployment environments represent distinct operational
 UT HPC represents institutionally managed Kubernetes hosting.
 Azure represents a public cloud deployment with the lowest idle footprint.
 AWS represents a service-based design that avoids Kubernetes for session execution but retains a continuously running web layer.
-The next chapter builds on these deployment cases by comparing their cost and operational consequences more directly.
+The next chapter builds on these deployment cases by comparing their cost and operational consequences more directly. % TODO again we are using "builds on this"
