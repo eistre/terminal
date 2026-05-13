@@ -201,3 +201,25 @@ The material includes the pod CPU and memory views used to assess the persistent
   \caption{UT HPC monitoring dashboard for session containers in March 2026.}
   \label{fig:appendix-uthpc-session-march-2026}
 \end{figure}
+
+\clearpage
+\refstepcounter{section}
+
+
+\section*{\thesection. Description of Accompanying Files} \label{app:accompanying-files}
+\addcontentsline{toc}{subsection}{\protect\numberline{\thesection.}Description of Accompanying Files}
+The accompanying files provide the source code for the thesis project.
+The repository is available at\url{https://github.com/eistre/terminal}.
+The most relevant files and directories are as follows:
+
+\begin{itemize}
+  \item \path{apps/} contains the runnable applications, including the main web application and scheduled cleanup jobs;
+  \item \path{packages/} contains shared packages used by the applications and the container image definition for the Linux terminal session environments;
+  \item \path{deploy/kubernetes/} contains the Helm chart for Kubernetes environments, including UT HPC\@;
+  \item \path{deploy/azure/} and \path{deploy/aws/} contain the Terraform deployment configurations for Microsoft Azure and Amazon Web Services, respectively;
+  \item \path{thesis/} contains the LaTeX thesis source;
+  \item \path{README.md} gives the project overview, setup notes, deployment options, and available commands.
+\end{itemize}
+
+Generated build output, local caches, local environment files, and provider credentials are not part of the intended accompanying archive.
+They can be recreated or supplied locally by following the setup and deployment instructions in \path{README.md} and Appendix~\ref{app:deployment-and-maintenance-instructions}.
