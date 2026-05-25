@@ -117,22 +117,26 @@ const taskLocalesForDisplay = computed<Locale[]>(() => {
 
         <div v-else>
           <UCard>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-1/2">
-              <UFormField :label="t('topic.editor.panel.fieldTitle')" :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.title`">
-                <UInput v-model="selectedTask.translations[activeTaskLocale].title" :ui="{ root: 'w-full' }" />
-              </UFormField>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div class="grid gap-4">
+                <UFormField :label="t('topic.editor.panel.fieldTitle')" :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.title`">
+                  <UInput v-model="selectedTask.translations[activeTaskLocale].title" :ui="{ root: 'w-full' }" />
+                </UFormField>
 
-              <UFormField :label="t('topic.editor.panel.fieldContent')" :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.content`">
-                <UTextarea v-model="selectedTask.translations[activeTaskLocale].content" :ui="{ root: 'w-full' }" />
-              </UFormField>
+                <UFormField :label="t('topic.editor.panel.fieldContent')" :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.content`">
+                  <UTextarea v-model="selectedTask.translations[activeTaskLocale].content" :ui="{ root: 'w-full' }" />
+                </UFormField>
+              </div>
 
-              <UFormField
-                :label="t('topic.editor.panel.fieldHint')"
-                :hint="t('topic.editor.panel.optional')"
-                :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.hint`"
-              >
-                <UTextarea v-model="selectedTask.translations[activeTaskLocale].hint" :ui="{ root: 'w-full' }" />
-              </UFormField>
+              <div>
+                <UFormField
+                  :label="t('topic.editor.panel.fieldHint')"
+                  :hint="t('topic.editor.panel.optional')"
+                  :name="`tasks.${selectedTaskIndex}.translations.${activeTaskLocale}.hint`"
+                >
+                  <UTextarea v-model="selectedTask.translations[activeTaskLocale].hint" :ui="{ root: 'w-full' }" />
+                </UFormField>
+              </div>
             </div>
           </UCard>
         </div>
