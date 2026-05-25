@@ -84,3 +84,6 @@ allowBuilds:
   ssh2: true
   unrs-resolver: true
   vue-demi: true
+minimumReleaseAgeExclude:
+  # Renovate security update: nuxt@4.4.6
+  - nuxt@4.4.6
