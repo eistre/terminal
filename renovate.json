@@ -14,7 +14,7 @@
   "rangeStrategy": "bump",
   "dependencyDashboard": true,
   "osvVulnerabilityAlerts": true,
-  "prConcurrentLimit": 5,
+  "prConcurrentLimit": 3,
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,

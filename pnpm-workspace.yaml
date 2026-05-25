@@ -2,6 +2,7 @@ catalogMode: strict
 cleanupUnusedCatalogs: true
 minimumReleaseAge: 1440
 shellEmulator: true
+trustLockfile: true
 trustPolicy: no-downgrade
 trustPolicyExclude:
   - chokidar@4.0.3
