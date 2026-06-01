@@ -33,6 +33,8 @@ const authLabels = computed(() => {
   return labels;
 });
 
+const hasAuthProviders = computed(() => Object.keys(authLabels.value).length > 0);
+
 function showAuthError() {
   toast.add({
     color: 'error',
@@ -57,35 +59,51 @@ async function signInWithProvider(provider: string) {
 </script>
 
 <template>
-  <UButton
-    v-if="authLabels.keycloak"
-    icon="i-lucide-landmark"
-    block
-    color="neutral"
-    variant="outline"
-    @click="signInWithOidc('keycloak')"
-  >
-    {{ authLabels.keycloak }}
-  </UButton>
+  <div v-if="hasAuthProviders" class="space-y-2">
+    <h2 class="text-sm font-medium text-highlighted">
+      {{ t('auth.singleSignOn') }}
+    </h2>
 
-  <UButton
-    v-if="authLabels.microsoft"
-    icon="i-lucide-landmark"
-    block
-    color="neutral"
-    variant="outline"
-    @click="signInWithProvider('microsoft')"
-  >
-    {{ authLabels.microsoft }}
-  </UButton>
+    <div class="space-y-2">
+      <UButton
+        v-if="authLabels.keycloak"
+        icon="i-lucide-landmark"
+        block
+        color="neutral"
+        variant="outline"
+        @click="signInWithOidc('keycloak')"
+      >
+        {{ authLabels.keycloak }}
+      </UButton>
 
-  <UTabs :items="items" :ui="{ root: 'min-h-[320px]' }">
-    <template #login>
-      <AuthLogin class="mt-2" @requires-verification="(email) => emit('requiresVerification', email)" />
-    </template>
+      <UButton
+        v-if="authLabels.microsoft"
+        icon="i-lucide-landmark"
+        block
+        color="neutral"
+        variant="outline"
+        @click="signInWithProvider('microsoft')"
+      >
+        {{ authLabels.microsoft }}
+      </UButton>
+    </div>
+  </div>
 
-    <template #signup>
-      <AuthSignUp class="mt-2" @requires-verification="(email) => emit('requiresVerification', email)" />
-    </template>
-  </UTabs>
+  <USeparator v-if="hasAuthProviders" :label="t('auth.or')" />
+
+  <div class="space-y-2">
+    <h2 v-if="hasAuthProviders" class="text-sm font-medium text-highlighted">
+      {{ t('auth.emailAndPassword') }}
+    </h2>
+
+    <UTabs :items="items" :ui="{ root: 'min-h-[320px]' }">
+      <template #login>
+        <AuthLogin class="mt-2" @requires-verification="(email) => emit('requiresVerification', email)" />
+      </template>
+
+      <template #signup>
+        <AuthSignUp class="mt-2" @requires-verification="(email) => emit('requiresVerification', email)" />
+      </template>
+    </UTabs>
+  </div>
 </template>

@@ -54,6 +54,9 @@
   "auth": {
     "login": "Login",
     "signup": "Sign Up",
+    "singleSignOn": "Single sign-on",
+    "emailAndPassword": "Email and password",
+    "or": "or",
     "email": "Email",
     "enterEmail": "Enter your email",
     "name": "Name",

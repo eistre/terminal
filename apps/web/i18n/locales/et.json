@@ -54,6 +54,9 @@
   "auth": {
     "login": "Logi sisse",
     "signup": "Registreeru",
+    "singleSignOn": "Ühekordne sisselogimine",
+    "emailAndPassword": "E-post ja parool",
+    "or": "või",
     "email": "E-post",
     "enterEmail": "Sisesta oma e-post",
     "name": "Nimi",
