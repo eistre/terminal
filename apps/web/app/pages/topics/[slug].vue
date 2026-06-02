@@ -120,7 +120,7 @@ async function handleContainerReset() {
     toast.add({
       color: 'error',
       icon: 'i-lucide-alert-circle',
-      title: t('terminal.resetTerminalError'),
+      title: t('topic.resetTerminalError'),
     });
   }
 }
