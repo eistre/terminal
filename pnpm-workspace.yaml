@@ -47,7 +47,7 @@ catalog:
   '@types/sortablejs': ^1.15.9
   '@types/ssh2': ^1.15.5
   '@types/sshpk': ^1.17.4
-  '@vueuse/nuxt': 14.2.1
+  '@vueuse/nuxt': ^14.3.0
   '@xterm/addon-fit': ^0.11.0
   '@xterm/addon-webgl': ^0.19.0
   '@xterm/xterm': ^6.0.0
