@@ -104,7 +104,8 @@ export function useTerminalSession(slug: string) {
       return;
     }
 
-    if (socketStatus.value !== 'CLOSED') {
+    const canOpen = socketStatus.value === 'CLOSED' || sessionStatus.value === 'RESETTING';
+    if (!canOpen) {
       return;
     }
 
