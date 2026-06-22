@@ -18,7 +18,7 @@ packages:
 
 overrides:
   # TODO: Remove once drizzle-kit drops @esbuild-kit/esm-loader.
-  '@esbuild-kit/core-utils@3.3.2>esbuild': 0.28.0
+  '@esbuild-kit/core-utils@3.3.2>esbuild': 0.28.1
 
 catalog:
   '@antfu/eslint-config': ^8.3.0
@@ -85,3 +85,6 @@ allowBuilds:
   ssh2: true
   unrs-resolver: true
   vue-demi: true
+minimumReleaseAgeExclude:
+  # Renovate security update: esbuild@0.28.1
+  - esbuild@0.28.1
