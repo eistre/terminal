@@ -3,7 +3,7 @@ import type { TopicTask } from '@terminal/database';
 
 const { tasks, resetting } = defineProps<{ tasks: TopicTask[]; resetting: boolean }>();
 const emit = defineEmits<{ reset: [] }>();
-const active = defineModel<string[]>('active', { default: [] });
+const active = defineModel<string[]>('active', { default: () => [] });
 const { t } = useI18n();
 
 const visibleHints = ref<Set<number>>(new Set());
