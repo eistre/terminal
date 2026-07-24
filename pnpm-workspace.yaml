@@ -21,7 +21,7 @@ overrides:
   '@esbuild-kit/core-utils@3.3.2>esbuild': 0.28.1
 
 catalog:
-  '@antfu/eslint-config': ^8.3.0
+  '@antfu/eslint-config': ^9.2.0
   '@aws-sdk/client-ec2': ^3.1093.0
   '@aws-sdk/client-ecs': ^3.1093.0
   '@aws-sdk/client-secrets-manager': ^3.1093.0
