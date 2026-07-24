@@ -19,6 +19,8 @@ packages:
 overrides:
   # TODO: Remove once drizzle-kit drops @esbuild-kit/esm-loader.
   '@esbuild-kit/core-utils@3.3.2>esbuild': 0.28.1
+  # TODO: Remove once fontless supports esbuild 0.28.
+  fontless@0.2.1>esbuild: 0.28.1
 
 catalog:
   '@antfu/eslint-config': ^8.3.0
