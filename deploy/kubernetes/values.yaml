@@ -71,8 +71,8 @@ provisioner:
     # nodePort: creates NodePort service, connects via node IP
     cpuRequest: 100m
     cpuLimit: 250m
-    memoryRequest: 64Mi
-    memoryLimit: 128Mi
+    memoryRequest: 128Mi
+    memoryLimit: 256Mi
 
 # Web application
 web:

@@ -21,8 +21,8 @@ export const kubernetesProvisionerSchema = baseProvisionerSchema.extend({
 
   PROVISIONER_KUBERNETES_CPU_REQUEST: z.string().regex(k8sCpuPattern).default('100m'),
   PROVISIONER_KUBERNETES_CPU_LIMIT: z.string().regex(k8sCpuPattern).default('250m'),
-  PROVISIONER_KUBERNETES_MEMORY_REQUEST: z.string().regex(k8sMemoryPattern).default('64Mi'),
-  PROVISIONER_KUBERNETES_MEMORY_LIMIT: z.string().regex(k8sMemoryPattern).default('128Mi'),
+  PROVISIONER_KUBERNETES_MEMORY_REQUEST: z.string().regex(k8sMemoryPattern).default('128Mi'),
+  PROVISIONER_KUBERNETES_MEMORY_LIMIT: z.string().regex(k8sMemoryPattern).default('256Mi'),
 });
 
 export type KubernetesProvisionerSchema = z.infer<typeof kubernetesProvisionerSchema>;
