@@ -22,8 +22,8 @@ spec:
         - protocol: TCP
           port: 22
   egress:
-    # Allow internet access (all namespaces except current namespace)
-    # This implicitly blocks: other session pods, web, mariadb (all in the same namespace)
+    # Allow access to cluster services in every namespace except the release namespace.
+    # This includes services such as cluster DNS.
     - to:
         - namespaceSelector:
             matchExpressions:
@@ -31,4 +31,10 @@ spec:
                 operator: NotIn
                 values:
                   - {{ .Release.Namespace }}
+    # Allow terminal exercises to reach the public internet.
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+        - ipBlock:
+            cidr: ::/0
 {{- end }}

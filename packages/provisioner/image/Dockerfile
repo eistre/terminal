@@ -6,7 +6,7 @@ RUN yes | unminimize
 
 # Update and install necessary packages
 RUN apt update && apt upgrade -y
-RUN apt install -y inotify-tools sudo less man-db openssh-server && apt clean
+RUN apt install -y inotify-tools sudo less man-db openssh-server dialog && apt clean
 
 # Disable password auth and root login
 RUN sed -i "s/#PasswordAuthentication yes/PasswordAuthentication no/" /etc/ssh/sshd_config \
