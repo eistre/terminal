@@ -87,3 +87,6 @@ allowBuilds:
   ssh2: true
   unrs-resolver: true
   vue-demi: true
+minimumReleaseAgeExclude:
+  # Renovate security update: nodemailer@9.1.1
+  - nodemailer@9.1.1
