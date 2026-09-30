@@ -122,8 +122,8 @@ catalogs:
       specifier: ^3.23.2
       version: 3.24.2
     nodemailer:
-      specifier: ^9.0.3
-      version: 9.0.6
+      specifier: ^10.0.0
+      version: 10.0.12
     nuxt:
       specifier: ^4.5.1
       version: 4.5.2
@@ -487,7 +487,7 @@ importers:
         version: 1.1.0(supports-color@10.2.2)
       nodemailer:
         specifier: 'catalog:'
-        version: 9.0.6
+        version: 10.0.12
       p-limit:
         specifier: 'catalog:'
         version: 7.3.1
@@ -6004,9 +6004,9 @@ packages:
     resolution: {integrity: sha512-YHs7BmmcsdAI5Ozuf8JZo6PT0mv2GIWC9vMfvUC3dp65M8hn7Ux8CPL+2oBI7juNuj9d0ndhTcznq2ODBps9cQ==}
     engines: {node: '>=18'}
 
-  nodemailer@9.0.6:
-    resolution: {integrity: sha512-IQUGFdhdGwI9+AWX+FpUt4DLmvFaOjTMEoneTIWX/RXxuy1TdenPwWrvFMSfLkPKl+HQEXWuSAxEMMbPYXtBmg==}
-    engines: {node: '>=6.0.0'}
+  nodemailer@10.0.12:
+    resolution: {integrity: sha512-PQ46oNbNMuH/Sno7B5IWIU9etytwrO0xdTFvWXpIQFRXhBAXtzD48243AS+BCbQQTPD8y3fqUrgLn0tSo77gvg==}
+    engines: {node: '>=20.0.0'}
 
   nopt@8.1.0:
     resolution: {integrity: sha512-ieGu42u/Qsa4TFktmaKEwM6MQH0pOWnaB3htzh0JRtx84+Mebc0cbZYN5bC+6WTZ4+77xrL9Pn5m7CV6VIkV7A==}
@@ -13555,7 +13555,7 @@ snapshots:
 
   node-releases@2.0.54: {}
 
-  nodemailer@9.0.6: {}
+  nodemailer@10.0.12: {}
 
   nopt@8.1.0:
     dependencies:
