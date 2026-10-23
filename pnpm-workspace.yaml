@@ -87,3 +87,6 @@ allowBuilds:
   ssh2: true
   unrs-resolver: true
   vue-demi: true
+minimumReleaseAgeExclude:
+  # Renovate security update: zod@4.6.6
+  - zod@4.6.6
