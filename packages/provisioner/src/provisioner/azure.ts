@@ -38,7 +38,10 @@ export class AzureProvisioner extends AbstractProvisioner {
     const credential = new DefaultAzureCredential();
 
     this.aci = new ContainerInstanceManagementClient(credential, config.PROVISIONER_AZURE_SUBSCRIPTION_ID);
-    this.secrets = new SecretClient(config.PROVISIONER_AZURE_KEYVAULT_URL, credential);
+    this.secrets = new SecretClient(config.PROVISIONER_AZURE_KEYVAULT_URL, credential, {
+      // Preserve the API version used before the Key Vault SDK 4.12 upgrade.
+      serviceVersion: '2025-07-01',
+    });
     this.resourceGroup = config.PROVISIONER_AZURE_RESOURCE_GROUP;
     this.location = config.PROVISIONER_AZURE_LOCATION;
     this.cpu = config.PROVISIONER_AZURE_CPU;
