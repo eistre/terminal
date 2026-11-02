@@ -64,7 +64,7 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@v5
         with:
-          version: v4.2.4
+          version: v4.3.1
       - name: Helm lint chart
         working-directory: deploy/kubernetes
         run: helm lint . ${{ matrix.values }}
@@ -82,7 +82,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
         with:
-          terraform_version: 1.15.2
+          terraform_version: v1.17.1
       - name: Terraform fmt
         working-directory: deploy/${{ matrix.name }}
         run: terraform fmt -check -recursive
