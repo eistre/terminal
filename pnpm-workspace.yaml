@@ -38,23 +38,23 @@ allowBuilds:
 
 catalog:
   '@antfu/eslint-config': ^9.5.1
-  '@aws-sdk/client-ec2': ^3.1160.0
-  '@aws-sdk/client-ecs': ^3.1160.0
-  '@aws-sdk/client-secrets-manager': ^3.1160.0
-  '@aws-sdk/client-sesv2': ^3.1160.0
+  '@aws-sdk/client-ec2': ^3.1161.0
+  '@aws-sdk/client-ecs': ^3.1161.0
+  '@aws-sdk/client-secrets-manager': ^3.1161.0
+  '@aws-sdk/client-sesv2': ^3.1161.0
   '@azure/arm-containerinstance': ^9.1.0
   '@azure/communication-email': ^1.1.0
   '@azure/core-rest-pipeline': ^1.25.0
   '@azure/identity': ^4.14.1
   '@azure/keyvault-secrets': ^4.12.0
-  '@iconify-json/flag': ^1.2.13
-  '@iconify-json/lucide': ^1.2.149
+  '@iconify-json/flag': ^1.2.15
+  '@iconify-json/lucide': ^1.2.150
   '@kubernetes/client-node': ^1.4.0
   '@nuxt/eslint': ^1.17.0
   '@nuxt/ui': ^4.12.0
   '@nuxtjs/i18n': ^10.6.0
   '@sindresorhus/slugify': ^3.0.1
-  '@tiptap/y-tiptap': ^3.0.11
+  '@tiptap/y-tiptap': ^3.0.12
   '@tsconfig/node-ts': ^23.6.4
   '@tsconfig/node24': ^24.0.5
   '@types/lodash-es': ^4.17.12
@@ -70,13 +70,13 @@ catalog:
   better-auth: ~1.6.33
   drizzle-kit: ^0.31.11
   drizzle-orm: ^0.45.4
-  eslint: ^10.13.0
+  eslint: ^10.14.0
   eslint-plugin-turbo: ^2.11.10
   husky: ^9.1.7
   lodash-es: ^4.18.1
   mysql2: ^3.24.6
   nodemailer: ^10.3.1
-  nuxt: ^4.6.3
+  nuxt: ^4.6.4
   p-limit: ^7.3.3
   p-retry: ^8.0.1
   pino: ^10.4.0
@@ -84,7 +84,7 @@ catalog:
   sortablejs: ^1.15.7
   ssh2: ^1.17.0
   sshpk: ^1.18.0
-  tailwindcss: ^4.3.3
+  tailwindcss: ^4.3.4
   turbo: ^2.11.10
   typescript: ^6.0.3
   vue: ^3.5.44
